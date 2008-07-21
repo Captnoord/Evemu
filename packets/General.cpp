@@ -25,7 +25,7 @@
 
 
 #include <string>
-#include "../packets/../packets/General.h"
+#include "General.h"
 #include "../common/PyRep.h"
 
 
