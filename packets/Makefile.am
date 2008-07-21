@@ -22,13 +22,17 @@ BUILT_DISTS = \
 #  SkillPkts.xmlp 
 
 noinst_LIBRARIES = \
+	libauth.a \
 	libpackets.a
+
+libauth_a_SOURCES = \
+	$(BUILT_DISTS) \
+	Authentication.cpp 
 
 libpackets_a_SOURCES = \
 	$(BUILT_DISTS) \
   ObjectCaching.cpp \
   AccountPkts.cpp \
-  Authentication.cpp \
   Character.cpp \
   CorporationPkts.cpp \
   Crypto.cpp \

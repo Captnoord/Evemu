@@ -75,6 +75,17 @@ AC_ARG_ENABLE(collector, AC_HELP_STRING([--enable-collector],[enable the eve col
 esac],[anvil=false])
 AM_CONDITIONAL(COLLECTOR, test x$collector = xtrue)
 
+# Evetool
+AC_ARG_ENABLE(evetool, AC_HELP_STRING([--enable-evetool],[enable the eve tool]),
+[case "${enableval}" in
+  yes) evetool=true ;;
+  no)  evetool=false ;;
+  *) AC_MSG_ERROR(bad value ${enableval} for --enable-evetool) ;;
+esac],[anvil=false])
+AM_CONDITIONAL(EVETOOL, test x$evetool = xtrue)
+
+
+
 # Define compile/library flags.
 AC_SUBST(AM_CXXFLAGS, "$AM_CXXFLAGS $INCLUDES $MYSQL_CFLAGS -Wall")
 AC_SUBST(AM_LDFLAGS, "$AM_LDFLAGS")
@@ -93,6 +104,9 @@ AC_CONFIG_FILES([
 	common/Makefile
 	xmlpktgen/Makefile
 	packets/Makefile
+	collector/Makefile
+	evetool/Makefile
+	server/Makefile
 ])
 
 AC_OUTPUT
