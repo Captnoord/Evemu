@@ -3,7 +3,6 @@ INCLUDES += -I$(srcdir)/../common/
 BUILT_DISTS = \
 	ObjectCaching.xmlp \
 	AccountPkts.xmlp \
-	Authentication.xmlp \
 	Character.xmlp \
 	CorporationPkts.xmlp \
 	Crypto.xmlp \
@@ -19,6 +18,7 @@ BUILT_DISTS = \
 	Standing2.xmlp \
 	Tutorial.xmlp \
 	Wallet.xmlp 
+#	Authentication.xmlp 
 #  SkillPkts.xmlp 
 
 noinst_LIBRARIES = \
