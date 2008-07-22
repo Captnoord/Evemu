@@ -13,6 +13,7 @@ depcomp
 install-sh
 .libs
 libtool
+ltmain.sh
 Makefile
 Makefile.in
 missing

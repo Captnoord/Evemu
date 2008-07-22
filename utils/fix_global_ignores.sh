@@ -10,7 +10,7 @@ if [ ! -f configure.ac ] ; then
 fi
 
 echo "Updating svn:ignore"
-for i in `find . -path '*/.svn' -prune -o -type d -print`; do
+for i in `find . -path '*/.svn' -prune -o -path '*/.deps' -prune -o -path '*/.libs' -prune -o -type d -print`; do
         if [ -f $i/.svn.ignore ] ; then
                 echo "Merging $i/.svn.ignore with global"
                 cat $i/.svn.ignore .svn.ignore.global | sort  | uniq > $i/.svn.ignore
