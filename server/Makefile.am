@@ -114,10 +114,11 @@ libinventory_a_SOURCES = \
 	inventory/InventoryDB.h \
 	inventory/InventoryItem.cpp \
 	inventory/InventoryItem.h \
-	inventory/ItemDB.cpp \
-	inventory/ItemDB.h \
 	inventory/ItemFactory.cpp \
 	inventory/ItemFactory.h
+# Seems not to be included
+#	inventory/ItemDB.cpp 
+#	inventory/ItemDB.h 
 
 libmanufacturing_a_SOURCES = \
 	manufacturing/FactoryDB.cpp \
@@ -291,12 +292,11 @@ server_LDADD = \
   -lstation \
   -lsystem \
 	-ltutorial \
-	-ltinyxml \
 	-lcommon \
+	-ltinyxml \
 	-lpackets \
 	-lz \
 	-lpthread \
-	-lpcap \
 	-ldl 
 
 server_LDFLAGS = \
@@ -305,3 +305,8 @@ server_LDFLAGS = \
 	-L$(srcdir)/../packets/ \
 	@MYSQL_LDFLAGS@
 
+AM_CXXFLAGS+= \
+	-pipe \
+	-fno-inline \
+	-Wall \
+	-ansi

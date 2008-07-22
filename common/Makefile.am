@@ -106,4 +106,6 @@ libtinyxml_a_SOURCES = \
 	tinyxml/tinyxml.h \
 	tinyxml/tinyxmlparser.cpp
 
+libtinyxml_a_CXXFLAGS = \
+	-DTIXML_USE_STL
 #AM_CXXFLAGS+= -fno-inline

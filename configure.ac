@@ -84,10 +84,13 @@ AC_ARG_ENABLE(evetool, AC_HELP_STRING([--enable-evetool],[enable the eve tool]),
 esac],[anvil=false])
 AM_CONDITIONAL(EVETOOL, test x$evetool = xtrue)
 
+# nids/pcap
+# nids/pcap
+
 
 
 # Define compile/library flags.
-AC_SUBST(AM_CXXFLAGS, "$AM_CXXFLAGS $INCLUDES $MYSQL_CFLAGS -Wall")
+AC_SUBST(AM_CXXFLAGS, "$AM_CXXFLAGS $INCLUDES $MYSQL_CFLAGS -Wall -DTIXML_USE_STL")
 AC_SUBST(AM_LDFLAGS, "$AM_LDFLAGS")
 
 # Checks for header files.
