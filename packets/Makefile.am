@@ -22,12 +22,13 @@ BUILT_DISTS = \
 #  SkillPkts.xmlp 
 
 noinst_LIBRARIES = \
-	libauth.a \
 	libpackets.a
+# Tmp disable, not needed and screws things up
+#	libauth.a
 
-libauth_a_SOURCES = \
-	$(BUILT_DISTS) \
-	Authentication.cpp 
+#libauth_a_SOURCES = 
+#	$(BUILT_DISTS) 
+#	Authentication.cpp 
 
 libpackets_a_SOURCES = \
 	$(BUILT_DISTS) \
