@@ -10,14 +10,23 @@ if [ ! -f configure.ac ] ; then
 fi
 
 echo "Updating svn:ignore"
-for i in `find . -path '*/.svn' -prune -o -path '*/.deps' -prune -o -path '*/.libs' -prune -o -type d -print`; do
+for i in ./ $(svn -R list | grep /\$); do
         if [ -f $i/.svn.ignore ] ; then
-                echo "Merging $i/.svn.ignore with global"
-                cat $i/.svn.ignore .svn.ignore.global | sort  | uniq > $i/.svn.ignore
-                svn propset svn:ignore -F $i/.svn.ignore $i
+                echo "Merging ${i}.svn.ignore with global"
+                cat ${i}.svn.ignore .svn.ignore.global | sort  | uniq > ${i}.svn.ignore
+								svn propget svn:ignore $i | diff -Bq - ${i}.svn.ignore
+								if [ $? -ne 0 ] ; then 
+									echo Propset differs, updating...
+                	svn propset svn:ignore -F ${i}.svn.ignore $i
+									echo
+								fi
         else
-                echo .
-                svn propset svn:ignore -F .svn.ignore.global $i
+								svn propget svn:ignore $i | diff -Bq - .svn.ignore.global
+								if [ $? -ne 0 ] ; then
+									echo Propset differs with global, updating propset
+                	svn propset svn:ignore -F .svn.ignore.global $i
+									echo
+								fi
         fi
 done
 
