@@ -251,6 +251,8 @@ libtutorial_a_SOURCES = \
 	tutorial/TutorialService.h
 
 server_SOURCES = \
+	NetService.cpp \
+	NetService.h \
 	BookmarkService.cpp \
 	BookmarkService.h \
 	Client.cpp \

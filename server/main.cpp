@@ -35,6 +35,7 @@
 
 
 #include "EntityList.h"
+#include "NetService.h"
 #include "Client.h"
 
 //services:
@@ -213,6 +214,7 @@ int main(int argc, char *argv[]) {
 	services.RegisterService(new FactoryService(&services, &db));
 	services.RegisterService(new RamProxyService(&services, &db));
 	services.RegisterService(new PosMgrService(&services, &db));
+	services.RegisterService(new NetService(&services));
 	
 	_log(SERVER__INIT, "Priming cached objects");
 //#ifndef WIN32
