@@ -26,7 +26,6 @@
 #include "Client.h"
 #include "../common/PyPacket.h"
 #include "../common/PyRep.h"
-#include "../common/EVEPresentation.h"
 #include "../common/logsys.h"
 #include "../common/EVEMarshal.h"
 #include "../common/packet_functions.h"
@@ -41,6 +40,7 @@
 #include "../common/sigexcept/sigexcept.h"
 
 #include "../packets/AccountPkts.h"
+#include "../packets/Crypto.h"
 #include "../packets/General.h"
 #include "../packets/Inventory.h"
 #include "../packets/Wallet.h"
@@ -65,12 +65,12 @@
 static const uint32 PING_INTERVAL_US = 60000;
 static const uint64 HackFixedClientID = 130293001608LL;	//should prolly generate these for each client some day...
 
-Client::Client(PyServiceMgr *services, EVEPresentation **n)
+Client::Client(PyServiceMgr *services, EVETCPConnection **con)
 : DynamicSystemEntity(NULL),
   modules(this),
   m_ship(NULL),
   m_services(services),
-  m_net(*n),
+  m_net(*con, this),
   m_pingTimer(PING_INTERVAL_US),
   m_accountID(0),
   m_role(1),
@@ -84,7 +84,7 @@ Client::Client(PyServiceMgr *services, EVEPresentation **n)
   m_nextNotifySequence(1)
 //  m_nextDestinyUpdate(46751)
 {
-	*n = NULL;
+	*con = NULL;
 
 	m_moveTimer.Disable();
 	m_pingTimer.Start();
@@ -104,6 +104,9 @@ Client::Client(PyServiceMgr *services, EVEPresentation **n)
 	m_char.Perception = 9;
 	m_char.Memory = 10;
 	m_char.Willpower = 11;
+
+	//initialize connection
+	m_net.SendHandshake(m_services->entity_list->GetClientCount());
 }
 
 Client::~Client() {
@@ -134,33 +137,32 @@ Client::~Client() {
 	if(m_system != NULL)
 		m_system->RemoveClient(this);	//handles removing us from bubbles and sending RemoveBall events.
 	
-	delete m_net;
-	
 	m_ship->Release();
 	targets.DoDestruction();
 }
 
 void Client::QueuePacket(PyPacket *p) {
 	p->userid = m_accountID;
-	m_net->QueuePacket(p);
+	m_net.QueuePacket(p);
 }
 
 void Client::FastQueuePacket(PyPacket **p) {
-	m_net->FastQueuePacket(p);
+	m_net.FastQueuePacket(p);
 }
 
 bool Client::ProcessNet() {
 	TRY_SIGEXCEPT {
 		
-		if(!m_net->Connected())
+		if(!m_net.Connected())
 			return(false);
 		
 		if(m_pingTimer.Check()) {
+			_log(CLIENT__TRACE, "%s: Sending ping reqest.", GetName());
 			_SendPingRequest();
 		}
 		
 		PyPacket *p;
-		while((p = m_net->PopPacket())) {
+		while((p = m_net.PopPacket())) {
 			{
 				PyLogsysDump dumper(CLIENT__IN_ALL);
 				_log(CLIENT__IN_ALL, "Received packet:");
@@ -168,9 +170,6 @@ bool Client::ProcessNet() {
 			}
 	
 			switch(p->type) {
-			case AUTHENTICATION_REQ:
-				_ProcessLogin(p);
-				break;
 			case CALL_REQ:
 				_ProcessCallRequest(p);
 				break;
@@ -344,81 +343,52 @@ void Client::ChannelLeft(LSCChannel *chan) {
 	m_channels.erase(chan);
 }
 
-void Client::SendHandshake() {
-	uint32 user_count = 17973;
-	m_net->SendHandshake(MachoNetVersion, user_count, EVEVersionNumber, EVEBuildVersion, EVEProjectVersion);
-}
+PyRep *Client::Login(CryptoChallengePacket *pack) {
+	_log(CLIENT__MESSAGE, "Login with %s", pack->user_name.c_str());
 
-void Client::_ProcessLogin(PyPacket *packet) {
-	AuthenticationReq req;
-	if(!req.Decode(&packet->payload)) {
-		_log(CLIENT__ERROR, "Failed to decode AuthenticationReq, rejecting.\n");
-		_SendLoginFailed(packet->source.callID);
-		return;
+	//urgh ... damn Python
+	if(!pack->user_password->CheckType(PyRep::PackedResultSet)) {
+		_log(CLIENT__ERROR, "Failed to get password: user_password is not PackedResultSet.");
+		return(NULL);
 	}
-	//_log(CLIENT__MESSAGE, "Login with %s/%s", req.login.c_str(), req.password.c_str());
-	_log(CLIENT__MESSAGE, "Login with %s", req.login.c_str());
+	PyRepPackedResultSet *set = (PyRepPackedResultSet *)pack->user_password;
+
+	util_PasswordString pass;
+	if(!pass.Decode(&set->header)) {
+		_log(CLIENT__ERROR, "Failed to get password: Failed to decode util.PasswordString.");
+		return(NULL);
+	}
 	
-	if(!m_services->GetServiceDB()->DoLogin(req.login.c_str(), req.password.c_str(), m_accountID, m_role)) {
+	if(!m_services->GetServiceDB()->DoLogin(pack->user_name.c_str(), pass.password.c_str(), m_accountID, m_role)) {
 		_log(CLIENT__MESSAGE, "Login rejected by DB");
-		_SendLoginFailed(packet->source.callID);
-		return;
+		//_SendLoginFailed(packet->source.callID);
+		return(NULL);
 	}
 	
 	// this is needed so if we exit before selecting a character, the account online flag would switch back to 0
 	m_char.charid = 0;
 	m_services->GetServiceDB()->SetAccountOnlineStatus(m_accountID, true);
 
+	//send this before session change
+	CryptoHandshakeAck ack;
+	ack.connectionLogID = 1;	//TODO: what is this??
+	ack.jit = pack->user_languageid;
+	ack.userid = m_accountID;
+	ack.maxSessionTime = new PyRepNone;
+	ack.userType = 23;	//TODO: what is this??
+	ack.role = m_role;
+	ack.address = m_net.GetConnectedAddress();
+	ack.inDetention = new PyRepNone;
+	ack.user_clientid = m_accountID;
+
 	session.Set_userType(23);	//TODO: what is this??
 	session.Set_userid(m_accountID);
-	session.Set_address(m_net->GetConnectedAddress().c_str());
+	session.Set_address(m_net.GetConnectedAddress().c_str());
 	session.Set_role(m_role);
-	session.Set_languageID(req.languageID.c_str());
-	
-	_CheckSessionChange();	// get session change out before success reply
-	
-	_SendLoginSuccess(packet->source.callID);
+	session.Set_languageID(pack->user_languageid.c_str());
+
+	return(ack.Encode());
 }
-
-void Client::_SendLoginSuccess(uint32 callid) {
-
-	AuthenticationRsp rsp;
-	rsp.project_version = EVEProjectVersion;
-	rsp.version_number = EVEVersionNumber;
-	rsp.build_version = EVEBuildVersion;
-
-	rsp.accountID = m_accountID;
-	rsp.role = m_role;
-	rsp.proxyNodeID = 10012002;
-
-	m_services->GetCache()->InsertCacheHints(
-		ObjCacheService::hLoginCachables, 
-		&rsp.cachables);
-
-	_BuildServiceListDict(&rsp.services);
-	
-
-	//build the packet:
-	PyPacket *p = new PyPacket();
-	p->type_string = "macho.AuthenticationRsp";
-	p->type = AUTHENTICATION_RSP;
-	
-	p->source.type = PyAddress::Any;
-
-	p->dest.type = PyAddress::Client;
-	p->dest.typeID = HackFixedClientID;
-	p->dest.callID = callid;
-
-	p->userid = m_accountID;
-	
-	p->payload = (PyRepTuple *) rsp.Encode();
-	
-	p->named_payload = new PyRepDict();
-	p->named_payload->add("channel", new PyRepString("authentication"));
-	
-	FastQueuePacket(&p);
-}
-
 
 void Client::_SendPingRequest() {
 	PyPacket *ping_req = new PyPacket();
@@ -443,75 +413,6 @@ void Client::_SendPingRequest() {
 	
 	FastQueuePacket(&ping_req);
 }
-
-void Client::_BuildServiceListDict(PyRepDict *into) {
-	into->items[ new PyRepString("objectCaching") ] = new PyRepNone();
-	into->items[ new PyRepString("lookupSvc") ] = new PyRepNone();
-	into->items[ new PyRepString("beyonce") ] = new PyRepNone();
-	into->items[ new PyRepString("standing2") ] = new PyRepNone();
-	into->items[ new PyRepString("ram") ] = new PyRepNone();
-	into->items[ new PyRepString("lien") ] = new PyRepNone();
-	into->items[ new PyRepString("voucher") ] = new PyRepNone();
-	into->items[ new PyRepString("entity") ] = new PyRepNone();
-	into->items[ new PyRepString("keeper") ] = new PyRepString("solarsystem");
-	into->items[ new PyRepString("agentMgr") ] = new PyRepNone();
-	into->items[ new PyRepString("dogmaIM") ] = new PyRepNone();
-	into->items[ new PyRepString("machoNet") ] = new PyRepNone();
-	into->items[ new PyRepString("watchdog") ] = new PyRepNone();
-	into->items[ new PyRepString("ship") ] = new PyRepNone();
-	into->items[ new PyRepString("npcSvc") ] = new PyRepNone();
-	into->items[ new PyRepString("cacheSvc") ] = new PyRepNone();
-	into->items[ new PyRepString("market") ] = new PyRepNone();
-	into->items[ new PyRepString("dungeon") ] = new PyRepNone();
-	into->items[ new PyRepString("aggressionMgr") ] = new PyRepNone();
-	into->items[ new PyRepString("sessionMgr") ] = new PyRepNone();
-	into->items[ new PyRepString("LSC") ] = new PyRepString("location");
-	into->items[ new PyRepString("allianceRegistry") ] = new PyRepNone();
-	into->items[ new PyRepString("bookmark") ] = new PyRepString("location");
-	into->items[ new PyRepString("invbroker") ] = new PyRepNone();
-	into->items[ new PyRepString("character") ] = new PyRepNone();
-	into->items[ new PyRepString("factory") ] = new PyRepNone();
-	into->items[ new PyRepString("corpStationMgr") ] = new PyRepNone();
-	into->items[ new PyRepString("authentication") ] = new PyRepNone();
-	into->items[ new PyRepString("station") ] = new PyRepString("station");
-	into->items[ new PyRepString("slash") ] = new PyRepNone();
-	into->items[ new PyRepString("charmgr") ] = new PyRepNone();
-	into->items[ new PyRepString("stationSvc") ] = new PyRepNone();
-	into->items[ new PyRepString("gangsta") ] = new PyRepNone();
-	into->items[ new PyRepString("config") ] = new PyRepString("locationPreferred");
-	into->items[ new PyRepString("deadlineMgr") ] = new PyRepNone();
-	into->items[ new PyRepString("billingMgr") ] = new PyRepNone();
-	into->items[ new PyRepString("billMgr") ] = new PyRepNone();
-	into->items[ new PyRepString("map") ] = new PyRepNone();
-	into->items[ new PyRepString("posMgr") ] = new PyRepNone();
-	into->items[ new PyRepString("lootSvc") ] = new PyRepNone();
-	into->items[ new PyRepString("http") ] = new PyRepNone();
-	into->items[ new PyRepString("gagger") ] = new PyRepNone();
-	into->items[ new PyRepString("dataconfig") ] = new PyRepNone();
-	into->items[ new PyRepString("DB") ] = new PyRepNone();
-	into->items[ new PyRepString("i2") ] = new PyRepNone();
-	into->items[ new PyRepString("account") ] = new PyRepString("location");
-	into->items[ new PyRepString("telnet") ] = new PyRepNone();
-	into->items[ new PyRepString("alert") ] = new PyRepNone();
-	into->items[ new PyRepString("director") ] = new PyRepNone();
-	into->items[ new PyRepString("dogma") ] = new PyRepNone();
-	into->items[ new PyRepString("pathfinder") ] = new PyRepNone();
-	into->items[ new PyRepString("corporationSvc") ] = new PyRepNone();
-	into->items[ new PyRepString("clones") ] = new PyRepNone();
-	into->items[ new PyRepString("effectCompiler") ] = new PyRepNone();
-	into->items[ new PyRepString("corpmgr") ] = new PyRepNone();
-	into->items[ new PyRepString("warRegistry") ] = new PyRepNone();
-	into->items[ new PyRepString("corpRegistry") ] = new PyRepNone();
-	into->items[ new PyRepString("missionMgr") ] = new PyRepNone();
-	into->items[ new PyRepString("userSvc") ] = new PyRepNone();
-	into->items[ new PyRepString("counter") ] = new PyRepNone();
-	into->items[ new PyRepString("petitioner") ] = new PyRepNone();
-	into->items[ new PyRepString("debug") ] = new PyRepNone();
-	into->items[ new PyRepString("shipSvc") ] = new PyRepNone();
-	into->items[ new PyRepString("onlineStatus") ] = new PyRepNone();
-	into->items[ new PyRepString("skillMgr") ] = new PyRepNone();
-}
-
 
 void Client::_CheckSessionChange() {
 	if(!session.IsDirty())
@@ -626,6 +527,8 @@ bool Client::EnterSystem() {
 
 		NotifyOnCharNowInStation n;
 		n.charID = GetCharacterID();
+		n.corpID = GetCorporationID();
+		n.allianceID = GetAllianceID();
 		PyRepTuple *tmp = n.Encode();
 		m_services->entity_list->Broadcast("OnCharNowInStation", "stationid", &tmp);
 	} else if(IsSolarSystem(GetLocationID())) {
@@ -642,7 +545,7 @@ bool Client::EnterSystem() {
 		//m_destiny->SendAddBall();	//bubble manager does this now.
 		//m_destiny->SendJumpIn();
 		//delay the SetState update so they can initialize their ballpark
-		_postMove(msStateChange, 4000);
+		_postMove(msStateChange, 10000);
 	} /*else {	//just dont do anything extra and let them be where they are
 		_log(CLIENT__ERROR, "Char %s (%lu) is in a bad location %lu", GetName(), GetCharacterID(), GetLocationID());
 		SendErrorMsg("In a bad location %lu", GetLocationID());

@@ -33,10 +33,12 @@ protected:
 
 	TutorialDB m_db;
 
-	PyCallable_DECL_CALL(GetTutorialInfo)
+	//PyCallable_DECL_CALL(GetTutorialInfo)
 	PyCallable_DECL_CALL(GetTutorials)
-	PyCallable_DECL_CALL(GetCriterias)
+	//PyCallable_DECL_CALL(GetCriterias)
 	//LogAborted(tutnum=5, int=1, int=11)
+	PyCallable_DECL_CALL(GetCategories)
+	PyCallable_DECL_CALL(GetContextHelp)
 };
 
 

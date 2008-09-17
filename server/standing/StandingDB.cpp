@@ -22,6 +22,8 @@
 #include "../common/logsys.h"
 #include "../common/EVEDBUtils.h"
 
+#include "../packets/General.h"
+
 StandingDB::StandingDB(DBcore *db)
 : ServiceDB(db)
 {
@@ -128,7 +130,7 @@ double StandingDB::GetSecurityRating(uint32 characterID) {
 }
 
 PyRepObject *StandingDB::GetStandingTransactions(uint32 characterID) {
-	DBQueryResult res;
+	/*DBQueryResult res;
 
 	if (!m_db->RunQuery(res,
 		" SELECT * FROM chrStandingChanges "
@@ -139,7 +141,27 @@ PyRepObject *StandingDB::GetStandingTransactions(uint32 characterID) {
 		return(NULL);
 	}
 
-	return (DBResultToRowset(res));
+	return (DBResultToRowset(res));*/
+
+	//since we dont support standing changes in any way yet, its useless to have such stuff in db
+	_log(DATABASE__MESSAGE, "StandingChanges unimplemented.");
+
+	util_Rowset res;
+
+	res.header.push_back("eventID");
+	res.header.push_back("eventTypeID");
+	res.header.push_back("eventDateTime");
+	res.header.push_back("fromID");
+	res.header.push_back("toID");
+	res.header.push_back("modification");
+	res.header.push_back("originalFromID");
+	res.header.push_back("originalToID");
+	res.header.push_back("int_1");
+	res.header.push_back("int_2");
+	res.header.push_back("int_3");
+	res.header.push_back("msg");
+
+	return(res.Encode());
 }
 
 

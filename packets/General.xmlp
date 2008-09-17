@@ -38,7 +38,7 @@
 		<strlist name="header" />
 	  </IDEntry>
 	  <IDEntry key="RowClass">
-		<string name="rowclass" type1="true"/>
+		<string name="rowclass" default="util.Row"  type1="true"/>
 	  </IDEntry>
 	  <IDEntry key="idName">
 		<string name="idName"/>
@@ -56,6 +56,16 @@
 	<strlist name="header" />
 	<list name="lines" />
   </InlineTuple>
+</element>
+
+<element name="util_PasswordString">
+	<InlineTuple>
+		<InlineTuple>
+			<string name="type" default="util.PasswordString" />
+			<string name="password" />
+		</InlineTuple>
+		<dict name="dict" />
+	</InlineTuple>
 </element>
 
 

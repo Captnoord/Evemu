@@ -75,6 +75,7 @@ protected:
 	
 	//make sure you add things to the constructor too
 	PyCallable_DECL_CALL(GetChannels)
+	PyCallable_DECL_CALL(GetRookieHelpChannel)
 	PyCallable_DECL_CALL(JoinChannels)
 	PyCallable_DECL_CALL(LeaveChannels)
 	PyCallable_DECL_CALL(LeaveChannel)

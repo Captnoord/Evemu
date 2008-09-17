@@ -39,6 +39,7 @@ protected:
 	PyCallable_DECL_CALL(SelectCharacterID)
 	PyCallable_DECL_CALL(GetOwnerNoteLabels)
 	PyCallable_DECL_CALL(GetCharCreationInfo)
+	PyCallable_DECL_CALL(GetCharNewExtraCreationInfo)
 	PyCallable_DECL_CALL(GetAppearanceInfo)
 	PyCallable_DECL_CALL(ValidateName)
 	PyCallable_DECL_CALL(CreateCharacter)

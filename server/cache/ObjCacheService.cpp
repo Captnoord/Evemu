@@ -36,10 +36,8 @@ const char *const ObjCacheService::LoginCachableObjects[] = {
 	"config.BulkData.billtypes",
 	"config.Bloodlines",
 	"config.Units",
-	"config.BulkData.dgmtypeattribs",
-	"config.BulkData.messages",
+	"config.BulkData.tickernames",
 	"config.BulkData.ramtyperequirements",
-	"config.Statistics",
 	"config.BulkData.ramaltypesdetailpergroup",
 	"config.BulkData.ramaltypes",
 	"config.BulkData.allianceshortnames",
@@ -49,25 +47,23 @@ const char *const ObjCacheService::LoginCachableObjects[] = {
 	"config.BulkData.dgmtypeeffects",
 	"config.BulkData.metagroups",
 	"config.BulkData.ramtypematerials",
-	"config.EncyclopediaTypes",
-	"config.ChannelTypes",
+	"config.BulkData.ramaltypesdetailpercategory",
 	"config.BulkData.owners",
 	"config.StaticOwners",
 	"config.Races",
-	"config.BulkData.ramaltypesdetailpercategory",
 	"config.Attributes",
-	"config.BulkData.tickernames",
-	"config.Roles",
+	"config.BulkData.dgmtypeattribs",
+	"config.BulkData.locations",
 	"config.BulkData.groups",
 	"config.BulkData.shiptypes",
 	"config.BulkData.dgmattribs",
-	"config.BulkData.locations",
-	"config.BulkData.constants",
 	"config.Flags",
 	"config.BulkData.bptypes",
 	"config.BulkData.graphics",
+	"config.BulkData.mapcelestialdescriptions",
 	"config.StaticLocations",
 	"config.InvContrabandTypes",
+	"config.BulkData.units",
 	"config.BulkData.dgmeffects",
 	"config.BulkData.types",
 	"config.BulkData.invmetatypes"
@@ -76,28 +72,32 @@ const uint32 ObjCacheService::LoginCachableObjectCount = sizeof(ObjCacheService:
 
 const char *const ObjCacheService::CharCreateCachableObjects[] = {
 	"charCreationInfo.bl_eyebrows",
-	"charCreationInfo.bl_costumes",
+	"charCreationInfo.bl_eyes",
 	"charCreationInfo.bl_decos",
-	"charCreationInfo.fields",
+	"charCreationInfo.schools",
 	"charCreationInfo.bl_hairs",
 	"charCreationInfo.bl_backgrounds",
-	"charCreationInfo.bloodlines",
-	"charCreationInfo.departments",
 	"charCreationInfo.bl_accessories",
+	"charCreationInfo.bl_costumes",
 	"charCreationInfo.bl_lights",
-	"charCreationInfo.races",
+	"charCreationInfo.bloodlines",
 	"charCreationInfo.ancestries",
-	"charCreationInfo.bl_skins",
-	"charCreationInfo.specialities",
-	"charCreationInfo.schools",
+	"charCreationInfo.races",
 	"charCreationInfo.attributes",
 	"charCreationInfo.bl_beards",
-	"charCreationInfo.bl_eyes",
-	"charCreationInfo.bl_lipsticks",
-	"charCreationInfo.bl_makeups"
+	"charCreationInfo.bl_skins",
+	"charCreationInfo.bl_lipsticks"
 };
 const uint32 ObjCacheService::CharCreateCachableObjectCount = sizeof(ObjCacheService::CharCreateCachableObjects) / sizeof(const char *);
 
+const char *const ObjCacheService::CharNewExtraCreateCachableObjects[] = {
+	"charNewExtraCreationInfo.raceskills",
+	"charNewExtraCreationInfo.careerskills",
+	"charNewExtraCreationInfo.specialityskills",
+	"charNewExtraCreationInfo.careers",
+	"charNewExtraCreationInfo.specialities"
+};
+const uint32 ObjCacheService::CharNewExtraCreateCachableObjectCount = sizeof(ObjCacheService::CharNewExtraCreateCachableObjects) / sizeof(const char *);
 
 const char *const ObjCacheService::AppearanceCachableObjects[] = {
 	"charCreationInfo.eyebrows",
@@ -252,6 +252,10 @@ void ObjCacheService::InsertCacheHints(hintSet hset, PyRepDict *into) {
 	case hCharCreateCachables:
 		objects = CharCreateCachableObjects;
 		object_count = CharCreateCachableObjectCount;
+		break;
+	case hCharNewExtraCreateCachables:
+		objects = CharNewExtraCreateCachableObjects;
+		object_count = CharNewExtraCreateCachableObjectCount;
 		break;
 	case hAppearanceCachables:
 		objects = AppearanceCachableObjects;

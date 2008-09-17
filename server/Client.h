@@ -75,8 +75,9 @@ detech clients moving into aggro radii
 #include "system/SystemEntity.h"
 #include "ship/ModuleManager.h"
 #include "../common/EVEUtils.h"
+#include "../common/EVEPresentation.h"
 
-class EVEPresentation;
+
 class PyPacket;
 class PyRep;
 class PyRepDict;
@@ -90,6 +91,7 @@ class EVENotificationStream;
 class InventoryItem;
 class LSCChannel;
 class SystemManager;
+class CryptoChallengePacket;
 
 class CharacterData {
 public:
@@ -248,8 +250,9 @@ protected:
 
 //DO NOT INHERIT THIS OBJECT!
 class Client : public DynamicSystemEntity {
+	friend PyPacket *EVEPresentation::PopPacket();	//TODO: remove this crap
 public:
-	Client(PyServiceMgr *services, EVEPresentation **net);
+	Client(PyServiceMgr *services, EVETCPConnection **con);
 	virtual ~Client();
 	
 	ClientSession session;
@@ -283,6 +286,7 @@ public:
 	double GetBalance() const { return(m_char.balance); }
 	bool AddBalance(double amount);
 
+	PyRep *Login(CryptoChallengePacket *pack);
 	uint32 GetShipID() const;
 	void BoardShip(InventoryItem *new_ship);
 	void MoveToLocation(uint32 location, const GPoint &pt);
@@ -297,8 +301,6 @@ public:
 	double GetPropulsionStrength() const;
 	
 	bool LaunchDrone(InventoryItem *drone);
-	
-	void SendHandshake();
 	
 	void SendNotification(const PyAddress &dest, EVENotificationStream *noti, bool seq=true);
 	void SendNotification(const char *notifyType, const char *idType, PyRepTuple **payload, bool seq=true);
@@ -352,11 +354,8 @@ public:
 	
 protected:
 	//login stuff:
-	void _ProcessLogin(PyPacket *packet);
 	void _SendLoginFailed(uint32 callid);
-	void _SendLoginSuccess(uint32 callid);
 	void _SendPingRequest();
-	void _BuildServiceListDict(PyRepDict *into);
 	
 	void _ProcessNotification(PyPacket *packet);
 	void _CheckSessionChange();
@@ -371,7 +370,7 @@ protected:
 	InventoryItem *m_ship;
 
 	PyServiceMgr *const m_services;
-	EVEPresentation *const m_net;	//we own this! never NULL.
+	EVEPresentation m_net;
 	Timer m_pingTimer;
 
 	uint32 m_accountID;

@@ -41,7 +41,9 @@
 <element name="CallSelectCharacterID">               
   <InlineTuple>
     <!-- 0 -->
-    <int name="charID" />         
+    <int name="charID" />
+	<!-- 1 -->
+	<int name="loadTutorialDungeon" />
   </InlineTuple>
 </element>
 
@@ -109,8 +111,16 @@
 
 <element name="NotifyOnCharNowInStation">
   <InlineTuple>
-    <!-- 0 -->
-    <int name="charID" />
+	  <InlineTuple>
+		  <!-- 0 -->
+		  <int name="charID" />
+		  <!-- 1 -->
+		  <int name="corpID" />
+		  <!-- 2 -->
+		  <int name="allianceID" default="0" none_marker="0" />
+		  <!-- 3 -->
+		  <int name="unknown" default="0" none_marker="0" />
+	  </InlineTuple>
   </InlineTuple>
 </element>
 

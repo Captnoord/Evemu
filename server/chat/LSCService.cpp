@@ -46,6 +46,7 @@ LSCService::LSCService(PyServiceMgr *mgr, DBcore *db, CommandDispatcher* cd)
 
 	//make sure you edit the header file too
 	PyCallable_REG_CALL(LSCService, GetChannels)
+	PyCallable_REG_CALL(LSCService, GetRookieHelpChannel)
 	PyCallable_REG_CALL(LSCService, JoinChannels)
 	PyCallable_REG_CALL(LSCService, LeaveChannels)
 	PyCallable_REG_CALL(LSCService, LeaveChannel)
@@ -135,6 +136,10 @@ PyCallResult LSCService::Handle_GetChannels(PyCallArgs &call) {
 
 
 	return info.Encode();
+}
+
+PyCallResult LSCService::Handle_GetRookieHelpChannel(PyCallArgs &call) {
+	return(new PyRepInteger(1));
 }
 
 PyCallResult LSCService::Handle_JoinChannels(PyCallArgs &call) {

@@ -134,6 +134,7 @@ PyRepDict *CorporationDB::ListAllCorpInfo() {
 		"	factionID,sizeFactor,stationCount,stationSystemCount,"
 		"   stationID,ceoID,entity.itemName AS ceoName"
 		" FROM crpNPCCorporations"
+		" JOIN corporation USING (corporationID)"
 		"	LEFT JOIN entity ON ceoID=entity.itemID"
 	))
 	{

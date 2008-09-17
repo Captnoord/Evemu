@@ -283,6 +283,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\server\market\ContractMgrService.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\server\corporation\CorpMgrService.cpp"
 				>
 			</File>
@@ -328,6 +332,14 @@
 			</File>
 			<File
 				RelativePath="..\server\EVEmuServerConfig.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\server\standing\FactionWarMgrDB.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\server\standing\FactionWarMgrService.cpp"
 				>
 			</File>
 			<File
@@ -432,6 +444,10 @@
 			</File>
 			<File
 				RelativePath="..\server\ship\ModuleManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\server\NetService.cpp"
 				>
 			</File>
 			<File
@@ -582,6 +598,14 @@
 				RelativePath="..\server\tutorial\TutorialService.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\server\chat\VoiceMgrService.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\server\standing\WarRegistryService.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -590,6 +614,10 @@
 			>
 			<File
 				RelativePath="..\server\ClientSession.h"
+				>
+			</File>
+			<File
+				RelativePath="..\server\market\ContractMgrService.h"
 				>
 			</File>
 			<File
@@ -602,6 +630,14 @@
 			</File>
 			<File
 				RelativePath="..\server\EVEmuServerConfig_elements.h"
+				>
+			</File>
+			<File
+				RelativePath="..\server\standing\FactionWarMgrDB.h"
+				>
+			</File>
+			<File
+				RelativePath="..\server\standing\FactionWarMgrService.h"
 				>
 			</File>
 			<File
@@ -638,6 +674,14 @@
 			</File>
 			<File
 				RelativePath="..\server\manufacturing\RamProxyService.h"
+				>
+			</File>
+			<File
+				RelativePath="..\server\chat\VoiceMgrService.h"
+				>
+			</File>
+			<File
+				RelativePath="..\server\standing\WarRegistryService.h"
 				>
 			</File>
 		</Filter>

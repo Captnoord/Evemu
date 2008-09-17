@@ -63,14 +63,16 @@ PyCallResult StationService::Handle_GetStationItemBits(PyCallArgs &call) {
 
 
 PyCallResult StationService::Handle_GetGuests(PyCallArgs &call) {
-	PyRep *result = NULL;
+	PyRepList *res = new PyRepList();
 
-	PyRepList *l = new PyRepList();
-	result = l;
+	PyRepTuple *t = new PyRepTuple(4);
+	t->items[0] = new PyRepInteger(call.client->GetCharacterID());
+	t->items[1] = new PyRepInteger(call.client->GetCorporationID());
+	t->items[2] = new PyRepInteger(call.client->GetAllianceID());
+	t->items[3] = new PyRepInteger(0);	//unknown, might be factionID
+	res->add(t);
 
-	l->add(new PyRepInteger(call.client->GetCharacterID()));
-
-	return(result);
+	return(res);
 }
 
 

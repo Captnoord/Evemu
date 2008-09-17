@@ -89,7 +89,7 @@ PyRepObject *CharacterDB::GetCharSelectInfo(uint32 characterID) {
 	
 	if(!m_db->RunQuery(res,
 		"SELECT "
-		" bloodlineID,gender,bounty,character_.corporationID,title,startDateTime,"
+		" characterName AS shortName,bloodlineID,gender,bounty,character_.corporationID,allianceID,title,startDateTime,createDateTime,"
 		" securityRating,character_.balance,character_.stationID,solarSystemID,constellationID,regionID,"
 		" petitionMessage,logonMinutes,tickerName"
 		" FROM character_ "
@@ -279,6 +279,10 @@ PyRepObject *CharacterDB::GetCharPublicInfo(uint32 characterID) {
 		"SELECT "
 		" character_.typeID,"
 		" character_.corporationID,"
+		//schoolID
+		//careerID
+		//careerSpecialityID
+		//ancestryID
         /*" chrBloodlines.raceID,"*/
 		" character_.raceID,"
 		" character_.bloodlineID,"

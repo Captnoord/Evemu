@@ -59,6 +59,7 @@
 #include "inventory/InvBrokerService.h"
 #include "chat/LSCService.h"
 #include "chat/LookupService.h"
+#include "chat/VoiceMgrService.h"
 #include "admin/AllCommands.h"
 #include "admin/CommandDispatcher.h"
 #include "admin/CommandDB.h"
@@ -71,12 +72,15 @@
 #include "cache/ObjCacheService.h"
 #include "chat/OnlineStatusService.h"
 #include "standing/Standing2Service.h"
+#include "standing/WarRegistryService.h"
+#include "standing/FactionWarMgrService.h"
 #include "station/StationService.h"
 #include "station/StationSvcService.h"
 #include "station/JumpCloneService.h"
 #include "system/KeeperService.h"
 #include "system/DungeonService.h"
 #include "market/MarketProxyService.h"
+#include "market/ContractMgrService.h"
 #include "tutorial/TutorialService.h"
 #include "mining/ReprocessingService.h"
 #include "manufacturing/FactoryService.h"
@@ -194,12 +198,15 @@ int main(int argc, char *argv[]) {
 	services.RegisterService(new InvBrokerService(&services, &db));
 	services.RegisterService(services.lsc_service = new LSCService(&services, &db, &command_dispatcher));
 	services.RegisterService(new LookupService(&services, &db));
+	services.RegisterService(new VoiceMgrService(&services));
 	services.RegisterService(new ShipService(&services, &db));
 	services.RegisterService(new InsuranceService(&services, &db));
 	services.RegisterService(new BeyonceService(&services, &db));
 	services.RegisterService(new MapService(&services, &db));
 	services.RegisterService(new OnlineStatusService(&services));
 	services.RegisterService(new Standing2Service(&services, &db));
+	services.RegisterService(new WarRegistryService(&services));
+	services.RegisterService(new FactionWarMgrService(&services, &db));
 	services.RegisterService(new StationService(&services, &db));
 	services.RegisterService(new StationSvcService(&services, &db));
 	services.RegisterService(new JumpCloneService(&services, &db));
@@ -210,6 +217,7 @@ int main(int argc, char *argv[]) {
 	services.RegisterService(new PetitionerService(&services));
 	services.RegisterService(new SlashService(&services, &command_dispatcher));
 	services.RegisterService(new MarketProxyService(&services, &db));
+	services.RegisterService(new ContractMgrService(&services));
 	services.RegisterService(new ReprocessingService(&services, &db));
 	services.RegisterService(new FactoryService(&services, &db));
 	services.RegisterService(new RamProxyService(&services, &db));
@@ -258,11 +266,8 @@ int main(int argc, char *argv[]) {
 			struct in_addr in;
 			in.s_addr = tcpc->GetrIP();
 			_log(SERVER__CLIENTS, "New TCP connection from %s:%d", inet_ntoa(in),tcpc->GetrPort());
-			EVEPresentation *p = new EVEPresentation(tcpc);
-			Client *c = new Client(&services, &p);
-			
-			c->SendHandshake();
-			
+			Client *c = new Client(&services, &tcpc);
+					
 			entity_list.Add(&c);
 		}
 		

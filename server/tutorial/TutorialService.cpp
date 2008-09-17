@@ -25,6 +25,7 @@
 #include "../PyServiceMgr.h"
 
 #include "../packets/Tutorial.h"
+#include "../packets/General.h"
 
 PyCallable_Make_InnerDispatcher(TutorialService)
 
@@ -35,16 +36,18 @@ TutorialService::TutorialService(PyServiceMgr *mgr, DBcore *dbc)
 {
 	_SetCallDispatcher(m_dispatch);
 
-	PyCallable_REG_CALL(TutorialService, GetTutorialInfo)
+	//PyCallable_REG_CALL(TutorialService, GetTutorialInfo)
 	PyCallable_REG_CALL(TutorialService, GetTutorials)
-	PyCallable_REG_CALL(TutorialService, GetCriterias)
+	//PyCallable_REG_CALL(TutorialService, GetCriterias)
+	PyCallable_REG_CALL(TutorialService, GetCategories)
+	PyCallable_REG_CALL(TutorialService, GetContextHelp)
 }
 
 TutorialService::~TutorialService() {
 	delete m_dispatch;
 }
 
-
+/*
 PyCallResult TutorialService::Handle_GetTutorialInfo(PyCallArgs &call) {
 	PyRep *result = NULL;
 	Call_GetTutorialInfo args;
@@ -110,23 +113,13 @@ PyCallResult TutorialService::Handle_GetTutorialInfo(PyCallArgs &call) {
 
 	return(result);
 }
-
+*/
 
 PyCallResult TutorialService::Handle_GetTutorials(PyCallArgs &call) {
-	PyRep *result = NULL;
-
-	PyRepObject *rowset = m_db.GetAllTutorials();
-	if(rowset == NULL)
-	{
-		codelog(CLIENT__ERROR, "An error occured while getting all tutorials.");
-		return(NULL);
-	}
-	result = rowset;
-
-	return(result);
+	return(m_db.GetAllTutorials());
 }
 
-
+/*
 PyCallResult TutorialService::Handle_GetCriterias(PyCallArgs &call) {
 	PyRep *result = NULL;
 
@@ -140,7 +133,55 @@ PyCallResult TutorialService::Handle_GetCriterias(PyCallArgs &call) {
 
 	return(result);
 }
+*/
 
+PyCallResult TutorialService::Handle_GetCategories(PyCallArgs &call) {
+	_log(SERVICE__WARNING, "%s: GetCategories unimplemented.", GetName());
+	call.tuple->Dump(SERVICE__WARNING, " Call args:");
+
+	util_Rowset res;
+
+	res.header.push_back("categoryID");
+	res.header.push_back("categoryName");
+	res.header.push_back("description");
+	res.header.push_back("dataID");
+
+	//TODO: save this crap into DB
+	PyRepList *line = new PyRepList;
+	line->add(new PyRepInteger(1));
+	line->add(new PyRepString("Beginner Tutorials"));
+	line->add(new PyRepString("Here are the basic tutorials for your first days in EVE!"));
+	line->add(new PyRepInteger(2386927));	//TODO: what is this?
+	res.lines.add(line);
+
+	line = new PyRepList;
+	line->add(new PyRepInteger(2));
+	line->add(new PyRepString("Intermediate Tutorials"));
+	line->add(new PyRepString("Under this category fall all advanced tutorials"));
+	line->add(new PyRepInteger(2387321));	//TODO: what is this?
+	res.lines.add(line);
+
+	line = new PyRepList;
+	line->add(new PyRepInteger(3));
+	line->add(new PyRepString("Advanced Tutorials"));
+	line->add(new PyRepString(""));
+	line->add(new PyRepInteger(2388093));	//TODO: what is this?
+	res.lines.add(line);
+
+	line = new PyRepList;
+	line->add(new PyRepInteger(4));
+	line->add(new PyRepString("Informative Tutorials"));
+	line->add(new PyRepString(""));
+	line->add(new PyRepInteger(2388094));	//TODO: what is this?
+	res.lines.add(line);
+
+	return(res.Encode());
+}
+
+PyCallResult TutorialService::Handle_GetContextHelp(PyCallArgs &call) {
+	//unimplemented
+	return(new PyRepList());
+}
 
 
 

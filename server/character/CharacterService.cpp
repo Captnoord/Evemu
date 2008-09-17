@@ -48,6 +48,7 @@ CharacterService::CharacterService(PyServiceMgr *mgr, DBcore *dbc)
 	PyCallable_REG_CALL(CharacterService, SelectCharacterID)
 	PyCallable_REG_CALL(CharacterService, GetOwnerNoteLabels)
 	PyCallable_REG_CALL(CharacterService, GetCharCreationInfo)
+	PyCallable_REG_CALL(CharacterService, GetCharNewExtraCreationInfo)
 	PyCallable_REG_CALL(CharacterService, GetAppearanceInfo)
 	PyCallable_REG_CALL(CharacterService, ValidateName)
 	PyCallable_REG_CALL(CharacterService, CreateCharacter)
@@ -102,7 +103,7 @@ PyCallResult CharacterService::Handle_GetCharacterToSelect(PyCallArgs &call) {
 }
 
 PyCallResult CharacterService::Handle_SelectCharacterID(PyCallArgs &call) {
-	Call_SingleIntegerArg args;
+	CallSelectCharacterID args;
 	if(!args.Decode(&call.tuple)) {
 		codelog(CLIENT__ERROR, "Failed to parse args from account %lu", call.client->GetAccountID());
 		//TODO: throw exception
@@ -130,9 +131,10 @@ PyCallResult CharacterService::Handle_SelectCharacterID(PyCallArgs &call) {
 		}
 	}*/
 
-	if(call.client->Load(args.arg))
+	//we dont care about tutorial dungeon right now
+	if(call.client->Load(args.charID))
 		//johnsus - characterOnline mod
-		m_db.SetCharacterOnlineStatus(args.arg,true);
+		m_db.SetCharacterOnlineStatus(args.charID,true);
 
 	return(NULL);
 }
@@ -154,6 +156,17 @@ PyCallResult CharacterService::Handle_GetCharCreationInfo(PyCallArgs &call) {
 		
 	_log(CLIENT__MESSAGE, "Sending char creation info reply");
 	
+	return(result);
+}
+
+PyCallResult CharacterService::Handle_GetCharNewExtraCreationInfo(PyCallArgs &call) {
+	PyRepDict *result = new PyRepDict();
+
+	m_manager->GetCache()->InsertCacheHints(
+		ObjCacheService::hCharNewExtraCreateCachables,
+		result);
+	_log(CLIENT__MESSAGE, "Sending char new extra creation info reply");
+
 	return(result);
 }
 

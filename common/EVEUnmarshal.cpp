@@ -1158,7 +1158,7 @@ static uint32 UnmarshalData(UnmarshalState *state, const byte *packet, uint32 le
 		/*
          * It seems as though there is actually two types of payload here,
          * and this is what the two unmarshal sequences are all about. Each
-         * sequence is terminated with an 0x2d
+         * sequence is terminated with an 0x2d.
          *
          * If you do not encounter an 0x2d before data, then you are likely
          * dealing with a dbutil.RowList, and you will just have a stream of
@@ -1167,10 +1167,9 @@ static uint32 UnmarshalData(UnmarshalState *state, const byte *packet, uint32 le
          * If you encounter an 0x2d first, you likely have a dbutil.RowDict,
          * in which case you will encounter sequences of data as a key value
          * followed by a PyPacked data entry.
-         *
-         *
-        */
+		*/
 		
+		n = pfx;
 		n += " Rows: ";
 		int empty_count = 0;
 		bool seen_data = false;

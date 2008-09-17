@@ -50,6 +50,7 @@ public:
 		
 		PyCallable_REG_CALL(SkillMgrBound, CharStartTrainingSkill)
 		PyCallable_REG_CALL(SkillMgrBound, GetEndOfTraining)
+		PyCallable_REG_CALL(SkillMgrBound, GetSkillHistory)
 		PyCallable_REG_CALL(SkillMgrBound, CharAddImplant)
 		PyCallable_REG_CALL(SkillMgrBound, RemoveImplantFromCharacter)
 	}
@@ -61,6 +62,7 @@ public:
 	
 	PyCallable_DECL_CALL(CharStartTrainingSkill)
 	PyCallable_DECL_CALL(GetEndOfTraining)
+	PyCallable_DECL_CALL(GetSkillHistory)
 	PyCallable_DECL_CALL(CharAddImplant)
 	PyCallable_DECL_CALL(RemoveImplantFromCharacter)
 
@@ -134,6 +136,20 @@ PyCallResult SkillMgrBound::Handle_GetEndOfTraining(PyCallArgs &call) {
 	return(result);
 }
 
+PyCallResult SkillMgrBound::Handle_GetSkillHistory(PyCallArgs &call) {
+	_log(SERVICE__WARNING, "%s: GetSkillHistory unimplemented.", GetName());
+	call.tuple->Dump(SERVICE__WARNING, " Call args:");
+
+	util_Rowset rowset;
+
+	rowset.header.push_back("logDateTime");
+	rowset.header.push_back("eventID");
+	rowset.header.push_back("skillTypeID");
+	rowset.header.push_back("relativePoints");
+	rowset.header.push_back("absolutePoints");
+
+	return(rowset.Encode());
+}
 
 PyCallResult SkillMgrBound::Handle_CharAddImplant(PyCallArgs &call) {
 	//takes itemid
