@@ -29,6 +29,7 @@ class Client;
 static const uint32 EVESocketMaxNumberOfBytes = 1000000; //this is a limit hard coded in the eve client! (NetClient.dll)
 
 class EVEPresentation {
+	friend class Client;	//TODO: get rid of this crap
 public:
 	EVEPresentation(EVETCPConnection *n, Client *c);
 	virtual ~EVEPresentation();

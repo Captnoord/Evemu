@@ -84,9 +84,9 @@ const char *PyRep::TypeString() const {
 	case SubStream: return("SubStream");
 	case ChecksumedStream: return("ChecksumedStream");
 	case Object: return("Object");
-	case PackedHeader: return("PackedHeader");
 	case PackedRow: return("PackedRow");
-	case PackedResultSet: return("PackedResultSet");
+	case PackedObject1: return("PackedObject1");
+	case PackedObject2: return("PackedObject2");
 	//no default on purpose
 	}
 	return("UNKNOWN TYPE");
@@ -726,10 +726,6 @@ void PyRepObject::visit(PyVisitor *v) const {
 	v->VisitObject(this);
 }
 
-void PyRepPackedRowHeader::visit(PyVisitor *v) const {
-	v->VisitPackedRowHeader(this);
-}
-
 void PyRepSubStruct::visit(PyVisitor *v) const {
 	v->VisitSubStruct(this);
 }
@@ -783,218 +779,289 @@ PyRepPackedRow *PyRepPackedRow::TypedClone() const {
 }
 
 void PyRepPackedRow::visit(PyVisitor *v) const {
-	v->VisitPacked(this);
+	v->VisitPackedRow(this);
 }
 
 
 
 
 
-PyRepPackedRowHeader::~PyRepPackedRowHeader() {
-	delete header_type;
-	delete arguments;
-	clear();
-}
-
-PyRepPackedRowHeader *PyRepPackedRowHeader::TypedClone() const {
-	PyRepPackedRowHeader *rh = new PyRepPackedRowHeader( format, header_type->Clone(), arguments->Clone() );
-
-	storage_type::const_iterator cur, _end;
-	
-	cur = rows.begin();
-	_end = rows.end();
-	for(; cur != _end; cur++) {
-		rh->rows.push_back((*cur)->TypedClone());
+PyRepPackedObject::~PyRepPackedObject() {
+	{
+		const_list_iterator cur, end;
+		cur = list_data.begin();
+		end = list_data.end();
+		for(; cur != end; cur++)
+			delete *cur;
+		list_data.clear();
 	}
-	
-	return(rh);
-}
-
-void PyRepPackedRowHeader::clear() {
-	storage_type::iterator cur, _end;
-	
-	cur = rows.begin();
-	_end = rows.end();
-	for(; cur != _end; cur++)
-		delete *cur;
-	rows.clear();
-}
-
-void PyRepPackedRowHeader::Dump(FILE *into, const char *pfx) const {
-	const char *type_string = "UNKNOWN TYPE";
-	switch(format) {
-	case RowList: type_string = "dbutil.RowList"; break;
-	case RowDict: type_string = "dbutil.RowDict"; break;
+	{
+		const_dict_iterator cur, end;
+		cur = dict_data.begin();
+		end = dict_data.end();
+		for(; cur != end; cur++) {
+			delete cur->first;
+			delete cur->second;
+		}
+		dict_data.clear();
 	}
-	
-	fprintf(into, "%sPacked Row Header: (data format=%s)\n", pfx, type_string);
-	std::string n(pfx);
-	n += "  Type: ";
-	header_type->Dump(into, n.c_str());
-	
-	std::string m(pfx);
-	m += "  Args: ";
-	arguments->Dump(into, m.c_str());
-	
-	if(rows.empty())
-		fprintf(into, "%sRows: Empty\n", pfx);
+}
+
+void PyRepPackedObject::Dump(FILE *into, const char *pfx) const {
+	fprintf(into, "%sList data:\n", pfx);
+	if(list_data.empty())
+		fprintf(into, "%s  Empty\n", pfx);
 	else {
-		fprintf(into, "%sRows: %d elements\n", pfx, rows.size());
-		storage_type::const_iterator cur, _end;
-		cur = rows.begin();
-		_end = rows.end();
-		char t[15];
-		int r;
-		for(r = 0; cur != _end; cur++, r++) {
-			n = pfx;
-			snprintf(t, 14, "  [%2d] ", r);
+		const_list_iterator cur, end;
+		cur = list_data.begin();
+		end = list_data.end();
+		char t[16];
+		for(int i = 0; cur != end; cur++, i++) {
+			std::string n(pfx);
+			snprintf(t, 16, "  [%2d] ", i);
 			n += t;
 			(*cur)->Dump(into, n.c_str());
 		}
 	}
+
+	fprintf(into, "%sDict data:\n", pfx);
+	if(dict_data.empty())
+		fprintf(into, "%s  Empty\n", pfx);
+	else {
+		const_dict_iterator cur, end;
+		cur = dict_data.begin();
+		end = dict_data.end();
+		char t[16];
+		for(int i = 0; cur != end; cur++, i++) {
+			std::string k(pfx);
+			snprintf(t, 16, "  [%2d] Key: ", i);
+			k += t;
+			cur->first->Dump(into, k.c_str());
+
+			std::string v(pfx);
+			snprintf(t, 16, "  [%2d] Value: ", i);
+			v += t;
+			cur->second->Dump(into, v.c_str());
+		}
+	}
 }
 
-void PyRepPackedRowHeader::Dump(LogType ltype, const char *pfx) const {
-	//extra check to avoid potentially a lot of work if we are disabled
+void PyRepPackedObject::Dump(LogType ltype, const char *pfx) const {
 	if(!is_log_enabled(ltype))
 		return;
-	
-	const char *format_string = "UNKNOWN TYPE";
-	switch(format) {
-	case RowList: format_string = "dbutil.RowList"; break;
-	case RowDict: format_string = "dbutil.RowDict"; break;
-	}
-	
-	_log(ltype, "%sPacked Row Header: (data format=%s)", pfx, format_string);
-	std::string n(pfx);
-	n += "  Type: ";
-	header_type->Dump(ltype, n.c_str());
-	
-	std::string m(pfx);
-	m += "  Args: ";
-	arguments->Dump(ltype, m.c_str());
-	
-	if(rows.empty()) {
-		_log(ltype, "%sRows: Empty", pfx);
-	} else {
-		_log(ltype, "%sRows: %d elements", pfx, rows.size());
-		storage_type::const_iterator cur, _end;
-		cur = rows.begin();
-		_end = rows.end();
-		char t[15];
-		int r;
-		for(r = 0; cur != _end; cur++, r++) {
-			n = pfx;
-			snprintf(t, 14, "  [%2d] ", r);
+
+	_log(ltype, "%sList data:", pfx);
+	if(list_data.empty())
+		_log(ltype, "%s  Empty", pfx);
+	else {
+		const_list_iterator cur, end;
+		cur = list_data.begin();
+		end = list_data.end();
+		char t[16];
+		for(int i = 0; cur != end; cur++, i++) {
+			std::string n(pfx);
+			snprintf(t, 16, "  [%2d] ", i);
 			n += t;
 			(*cur)->Dump(ltype, n.c_str());
 		}
 	}
-}
 
-
-
-
-
-
-
-PyRepPackedResultSet::~PyRepPackedResultSet() {
-	delete header;
-	clear();
-}
-
-void PyRepPackedResultSet::clear() {
-	storage_type::iterator cur, _end;
-	cur = begin();
-	_end = end();
-	for(; cur != _end; cur++)
-		delete *cur;
-	rows.clear();
-}
-
-void PyRepPackedResultSet::Dump(FILE *into, const char *pfx) const {
-	
-	const char *format_string = "UNKNOWN TYPE";
-	switch(format) {
-	case RowList: format_string = "dbutil.RowList"; break;
-	case RowDict: format_string = "dbutil.RowDict"; break;
-	}
-	
-	fprintf(into, "%sPacked Result Set: (data format=%s)\n", pfx, format_string);
-	
-	std::string n(pfx);
-	n += " Header: ";
-	header->Dump(into, n.c_str());
-	
-	if(rows.empty())
-		fprintf(into, "%s  Rows: Empty\n", pfx);
+	_log(ltype, "%sDict data:", pfx);
+	if(dict_data.empty())
+		_log(ltype, "%s  Empty", pfx);
 	else {
-		fprintf(into, "%s  Rows: %d elements\n", pfx, rows.size());
-		storage_type::const_iterator cur, _end;
-		cur = begin();
-		_end = end();
-		char t[15];
-		int r;
-		for(r = 0; cur != _end; cur++, r++) {
-			n = pfx;
-			snprintf(t, 14, "    [%2d] ", r);
-			n += t;
-			(*cur)->Dump(into, n.c_str());
+		const_dict_iterator cur, end;
+		cur = dict_data.begin();
+		end = dict_data.end();
+		char t[16];
+		for(int i = 0; cur != end; cur++, i++) {
+			std::string k(pfx);
+			snprintf(t, 16, "  [%2d] Key: ", i);
+			k += t;
+			cur->first->Dump(ltype, k.c_str());
+
+			std::string v(pfx);
+			snprintf(t, 16, "  [%2d] Value: ", i);
+			v += t;
+			cur->second->Dump(ltype, v.c_str());
 		}
 	}
 }
 
-void PyRepPackedResultSet::Dump(LogType type, const char *pfx) const {
-	//extra check to avoid potentially a lot of work if we are disabled
-	if(!is_log_enabled(type))
-		return;
-	
-	const char *format_string = "UNKNOWN TYPE";
-	switch(format) {
-	case RowList: format_string = "dbutil.RowList"; break;
-	case RowDict: format_string = "dbutil.RowDict"; break;
+void PyRepPackedObject::visit(PyVisitor *v) const {
+	v->VisitPackedObject(this);
+}
+
+void PyRepPackedObject::CloneFrom(const PyRepPackedObject *from) {
+	{
+		const_list_iterator cur, end;
+		cur = from->list_data.begin();
+		end = from->list_data.end();
+		for(; cur != end; cur++)
+			list_data.push_back((*cur)->Clone());
 	}
-	
-	_log(type, "%sPacked Result Set: (data format=%s)", pfx, format_string);
-	
+	{
+		const_dict_iterator cur, end;
+		cur = from->dict_data.begin();
+		end = from->dict_data.end();
+		for(; cur != end; cur++) {
+			dict_data[cur->first->Clone()] = cur->second->Clone();
+		}
+	}
+}
+
+PyRepPackedObject1::PyRepPackedObject1(
+	const char *_type,
+	PyRepTuple *_args,
+	PyRepDict &_keywords)
+: PyRepPackedObject(PyRep::PackedObject1),
+  type(_type),
+  args(_args),
+  keywords(_keywords)
+{
+}
+
+PyRepPackedObject1::~PyRepPackedObject1() {
+	delete args;
+}
+
+void PyRepPackedObject1::Dump(FILE *into, const char *pfx) const {
+	fprintf(into, "%sPackedObject1 '%s'\n", pfx, type.c_str());
+
 	std::string n(pfx);
-	n += " Header: ";
-	header->Dump(type, n.c_str());
-	
-	if(rows.empty()) {
-		_log(type, "%s  Rows: Empty", pfx);
-	} else {
-		_log(type, "%s  Rows: %d elements", pfx, rows.size());
-		storage_type::const_iterator cur, _end;
-		cur = begin();
-		_end = end();
-		char t[15];
-		int r;
-		for(r = 0; cur != _end; cur++, r++) {
-			n = pfx;
-			snprintf(t, 14, "    [%2d] ", r);
-			n += t;
-			(*cur)->Dump(type, n.c_str());
-		}
-	}
+	n += "  Args: ";
+	if(args == NULL)
+		fprintf(into, "%sNone\n", n.c_str());
+	else
+		args->Dump(into, n.c_str());
+
+	n = pfx;
+	n += "  Keywords: ";
+	if(keywords.empty())
+		fprintf(into, "%sNone\n", n.c_str());
+	else
+		keywords.Dump(into, n.c_str());
+
+	//now dump data
+	PyRepPackedObject::Dump(into, pfx);
 }
 
-PyRepPackedResultSet *PyRepPackedResultSet::TypedClone() const {
-	PyRepPackedResultSet *rs = new PyRepPackedResultSet(format, header->Clone());
-	storage_type::const_iterator cur, _end;
-	cur = begin();
-	_end = end();
-	for(; cur != _end; cur++) {
-		rs->rows.push_back((*cur)->TypedClone());
-	}
-	return(rs);
+void PyRepPackedObject1::Dump(LogType ltype, const char *pfx) const {
+	_log(ltype, "%sPackedObject1 '%s'", pfx, type.c_str());
+
+	std::string n(pfx);
+	n += "  Args: ";
+	if(args == NULL)
+		_log(ltype, "%sNone", n.c_str());
+	else
+		args->Dump(ltype, n.c_str());
+
+	n = pfx;
+	n += "  Keywords: ";
+	if(keywords.empty())
+		_log(ltype, "%sNone", n.c_str());
+	else
+		keywords.Dump(ltype, n.c_str());
+
+	//now dump data
+	PyRepPackedObject::Dump(ltype, pfx);
 }
 
-void PyRepPackedResultSet::visit(PyVisitor *v) const {
-	v->VisitPackedResultSet(this);
+void PyRepPackedObject1::visit(PyVisitor *v) const {
+	v->VisitPackedObject1(this);
 }
 
+PyRepPackedObject1 *PyRepPackedObject1::TypedClone() const {
+	PyRepPackedObject1 *clone = new PyRepPackedObject1;
+	clone->CloneFrom(this);
+	return(clone);
+}
 
+void PyRepPackedObject1::CloneFrom(const PyRepPackedObject1 *from) {
+	type = from->type;
+	args = (from->args == NULL ? NULL : from->args->TypedClone());
+	keywords.CloneFrom(&from->keywords);
+
+	//clone data
+	PyRepPackedObject::CloneFrom(from);
+}
+
+PyRepPackedObject2::PyRepPackedObject2(
+	const char *_type,
+	PyRepTuple *_args1,
+	PyRep *_args2)
+: PyRepPackedObject(PyRep::PackedObject2),
+  type(_type),
+  args1(_args1),
+  args2(_args2)
+{
+}
+
+PyRepPackedObject2::~PyRepPackedObject2() {
+	delete args1;
+	delete args2;
+}
+
+void PyRepPackedObject2::Dump(FILE *into, const char *pfx) const {
+	fprintf(into, "%sPackedObject2 '%s'\n", pfx, type.c_str());
+
+	std::string n(pfx);
+	n += "  Args1: ";
+	if(args1 == NULL)
+		fprintf(into, "%sNone\n", n.c_str());
+	else
+		args1->Dump(into, n.c_str());
+
+	n = pfx;
+	n += "  Args2: ";
+	if(args2 == NULL)
+		fprintf(into, "%sNone\n", n.c_str());
+	else
+		args2->Dump(into, n.c_str());
+
+	//now dump data
+	PyRepPackedObject::Dump(into, pfx);
+}
+
+void PyRepPackedObject2::Dump(LogType ltype, const char *pfx) const {
+	_log(ltype, "%sPackedObject2 '%s'", pfx, type.c_str());
+
+	std::string n(pfx);
+	n += "  Args1: ";
+	if(args1 == NULL)
+		_log(ltype, "%sNone", n.c_str());
+	else
+		args1->Dump(ltype, n.c_str());
+
+	n = pfx;
+	n += "  Args2: ";
+	if(args2 == NULL)
+		_log(ltype, "%sNone", n.c_str());
+	else
+		args2->Dump(ltype, n.c_str());
+
+	//now dump data
+	PyRepPackedObject::Dump(ltype, pfx);
+}
+
+void PyRepPackedObject2::visit(PyVisitor *v) const {
+	v->VisitPackedObject2(this);
+}
+
+PyRepPackedObject2 *PyRepPackedObject2::TypedClone() const {
+	PyRepPackedObject2 *clone = new PyRepPackedObject2;
+	clone->CloneFrom(this);
+	return(clone);
+}
+
+void PyRepPackedObject2::CloneFrom(const PyRepPackedObject2 *from) {
+	type = from->type;
+	args1 = (from->args1 == NULL ? NULL : from->args1->TypedClone());
+	args2 = (from->args2 == NULL ? NULL : from->args2->Clone());
+
+	//clone data
+	PyRepPackedObject::CloneFrom(from);
+}
 
 
 

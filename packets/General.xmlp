@@ -58,16 +58,6 @@
   </InlineTuple>
 </element>
 
-<element name="util_PasswordString">
-	<InlineTuple>
-		<InlineTuple>
-			<string name="type" default="util.PasswordString" />
-			<string name="password" />
-		</InlineTuple>
-		<dict name="dict" />
-	</InlineTuple>
-</element>
-
 
 <element name="list_rowset">
   <InlineTuple>

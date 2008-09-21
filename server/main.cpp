@@ -260,8 +260,7 @@ int main(int argc, char *argv[]) {
 		
 		//check for timeouts in other threads
 		//timeout_manager.CheckTimeouts();
-		
-		
+
 		while ((tcpc = tcps.NewQueuePop())) {
 			struct in_addr in;
 			in.s_addr = tcpc->GetrIP();

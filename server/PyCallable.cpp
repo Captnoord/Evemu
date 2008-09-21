@@ -96,19 +96,19 @@ PyCallArgs::~PyCallArgs() {
 }
 
 void PyCallArgs::Dump(LogType type) const {
-	if(!is_log_enabled(SERVICE__CALL_TRACE))
+	if(!is_log_enabled(type))
 		return;
 	
-	_log(SERVICE__CALL_TRACE, "  Call Arguments:");
-	tuple->Dump(stdout, "      ");
+	_log(type, "  Call Arguments:");
+	tuple->Dump(type, "      ");
 	if(!byname.empty()) {
-		_log(SERVICE__CALL_TRACE, "  Call Named Arguments:");
+		_log(type, "  Call Named Arguments:");
 		std::map<std::string, PyRep *>::const_iterator cur, end;
 		cur = byname.begin();
 		end = byname.end();
 		for(; cur != end; cur++) {
-			_log(SERVICE__CALL_TRACE, "    Argument '%s':", cur->first.c_str());
-			cur->second->Dump(SERVICE__CALL_TRACE, "        ");
+			_log(type, "    Argument '%s':", cur->first.c_str());
+			cur->second->Dump(type, "        ");
 		}
 	}
 }

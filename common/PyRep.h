@@ -45,9 +45,9 @@ public:
 		SubStream,
 		ChecksumedStream,
 		Object,
-		PackedHeader,
 		PackedRow,
-		PackedResultSet
+		PackedObject1,
+		PackedObject2
 	} Type;
 	
 	PyRep(Type t) : m_type(t) { }
@@ -307,87 +307,68 @@ protected:
 	const PyRep *const m_header;
 };
 
-//TODO: make a seperate object for RowDict, because we need to keep
-//key value pairs in `rows`, not just values.
-class PyRepPackedRowHeader : public PyRep {
+//base for opcodes 0x22 and 0x23
+class PyRepPackedObject : public PyRep {
 public:
-	typedef std::vector<PyRepPackedRow *> storage_type;
-	typedef std::vector<PyRepPackedRow *>::iterator iterator;
-	typedef std::vector<PyRepPackedRow *>::const_iterator const_iterator;
-	
-	typedef enum {
-		RowList,
-		RowDict
-	} Format;
-	
-	PyRepPackedRowHeader(Format format_ = RowList, PyRep *t = NULL, PyRep *a = NULL) : PyRep(PyRep::Object), format(format_), header_type(t), arguments(a) {}
-	virtual ~PyRepPackedRowHeader();
+	//for list data (before first PackedTerminator)
+	typedef std::vector<PyRep *> list_type;
+	typedef std::vector<PyRep *>::iterator list_iterator;
+	typedef std::vector<PyRep *>::const_iterator const_list_iterator;
+
+	//for dict data (after first PackedTerminator)
+	typedef std::map<PyRep *, PyRep *> dict_type;
+	typedef std::map<PyRep *, PyRep *>::iterator dict_iterator;
+	typedef std::map<PyRep *, PyRep *>::const_iterator const_dict_iterator;
+
+	PyRepPackedObject(Type t) : PyRep(t) {}
+	virtual ~PyRepPackedObject();
+	virtual void Dump(FILE *into, const char *pfx) const;
+	virtual void Dump(LogType type, const char *pfx) const;
+	virtual PyRep *Clone() const = 0;
+	virtual void visit(PyVisitor *v) const;
+
+	void CloneFrom(const PyRepPackedObject *from);
+
+	list_type list_data;
+	dict_type dict_data;
+};
+
+//opcode 0x22
+class PyRepPackedObject1 : public PyRepPackedObject {
+public:
+	PyRepPackedObject1(const char *_type = "", PyRepTuple *_args = NULL, PyRepDict &_keywords = PyRepDict());
+	~PyRepPackedObject1();
+	virtual void Dump(FILE *into, const char *pfx) const;
+	virtual void Dump(LogType ltype, const char *pfx) const;
+	virtual PyRep *Clone() const { return(TypedClone()); }
+	virtual void visit(PyVisitor *v) const;
+
+	PyRepPackedObject1 *TypedClone() const;
+	void CloneFrom(const PyRepPackedObject1 *from);
+
+	std::string type;
+	PyRepTuple *args;
+	PyRepDict keywords;
+};
+
+//opcode 0x23
+//not 100% completed
+class PyRepPackedObject2 : public PyRepPackedObject {
+public:
+	PyRepPackedObject2(const char *_type = "", PyRepTuple *_args1 = NULL, PyRep *_args2 = NULL);
+	~PyRepPackedObject2();
 	virtual void Dump(FILE *into, const char *pfx) const;
 	virtual void Dump(LogType type, const char *pfx) const;
 	virtual PyRep *Clone() const { return(TypedClone()); }
 	virtual void visit(PyVisitor *v) const;
-	
-	PyRepPackedRowHeader *TypedClone() const;
 
-	Format format;	//determines how the packed data is stored following this object.
-	PyRep *header_type;		//should always be "blue.DBRowDescriptor" right now.
-	PyRep *arguments;	//should be a tuple or a dict
-	
-	//Packed data included after this header:
-	storage_type rows;	//we own these.
-	
-	iterator begin() { return(rows.begin()); }
-	iterator end() { return(rows.end()); }
-	const_iterator begin() const { return(rows.begin()); }
-	const_iterator end() const { return(rows.end()); }
-	bool empty() const { return(rows.empty()); }
-	void clear();
+	PyRepPackedObject2 *TypedClone() const;
+	void CloneFrom(const PyRepPackedObject2 *from);
+
+	std::string type;
+	PyRepTuple *args1;
+	PyRep *args2;
 };
-
-//TODO: make a seperate object for RowDict, because we need to keep
-//key value pairs in `rows`, not just values. Then we can be more 
-// specific with the header fields.
-class PyRepPackedResultSet : public PyRep {
-public:
-	typedef std::vector<PyRepPackedRow *> storage_type;
-	typedef std::vector<PyRepPackedRow *>::iterator iterator;
-	typedef std::vector<PyRepPackedRow *>::const_iterator const_iterator;
-	
-	typedef enum {
-		RowList,
-		RowDict
-	} Format;
-	
-	PyRepPackedResultSet(Format format_ = RowList, PyRep *h = NULL) : PyRep(PyRep::PackedResultSet), format(format_), header(h) {}
-	virtual ~PyRepPackedResultSet();
-	virtual void Dump(FILE *into, const char *pfx) const;
-	virtual void Dump(LogType type, const char *pfx) const;
-	virtual PyRep *Clone() const { return(TypedClone()); }
-	virtual void visit(PyVisitor *v) const;
-	
-	PyRepPackedResultSet *TypedClone() const;
-	
-	Format format;	//determines how the packed data is stored following this object.
-	
-	PyRep *header;
-		//contains this for a RowList:
-		// ( ( "dbutil.RowList" ), [ "header" => PackedRowHeader, "columns" => list_of_col_names ] )
-		// 	Represented as a dbutil_RowList_header in XML
-		//contains this for a RowDict:
-		// ( ( "dbutil.RowDict" ), [ "header" => PackedRowHeader, "columns" => list_of_col_names, "key" => key_column_name ] )
-		// 	Represented as a dbutil_RowDict_header in XML
-	
-	//Packed data included in this result set:
-	storage_type rows;	//we own these.
-	
-	iterator begin() { return(rows.begin()); }
-	iterator end() { return(rows.end()); }
-	const_iterator begin() const { return(rows.begin()); }
-	const_iterator end() const { return(rows.end()); }
-	bool empty() const { return(rows.empty()); }
-	void clear();
-};
-
 
 class PyRepSubStruct : public PyRep {
 public:

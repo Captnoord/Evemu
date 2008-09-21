@@ -719,13 +719,11 @@ void TestMarshal() {
 	//PyRepTuple *t = new PyRepTuple(2);
 	
 	
-	PyRepPackedRowHeader *rhead = new PyRepPackedRowHeader();
-	rhead->header_type = new PyRepString("blue.DBRowDescriptor", true);
-	
-	PyRepTuple *arg_tuple = new PyRepTuple(1);
-	rhead->arguments = arg_tuple;
+	PyRepPackedObject1 *dbrowdesc = new PyRepPackedObject1("blue.DBRowDescriptor");
+	dbrowdesc->args = new PyRepTuple(1);
+
 		PyRepTuple *arg_list = new PyRepTuple(6);
-		arg_tuple->items[0] = arg_list;
+		dbrowdesc->args->items[0] = arg_list;
 			PyRepTuple *pair_tuple;
 			int r = 0;
 			
@@ -758,21 +756,11 @@ void TestMarshal() {
 			pair_tuple->items[0] = new PyRepString("orders");
 			pair_tuple->items[1] = new PyRepInteger(DBTYPE_I4);
 			arg_list->items[r++] = pair_tuple;
-			
-	//t->items[0] = rhead;
-	
-	PyRepPackedResultSet *rs = new PyRepPackedResultSet();
-	rs->format = PyRepPackedResultSet::RowList;
-	dbutil_RowList_header head_coder;
-	head_coder.type = "dbutil.RowList";
-	head_coder.packed_header = rhead;
-	head_coder.columns.push_back("historyDate");
-	head_coder.columns.push_back("lowPrice");
-	head_coder.columns.push_back("highPrice");
-	head_coder.columns.push_back("avgPrice");
-	head_coder.columns.push_back("volume");
-	head_coder.columns.push_back("orders");
-	rs->header = head_coder.FastEncode();
+
+	PyRepPackedObject2 *rs = new PyRepPackedObject2("dbutil.RowList");
+	PyRepDict *d = new PyRepDict;
+	rs->args2 = d;
+	d->add("header", dbrowdesc);
 	
 	//PyRepList *l = new PyRepList();
 		PyRepPackedRow *row;
@@ -783,9 +771,9 @@ void TestMarshal() {
 			0x38, 0x4a, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xe0, 0x47, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 			0x01, 0xee, 0x95, 0x31, 0x00, 0x00, 0x00, 0x00, 0x2f, 0x0f, 0x00, 0x00
 		};
-		row = new PyRepPackedRow(data, sizeof(data), false, rhead);
+		row = new PyRepPackedRow(data, sizeof(data), false, dbrowdesc);
 		//l->add(row);
-		rs->rows.push_back(row);
+		rs->list_data.push_back(row);
 		}
 	//t->items[1] = l;
 
@@ -799,7 +787,7 @@ void TestMarshal() {
 	printf("Unmarshaling...\n");
 	PyRep *rep = InflateAndUnmarshal(marshaled, mlen);
 	if(rep != NULL) {
-		rep->Dump(stderr, " Final: ");
+		rep->Dump(stdout, " Final: ");
 	}
 }
 

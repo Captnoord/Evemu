@@ -543,7 +543,7 @@ public:
 	uint32 index;
 	DBTYPE type;
 };
-
+/*
 static void _packRowList(
 	DBQueryResult &result, 
 	const DBColumnTypeMap &types, 
@@ -692,14 +692,14 @@ static void _packRowList(
 				)
 			);
 	} while (result.GetRow(row));
-}
+}*/
 
 PyRep *DBResultToPackedRowList(
 	DBQueryResult &result, 
 	const DBColumnTypeMap &types, 
 	const DBColumnOrdering &ordering
 ) {
-	PyRepPackedRowHeader *rhead = new PyRepPackedRowHeader();
+	/*PyRepPackedRowHeader *rhead = new PyRepPackedRowHeader();
 	PyRepPackedResultSet *rs = new PyRepPackedResultSet();
 	
 	_packRowList(result, types, ordering, rs->rows, rhead);
@@ -717,7 +717,8 @@ PyRep *DBResultToPackedRowList(
 	
 	rs->header = head_coder.FastEncode();
 	
-	return(rs);
+	return(rs);*/
+	return(new PyRepNone);
 }
 
 PyRep *DBResultToPackedRowListTuple(
@@ -725,7 +726,7 @@ PyRep *DBResultToPackedRowListTuple(
 	const DBColumnTypeMap &types, 
 	const DBColumnOrdering &ordering
 ) {
-	PyRepPackedRowHeader *rhead = new PyRepPackedRowHeader();
+	/*PyRepPackedRowHeader *rhead = new PyRepPackedRowHeader();
 	PyRepPackedResultSet::storage_type rows;
 	
 	_packRowList(result, types, ordering, rows, rhead);
@@ -745,7 +746,8 @@ PyRep *DBResultToPackedRowListTuple(
 	}
 	rows.clear();
 	
-	return(res);
+	return(res);*/
+	return(new PyRepNone);
 }
 
 

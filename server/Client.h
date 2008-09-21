@@ -250,7 +250,6 @@ protected:
 
 //DO NOT INHERIT THIS OBJECT!
 class Client : public DynamicSystemEntity {
-	friend PyPacket *EVEPresentation::PopPacket();	//TODO: remove this crap
 public:
 	Client(PyServiceMgr *services, EVETCPConnection **con);
 	virtual ~Client();
@@ -286,7 +285,7 @@ public:
 	double GetBalance() const { return(m_char.balance); }
 	bool AddBalance(double amount);
 
-	PyRep *Login(CryptoChallengePacket *pack);
+	void Login(CryptoChallengePacket *pack);
 	uint32 GetShipID() const;
 	void BoardShip(InventoryItem *new_ship);
 	void MoveToLocation(uint32 location, const GPoint &pt);

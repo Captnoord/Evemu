@@ -105,7 +105,7 @@ public:
 		PutBytes(rep->GetBuffer(), rep->GetLength());
 	}
 	
-	virtual void VisitPacked(const PyRepPackedRow *rep) {
+	virtual void VisitPackedRow(const PyRepPackedRow *rep) {
 		PutByte(Op_PyPackedRow);
 		
 		rep->GetHeader()->visit(this);
@@ -122,8 +122,9 @@ public:
 		} else {
 			PutByte(packed.size());
 		}
-		//out goes the data...
-		PutBytes(&packed[0], packed.size());
+		if(packed.size() != 0)
+			//out goes the data...
+			PutBytes(&packed[0], packed.size());
 	}
 	
 	virtual void VisitString(const PyRepString *rep) {
@@ -182,62 +183,68 @@ public:
 		//this will visit arguments
 		PyVisitor::VisitObject(rep);
 	}
-	
-	virtual void VisitPackedRowHeader(const PyRepPackedRowHeader *rep) {
-		PutByte(Op_PackedRowHeader);
-		
-		PutByte(Op_PyTwoTuple);
-		rep->header_type->visit(this);
-		rep->arguments->visit(this);
-		
-		PyRepPackedRowHeader::const_iterator cur, end;
-		uint32 r;
-		
-        /* there are essentially two lists here, each terminated with the packed
-         * terminator. The first one contains data for rowlist, the second for
-         * rowdict.
-         */
-		if(rep->format == PyRepPackedRowHeader::RowDict)
-			PutByte(Op_PackedTerminator);
-		
-		cur = rep->rows.begin();
-		end = rep->rows.end();
-		for(r = 0; cur != end; cur++, r++) {
-			VisitPackedRowHeaderElement(rep, r, *cur);
-		}
+
+	virtual void VisitPackedObjectList(const PyRepPackedObject *rep) {
+		PyVisitor::VisitPackedObjectList(rep);
 		PutByte(Op_PackedTerminator);
-		
-		if(rep->format == PyRepPackedRowHeader::RowList)
-			PutByte(Op_PackedTerminator);
 	}
-	
-	virtual void VisitPackedResultSet(const PyRepPackedResultSet *rep) {
-		PutByte(Op_PackedResultSet);
-		
-		rep->header->visit(this);
-		
-        /* there are essentially two lists here, each terminated with the packed
-         * terminator. The first one contains data for rowlist, the second for
-         * rowdict.
-         */
-		if(rep->format == PyRepPackedResultSet::RowDict)
-			PutByte(Op_PackedTerminator);
-		
-		PyRepPackedResultSet::const_iterator cur, end;
-		uint32 r;
-		cur = rep->rows.begin();
-		end = rep->rows.end();
-		for(r = 0; cur != end; cur++, r++) {
-			VisitPackedResultSetElement(rep, r, *cur);
-		}
+
+	virtual void VisitPackedObjectDict(const PyRepPackedObject *rep) {
+		PyVisitor::VisitPackedObjectDict(rep);
 		PutByte(Op_PackedTerminator);
+	}
+
+	virtual void VisitPackedObject1(const PyRepPackedObject1 *rep) {
+		PutByte(Op_PackedObject1);
+		//this is little hackish, but we dont have to clone whole contents
+		if(rep->keywords.empty())
+			PutByte(Op_PyTwoTuple);
+		else {
+			PutByte(Op_PyTuple);
+			PutByte(3);
+		}
+		PyRepString s(rep->type, true);
+		s.visit(this);
 		
-		if(rep->format == PyRepPackedResultSet::RowList)
-			PutByte(Op_PackedTerminator);
-		
-		
-		if(rep->format == PyRepPackedResultSet::RowDict)
-			PutByte(Op_PackedTerminator);
+		if(rep->args == NULL)
+			PutByte(Op_PyEmptyTuple);
+		else
+			rep->args->visit(this);
+
+		//if not empty, insert keywords
+		if(!rep->keywords.empty())
+			rep->keywords.visit(this);
+
+		VisitPackedObject(rep);
+	}
+
+	virtual void VisitPackedObject2(const PyRepPackedObject2 *rep) {
+		PutByte(Op_PackedObject2);
+		//this is little hackish, but we dont have to clone whole contents
+		if(rep->args2 == NULL)
+			PutByte(Op_PyOneTuple);
+		else
+			PutByte(Op_PyTwoTuple);
+
+		if(rep->args1 == NULL)
+			PutByte(Op_PyOneTuple);
+		else if(rep->args1->items.size() == 1)
+			PutByte(Op_PyTwoTuple);
+		else {
+			PutByte(Op_PyTuple);
+			PutByte(1 + rep->args1->items.size());
+		}
+
+		PyRepString s(rep->type, true);
+		s.visit(this);
+
+		if(rep->args1 != NULL)
+			rep->args1->visit(this);
+
+		if(rep->args2 != NULL)
+			rep->args2->visit(this);
+
+		VisitPackedObject(rep);
 	}
 	
 	virtual void VisitSubStruct(const PyRepSubStruct *rep) {

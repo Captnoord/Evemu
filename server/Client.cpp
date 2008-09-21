@@ -343,26 +343,32 @@ void Client::ChannelLeft(LSCChannel *chan) {
 	m_channels.erase(chan);
 }
 
-PyRep *Client::Login(CryptoChallengePacket *pack) {
+void Client::Login(CryptoChallengePacket *pack) {
 	_log(CLIENT__MESSAGE, "Login with %s", pack->user_name.c_str());
 
-	//urgh ... damn Python
-	if(!pack->user_password->CheckType(PyRep::PackedResultSet)) {
-		_log(CLIENT__ERROR, "Failed to get password: user_password is not PackedResultSet.");
-		return(NULL);
+	if(!pack->user_password->CheckType(PyRep::PackedObject2)) {
+		_log(CLIENT__ERROR, "Failed to get password: user_password is not PackedObject2.");
+		return;
 	}
-	PyRepPackedResultSet *set = (PyRepPackedResultSet *)pack->user_password;
+	PyRepPackedObject2 *obj = (PyRepPackedObject2 *)pack->user_password;
+	//we can check type, should be "util.PasswordString"
 
-	util_PasswordString pass;
-	if(!pass.Decode(&set->header)) {
-		_log(CLIENT__ERROR, "Failed to get password: Failed to decode util.PasswordString.");
-		return(NULL);
+	Call_SingleStringArg pass;
+	if(!pass.Decode(&obj->args1)) {
+		_log(CLIENT__ERROR, "Failed to decode password.");
+		return;
 	}
 	
-	if(!m_services->GetServiceDB()->DoLogin(pack->user_name.c_str(), pass.password.c_str(), m_accountID, m_role)) {
-		_log(CLIENT__MESSAGE, "Login rejected by DB");
-		//_SendLoginFailed(packet->source.callID);
-		return(NULL);
+	if(!m_services->GetServiceDB()->DoLogin(pack->user_name.c_str(), pass.arg.c_str(), m_accountID, m_role)) {
+		_log(CLIENT__MESSAGE, "%s: Login rejected by DB", pack->user_name.c_str());
+
+		PyRepPackedObject1 *e = new PyRepPackedObject1("exceptions.GPSTransportClosed");
+		e->args = new PyRepTuple(1);
+		e->args->items[0] = new PyRepString("LoginAuthFailed");
+
+		m_net._QueueRep(e);
+		delete e;
+		return;
 	}
 	
 	// this is needed so if we exit before selecting a character, the account online flag would switch back to 0
@@ -381,13 +387,15 @@ PyRep *Client::Login(CryptoChallengePacket *pack) {
 	ack.inDetention = new PyRepNone;
 	ack.user_clientid = m_accountID;
 
+	m_net._QueueRep(ack.Encode());
+
 	session.Set_userType(23);	//TODO: what is this??
 	session.Set_userid(m_accountID);
 	session.Set_address(m_net.GetConnectedAddress().c_str());
 	session.Set_role(m_role);
 	session.Set_languageID(pack->user_languageid.c_str());
 
-	return(ack.Encode());
+	_CheckSessionChange();
 }
 
 void Client::_SendPingRequest() {
@@ -705,7 +713,7 @@ void Client::_ProcessCallRequest(PyPacket *packet) {
 		_log(CLIENT__ERROR, "Unable to find service to handle call to:");
 		packet->dest.Dump(stdout, "    ");
 #ifndef WIN32
-#warning TODO: throw proper exception to client.
+#warning TODO: throw proper exception to client (exceptions.ServiceNotFound).
 #endif
 		PyRep *except = new PyRepNone();
 		_SendException(packet, WRAPPEDEXCEPTION, &except);

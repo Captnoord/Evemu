@@ -30,8 +30,11 @@
 
 //unfortunately, account login is now more low-level, so we need to include this
 #include "../server/Client.h"
+#include "../server/PyCallable.h"
 
-static const byte handshakeFunc[] = "\x74\x04\x00\x00\x00\x4E\x6F\x6E\x65";	//marshaled Python string "None"
+static const byte handshakeFunc[] = {
+	0x74, 0x04, 0x00, 0x00, 0x00, 0x4E, 0x6F, 0x6E, 0x65	//marshaled Python string "None"
+};
 
 EVEPresentation::EVEPresentation(
 	EVETCPConnection *n,
@@ -245,18 +248,10 @@ PyPacket *EVEPresentation::PopPacket() {
 			}
 
 			//this is a bit crappy ...
-
-			PyRep *res = client->Login(m_request);
-			if(res != NULL) {
-				_QueueRep(res);
-				delete res;
-			}
+			client->Login(m_request);
 
 			delete m_request;
 			m_request = NULL;
-
-			//send the session change AFTER the result of login
-			client->_CheckSessionChange();
 
 			m_state = AcceptingPackets;
 		}	break;
@@ -351,7 +346,7 @@ void EVEPresentation::_SendHandshake() {
 }
 
 std::string EVEPresentation::GetConnectedAddress() const {
-	char buf[54];
+	char buf[64];
 	struct in_addr	in;
 	in.s_addr = net->GetrIP();
 	snprintf(buf, sizeof(buf), "%s:%d", inet_ntoa(in), net->GetrPort());
