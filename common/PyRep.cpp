@@ -742,46 +742,75 @@ void PyRepChecksumedStream::visit(PyVisitor *v) const {
 
 
 
-PyRepPackedRow::PyRepPackedRow(const byte *buffer, uint32 length, bool own_header, const PyRep *header)
+PyRepPackedRow::PyRepPackedRow(const PyRep *header, bool own_header, const byte *data, const uint32 len)
 : PyRep(PyRep::PackedRow),
-  m_value(new byte[length]),
-  m_length(length),
   m_ownsHeader(own_header),
   m_header(header)
 {
-	memcpy(m_value, buffer, length);
+	if(data != NULL)
+		Push(data, len);
 }
 
 PyRepPackedRow::~PyRepPackedRow() {
-	delete[] m_value;
 	if(m_ownsHeader)
 		delete m_header;
 }
 
 
 void PyRepPackedRow::Dump(FILE *into, const char *pfx) const {
-	fprintf(into, "%sPacked Row of length %ld (owned header? %s)\n", pfx, m_length, m_ownsHeader?"yes":"no");
-	string p(pfx);
-	p += "  ";
-	pfxPreviewHexDump(p.c_str(), into, m_value, m_length);
+	fprintf(into, "%sPacked Row of length %ld (owned header? %s)\n", pfx, m_buffer.size(), m_ownsHeader?"yes":"no");
+	if(!m_buffer.empty()) {
+		string p(pfx);
+		p += "  ";
+		pfxPreviewHexDump(p.c_str(), into, &m_buffer[0], m_buffer.size());
+	}
+	if(!m_reps.empty()) {
+		std::string n(pfx);
+		n += "  Reps: ";
+		rep_list::const_iterator rcur, rend;
+		rcur = begin();
+		rend = end();
+		for(; rcur != rend; rcur++)
+			(*rcur)->Dump(into, n.c_str());
+	}
 }
 
 void PyRepPackedRow::Dump(LogType ltype, const char *pfx) const {
-	_log(ltype, "%sPacked Row of length %d (owned header? %s)", pfx, m_length, m_ownsHeader?"yes":"no");
-	string p(pfx);
-	p += "  ";
-	pfxPreviewHexDump(p.c_str(), ltype, m_value, m_length);
+	_log(ltype, "%sPacked Row of length %ld (owned header? %s)\n", pfx, m_buffer.size(), m_ownsHeader?"yes":"no");
+	if(!m_buffer.empty()) {
+		string p(pfx);
+		p += "  ";
+		pfxPreviewHexDump(p.c_str(), ltype, &m_buffer[0], m_buffer.size());
+	}
+	if(!m_reps.empty()) {
+		std::string n(pfx);
+		n += "  Reps: ";
+		rep_list::const_iterator rcur, rend;
+		rcur = begin();
+		rend = end();
+		for(; rcur != rend; rcur++)
+			(*rcur)->Dump(ltype, n.c_str());
+	}
 }
 
 PyRepPackedRow *PyRepPackedRow::TypedClone() const {
-	return(new PyRepPackedRow(m_value, m_length, m_ownsHeader, 
-		m_ownsHeader?m_header->Clone():m_header));
+	return(new PyRepPackedRow(
+		m_ownsHeader ? m_header->Clone() : m_header,
+		m_ownsHeader,
+		m_buffer.empty() ? NULL : &m_buffer[0],
+		m_buffer.size()
+		));
 }
 
 void PyRepPackedRow::visit(PyVisitor *v) const {
 	v->VisitPackedRow(this);
 }
 
+//this could be done a lot better... will not work on big endian systems.
+void PyRepPackedRow::Push(const void *data, uint32 len) {
+	for(const byte *_data = (const byte *)data; len > 0; _data++, len--)
+		m_buffer.push_back(*_data);
+}
 
 
 

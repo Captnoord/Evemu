@@ -176,6 +176,9 @@ bool Client::ProcessNet() {
 			case NOTIFICATION:
 				_ProcessNotification(p);
 				break;
+			case PING_REQ:
+				_log(CLIENT__TRACE, "%s: Unhandled ping request.", GetName());
+				break;
 			case PING_RSP:
 				_log(CLIENT__TRACE, "%s: Received ping response.", GetName());
 				break;

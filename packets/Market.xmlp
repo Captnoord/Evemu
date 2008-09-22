@@ -12,6 +12,7 @@
     <raw name="graphicID" />        <!-- may be None -->
     <int name="hasTypes" />
     <intlist name="types" />
+	<int name="dataID" default="0" />
   </InlineList>
 </element>
 

@@ -229,7 +229,7 @@ void PyDumpVisitor::VisitPackedObject2(const PyRepPackedObject2 *rep) {
 }
 
 void PyDumpVisitor::VisitPackedRow(const PyRepPackedRow *rep) {
-	_print("Packed data of length %d", rep->GetLength());
+	_print("Packed data of length %d", rep->GetBufferSize());
 	
 	std::string m(top());
 	m += "  Header: ";
@@ -237,11 +237,11 @@ void PyDumpVisitor::VisitPackedRow(const PyRepPackedRow *rep) {
 	rep->GetHeader()->visit(this);
 	pop();
 
-	if(rep->GetLength() > 0) {
-		_hexDump(rep->GetBuffer(), rep->GetLength());
+	if(rep->GetBufferSize() > 0) {
+		_hexDump(rep->GetBuffer(), rep->GetBufferSize());
 	}
 
-	switch(rep->GetLength()) {
+	switch(rep->GetBufferSize()) {
 	case 0x2b: {
 		const byte *buf = rep->GetBuffer();
 		_print("  Len 0x2b decode:");

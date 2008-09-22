@@ -41,9 +41,6 @@ class PyRepDict;
 } StringContentsType;
 StringContentsType ClassifyStringContents(const char *str);*/
 
-typedef std::map<std::string, DBTYPE> DBColumnTypeMap;
-typedef std::vector<std::string> DBColumnOrdering;
-
 PyRep *DBColumnToPyRep(DBResultRow &row, uint32 column_index);
 
 PyRepObject *DBResultToRowset(DBQueryResult &result);
@@ -56,8 +53,10 @@ void DBResultToIntIntDict(DBQueryResult &result, std::map<uint32, uint32> &into)
 void DBResultToIntIntlistDict(DBQueryResult &result, std::map<uint32, PyRep *> &into);
 
 //new packed stuff:
-PyRep *DBResultToPackedRowList(DBQueryResult &result, const DBColumnTypeMap &types, const DBColumnOrdering &ordering);
-PyRep *DBResultToPackedRowListTuple(DBQueryResult &result, const DBColumnTypeMap &types, const DBColumnOrdering &ordering);
+PyRep *DBResultToPackedRowList(DBQueryResult &result);
+PyRep *DBResultToPackedRowListTuple(DBQueryResult &result);
+PyRep *DBResultToDBUtilRowList(DBQueryResult &result);
+PyRep *DBResultToDBUtilCRowset(DBQueryResult &result);
 
 PyRepObject *DBRowToKeyVal(DBResultRow &row);
 PyRepObject *DBRowToRow(DBResultRow &row, const char *type = "util.Row");

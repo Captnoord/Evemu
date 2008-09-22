@@ -100,7 +100,7 @@ PyRep *MarketDB::GetRegionBest(uint32 regionID) {
 PyRep *MarketDB::GetOrders(uint32 regionID, uint32 typeID) {
 	DBQueryResult res;
 
-	DBColumnTypeMap colmap;
+	/*DBColumnTypeMap colmap;
 	colmap["volRemaining"] = DBTYPE_R8;
 	colmap["price"] = DBTYPE_CY;
 	colmap["issued"] = DBTYPE_FILETIME;
@@ -130,11 +130,11 @@ PyRep *MarketDB::GetOrders(uint32 regionID, uint32 typeID) {
 	ordering.push_back("stationID");
 	ordering.push_back("regionID");
 	ordering.push_back("solarSystemID");
-		ordering.push_back("jumps");	//not working right...
+	ordering.push_back("jumps");	//not working right...
 	ordering.push_back("typeID");
 	ordering.push_back("range");
 	ordering.push_back("duration");
-	ordering.push_back("bid");
+	ordering.push_back("bid");*/
 	
 	
 	
@@ -154,7 +154,7 @@ PyRep *MarketDB::GetOrders(uint32 regionID, uint32 typeID) {
 
 	PyRepTuple *tup = new PyRepTuple(2);
 	//this is wrong.
-	tup->items[0] = DBResultToPackedRowList(res, colmap, ordering);
+	tup->items[0] = DBResultToDBUtilRowList(res);
 	
 	//query buy orders
 	if(!m_db->RunQuery(res,
@@ -171,7 +171,7 @@ PyRep *MarketDB::GetOrders(uint32 regionID, uint32 typeID) {
 	}
 	
 	//this is wrong.
-	tup->items[1] = DBResultToPackedRowList(res, colmap, ordering);
+	tup->items[1] = DBResultToDBUtilRowList(res);
 	
 	return(tup);
 }
@@ -199,7 +199,7 @@ PyRep *MarketDB::GetCharOrders(uint32 characterID) {
 PyRep *MarketDB::GetOldPriceHistory(uint32 regionID, uint32 typeID) {
 	DBQueryResult res;
 
-	DBColumnTypeMap colmap;
+	/*DBColumnTypeMap colmap;
 	colmap["historyDate"] = DBTYPE_FILETIME;
 	colmap["lowPrice"] = DBTYPE_CY;
 	colmap["highPrice"] = DBTYPE_CY;
@@ -214,7 +214,7 @@ PyRep *MarketDB::GetOldPriceHistory(uint32 regionID, uint32 typeID) {
 	ordering.push_back("highPrice");
 	ordering.push_back("avgPrice");
 	ordering.push_back("volume");
-	ordering.push_back("orders");
+	ordering.push_back("orders");*/
 	
 	if(!m_db->RunQuery(res,
 		"SELECT"
@@ -227,13 +227,13 @@ PyRep *MarketDB::GetOldPriceHistory(uint32 regionID, uint32 typeID) {
 		return(NULL);
 	}
 	
-	return(DBResultToPackedRowListTuple(res, colmap, ordering));
+	return(DBResultToDBUtilRowList(res));
 }
 
 PyRep *MarketDB::GetNewPriceHistory(uint32 regionID, uint32 typeID) {
 	DBQueryResult res;
 
-	DBColumnTypeMap colmap;
+	/*DBColumnTypeMap colmap;
 	colmap["historyDate"] = DBTYPE_FILETIME;
 	colmap["lowPrice"] = DBTYPE_CY;
 	colmap["highPrice"] = DBTYPE_CY;
@@ -248,7 +248,7 @@ PyRep *MarketDB::GetNewPriceHistory(uint32 regionID, uint32 typeID) {
 	ordering.push_back("highPrice");
 	ordering.push_back("avgPrice");
 	ordering.push_back("volume");
-	ordering.push_back("orders");
+	ordering.push_back("orders");*/
 
 	//build the history record from the recent market transactions.
 	//NOTE: it may be a good idea to cache the historyDate column in each
@@ -272,7 +272,7 @@ PyRep *MarketDB::GetNewPriceHistory(uint32 regionID, uint32 typeID) {
 		return(NULL);
 	}
 	
-	return(DBResultToPackedRowListTuple(res, colmap, ordering));
+	return(DBResultToDBUtilRowList(res));
 }
 
 bool MarketDB::BuildOldPriceHistory() {
@@ -414,12 +414,11 @@ PyRepObject *MarketDB::GetMarketGroups() {
 	//first we need to query out all the types because we need them to 
 	// fill in the 'types' subquery for each row of the result
 	std::map< int, std::set<uint32> > types;
-	uint32 currentGroup = 0;
-	std::set<uint32> currentTypes;
 	if(!m_db->RunQuery(res,
 		"SELECT"
 		"	marketGroupID,typeID"
 		" FROM invTypes"
+		" WHERE marketGroupID IS NOT NULL"
 		" ORDER BY marketGroupID"))
 	{
 		codelog(MARKET__ERROR, "Error in query: %s", res.error.c_str());
@@ -427,18 +426,8 @@ PyRepObject *MarketDB::GetMarketGroups() {
 	}
 	
 	DBResultRow row;
-	while(res.GetRow(row)) {
-		uint32 g = row.GetUInt(0);
-		if(currentGroup != g) {
-			//group has changed
-			if(currentGroup != 0) {
-				types[currentGroup] = currentTypes;
-				currentTypes.clear();
-			}
-			currentGroup = g;
-		}
-		currentTypes.insert(row.GetUInt(1));
-	}
+	while(res.GetRow(row))
+		types[row.GetUInt(0)].insert(row.GetUInt(1));
 
 
 
@@ -495,6 +484,7 @@ PyRepObject *MarketDB::GetMarketGroups() {
 	header->add("graphicID");
 	header->add("hasTypes");
 	header->add("types");	//this column really contains an entire list.
+	header->add("dataID");
 	
 	args->add("header", header);
 	args->add("idName", new PyRepString("parentGroupID"));

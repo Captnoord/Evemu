@@ -27,7 +27,7 @@
 
 void UnpackZeroCompressed(const byte *in_buf, uint32 in_length, std::vector<byte> &buffer) {
 	buffer.clear();
-	if(in_length == 0)
+	if(in_buf == NULL || in_length == 0)
 		return;
 	
 	buffer.reserve(in_length*2);	//just a reasonable start
@@ -75,7 +75,7 @@ void UnpackZeroCompressed(const byte *in_buf, uint32 in_length, std::vector<byte
 
 void PackZeroCompressed(const byte *in_buf, uint32 in_length, std::vector<byte> &out_buf) {
 	out_buf.clear();
-	if(in_length == 0)
+	if(in_buf == NULL || in_length == 0)
 		return;
 
 	_log(NET__ZEROCOMP, "Zero-compressing buffer of length %d", in_length);

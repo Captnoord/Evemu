@@ -1416,9 +1416,8 @@ static uint32 UnmarshalData(UnmarshalState *state, const byte *packet, uint32 le
 		len -= header_len;
 		len_used += header_len;
 #endif
+		PyRepPackedRow *row = new PyRepPackedRow(header_element, true);
 
-		
-		
 		if(len < 1) {
 			_log(NET__UNMARSHAL_ERROR, "Not enough data for packed length (missing length and data)\n");
 			break;
@@ -1464,10 +1463,12 @@ static uint32 UnmarshalData(UnmarshalState *state, const byte *packet, uint32 le
 		phex(NET__UNMARSHAL_TRACE, &unpacked[0], unpacked.size());
 		
 #ifdef PACKED_ROW_HEADER_HACK
-		do something...
+		//do something...
 #else
-		res = new PyRepPackedRow(&unpacked[0], unpacked.size(), true, header_element);
+		row->Push(&unpacked[0], unpacked.size());
 #endif
+		//TODO: unmarshal following PyReps as well
+		res = row;
 	/*
 	.text:1005DA0E loc_1005DA0E:                           ; CODE XREF: Marshal_Something+3Cj
 	.text:1005DA0E                                         ; DATA XREF: .text:off_1005DA58o

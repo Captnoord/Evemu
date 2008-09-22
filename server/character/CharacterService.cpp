@@ -51,6 +51,7 @@ CharacterService::CharacterService(PyServiceMgr *mgr, DBcore *dbc)
 	PyCallable_REG_CALL(CharacterService, GetCharNewExtraCreationInfo)
 	PyCallable_REG_CALL(CharacterService, GetAppearanceInfo)
 	PyCallable_REG_CALL(CharacterService, ValidateName)
+	PyCallable_REG_CALL(CharacterService, ValidateNameEx)
 	PyCallable_REG_CALL(CharacterService, CreateCharacter)
 	PyCallable_REG_CALL(CharacterService, PrepareCharacterForDelete)
 	PyCallable_REG_CALL(CharacterService, CancelCharacterDeletePrepare)
@@ -197,6 +198,11 @@ PyCallResult CharacterService::Handle_ValidateName(PyCallArgs &call) {
 	return(new PyRepBoolean(m_db.ValidateCharName(arg.arg.c_str())));
 }
 
+PyCallResult CharacterService::Handle_ValidateNameEx(PyCallArgs &call) {
+	//just redirect it now
+	return(Handle_ValidateName(call));
+}
+
 PyCallResult CharacterService::Handle_CreateCharacter(PyCallArgs &call) {
 	PyRepTuple *call_args = call.tuple;
 	
@@ -218,15 +224,15 @@ PyCallResult CharacterService::Handle_CreateCharacter(PyCallArgs &call) {
 
 	uint32 args[12];
 	uint8 r;
-	for(r = 1; r < 13; r++) {
-		if(!call_args->items[r]->CheckType(PyRep::Integer)) {
-			_log(CLIENT__ERROR, "Invalid CreateCharacter argument %d, expected integer", r);
+	for(r = 1; r < 13; r++)
+		if(call_args->items[r]->CheckType(PyRep::Integer))
+			args[r-1] = ((PyRepInteger *)call_args->items[r])->value;
+		else if(call_args->items[r]->CheckType(PyRep::None)) {
+			args[r-1] = 0;
+		} else {
+			_log(CLIENT__ERROR, "Invalid CreateCharacter argument %d: type %s, expected integer or none", r, call_args->items[r]->TypeString());
 			return(new PyRepNone());
 		}
-		PyRepInteger *i = (PyRepInteger *) call_args->items[r];
-		args[r-1] = i->value;
-	}
-
 
 	cdata.bloodlineID = args[0];
 	cdata.genderID = args[1];
@@ -242,10 +248,8 @@ PyCallResult CharacterService::Handle_CreateCharacter(PyCallArgs &call) {
 	cdata.Willpower = args[11];
 
 	_log(CLIENT__MESSAGE, "CreateCharacter called for '%s'", char_name->value.c_str());
-	_log(CLIENT__MESSAGE, "  bloodlineID=%d genderID=%d ancestryID=%d schoolID=%d", 
+	_log(CLIENT__MESSAGE, "  bloodlineID=%d genderID=%d ancestryID=%d", 
 			cdata.bloodlineID, cdata.genderID, cdata.ancestryID, cdata.schoolID);
-	_log(CLIENT__MESSAGE, "  departmentID=%d fieldID=%d specialityID=%d", 
-			cdata.departmentID, cdata.fieldID, cdata.specialityID);
 	_log(CLIENT__MESSAGE, "  +INT=%d +CHA=%d +PER=%d +MEM=%d +WIL=%d", 
 			cdata.Intelligence, cdata.Charisma, cdata.Perception, cdata.Memory, cdata.Willpower);
 	_log(CLIENT__MESSAGE, "  Appearance Data:");

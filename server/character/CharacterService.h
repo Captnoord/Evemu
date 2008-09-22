@@ -42,6 +42,7 @@ protected:
 	PyCallable_DECL_CALL(GetCharNewExtraCreationInfo)
 	PyCallable_DECL_CALL(GetAppearanceInfo)
 	PyCallable_DECL_CALL(ValidateName)
+	PyCallable_DECL_CALL(ValidateNameEx)
 	PyCallable_DECL_CALL(CreateCharacter)
 	PyCallable_DECL_CALL(PrepareCharacterForDelete)
 	PyCallable_DECL_CALL(CancelCharacterDeletePrepare)

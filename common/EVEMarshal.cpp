@@ -112,7 +112,7 @@ public:
 		
 		//pack the bytes with the zero compression algorithm.
 		std::vector<byte> packed;
-		PackZeroCompressed(rep->GetBuffer(), rep->GetLength(), packed);
+		PackZeroCompressed(rep->GetBuffer(), rep->GetBufferSize(), packed);
 		
 		if(packed.size() >= 0xFF) {
 			PutByte(0xFF);
@@ -122,9 +122,16 @@ public:
 		} else {
 			PutByte(packed.size());
 		}
-		if(packed.size() != 0)
+		if(!packed.empty())
 			//out goes the data...
 			PutBytes(&packed[0], packed.size());
+
+		//PyReps follow packed data
+		PyRepPackedRow::rep_list::const_iterator cur, end;
+		cur = rep->begin();
+		end = rep->end();
+		for(; cur != end; cur++)
+			(*cur)->visit(this);
 	}
 	
 	virtual void VisitString(const PyRepString *rep) {

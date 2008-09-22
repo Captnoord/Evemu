@@ -283,7 +283,10 @@ public:
 
 class PyRepPackedRow : public PyRep {
 public:
-	PyRepPackedRow(const byte *buffer, uint32 length, bool own_header, const PyRep *header);
+	typedef std::vector<byte> buffer;
+	typedef std::vector<PyRep *> rep_list;
+
+	PyRepPackedRow(const PyRep *header, bool own_header, const byte *data = NULL, const uint32 len = 0);
 	virtual ~PyRepPackedRow();
 	virtual void Dump(FILE *into, const char *pfx) const;
 	virtual void Dump(LogType type, const char *pfx) const;
@@ -291,18 +294,45 @@ public:
 	virtual void visit(PyVisitor *v) const;
 	
 	PyRepPackedRow *TypedClone() const;
-	
-	//treat it as a buffer:
-	byte *GetBuffer() const { return(m_value); }
-	uint32 GetLength() const { return(m_length); }
-	
-	const PyRep *GetHeader() const { return(m_header); }
 
+	//integers
+	void PushInt8(const sint8 v) { Push(&v, sizeof(sint8)); }
+	void PushUInt8(const uint8 v) { Push(&v, sizeof(uint8)); }
+	void PushInt16(const sint16 v) { Push(&v, sizeof(sint16)); }
+	void PushUInt16(const uint16 v) { Push(&v, sizeof(uint16)); }
+	void PushInt32(const sint32 v) { Push(&v, sizeof(sint32)); }
+	void PushUInt32(const uint32 v) { Push(&v, sizeof(uint32)); }
+	void PushInt64(const sint64 v) { Push(&v, sizeof(sint64)); }
+	void PushUInt64(const uint64 v) { Push(&v, sizeof(uint64)); }
+
+	//floating point
+	void PushFloat(const float v) { Push(&v, sizeof(float)); }
+	void PushDouble(const double v) { Push(&v, sizeof(double)); }
+
+	//raw
+	void Push(const void *data, uint32 len);
+
+	//PyRep
+	void PushPyRep(PyRep *const v) { m_reps.push_back(v); }
+
+	//header access
+	const PyRep *GetHeader() const { return(m_header); }
 	bool OwnsHeader() const { return(m_ownsHeader); }
-	
+
+	//buffer access
+	const byte *GetBuffer() const { return(m_buffer.empty() ? NULL : &m_buffer[0]); }
+	uint32 GetBufferSize() const { return(uint32(m_buffer.size())); }
+
+	//reps access
+	rep_list::iterator begin() { return(m_reps.begin()); }
+	rep_list::iterator end() { return(m_reps.end()); }
+	rep_list::const_iterator begin() const { return(m_reps.begin()); }
+	rep_list::const_iterator end() const { return(m_reps.end()); }
+
 protected:
-	byte *const m_value;
-	const uint32 m_length;
+	buffer m_buffer;
+	rep_list m_reps;
+
 	const bool m_ownsHeader;
 	const PyRep *const m_header;
 };
