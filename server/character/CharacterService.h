@@ -59,7 +59,7 @@ protected:
 	PyCallable_DECL_CALL(GetNote) // LSMoura
 	PyCallable_DECL_CALL(SetNote) // LSMoura
 
-	int32 GetSkillPointsForSkillLevel(InventoryItem *i, int level); // Johnsus
+	uint32 GetSkillPointsForSkillLevel(InventoryItem *i, uint8 level); // Johnsus
 };
 
 

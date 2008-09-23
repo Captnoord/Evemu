@@ -65,6 +65,101 @@
 static const uint32 PING_INTERVAL_US = 60000;
 static const uint64 HackFixedClientID = 130293001608LL;	//should prolly generate these for each client some day...
 
+CharacterAppearance::CharacterAppearance() {
+	//NULL all dynamic fields
+#define NULL_FIELD(v) \
+	v = NULL;
+
+#define INT_DYN(v) NULL_FIELD(v)
+#define REAL_DYN(v) NULL_FIELD(v)
+#include "character/CharacterAppearance_fields.h"
+
+#undef NULL_FIELD
+}
+
+CharacterAppearance::CharacterAppearance(const CharacterAppearance &from) {
+	//just do deep copy
+	*this = from;
+}
+
+CharacterAppearance::~CharacterAppearance() {
+	//delete all dynamic fields
+#define CLEAR_FIELD(v) \
+	Clear_##v();
+
+#define INT_DYN(v) CLEAR_FIELD(v)
+#define REAL_DYN(v) CLEAR_FIELD(v)
+#include "character/CharacterAppearance_fields.h"
+
+#undef CLEAR_FIELD
+}
+
+void CharacterAppearance::Build(const std::map<std::string, PyRep *> &from) {
+	//builds our contents from strdict
+	std::map<std::string, PyRep *>::const_iterator itr;
+
+	_log(CLIENT__MESSAGE, "  Appearance Data:");
+
+#define INT(v) \
+	itr = from.find(#v); \
+	if(itr != from.end()) { \
+		if(!itr->second->CheckType(PyRep::Integer)) \
+			_log(CLIENT__ERROR, "Invalid type for " #v ": expected integer, got %s.", itr->second->TypeString()); \
+		else { \
+			v = ((PyRepInteger *)itr->second)->value; \
+			_log(CLIENT__MESSAGE, "     %s: %lu", itr->first.c_str(), v); \
+		} \
+	}
+#define INT_DYN(v) \
+	itr = from.find(#v); \
+	if(itr != from.end()) { \
+		if(!itr->second->CheckType(PyRep::Integer)) \
+			_log(CLIENT__ERROR, "Invalid type for " #v ": expected integer, got %s.", itr->second->TypeString()); \
+		else { \
+			Set_##v(((PyRepInteger *)itr->second)->value); \
+			_log(CLIENT__MESSAGE, "     %s: %lu", itr->first.c_str(), Get_##v()); \
+		} \
+	}
+#define REAL(v) \
+	itr = from.find(#v); \
+	if(itr != from.end()) { \
+		if(!itr->second->CheckType(PyRep::Real)) \
+			_log(CLIENT__ERROR, "Invalid type for " #v ": expected real, got %s.", itr->second->TypeString()); \
+		else { \
+			v = ((PyRepReal *)itr->second)->value; \
+			_log(CLIENT__MESSAGE, "     %s: %f", itr->first.c_str(), v); \
+		} \
+	}
+#define REAL_DYN(v) \
+	itr = from.find(#v); \
+	if(itr != from.end()) { \
+		if(!itr->second->CheckType(PyRep::Real)) \
+			_log(CLIENT__ERROR, "Invalid type for " #v ": expected real, got %s.", itr->second->TypeString()); \
+		else { \
+			Set_##v(((PyRepReal *)itr->second)->value); \
+			_log(CLIENT__MESSAGE, "     %s: %f", itr->first.c_str(), Get_##v()); \
+		} \
+	}
+#include "character/CharacterAppearance_fields.h"
+}
+
+void CharacterAppearance::operator=(const CharacterAppearance &from) {
+#define COPY(v) \
+	v = from.v;
+#define COPY_DYN(v) \
+	if(!from.IsNull_##v()) \
+		Set_##v(from.Get_##v());
+
+#define INT(v) COPY(v)
+#define INT_DYN(v) COPY_DYN(v)
+#define REAL(v) COPY(v)
+#define REAL_DYN(v) COPY_DYN(v)
+#include "character/CharacterAppearance_fields.h"
+
+#undef COPY
+#undef COPY_DYN
+}
+
 Client::Client(PyServiceMgr *services, EVETCPConnection **con)
 : DynamicSystemEntity(NULL),
   modules(this),
@@ -95,15 +190,13 @@ Client::Client(PyServiceMgr *services, EVETCPConnection **con)
 	m_char.bloodlineID = 1;
 	m_char.genderID = 0;
 	m_char.ancestryID = 2;
-	m_char.schoolID = 3;
-	m_char.departmentID = 4;
-	m_char.fieldID = 5;
-	m_char.specialityID = 6;
-	m_char.Intelligence = 7;
-	m_char.Charisma = 8;
-	m_char.Perception = 9;
-	m_char.Memory = 10;
-	m_char.Willpower = 11;
+	m_char.careerID = 3;
+	m_char.careerSpecialityID = 4;
+	m_char.Intelligence = 5;
+	m_char.Charisma = 6;
+	m_char.Perception = 7;
+	m_char.Memory = 8;
+	m_char.Willpower = 9;
 
 	//initialize connection
 	m_net.SendHandshake(m_services->entity_list->GetClientCount());

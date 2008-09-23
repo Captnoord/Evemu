@@ -43,7 +43,8 @@
     <!-- 0 -->
     <int name="charID" />
 	<!-- 1 -->
-	<int name="loadTutorialDungeon" />
+	<!-- may be boolean or integer -->
+	<raw name="loadTutorialDungeon" />
   </InlineTuple>
 </element>
 
@@ -77,14 +78,14 @@
     <int name="genderID" />
     <!-- 3 -->
     <int name="ancestryID" />
-    <!-- 4 -->
-    <int name="schoolID" />
-    <!-- 5 -->
-    <int name="departmentID" />
-    <!-- 6 -->
-    <int name="fieldID" />
-    <!-- 7 -->
-    <int name="specialityID" />
+	<!-- 4: schoolID -->
+	<none />
+	<!-- 5: departmentID -->
+	<none />
+	<!-- 6: fieldID -->
+	<none />
+	<!-- 7: specialityID -->
+	<none />
     <!-- 8 -->
     <int name="IntelligenceAdd" />
     <!-- 9 -->

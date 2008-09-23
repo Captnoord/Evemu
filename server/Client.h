@@ -119,10 +119,8 @@ public:
 	uint32 bloodlineID;
 	uint32 genderID;
 	uint32 ancestryID;
-	uint32 schoolID;
-	uint32 departmentID;
-	uint32 fieldID;
-	uint32 specialityID;
+	uint32 careerID;
+	uint32 careerSpecialityID;
 	
 	uint32 Intelligence;
 	uint32 Charisma;
@@ -146,44 +144,57 @@ public:
 
 class CharacterAppearance {
 public:
-	uint32 accessoryID;
-	uint32 beardID;
-	uint32 costumeID;
-	uint32 decoID;
-	uint32 eyebrowsID;
-	uint32 eyesID;
-	uint32 hairID;
-	uint32 lipstickID;
-	uint32 makeupID;
-	uint32 skinID;
-	uint32 backgroundID;
-	uint32 lightID;
-	
-	double headRotation1;
-	double headRotation2;
-	double headRotation3;
-	double eyeRotation1;
-	double eyeRotation2;
-	double eyeRotation3;
-	double camPos1;
-	double camPos2;
-	double camPos3;
-	double morph1e;
-	double morph1n;
-	double morph1s;
-	double morph1w;
-	double morph2e;
-	double morph2n;
-	double morph2s;
-	double morph2w;
-	double morph3e;
-	double morph3n;
-	double morph3s;
-	double morph3w;
-	double morph4e;
-	double morph4n;
-	double morph4s;
-	double morph4w;
+	CharacterAppearance();
+	CharacterAppearance(const CharacterAppearance &from);
+	~CharacterAppearance();
+
+#define INT(v) \
+	uint32 v;
+#define INT_DYN(v) \
+	bool IsNull_##v() const { \
+		return(v == NULL); \
+	} \
+	uint32 Get_##v() const { \
+		return(IsNull_##v() ? NULL : *v); \
+	} \
+	void Set_##v(uint32 val) { \
+		Clear_##v(); \
+		v = new uint32(val); \
+	} \
+	void Clear_##v() { \
+		if(!IsNull_##v()) \
+			delete v; \
+		v = NULL; \
+	}
+#define REAL(v) \
+	double v;
+#define REAL_DYN(v) \
+	bool IsNull_##v() const { \
+		return(v == NULL); \
+	} \
+	double Get_##v() const { \
+		return(IsNull_##v() ? NULL : *v); \
+	} \
+	void Set_##v(double val) { \
+		Clear_##v(); \
+		v = new double(val); \
+	} \
+	void Clear_##v() { \
+		if(!IsNull_##v()) \
+			delete v; \
+		v = NULL; \
+	}
+#include "character/CharacterAppearance_fields.h"
+
+	void Build(const std::map<std::string, PyRep *> &from);
+	void operator=(const CharacterAppearance &from);
+
+protected:
+#define INT_DYN(v) \
+	uint32 *v;
+#define REAL_DYN(v) \
+	double *v;
+#include "character/CharacterAppearance_fields.h"
 };
 
 class CorpMemberInfo {
