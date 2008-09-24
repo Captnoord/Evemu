@@ -1771,7 +1771,7 @@ static uint32 UnmarshalData(UnmarshalState *state, const byte *packet, uint32 le
 		len_used += data_length;
 
 		if(data_length <= sizeof(uint64)) {
-			uint64 intval = (1 << (8 * data_length)) - 1;
+			uint64 intval = (1LL << (8 * data_length)) - 1;
 			intval &= *((const uint64 *) packet);
 
 			_log(NET__UNMARSHAL_TRACE, "%s(0x%x)Op_PyVarInteger(len=%d) = " I64u, pfx, opcode, data_length, intval);

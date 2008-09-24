@@ -183,7 +183,6 @@ Client::Client(PyServiceMgr *services, EVETCPConnection **con)
 
 	m_moveTimer.Disable();
 	m_pingTimer.Start();
-	//m_destinyTimer.Start();
 
 	m_char.name = "monkey";
 	m_char.charid = 444666;

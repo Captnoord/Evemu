@@ -53,6 +53,7 @@ CharacterService::CharacterService(PyServiceMgr *mgr, DBcore *dbc)
 	PyCallable_REG_CALL(CharacterService, ValidateName)
 	PyCallable_REG_CALL(CharacterService, ValidateNameEx)
 	PyCallable_REG_CALL(CharacterService, CreateCharacter)
+	PyCallable_REG_CALL(CharacterService, Ping)
 	PyCallable_REG_CALL(CharacterService, PrepareCharacterForDelete)
 	PyCallable_REG_CALL(CharacterService, CancelCharacterDeletePrepare)
 	PyCallable_REG_CALL(CharacterService, AddOwnerNote)
@@ -211,8 +212,6 @@ PyCallResult CharacterService::Handle_CreateCharacter(PyCallArgs &call) {
 	}
 
 	CharacterData cdata;
-	CharacterAppearance capp;
-
 	cdata.name = arg.name;
 	cdata.bloodlineID = arg.bloodlineID;
 	cdata.genderID = arg.genderID;
@@ -248,11 +247,12 @@ PyCallResult CharacterService::Handle_CreateCharacter(PyCallArgs &call) {
 	}
 
 	_log(CLIENT__MESSAGE, "CreateCharacter called for '%s'", cdata.name.c_str());
-	_log(CLIENT__MESSAGE, "  bloodlineID=%d genderID=%d ancestryID=%d", 
-			cdata.bloodlineID, cdata.genderID, cdata.ancestryID);
-	_log(CLIENT__MESSAGE, "  +INT=%d +CHA=%d +PER=%d +MEM=%d +WIL=%d", 
+	_log(CLIENT__MESSAGE, "  bloodlineID=%lu genderID=%lu ancestryID=%lu careerID=%lu careerSpecialityID=%lu", 
+			cdata.bloodlineID, cdata.genderID, cdata.ancestryID, cdata.careerID, cdata.careerSpecialityID);
+	_log(CLIENT__MESSAGE, "  +INT=%lu +CHA=%lu +PER=%lu +MEM=%lu +WIL=%lu", 
 			cdata.Intelligence, cdata.Charisma, cdata.Perception, cdata.Memory, cdata.Willpower);
 
+	CharacterAppearance capp;
 	//this builds appearance data from strdict
 	capp.Build(arg.appearance);
 
@@ -263,11 +263,10 @@ PyCallResult CharacterService::Handle_CreateCharacter(PyCallArgs &call) {
 	if(   !m_db.GetLocationCorporationByCareer(cdata, x, y, z)
 	   || !m_db.GetAttributesFromBloodline(cdata)
 	   || !m_db.GetAttributesFromAncestry(cdata) ) {
-		codelog(CLIENT__ERROR, "Failed to load char create details. Bloodline %lu, ancestry %lu.",
-			cdata.bloodlineID, cdata.ancestryID);
+		codelog(CLIENT__ERROR, "Failed to load char create details. Bloodline %lu, ancestry %lu, career %lu.",
+			cdata.bloodlineID, cdata.ancestryID, cdata.careerID);
 		return(NULL);
 	}
-	cdata.allianceID = 0;
 	
 	cdata.raceID = m_db.GetRaceByBloodline(cdata.bloodlineID);
 	if(cdata.raceID == 0) {
@@ -319,8 +318,7 @@ PyCallResult CharacterService::Handle_CreateCharacter(PyCallArgs &call) {
 		codelog(CLIENT__ERROR, "Failed to create character '%s'", cdata.name.c_str());
 		return(NULL);
 	}
-	uint32 charid = char_item->itemID();
-	cdata.charid = charid;
+	cdata.charid = char_item->itemID();
 
 	//spawn all the skills
 	InventoryItem *i;
@@ -346,7 +344,7 @@ PyCallResult CharacterService::Handle_CreateCharacter(PyCallArgs &call) {
 		std::string capsule_name = cdata.name + "'s Capsule";
 		InventoryItem *capsule = m_manager->item_factory->SpawnSingleton(
 			itemTypeCapsule,
-			charid,
+			cdata.charid,
 			cdata.stationID,
 			flagHangar,
 			capsule_name.c_str());
@@ -355,8 +353,6 @@ PyCallResult CharacterService::Handle_CreateCharacter(PyCallArgs &call) {
 			//what to do?
 			return(NULL);
 		}
-		//hack in a relocation
-		//capsule->Relocate(-1464808120320.0, 96202629120.0, -2573596385280.0);
 		capsule->Relocate(GPoint(x,y,z));
 	
 		//put the player in their capsule
@@ -369,25 +365,22 @@ PyCallResult CharacterService::Handle_CreateCharacter(PyCallArgs &call) {
 		junk = m_manager->item_factory->Spawn(
 			2046,	//Damage Control I
 			1,
-			charid, cdata.stationID, flagHangar);
-		if(junk == NULL) {
+			cdata.charid, cdata.stationID, flagHangar);
+		if(junk == NULL)
 			codelog(CLIENT__ERROR, "%s: Failed to spawn a starting item", cdata.name.c_str());
-		} else {
+		else
 			junk->Release();
-		}
 		
 		junk = m_manager->item_factory->Spawn(
 			34,		//Tritanium
 			1,
-			charid,
+			cdata.charid,
 			cdata.stationID,
 			flagHangar);
-		if(junk == NULL) {
+		if(junk == NULL)
 			codelog(CLIENT__ERROR, "%s: Failed to spawn a starting item", cdata.name.c_str());
-		} else {
+		else
 			junk->Release();
-		}
-		junk = NULL;
 	}
 
 	{	//item scope
@@ -395,17 +388,15 @@ PyCallResult CharacterService::Handle_CreateCharacter(PyCallArgs &call) {
 		InventoryItem *ship_item;
 		ship_item = m_manager->item_factory->SpawnSingleton(
 			shipTypeID,		// The race-specific start ship
-			charid,
+			cdata.charid,
 			cdata.stationID,
 			flagHangar,
 			ship_name.c_str());
 		if(ship_item == NULL) {
 			codelog(CLIENT__ERROR, "%s: Failed to spawn a starting item", cdata.name.c_str());
 		} else {
-			//hack in a relocation
-			//ship_item->Relocate(-1464808120320.0, 96202629120.0, -2573596385280.0);
 			ship_item->Relocate(GPoint(x,y,z));
-			
+
 			ship_item->Release();
 			ship_item = NULL;
 		}
@@ -415,9 +406,13 @@ PyCallResult CharacterService::Handle_CreateCharacter(PyCallArgs &call) {
 	char_item->Save(true);
 	char_item->Release();
 
-	_log(CLIENT__MESSAGE, "Sending char create ID %d as reply", charid);
+	_log(CLIENT__MESSAGE, "Sending char create ID %d as reply", cdata.charid);
 
-	return(new PyRepInteger(charid));
+	return(new PyRepInteger(cdata.charid));
+}
+
+PyCallResult CharacterService::Handle_Ping(PyCallArgs &call) {
+	return(new PyRepInteger(call.client->GetAccountID()));
 }
 
 PyCallResult CharacterService::Handle_PrepareCharacterForDelete(PyCallArgs &call) {
@@ -481,10 +476,7 @@ PyCallResult CharacterService::Handle_CancelCharacterDeletePrepare(PyCallArgs &c
 	_log(CLIENT__ERROR, "Cancel delete (of char %lu) unimplemented.", args.arg);
 
 	//returns nothing.
-	PyRep *result = NULL;
-	result = new PyRepNone();
-
-	return(result);
+	return(NULL);
 }
 
 PyCallResult CharacterService::Handle_AddOwnerNote(PyCallArgs &call) {
@@ -626,19 +618,13 @@ PyCallResult CharacterService::Handle_GetCharacterAppearanceList(PyCallArgs &cal
  */
 PyCallResult CharacterService::Handle_GetNote(PyCallArgs &call) {
 	Call_SingleIntegerArg args;
-	PyRep *result;
 
 	if(!args.Decode(&call.tuple)) {
 		codelog(CLIENT__ERROR, "Invalid arguments");
 		return(NULL);
 	}
 
-	result = m_db.GetNote(call.client->GetCharacterID(), args.arg);
-
-	if (!result)
-		result = new PyRepNone();
-
-	return(result);
+	return(m_db.GetNote(call.client->GetCharacterID(), args.arg));
 }
 
 /** Stores a Character note.

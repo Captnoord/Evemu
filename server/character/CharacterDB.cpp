@@ -163,7 +163,7 @@ InventoryItem *CharacterDB::CreateCharacter(uint32 acct, ItemFactory *fact, cons
 	m_db->DoEscapeString(titleEsc, data.title);
 	std::string descEsc;
 	m_db->DoEscapeString(descEsc, data.description);
-	
+
 	if(!m_db->RunQuery(err,
 	"INSERT INTO character_ ("
 	"	characterID,characterName,accountID,title,description,typeID,"
@@ -264,17 +264,18 @@ uint32 CharacterDB::GetRaceFromBloodline(uint32 bloodline) {
 }*/
 
 PyRepObject *CharacterDB::GetCharPublicInfo(uint32 characterID) {
-
 	DBQueryResult res;
 	
 	if(!m_db->RunQuery(res,
 		"SELECT "
 		" character_.typeID,"
 		" character_.corporationID,"
-		//schoolID
-		//careerID
-		//careerSpecialityID
-		//ancestryID
+		/* TODO:
+		 * schoolID
+		 * careerID
+		 * careerSpecialityID
+		 * ancestryID
+		 */
         /*" chrBloodlines.raceID,"*/
 		" character_.raceID,"
 		" character_.bloodlineID,"
@@ -652,6 +653,7 @@ bool CharacterDB::GetLocationCorporationByCareer(CharacterData & cdata, double &
 	if (!m_db->RunQuery(res, 
 	 "SELECT "
 	 "	chrSchools.corporationID, "
+	 "  corporation.allianceID, "
 	 "	corporation.stationID, "
 	 "	staStations.solarSystemID, "
 	 "	staStations.constellationID, "
@@ -679,14 +681,15 @@ bool CharacterDB::GetLocationCorporationByCareer(CharacterData & cdata, double &
 	}
 	
 	cdata.corporationID = row.GetUInt(0);
-	cdata.stationID = row.GetUInt(1);
-	cdata.solarSystemID = row.GetUInt(2);
-	cdata.constellationID = row.GetUInt(3);
-	cdata.regionID = row.GetUInt(4);
+	cdata.allianceID = row.GetUInt(1);
+	cdata.stationID = row.GetUInt(2);
+	cdata.solarSystemID = row.GetUInt(3);
+	cdata.constellationID = row.GetUInt(4);
+	cdata.regionID = row.GetUInt(5);
 	
-	x = row.GetDouble(5);
-	y = row.GetDouble(6);
-	z = row.GetDouble(7);
+	x = row.GetDouble(6);
+	y = row.GetDouble(7);
+	z = row.GetDouble(8);
 	
 	return (true);
 }
