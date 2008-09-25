@@ -53,6 +53,7 @@ protected:
 	PyCallable_DECL_CALL(GetHomeStation)
 	PyCallable_DECL_CALL(GetCloneTypeID)
 	PyCallable_DECL_CALL(GetCharacterAppearanceList)
+	PyCallable_DECL_CALL(GetRecentShipKillsAndLosses)
 
 	PyCallable_DECL_CALL(GetCharacterDescription)//mandela
 	PyCallable_DECL_CALL(SetCharacterDescription)//mandela

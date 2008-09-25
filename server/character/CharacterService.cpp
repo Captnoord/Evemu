@@ -62,6 +62,7 @@ CharacterService::CharacterService(PyServiceMgr *mgr, DBcore *dbc)
 	PyCallable_REG_CALL(CharacterService, GetHomeStation)
 	PyCallable_REG_CALL(CharacterService, GetCloneTypeID)
 	PyCallable_REG_CALL(CharacterService, GetCharacterAppearanceList)
+	PyCallable_REG_CALL(CharacterService, GetRecentShipKillsAndLosses)
 
 	PyCallable_REG_CALL(CharacterService, GetCharacterDescription)//mandela
 	PyCallable_REG_CALL(CharacterService, SetCharacterDescription)//mandela
@@ -544,6 +545,34 @@ PyCallResult CharacterService::Handle_GetCloneTypeID(PyCallArgs &call) {
 	result = new PyRepInteger(164);
 
 	return(result);
+}
+
+PyCallResult CharacterService::Handle_GetRecentShipKillsAndLosses(PyCallArgs &call) {
+	_log(SERVICE__WARNING, "%s::GetRecentShipKillsAndLosses unimplemented.", GetName());
+
+	util_Rowset rs;
+
+	rs.header.push_back("killID");
+	rs.header.push_back("solarSystemID");
+	rs.header.push_back("victimCharacterID");
+	rs.header.push_back("victimCorporationID");
+	rs.header.push_back("victimAllianceID");
+	rs.header.push_back("victimFactionID");
+	rs.header.push_back("victimShipTypeID");
+	rs.header.push_back("finalCharacterID");
+	rs.header.push_back("finalCorporationID");
+	rs.header.push_back("finalAllianceID");
+	rs.header.push_back("finalFactionID");
+	rs.header.push_back("finalShipTypeID");
+	rs.header.push_back("finalWeaponTypeID");
+	rs.header.push_back("killBlob");	//string
+	rs.header.push_back("killTime");	//uint64
+	rs.header.push_back("victimDamageTaken");
+	rs.header.push_back("finalSecurityStatus");	//real
+	rs.header.push_back("finalDamageDone");
+	rs.header.push_back("moonID");
+
+	return(rs.Encode());
 }
 
 

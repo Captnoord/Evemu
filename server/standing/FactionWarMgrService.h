@@ -27,6 +27,7 @@ public:
 
 	PyCallable_DECL_CALL(GetWarFactions)
 	PyCallable_DECL_CALL(GetFacWarSystems)
+	PyCallable_DECL_CALL(GetCharacterRankOverview)
 
 private:
 	class Dispatcher;

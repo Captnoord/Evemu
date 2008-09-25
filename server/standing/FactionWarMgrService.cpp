@@ -33,16 +33,17 @@ FactionWarMgrService::FactionWarMgrService(PyServiceMgr *mgr, DBcore *db)
 
 	PyCallable_REG_CALL(FactionWarMgrService, GetWarFactions)
 	PyCallable_REG_CALL(FactionWarMgrService, GetFacWarSystems)
+	PyCallable_REG_CALL(FactionWarMgrService, GetCharacterRankOverview)
 }
 
 PyCallResult FactionWarMgrService::Handle_GetWarFactions(PyCallArgs &call) {
-	_log(SERVICE__ERROR, "%s: GetWarFactions unimplemented.", GetName());
+	_log(SERVICE__ERROR, "%s::GetWarFactions unimplemented.", GetName());
 
 	return(new PyRepList());
 }
 
 PyCallResult FactionWarMgrService::Handle_GetFacWarSystems(PyCallArgs &call) {
-	_log(SERVICE__ERROR, "%s: GetFacWarSystems not fully unimplemented.", GetName());
+	_log(SERVICE__ERROR, "%s::GetFacWarSystems not fully unimplemented.", GetName());
 
 	ObjectCachedMethodID method_id(GetName(), "GetFacWarSystems");
 
@@ -54,6 +55,25 @@ PyCallResult FactionWarMgrService::Handle_GetFacWarSystems(PyCallArgs &call) {
 	}
 
 	return(m_manager->GetCache()->MakeObjectCachedMethodCallResult(method_id));
+}
+
+PyCallResult FactionWarMgrService::Handle_GetCharacterRankOverview(PyCallArgs &call) {
+	Call_SingleIntegerArg arg;
+	if(!arg.Decode(&call.tuple)) {
+		_log(SERVICE__ERROR, "Failed to decode args.");
+		return(NULL);
+	}
+
+	_log(SERVICE__WARNING, "%s::GetCharacterRankOverview(charid=%lu) unimplemented.", GetName(), arg.arg);
+
+	util_Rowset rs;
+
+	rs.header.push_back("currentRank");
+	rs.header.push_back("highestRank");
+	rs.header.push_back("factionID");
+	rs.header.push_back("lastModified");
+
+	return(rs.Encode());
 }
 
 

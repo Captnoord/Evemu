@@ -138,7 +138,6 @@ PyCallResult SkillMgrBound::Handle_GetEndOfTraining(PyCallArgs &call) {
 
 PyCallResult SkillMgrBound::Handle_GetSkillHistory(PyCallArgs &call) {
 	_log(SERVICE__WARNING, "%s: GetSkillHistory unimplemented.", GetName());
-	call.tuple->Dump(SERVICE__WARNING, " Call args:");
 
 	util_Rowset rowset;
 
