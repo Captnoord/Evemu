@@ -402,11 +402,11 @@ bool RamProxyDB::GetRequiredItems(const uint32 typeID, const EVERamActivity acti
 		" material.quantity,"
 		" material.damagePerJob,"
 		" IF(materialGroup.categoryID = 16, 1, 0) AS isSkill"
-		" FROM TL2MaterialsForTypeWithActivity AS material"
+		" FROM typeActivityMaterials AS material"
 		" LEFT JOIN invTypes AS materialType ON material.requiredTypeID = materialType.typeID"
 		" LEFT JOIN invGroups AS materialGroup ON materialType.groupID = materialGroup.groupID"
 		" WHERE material.typeID = %lu"
-		" AND material.activity = %d",
+		" AND material.activityID = %d",
 		typeID, (const int)activity))
 	{
 		_log(DATABASE__ERROR, "Failed to query data to build BillOfMaterials: %s.", res.error.c_str());

@@ -33,7 +33,7 @@ bool ReprocessingDB::IsRefinable(const uint32 typeID) {
 
 	if(!m_db->RunQuery(res,
 				"SELECT NULL"
-				" FROM TL2MaterialsForTypeWithActivity"
+				" FROM typeActivityMaterials"
 				" WHERE typeID=%lu"
 				" AND recycle = 0"
 				" LIMIT 1",
@@ -51,12 +51,12 @@ bool ReprocessingDB::IsRecyclable(const uint32 typeID) {
 	DBQueryResult res;
 
 	if(!m_db->RunQuery(res,
-				"SELECT NULL FROM TL2MaterialsForTypeWithActivity"
+				"SELECT NULL FROM typeActivityMaterials"
 				" LEFT JOIN invBlueprintTypes ON typeID = blueprintTypeID"
 				" WHERE damagePerJob = 1 AND ("
-				"   (activity = 6 AND typeID = %lu)"
+				"   (activityID = 6 AND typeID = %lu)"
 				"   OR"
-				"	(activity = 1 AND productTypeID = %lu))"
+				"	(activityID = 1 AND productTypeID = %lu))"
 				" AND recycle = 1"
 				" LIMIT 1",
 				typeID, typeID))
@@ -125,12 +125,12 @@ bool ReprocessingDB::GetRecoverables(const uint32 typeID, std::vector<Recoverabl
 	DBResultRow row;
 
 	if(!m_db->RunQuery(res,
-				"SELECT requiredTypeID, MIN(quantity) FROM TL2MaterialsForTypeWithActivity"
+				"SELECT requiredTypeID, MIN(quantity) FROM typeActivityMaterials"
 				" LEFT JOIN invBlueprintTypes ON typeID = blueprintTypeID"
 				" WHERE damagePerJob = 1 AND ("
-				"   (activity = 6 AND typeID = %lu)"
+				"   (activityID = 6 AND typeID = %lu)"
 				"   OR"
-				"	(activity = 1 AND productTypeID = %lu))"
+				"	(activityID = 1 AND productTypeID = %lu))"
 				" GROUP BY requiredTypeID",
 				typeID, typeID, typeID))
 	{

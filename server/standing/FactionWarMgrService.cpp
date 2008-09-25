@@ -34,12 +34,20 @@ FactionWarMgrService::FactionWarMgrService(PyServiceMgr *mgr, DBcore *db)
 	PyCallable_REG_CALL(FactionWarMgrService, GetWarFactions)
 	PyCallable_REG_CALL(FactionWarMgrService, GetFacWarSystems)
 	PyCallable_REG_CALL(FactionWarMgrService, GetCharacterRankOverview)
+	PyCallable_REG_CALL(FactionWarMgrService, GetFactionMilitiaCorporation)
 }
 
 PyCallResult FactionWarMgrService::Handle_GetWarFactions(PyCallArgs &call) {
-	_log(SERVICE__ERROR, "%s::GetWarFactions unimplemented.", GetName());
+	ObjectCachedMethodID method_id(GetName(), "GetWarFactions");
 
-	return(new PyRepList());
+	if(!m_manager->GetCache()->IsCacheLoaded(method_id)) {
+		PyRep *res = m_db.GetWarFactions();
+		if(res == NULL)
+			return(NULL);
+		m_manager->GetCache()->GiveCache(method_id, &res);
+	}
+
+	return(m_manager->GetCache()->MakeObjectCachedMethodCallResult(method_id));
 }
 
 PyCallResult FactionWarMgrService::Handle_GetFacWarSystems(PyCallArgs &call) {
@@ -48,10 +56,10 @@ PyCallResult FactionWarMgrService::Handle_GetFacWarSystems(PyCallArgs &call) {
 	ObjectCachedMethodID method_id(GetName(), "GetFacWarSystems");
 
 	if(!m_manager->GetCache()->IsCacheLoaded(method_id)) {
-		PyRepDict *dict = new PyRepDict;
-		if(!m_db.GetFacWarSystems(*dict))
+		PyRep *res = m_db.GetWarFactions();
+		if(res == NULL)
 			return(NULL);
-		m_manager->GetCache()->GiveCache(method_id, (PyRep **)&dict);
+		m_manager->GetCache()->GiveCache(method_id, &res);
 	}
 
 	return(m_manager->GetCache()->MakeObjectCachedMethodCallResult(method_id));
@@ -74,6 +82,15 @@ PyCallResult FactionWarMgrService::Handle_GetCharacterRankOverview(PyCallArgs &c
 	rs.header.push_back("lastModified");
 
 	return(rs.Encode());
+}
+
+PyCallResult FactionWarMgrService::Handle_GetFactionMilitiaCorporation(PyCallArgs &call) {
+	Call_SingleIntegerArg arg;
+	if(!arg.Decode(&call.tuple)) {
+		_log(SERVICE__ERROR, "Failed to decode args.");
+		return(NULL);
+	}
+	return(new PyRepInteger(m_db.GetFactionMilitiaCorporation(arg.arg)));
 }
 
 

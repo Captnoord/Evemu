@@ -324,7 +324,7 @@
     <!-- 0 -->
     <list name="channels" />
     <!-- 1 -->
-    <int name="unsubscribe" />
+    <bool name="unsubscribe" />
   </InlineTuple>
 </element>
 

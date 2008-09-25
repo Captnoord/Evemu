@@ -19,23 +19,62 @@
 
 #include "../common/PyRep.h"
 #include "../common/DBcore.h"
+#include "../common/EVEDBUtils.h"
 
 FactionWarMgrDB::FactionWarMgrDB(DBcore *db)
 : ServiceDB(db)
 {
 }
 
-bool FactionWarMgrDB::GetFacWarSystems(PyRepDict &into) {
+PyRep *FactionWarMgrDB::GetWarFactions() {
 	DBQueryResult res;
 
+	if(!m_db->RunQuery(res,
+		"SELECT factionID, militiaCorporationID"
+		" FROM chrFactions"
+		" WHERE militiaCorporationID IS NOT NULL"))
+	{
+		_log(DATABASE__ERROR, "Failed to query war factions: %s.");
+		return(NULL);
+	}
+
+	return(DBResultToIntIntDict(res));
+}
+
+PyRep *FactionWarMgrDB::GetFacWarSystems() {
 	_log(DATABASE__MESSAGE, "GetFacWarSystems unimplemented.");
 
 	//fill some crap
-	PyRepDict *dict = new PyRepDict;
+	PyRepDict *result = new PyRepDict;
+	PyRepDict *dict;
+
+	dict = new PyRepDict;
 	dict->add("occupierID", new PyRepInteger(500002));
 	dict->add("factionID", new PyRepInteger(500002));
-	into.add(new PyRepInteger(30002097), dict);
+	result->add(new PyRepInteger(30002097), dict);
 
-	return(true);
+	return(result);
+}
+
+uint32 FactionWarMgrDB::GetFactionMilitiaCorporation(const uint32 factionID) {
+	DBQueryResult res;
+
+	if(!m_db->RunQuery(res,
+		"SELECT militiaCorporationID"
+		" FROM chrFactions"
+		" WHERE factionID=%lu",
+		factionID))
+	{
+		_log(DATABASE__ERROR, "Failed to query militia corporation for faction %lu: %s.", factionID);
+		return(NULL);
+	}
+
+	DBResultRow row;
+	if(!res.GetRow(row)) {
+		_log(DATABASE__ERROR, "Faction %lu not found.", factionID);
+		return(NULL);
+	}
+
+	return(row.GetUInt(0));
 }
 

@@ -20,13 +20,15 @@
 
 #include "../ServiceDB.h"
 
-class PyRepDict;
+class PyRep;
 
 class FactionWarMgrDB : public ServiceDB {
 public:
 	FactionWarMgrDB(DBcore *db);
 
-	bool GetFacWarSystems(PyRepDict &into);
+	PyRep *GetWarFactions();
+	PyRep *GetFacWarSystems();
+	uint32 GetFactionMilitiaCorporation(const uint32 factionID);
 };
 
 #endif /* __FACTION_WAR_MGR_DB__H__INCL__ */
