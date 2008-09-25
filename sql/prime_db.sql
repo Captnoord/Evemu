@@ -12,7 +12,7 @@ SET @@FOREIGN_KEY_CHECKS = 0;
 -- delete from character_ where characterID > 1 AND (characterID<3008416 OR characterID>100000000);
 TRUNCATE TABLE chrEmployment;
 TRUNCATE TABLE character_;
-INSERT INTO character_ SELECT *, 0 FROM characterStatic;
+INSERT INTO character_ SELECT *, 0 AS Online FROM characterStatic;
 
 -- Copy over the static entities
 -- optional cleanup instead of the bulk delete: 
@@ -32,6 +32,11 @@ INSERT INTO corporation SELECT * FROM corporationStatic;
 -- delete from eveStaticOwners where ownerID > 1 AND (ownerID<1000000 OR ownerID>100000000);
 TRUNCATE TABLE eveStaticOwners;
 -- We dont store it in separate table anymore as we can copy it from elsewhere
+-- more or less static record .. we might eventually find a new home for it
+INSERT INTO eveStaticOwners
+ (ownerID, ownerName, typeID)
+ VALUES
+ (1, 'EVE System', 0);
 -- static characters
 INSERT INTO eveStaticOwners
  SELECT ch.characterID, ch.characterName, bl.typeID
@@ -39,11 +44,11 @@ INSERT INTO eveStaticOwners
  JOIN bloodlineTypes AS bl USING (bloodlineID);
 -- factions
 INSERT INTO eveStaticOwners
- SELECT factionID, factionName, 30
+ SELECT factionID, factionName, 30 AS typeID
  FROM chrFactions;
 -- static corporations
 INSERT INTO eveStaticOwners
- SELECT corporationID, corporationName, 2
+ SELECT corporationID, corporationName, 2 AS typeID
  FROM corporationStatic;
 
 -- Copy over the static channel info

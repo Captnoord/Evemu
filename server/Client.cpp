@@ -186,16 +186,17 @@ Client::Client(PyServiceMgr *services, EVETCPConnection **con)
 
 	m_char.name = "monkey";
 	m_char.charid = 444666;
-	m_char.bloodlineID = 1;
-	m_char.genderID = 0;
+	m_char.bloodlineID = 0;
+	m_char.genderID = 1;
 	m_char.ancestryID = 2;
 	m_char.careerID = 3;
-	m_char.careerSpecialityID = 4;
-	m_char.Intelligence = 5;
-	m_char.Charisma = 6;
-	m_char.Perception = 7;
-	m_char.Memory = 8;
-	m_char.Willpower = 9;
+	m_char.schoolID = 4;
+	m_char.careerSpecialityID = 5;
+	m_char.Intelligence = 6;
+	m_char.Charisma = 7;
+	m_char.Perception = 8;
+	m_char.Memory = 9;
+	m_char.Willpower = 10;
 
 	//initialize connection
 	m_net.SendHandshake(m_services->entity_list->GetClientCount());

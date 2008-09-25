@@ -120,6 +120,7 @@ public:
 	uint32 genderID;
 	uint32 ancestryID;
 	uint32 careerID;
+	uint32 schoolID;
 	uint32 careerSpecialityID;
 	
 	uint32 Intelligence;

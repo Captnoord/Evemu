@@ -942,7 +942,7 @@ void PyRepPackedObject::CloneFrom(const PyRepPackedObject *from) {
 PyRepPackedObject1::PyRepPackedObject1(
 	const char *_type,
 	PyRepTuple *_args,
-	PyRepDict &_keywords)
+	const PyRepDict &_keywords)
 : PyRepPackedObject(PyRep::PackedObject1),
   type(_type),
   args(_args),

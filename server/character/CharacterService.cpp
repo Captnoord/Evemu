@@ -282,13 +282,12 @@ PyCallResult CharacterService::Handle_CreateCharacter(PyCallArgs &call) {
 	cdata.solarSystemID = 30001407;
 	cdata.constellationID = 20000206;
 	cdata.regionID = 10000016;
-	cdata.corporationID = 1000044;
 
 	cdata.bounty = 0;
 	cdata.balance = 6666000000.0f;
 	cdata.securityRating = 0;
 	cdata.logonMinutes = 0;
-	cdata.title = "CharTitle";
+	cdata.title = "No Title";
 
 	cdata.startDateTime = Win32TimeNow();
 	cdata.createDateTime = cdata.startDateTime;

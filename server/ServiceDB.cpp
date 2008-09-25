@@ -515,7 +515,8 @@ bool ServiceDB::LoadCharacter(uint32 characterID, CharacterData &into) {
 	"	character_.bounty,character_.balance,character_.securityRating,character_.logonMinutes,"
 	"	character_.corporationID,character_.corporationDateTime,corporation.allianceID,"
 	"	character_.stationID,character_.solarSystemID,character_.constellationID,character_.regionID,"
-	"	character_.bloodlineID,character_.gender,character_.raceID"
+	"	character_.bloodlineID,character_.gender,character_.raceID,character_.ancestryID,"
+	"	character_.careerID,character_.schoolID,character_.careerSpecialityID"
 	" FROM character_"
 	" LEFT JOIN corporation ON corporation.corporationID = character_.corporationID"
 	" WHERE characterID=%lu", characterID))
@@ -551,6 +552,10 @@ bool ServiceDB::LoadCharacter(uint32 characterID, CharacterData &into) {
 	into.bloodlineID = row.GetUInt(i++);
 	into.genderID = row.GetUInt(i++);
 	into.raceID = row.GetUInt(i++);
+	into.ancestryID = row.GetUInt(i++);
+	into.careerID = row.GetUInt(i++);
+	into.schoolID = row.GetUInt(i++);
+	into.careerSpecialityID = row.GetUInt(i++);
 	
 	into.charid = characterID;
 	return(true);

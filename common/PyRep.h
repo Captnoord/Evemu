@@ -366,7 +366,7 @@ public:
 //opcode 0x22
 class PyRepPackedObject1 : public PyRepPackedObject {
 public:
-	PyRepPackedObject1(const char *_type = "", PyRepTuple *_args = NULL, PyRepDict &_keywords = PyRepDict());
+	PyRepPackedObject1(const char *_type = "", PyRepTuple *_args = NULL, const PyRepDict &_keywords = PyRepDict());
 	~PyRepPackedObject1();
 	virtual void Dump(FILE *into, const char *pfx) const;
 	virtual void Dump(LogType ltype, const char *pfx) const;

@@ -171,7 +171,7 @@ InventoryItem *CharacterDB::CreateCharacter(uint32 acct, ItemFactory *fact, cons
 	"	bounty,balance,securityRating,petitionMessage,logonMinutes,"
 	"	corporationID,corporationDateTime,"
 	"	stationID,solarSystemID,constellationID,regionID,"
-	"	raceID,bloodlineID,gender,"
+	"	raceID,bloodlineID,ancestryID,careerID,schoolID,careerSpecialityID,gender,"
 	"	accessoryID,beardID,costumeID,decoID,eyebrowsID,eyesID,"
 	"	hairID,lipstickID,makeupID,skinID,backgroundID,lightID,"
 	"	headRotation1,headRotation2,headRotation3,"
@@ -187,7 +187,7 @@ InventoryItem *CharacterDB::CreateCharacter(uint32 acct, ItemFactory *fact, cons
 	"	%.13f, %.13f, %.13f, '', %lu,"
 	"	%ld,%lld,"		//corp
 	"	%ld,%ld,%ld,%ld,"	//loc
-	"	%lu,%lu,%lu,"
+	"	%lu,%lu,%lu,%lu,%lu,%lu,%lu,"
 	"	%s,%s,%ld,%s,%ld,%ld,"
 	"	%ld,%s,%s,%ld,%ld,%ld,"
 	"	%.13f,%.13f,%.13f,"	//head
@@ -203,7 +203,7 @@ InventoryItem *CharacterDB::CreateCharacter(uint32 acct, ItemFactory *fact, cons
 		data.bounty,data.balance,data.securityRating,data.logonMinutes,
 		data.corporationID, data.corporationDateTime,
 		data.stationID, data.solarSystemID, data.constellationID, data.regionID,
-		data.raceID, data.bloodlineID, data.genderID,
+		data.raceID, data.bloodlineID, data.ancestryID, data.careerID, data.schoolID, data.careerSpecialityID, data.genderID,
 		_VoN(accessoryID,app),_VoN(beardID,app),app.costumeID,_VoN(decoID,app),app.eyebrowsID,app.eyesID,
 		app.hairID,_VoN(lipstickID,app),_VoN(makeupID,app),app.skinID,app.backgroundID,app.lightID,
 		app.headRotation1, app.headRotation2, app.headRotation3, 
@@ -265,20 +265,18 @@ uint32 CharacterDB::GetRaceFromBloodline(uint32 bloodline) {
 
 PyRepObject *CharacterDB::GetCharPublicInfo(uint32 characterID) {
 	DBQueryResult res;
-	
+
 	if(!m_db->RunQuery(res,
 		"SELECT "
 		" character_.typeID,"
 		" character_.corporationID,"
-		/* TODO:
-		 * schoolID
-		 * careerID
-		 * careerSpecialityID
-		 * ancestryID
-		 */
         /*" chrBloodlines.raceID,"*/
 		" character_.raceID,"
 		" character_.bloodlineID,"
+		" character_.ancestryID,"
+		" character_.careerID,"
+		" character_.schoolID,"
+		" character_.careerSpecialityID,"
 		" character_.characterName,"
 		" 0 as age,"	//hack
 		" character_.createDateTime,"
@@ -653,6 +651,7 @@ bool CharacterDB::GetLocationCorporationByCareer(CharacterData & cdata, double &
 	if (!m_db->RunQuery(res, 
 	 "SELECT "
 	 "	chrSchools.corporationID, "
+	 "  chrSchools.schoolID,"
 	 "  corporation.allianceID, "
 	 "	corporation.stationID, "
 	 "	staStations.solarSystemID, "
@@ -681,15 +680,16 @@ bool CharacterDB::GetLocationCorporationByCareer(CharacterData & cdata, double &
 	}
 	
 	cdata.corporationID = row.GetUInt(0);
-	cdata.allianceID = row.GetUInt(1);
-	cdata.stationID = row.GetUInt(2);
-	cdata.solarSystemID = row.GetUInt(3);
-	cdata.constellationID = row.GetUInt(4);
-	cdata.regionID = row.GetUInt(5);
+	cdata.schoolID = row.GetUInt(1);
+	cdata.allianceID = row.GetUInt(2);
+	cdata.stationID = row.GetUInt(3);
+	cdata.solarSystemID = row.GetUInt(4);
+	cdata.constellationID = row.GetUInt(5);
+	cdata.regionID = row.GetUInt(6);
 	
-	x = row.GetDouble(6);
-	y = row.GetDouble(7);
-	z = row.GetDouble(8);
+	x = row.GetDouble(7);
+	y = row.GetDouble(8);
+	z = row.GetDouble(9);
 	
 	return (true);
 }

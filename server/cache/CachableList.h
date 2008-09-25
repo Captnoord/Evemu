@@ -179,40 +179,40 @@ KCACHABLE("charCreationInfo.schools", "schools", c_chrSchools, DBUtilCRowset,
 KCACHABLE("charCreationInfo.attributes", "attributes", c_chrAttributes, DBUtilCRowset,
 	"SELECT attributeID,attributeName,description,graphicID FROM chrAttributes"
 );
-KCACHABLE("charCreationInfo.bl_accessories", "accessories", bl_accessories, DBUtilCRowset,
+KCACHABLE("charCreationInfo.bl_accessories", "accessories", bl_accessories, Rowset,
 	"SELECT bloodlineID,gender,accessoryID,npc FROM chrBLAccessories"
 );
-KCACHABLE("charCreationInfo.bl_lights", "lights", bl_lights, DBUtilCRowset,
+KCACHABLE("charCreationInfo.bl_lights", "lights", bl_lights, Rowset,
 	"SELECT lightID,lightName FROM chrBLLights"
 );
-KCACHABLE("charCreationInfo.bl_skins", "skins", bl_skins, DBUtilCRowset,
+KCACHABLE("charCreationInfo.bl_skins", "skins", bl_skins, Rowset,
 	"SELECT bloodlineID,gender,skinID,npc FROM chrBLSkins"
 );
-KCACHABLE("charCreationInfo.bl_beards", "beards", bl_beards, DBUtilCRowset,
+KCACHABLE("charCreationInfo.bl_beards", "beards", bl_beards, Rowset,
 	"SELECT bloodlineID,gender,beardID,npc FROM chrBLBeards"
 );
-KCACHABLE("charCreationInfo.bl_eyes", "eyes", bl_eyes, DBUtilCRowset,
+KCACHABLE("charCreationInfo.bl_eyes", "eyes", bl_eyes, Rowset,
 	"SELECT bloodlineID,gender,eyesID,npc FROM chrBLEyes"
 );
-KCACHABLE("charCreationInfo.bl_lipsticks", "lipsticks", bl_lipsticks, DBUtilCRowset,
+KCACHABLE("charCreationInfo.bl_lipsticks", "lipsticks", bl_lipsticks, Rowset,
 	"SELECT bloodlineID,gender,lipstickID,npc FROM chrBLLipsticks"
 );
-KCACHABLE("charCreationInfo.bl_makeups", "makeups", bl_makeups, DBUtilCRowset,
+KCACHABLE("charCreationInfo.bl_makeups", "makeups", bl_makeups, Rowset,
 	"SELECT bloodlineID,gender,makeupID,npc FROM chrBLMakeups"
 );
-KCACHABLE("charCreationInfo.bl_hairs", "hairs", bl_hairs, DBUtilCRowset,
+KCACHABLE("charCreationInfo.bl_hairs", "hairs", bl_hairs, Rowset,
 	"SELECT bloodlineID,gender,hairID,npc FROM chrBLHairs"
 );
-KCACHABLE("charCreationInfo.bl_backgrounds", "backgrounds", bl_backgrounds, DBUtilCRowset,
+KCACHABLE("charCreationInfo.bl_backgrounds", "backgrounds", bl_backgrounds, Rowset,
 	"SELECT backgroundID,backgroundName FROM chrBLBackgrounds"
 );
-KCACHABLE("charCreationInfo.bl_decos", "decos", bl_decos, DBUtilCRowset,
+KCACHABLE("charCreationInfo.bl_decos", "decos", bl_decos, Rowset,
 	"SELECT bloodlineID,gender,decoID,npc FROM chrBLDecos"
 );
-KCACHABLE("charCreationInfo.bl_eyebrows", "eyebrows", bl_eyebrows, DBUtilCRowset,
+KCACHABLE("charCreationInfo.bl_eyebrows", "eyebrows", bl_eyebrows, Rowset,
 	"SELECT bloodlineID,gender,eyebrowsID,npc FROM chrBLEyebrows"
 );
-KCACHABLE("charCreationInfo.bl_costumes", "costumes", bl_costumes, DBUtilCRowset,
+KCACHABLE("charCreationInfo.bl_costumes", "costumes", bl_costumes, Rowset,
 	"SELECT bloodlineID,gender,costumeID,npc FROM chrBLCostumes"
 );
 

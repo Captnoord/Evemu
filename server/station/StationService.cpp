@@ -45,20 +45,6 @@ StationService::~StationService() {
 
 PyCallResult StationService::Handle_GetStationItemBits(PyCallArgs &call) {
 	return m_db.GetStationItemBits(call.client->GetStationID());
-/*
-	PyRep *result = NULL;
-
-	PyRepTuple *tt;
-	tt = new PyRepTuple(5);
-	result = tt;
-
-	tt->items[0] = new PyRepInteger(241);		//hangarGraphicID
-	tt->items[1] = new PyRepInteger(1000044);	//station owner corp
-	tt->items[2] = new PyRepInteger(60004420);	//station ID
-	tt->items[3] = new PyRepInteger(7680597);	//serviceMask
-	tt->items[4] = new PyRepInteger(1529);		//stationTypeID
-
-	return(result);*/
 }
 
 
