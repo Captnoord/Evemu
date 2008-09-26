@@ -85,7 +85,9 @@ libchat_a_SOURCES = \
 	chat/LSCService.cpp \
 	chat/LSCService.h \
 	chat/OnlineStatusService.cpp \
-	chat/OnlineStatusService.h
+	chat/OnlineStatusService.h \
+	chat/VoiceMgrService.cpp \
+	chat/VoiceMgrService.h
 
 libconfig_a_SOURCES = \
 	config/ConfigDB.cpp \
@@ -150,7 +152,9 @@ libmarket_a_SOURCES = \
 	market/MarketDB.cpp \
 	market/MarketDB.h \
 	market/MarketProxyService.cpp \
-	market/MarketProxyService.h
+	market/MarketProxyService.h \
+	market/ContractMgrService.cpp \
+	market/ContractMgrService.h
 
 libmining_a_SOURCES = \
 	mining/AsteroidBeltManager.cpp \
@@ -210,7 +214,13 @@ libstanding_a_SOURCES = \
 	standing/Standing2Service.cpp \
 	standing/Standing2Service.h \
 	standing/StandingDB.cpp \
-	standing/StandingDB.h
+	standing/StandingDB.h \
+	standing/WarRegistryService.cpp \
+	standing/WarRegistryService.h \
+	standing/FactionWarMgrService.cpp \
+	standing/FactionWarMgrService.h \
+	standing/FactionWarMgrDB.cpp \
+	standing/FactionWarMgrDB.h
 
 libstation_a_SOURCES = \
 	station/JumpCloneService.cpp \

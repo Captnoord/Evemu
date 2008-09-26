@@ -18,7 +18,7 @@
 #include "FactionWarMgrDB.h"
 
 #include "../common/PyRep.h"
-#include "../common/DBcore.h"
+#include "../common/dbcore.h"
 #include "../common/EVEDBUtils.h"
 
 FactionWarMgrDB::FactionWarMgrDB(DBcore *db)
