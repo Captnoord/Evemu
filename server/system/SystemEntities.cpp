@@ -355,7 +355,7 @@ void SystemDungeonEntranceEntity::EncodeDestiny(std::vector<byte> &into) const {
 	item->head.z = pos.z;
 	item->head.sub_type = AddBallSubType_dungeonEntrance;
 	item->mass.mass = 10000000000.00;
-	item->mass.unknown51 = 0;
+	item->mass.cloak = 0;
 	item->mass.unknown52 = 0xFFFFFFFFFFFFFFFFLL;
 	item->mass.corpID = m_self->ownerID();	//a little hacky...
 	item->mass.allianceID = 0xFFFFFFFF;

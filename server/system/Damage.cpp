@@ -402,8 +402,8 @@ void DynamicSystemEntity::Killed(Damage &fatal_blow) {
 	//NOTE: Client::Killed intentionally skips over this function in order to
 	//handle the destiny stuff more carefully.
 	if(m_destiny != NULL) {
-		m_destiny->SendRemoveBall();
 		m_destiny->SendTerminalExplosion();
+		m_destiny->SendRemoveBall();
 	}
 }
 
@@ -415,7 +415,6 @@ void Client::Killed(Damage &fatal_blow) {
 	if(m_ship->typeID() == itemTypeCapsule) {
 		//we have been pod killed... off we go.
 		
-		m_destiny->SendRemoveBall();
 		m_destiny->SendTerminalExplosion();	//I think they actually delay this one a second.
 		
 		//TODO: destroy all implants

@@ -331,6 +331,21 @@ void Command_setbpattr(Client *who, CommandDB *db, PyServiceMgr *services, const
 	return;
 }
 
+void Command_state(Client *who, CommandDB *db, PyServiceMgr *services, const Seperator &args) {
+	if(!who->IsInSpace()) {
+		who->SendErrorMsg("You must be in space.");
+		return;
+	}
+
+	DestinyManager *destiny = who->Destiny();
+	if(destiny == NULL) {
+		who->SendErrorMsg("You have no destiny manager.");
+		return;
+	}
+
+	destiny->SendSetState(who->Bubble());
+}
+
 
 
 

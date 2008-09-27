@@ -63,7 +63,6 @@
 #include "NPC.h"
 
 static const uint32 PING_INTERVAL_US = 60000;
-static const uint64 HackFixedClientID = 130293001608LL;	//should prolly generate these for each client some day...
 
 CharacterAppearance::CharacterAppearance() {
 	//NULL all dynamic fields
@@ -176,7 +175,8 @@ Client::Client(PyServiceMgr *services, EVETCPConnection **con)
   m_moveState(msIdle),
   m_moveTimer(500),
   m_movePoint(0, 0, 0),
-  m_nextNotifySequence(1)
+  m_nextNotifySequence(1),
+  m_beyonceBoundCount(0)
 //  m_nextDestinyUpdate(46751)
 {
 	*con = NULL;
@@ -298,10 +298,6 @@ void Client::Process() {
 		switch(s) {
 		case msIdle:
 			_log(CLIENT__ERROR, "%s: Move timer expired when no move is pending.", GetName());
-			break;
-		//used to delay SetState update so they can init their ballpark
-		case msStateChange:
-			_ExecuteSetState();
 			break;
 		//used to delay stargate animation
 		case msJump:
@@ -506,7 +502,7 @@ void Client::_SendPingRequest() {
 	ping_req->source.callID = 0;
 	
 	ping_req->dest.type = PyAddress::Client;
-	ping_req->dest.typeID = HackFixedClientID;
+	ping_req->dest.typeID = GetAccountID();
 	ping_req->dest.callID = 0;
 	
 	ping_req->userid = m_accountID;
@@ -544,7 +540,7 @@ void Client::_CheckSessionChange() {
 	p->source.callID = 0;
 
 	p->dest.type = PyAddress::Client;
-	p->dest.typeID = HackFixedClientID;
+	p->dest.typeID = GetAccountID();
 	p->dest.callID = 0;
 
 	p->userid = 0;
@@ -644,12 +640,8 @@ bool Client::EnterSystem() {
 		m_destiny->SetPosition(Ship()->position(), false);
 		//for now, we always enter a system stopped.
 		m_destiny->Halt(false);
-		
-		//send add ball before we add ourself to the system, so we dont get it.
-		//m_destiny->SendAddBall();	//bubble manager does this now.
-		//m_destiny->SendJumpIn();
-		//delay the SetState update so they can initialize their ballpark
-		_postMove(msStateChange, 10000);
+		//send SetState update
+		m_destiny->SendSetState(Bubble());
 	} /*else {	//just dont do anything extra and let them be where they are
 		_log(CLIENT__ERROR, "Char %s (%lu) is in a bad location %lu", GetName(), GetCharacterID(), GetLocationID());
 		SendErrorMsg("In a bad location %lu", GetLocationID());
@@ -789,7 +781,7 @@ void Client::_SendLoginFailed(uint32 callid) {
 	p->source.type = PyAddress::Any;
 
 	p->dest.type = PyAddress::Client;
-	p->dest.typeID = HackFixedClientID;
+	p->dest.typeID = GetAccountID();
 	p->dest.callID = callid;
 
 	p->userid = 0;
@@ -900,7 +892,7 @@ void Client::_SendCallReturn(PyPacket *req, PyRepTuple **return_value, const cha
 	p->source = req->dest;
 
 	p->dest.type = PyAddress::Client;
-	p->dest.typeID = HackFixedClientID;
+	p->dest.typeID = GetAccountID();
 	p->dest.callID = req->source.callID;
 
 	p->userid = m_accountID;
@@ -925,7 +917,7 @@ void Client::_SendException(PyPacket *req, MACHONETERR_TYPE type, PyRep **payloa
 	p->source = req->dest;
 
 	p->dest.type = PyAddress::Client;
-	p->dest.typeID = HackFixedClientID;
+	p->dest.typeID = GetAccountID();
 	p->dest.callID = req->source.callID;
 
 	p->userid = m_accountID;
@@ -955,7 +947,7 @@ void Client::QueueDestinyEvent(PyRepTuple **multiEvent) {
 void Client::_SendQueuedUpdates(uint32 stamp) {
 	std::vector<PyRepTuple *>::const_iterator cur, end;
 	
-	if(m_destinyUpdateQueue.empty()) {
+	if(m_destinyUpdateQueue.empty() || m_beyonceBoundCount == 0) {
 		//no destiny stuff to do...
 		if(m_destinyEventQueue.empty()) {
 			//no multi-events either...
@@ -1023,18 +1015,17 @@ void Client::SendNotification(const PyAddress &dest, EVENotificationStream *noti
 	p->type = NOTIFICATION;
 
 	p->source.type = PyAddress::Node;
-	p->source.typeID = 111555;
+	p->source.typeID = m_services->GetNodeID();
 
 	p->dest = dest;
 
-	p->userid = m_accountID;
+	p->userid = GetAccountID();
 
 	p->payload = noti->Encode();
 
 	if(seq) {
 		p->named_payload = new PyRepDict();
-		p->named_payload->add("sn", new PyRepInteger(m_nextNotifySequence));
-		m_nextNotifySequence++;
+		p->named_payload->add("sn", new PyRepInteger(m_nextNotifySequence++));
 	}
 
 	_log(CLIENT__NOTIFY_DUMP, "Sending notify of type %s with ID type %s", dest.service.c_str(), dest.bcast_idtype.c_str());
@@ -1093,15 +1084,6 @@ void Client::StargateJump(uint32 fromGate, uint32 toGate) {
 void Client::_postMove(_MoveState type, uint32 wait_ms) {
 	m_moveState = type;
 	m_moveTimer.Start(wait_ms);
-}
-
-void Client::_ExecuteSetState() {
-	if(m_destiny == NULL)
-		return;
-	
-	//m_warpActive = as_warp;
-	m_destiny->SendSetState(Bubble());
-	//m_warpActive = false;
 }
 
 void Client::_ExecuteJump() {

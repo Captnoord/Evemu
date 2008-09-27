@@ -38,9 +38,10 @@ TutorialService::TutorialService(PyServiceMgr *mgr, DBcore *dbc)
 
 	//PyCallable_REG_CALL(TutorialService, GetTutorialInfo)
 	PyCallable_REG_CALL(TutorialService, GetTutorials)
-	//PyCallable_REG_CALL(TutorialService, GetCriterias)
+	PyCallable_REG_CALL(TutorialService, GetCriterias)
 	PyCallable_REG_CALL(TutorialService, GetCategories)
 	PyCallable_REG_CALL(TutorialService, GetContextHelp)
+	PyCallable_REG_CALL(TutorialService, GetCharacterTutorialState)
 }
 
 TutorialService::~TutorialService() {
@@ -49,130 +50,123 @@ TutorialService::~TutorialService() {
 
 /*
 PyCallResult TutorialService::Handle_GetTutorialInfo(PyCallArgs &call) {
-	PyRep *result = NULL;
 	Call_GetTutorialInfo args;
-	
-	if(!args.Decode(&call.tuple))
-	{
+	if(!args.Decode(&call.tuple)) {
 		codelog(CLIENT__ERROR, "Can't parse args.");
 		return(NULL);
 	}
 
-	PyRepObject *keyval = new PyRepObject();
-	result = keyval;
+	Rsp_GetTutorialInfo rsp;
 
-	keyval->type = "util.KeyVal";
-	PyRepDict *keyval_args = new PyRepDict();
-	keyval->arguments = keyval_args;
-
-
-	//pagecriterias item
-	{
-		PyRepObject *rowset = m_db.GetPageCriterias(args.tutorialID);
-		if(rowset == NULL)
-		{
-			codelog(CLIENT__ERROR, "An error occured while getting pagecriterias.");
-			return(NULL);
-		}
-		keyval_args->add("pagecriterias", rowset);
+	rsp.pagecriterias = m_db.GetPageCriterias(args.tutorialID);
+	if(rsp.pagecriterias == NULL) {
+		codelog(SERVICE__ERROR, "An error occured while getting pagecriterias for tutorial %lu.", args.tutorialID);
+		return(NULL);
 	}
 
-	//pages item
-	{
-		PyRepObject *rowset = m_db.GetPages(args.tutorialID);
-		if(rowset == NULL)
-		{
-			codelog(CLIENT__ERROR, "An error occured while getting pages.");
-			return(NULL);
-		}
-		keyval_args->add("pages", rowset);
+	rsp.pages = m_db.GetPages(args.tutorialID);
+	if(rsp.pages == NULL) {
+		codelog(SERVICE__ERROR, "An error occured while getting pages for tutorial %lu.", args.tutorialID);
+		return(NULL);
 	}
 
-
-	//tutorial item
-	{
-		PyRepObject *rowset = m_db.GetTutorial(args.tutorialID);
-		if(rowset == NULL)
-		{
-			codelog(CLIENT__ERROR, "An error occured while getting tutorial.");
-			return(NULL);
-		}
-		keyval_args->add("tutorial", rowset);
+	rsp.tutorial = m_db.GetTutorial(args.tutorialID);
+	if(rsp.tutorial == NULL) {
+		codelog(SERVICE__ERROR, "An error occured while getting tutorial %lu.", args.tutorialID);
+		return(NULL);
 	}
 
-	//criterias item
-	{
-		PyRepObject *rowset = m_db.GetTutorialCriterias(args.tutorialID);
-		if(rowset == NULL)
-		{
-			codelog(CLIENT__ERROR, "An error occured while getting tutorial criterias.");
-			return(NULL);
-		}
-		keyval_args->add("criterias", rowset);
+	rsp.criterias = m_db.GetTutorialCriterias(args.tutorialID);
+	if(rsp.criterias == NULL) {
+		codelog(SERVICE__ERROR, "An error occured while getting criterias for tutorial %lu.", args.tutorialID);
+		return(NULL);
 	}
 
-	return(result);
+	return(rsp.Encode());
 }
 */
 
 PyCallResult TutorialService::Handle_GetTutorials(PyCallArgs &call) {
-	return(m_db.GetAllTutorials());
+	//return(m_db.GetAllTutorials());
+
+	PyRepDict *d = new PyRepDict;
+
+	PyRepTuple *args = new PyRepTuple(1);
+	PyRepTuple *col_list = new PyRepTuple(5);
+	args->items[0] = col_list;
+
+	PyRepTuple *col;
+	col = new PyRepTuple(2);
+	col->items[0] = new PyRepString("tutorialID");
+	col->items[1] = new PyRepInteger(DBTYPE_I4);
+	col_list->items[0] = col;
+
+	col = new PyRepTuple(2);
+	col->items[0] = new PyRepString("tutorialName");
+	col->items[1] = new PyRepInteger(DBTYPE_STR);
+	col_list->items[1] = col;
+
+	col = new PyRepTuple(2);
+	col->items[0] = new PyRepString("nextTutorialID");
+	col->items[1] = new PyRepInteger(DBTYPE_I4);
+	col_list->items[2] = col;
+
+	col = new PyRepTuple(2);
+	col->items[0] = new PyRepString("categoryID");
+	col->items[1] = new PyRepInteger(DBTYPE_I4);
+	col_list->items[3] = col;
+
+	col = new PyRepTuple(2);
+	col->items[0] = new PyRepString("dataID");
+	col->items[1] = new PyRepInteger(DBTYPE_I4);
+	col_list->items[4] = col;
+
+	d->add("header", new PyRepPackedObject1("blue.DBRowDescriptor", args));
+
+	return(new PyRepPackedObject2("dbutil.CRowset", NULL, d));
 }
 
-/*
 PyCallResult TutorialService::Handle_GetCriterias(PyCallArgs &call) {
-	PyRep *result = NULL;
-
-	PyRepObject *rowset = m_db.GetAllCriterias();
-	if(rowset == NULL)
-	{
-		codelog(CLIENT__ERROR, "An error occured while getting criterias.");
-		return(NULL);
-	}
-	result = rowset;
-
-	return(result);
+	return(m_db.GetAllCriterias());
 }
-*/
 
 PyCallResult TutorialService::Handle_GetCategories(PyCallArgs &call) {
 	_log(SERVICE__WARNING, "%s: GetCategories unimplemented.", GetName());
-	call.tuple->Dump(SERVICE__WARNING, " Call args:");
 
 	util_Rowset res;
 
 	res.header.push_back("categoryID");
 	res.header.push_back("categoryName");
 	res.header.push_back("description");
-	res.header.push_back("dataID");
+	res.header.push_back("dataID");	//TODO: what is this?
 
 	//TODO: save this crap into DB
 	PyRepList *line = new PyRepList;
 	line->add(new PyRepInteger(1));
 	line->add(new PyRepString("Beginner Tutorials"));
 	line->add(new PyRepString("Here are the basic tutorials for your first days in EVE!"));
-	line->add(new PyRepInteger(2386927));	//TODO: what is this?
+	line->add(new PyRepInteger(2386927));
 	res.lines.add(line);
 
 	line = new PyRepList;
 	line->add(new PyRepInteger(2));
 	line->add(new PyRepString("Intermediate Tutorials"));
 	line->add(new PyRepString("Under this category fall all advanced tutorials"));
-	line->add(new PyRepInteger(2387321));	//TODO: what is this?
+	line->add(new PyRepInteger(2387321));
 	res.lines.add(line);
 
 	line = new PyRepList;
 	line->add(new PyRepInteger(3));
 	line->add(new PyRepString("Advanced Tutorials"));
 	line->add(new PyRepString(""));
-	line->add(new PyRepInteger(2388093));	//TODO: what is this?
+	line->add(new PyRepInteger(2388093));
 	res.lines.add(line);
 
 	line = new PyRepList;
 	line->add(new PyRepInteger(4));
 	line->add(new PyRepString("Informative Tutorials"));
 	line->add(new PyRepString(""));
-	line->add(new PyRepInteger(2388094));	//TODO: what is this?
+	line->add(new PyRepInteger(2388094));
 	res.lines.add(line);
 
 	return(res.Encode());
@@ -181,6 +175,17 @@ PyCallResult TutorialService::Handle_GetCategories(PyCallArgs &call) {
 PyCallResult TutorialService::Handle_GetContextHelp(PyCallArgs &call) {
 	//unimplemented
 	return(new PyRepList());
+}
+
+PyCallResult TutorialService::Handle_GetCharacterTutorialState(PyCallArgs &call) {
+	util_Rowset rs;
+
+	rs.header.push_back("characterID");
+	rs.header.push_back("tutorialID");
+	rs.header.push_back("pageID");
+	rs.header.push_back("eventTypeID");
+
+	return(rs.Encode());
 }
 
 

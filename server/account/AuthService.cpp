@@ -15,16 +15,34 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
-
 #include "AuthService.h"
 #include "../common/logsys.h"
 #include "../common/PyRep.h"
 #include "../common/PyPacket.h"
 #include "../common/EVEUtils.h"
+#include "../common/EVEmuRevision.h"
 #include "../Client.h"
 #include "../PyServiceCD.h"
 #include "../PyServiceMgr.h"
+
+#ifdef SHOW_LOGIN_MESSAGE
+//some adverts - may be customized
+static const char *const loginMessage = 
+"<html>"
+	"<head>"
+	"</head>"
+	"<body>"
+		"Welcome to <b>EVEmu Server " EVEMU_REVISION "</b>.<br>"
+		"<br>"
+		"You can find a lot of interesing info about this project at <a href=\"http://evemu.sourceforge.net/\">SoureForge.net</a> or at <a href=\"http://mmoforge.org/gf/project/evemu\">MMOForge.org</a>.<br>"
+		"<br>"
+		"You can also join our IRC channel at <b>irc.mmoforge.org:6667</b>, channel <b>#evemu</b>.<br>"
+		"<br>"
+		"Best wishes,<br>"
+		"EVEmu development team"
+	"</body>"
+"</html>";
+#endif /* SHOW_LOGIN_MESSAGE */
 
 class AuthService::Dispatcher
 : public PyCallableDispatcher<AuthService> {
@@ -50,11 +68,7 @@ AuthService::~AuthService() {
 
 
 PyCallResult AuthService::Handle_Ping(PyCallArgs &call) {
-	PyRep *result = NULL;
-	
-	result = new PyRepInteger(Win32TimeNow());
-	
-	return(result);
+	return(new PyRepInteger(Win32TimeNow()));
 }
 
 
@@ -81,7 +95,13 @@ PyCallResult AuthService::Handle_GetPostAuthenticationMessage(PyCallArgs &call) 
 				args->items[ new PyRepString("showButtons") ] = new PyRepInteger(0);
 				args->items[ new PyRepString("showModal") ] = new PyRepInteger(1);
 */
-	result = new PyRepNone();
+
+#ifdef SHOW_LOGIN_MESSAGE
+	PyRepDict *args = new PyRepDict;
+	args->add("message", loginMessage);
+	result = new PyRepObject("util.KeyVal", args);
+#endif /* SHOW_LOGIN_MESSAGE */
+
 	return(result);
 }
 

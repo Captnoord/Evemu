@@ -63,7 +63,6 @@ PyCallResult PyService::Call(PyCallStream &call, PyCallArgs &args) {
 */
 
 PyCallResult PyService::Handle_MachoResolveObject(PyCallArgs &call) {
-	PyRep *result = NULL;
 //takes ((stationID, u1_2=15), u2=0)
 
 	//returns a single integer. like 126774 (last element in session change, version number on dogmaIM.attributesByName)
@@ -71,13 +70,10 @@ PyCallResult PyService::Handle_MachoResolveObject(PyCallArgs &call) {
 //	PyRepTuple *t = new PyRepTuple(1);
 //	PyRepSubStream *ss = new PyRepSubStream();
 //	t->items[0] = ss;
-	
-	PyRepInteger *i = new PyRepInteger(m_manager->GetNodeID());
-	result = i;
 
 	_log(CLIENT__MESSAGE, "%s Service: MachoResolveObject requested, returning %lu", GetName(), m_manager->GetNodeID());
 	
-	return(result);
+	return(new PyRepInteger(m_manager->GetNodeID()));
 }
 
 

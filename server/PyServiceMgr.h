@@ -45,7 +45,7 @@ class LSCService;
 
 class PyServiceMgr {
 public:
-	PyServiceMgr(uint32 global_node_ID, DBcore *db, EntityList *elist, ItemFactory *ifactory, const std::string &CacheDirectory);
+	PyServiceMgr(uint32 nodeID, DBcore *db, EntityList *elist, ItemFactory *ifactory, const std::string &CacheDirectory);
 	~PyServiceMgr();
 	
 	void Process();
@@ -54,7 +54,7 @@ public:
 	PyService *LookupService(const PyPacket *p);
 	
 	ObjCacheService *GetCache() { return(m_cache); }
-	uint32 GetNodeID() const { return(m_globalNodeID); }
+	uint32 GetNodeID() const { return(m_nodeID); }
 	
 	//object binding, not fully understood yet.
 	PyRepSubStruct *BindObject(Client *who, PyBoundObject *obj, PyRepDict **dict = NULL);
@@ -85,7 +85,7 @@ protected:
 	
 	//this is getting messy:
 	uint32 _AllocateBindID();
-	const uint32 m_globalNodeID;
+	uint32 m_nodeID;
 	uint32 m_nextBindID;
 	class BoundObject {
 	public:

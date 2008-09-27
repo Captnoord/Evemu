@@ -306,6 +306,9 @@ public:
 	bool EnterSystem();
 	bool Load(uint32 char_id);
 	void JoinCorporationUpdate(uint32 corp_id);
+	//should be done better
+	void BeyonceBoundCreated() { m_beyonceBoundCount++; _log(CLIENT__MESSAGE, "BeyonceBound Created: %lu objects active.", m_beyonceBoundCount); }
+	void BeyonceBoundDestroyed() { m_beyonceBoundCount--; _log(CLIENT__MESSAGE, "BeyonceBound Destroyed: %lu objects remain.", m_beyonceBoundCount); }
 	inline InventoryItem *Ship() const { return(m_ship); }
 	void SavePosition();
 	
@@ -398,7 +401,6 @@ protected:
 	//this whole move system is a piece of crap:
 	typedef enum {
 		msIdle,
-		msStateChange,
 		msJump
 	} _MoveState;
 	void _postMove(_MoveState type, uint32 wait_ms=500);
@@ -406,13 +408,12 @@ protected:
 	Timer m_moveTimer;
 	uint32 m_moveSystemID;
 	GPoint m_movePoint;
-	//bool m_warpActive;	//only for destiny setstate right now...
-	void _ExecuteSetState();
 	void _ExecuteJump();
 	
 private:
 	//queues for destiny updates:
 	std::vector<PyRep *> m_destinyEventQueue;	//we own these. These are events as used in OnMultiEvent
+	uint32 m_beyonceBoundCount;
 	std::vector<PyRepTuple *> m_destinyUpdateQueue;	//we own these. They are the `update` which go into DoDestinyAction
 	void _SendQueuedUpdates(uint32 stamp);
 

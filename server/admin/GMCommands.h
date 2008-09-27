@@ -16,10 +16,12 @@ COMMAND( goto, ROLE_ADMIN,
          "(x) (y) (z) - Jump to the specified position in space. Stopped." )
 COMMAND( spawn, ROLE_ADMIN,
          "(typeID) - Spawn an NPC with the specified type." )
-COMMAND ( location, ROLE_ADMIN,
-		 "- Gives you back your current location in space." )
+COMMAND( location, ROLE_ADMIN,
+         "- Gives you back your current location in space." )
 COMMAND( setbpattr, ROLE_ADMIN,
-           "(itemID) (copy) (materialLevel) (productivityLevel) (licensedProductionRunsRemaining) - Change blueprint's attributes." )
+         "(itemID) (copy) (materialLevel) (productivityLevel) (licensedProductionRunsRemaining) - Change blueprint's attributes." )
+COMMAND( state, ROLE_ADMIN,
+		 "- Sends DoDestinyUpdate SetState." )
 
 
 

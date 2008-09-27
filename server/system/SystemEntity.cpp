@@ -254,7 +254,7 @@ void DynamicSystemEntity::EncodeDestiny(std::vector<byte> &into) const {
 		item->head.z = position.z;
 		item->head.sub_type = AddBallSubType_player;
 		item->mass.mass = GetMass();
-		item->mass.unknown51 = 0;
+		item->mass.cloak = 0;
 		item->mass.unknown52 = 0xFFFFFFFFFFFFFFFFLL;
 		item->mass.corpID = GetCorporationID();
 		item->mass.allianceID = 0xFFFFFFFF;
@@ -413,7 +413,7 @@ void NPC::EncodeDestiny(std::vector<byte> &into) const {
 		item->ship.speed_fraction = 1.0;
 		
 		item->mass.mass = m_self->mass();
-		item->mass.unknown51 = 0;
+		item->mass.cloak = 0;
 		item->mass.unknown52 = 0xFFFFFFFFFFFFFFFFLL;
 		item->mass.corpID = GetCorporationID();
 		item->mass.allianceID = 0xFFFFFFFF;
