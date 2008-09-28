@@ -685,12 +685,12 @@ bool PyCachedObjectDecoder::Decode(PyRepSubStream **in_ss) {
 
 	PyRepTuple *objVt = (PyRepTuple *) args->items[0];
 	if(!objVt->items[0]->CheckType(PyRep::Integer)) {
-		_log(CLIENT__ERROR, "Cache object's version tuple %d is not an Integer: %s", 0, args->items[0]->TypeString());
+		_log(CLIENT__ERROR, "Cache object's version tuple %d is not an Integer: %s", 0, objVt->items[0]->TypeString());
 		delete ss;
 		return(false);
 	}
 	if(!objVt->items[1]->CheckType(PyRep::Integer)) {
-		_log(CLIENT__ERROR, "Cache object's version tuple %d is not an Integer: %s", 1, args->items[1]->TypeString());
+		_log(CLIENT__ERROR, "Cache object's version tuple %d is not an Integer: %s", 1, objVt->items[1]->TypeString());
 		delete ss;
 		return(false);
 	}

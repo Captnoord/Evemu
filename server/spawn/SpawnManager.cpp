@@ -161,7 +161,7 @@ void SpawnEntry::_DoSpawn(SystemManager *mgr, PyServiceMgr *svc) {
 			//create them all at the same point to start with...
 			//we will move them before they get added to the system
 			NPC *npc = new NPC(mgr, svc,
-				i, cur->corporationID, spawn_point, this);
+				i, cur->corporationID, 0, spawn_point, this);	//TODO: add allianceID
 			spawned.push_back(npc);
 		}
 	}

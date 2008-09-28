@@ -31,6 +31,7 @@ NPC::NPC(
 	PyServiceMgr *services,
 	InventoryItem *self,
 	uint32 corporationID,
+	uint32 allianceID,
 	const GPoint &position,
 	SpawnEntry *spawner)
 : DynamicSystemEntity(new DestinyManager(this, system), self),
@@ -41,6 +42,7 @@ NPC::NPC(
 //  m_typeID(self->typeID()),
 //  m_ownerID(self->ownerID()),
   m_corporationID(corporationID),
+  m_allianceID(allianceID),
   m_orbitingID(0)
 {
 	//NOTE: this is bad if we inherit NPC!
@@ -82,18 +84,6 @@ bool NPC::Load(ServiceDB *from) {
 	//The old purpose for this was eliminated. But we might find
 	//something else to stick in here eventually, so it stays for now.
 	return(true);
-}
-
-double NPC::GetMass() const {
-	return(m_self->mass());
-}
-
-double NPC::GetMaxVelocity() const {
-	return(m_self->maxVelocity());
-}
-
-double NPC::GetAgility() const {
-	return(m_self->agility());
 }
 
 void NPC::TargetLost(SystemEntity *who) {

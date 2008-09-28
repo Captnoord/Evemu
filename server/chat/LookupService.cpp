@@ -75,6 +75,7 @@ m_db(db)
 	_SetCallDispatcher(m_dispatch);
 
 	PyCallable_REG_CALL(LookupService, LookupCharacters)
+	PyCallable_REG_CALL(LookupService, LookupPlayerCharacters)
 	PyCallable_REG_CALL(LookupService, LookupCorporations)
 	PyCallable_REG_CALL(LookupService, LookupFactions)
 	PyCallable_REG_CALL(LookupService, LookupCorporationTickers)
@@ -105,6 +106,15 @@ PyCallResult LookupService::Handle_LookupCharacters(PyCallArgs &call) {
 	}
 	
 	return m_db.LookupChars(args.searchString.c_str(), args.searchOption);
+}
+PyCallResult LookupService::Handle_LookupPlayerCharacters(PyCallArgs &call) {
+	Call_LookupStringInt args;
+	if (!args.Decode(&call.tuple)) {
+		codelog(SERVICE__ERROR, "Wrong incoming param in LookupPlayerCharacters");
+		return false;
+	}
+
+	return m_db.LookupPlayerChars(args.searchString.c_str(), args.searchOption);
 }
 PyCallResult LookupService::Handle_LookupCorporations(PyCallArgs &call) {
 	Call_LookupStringInt args;

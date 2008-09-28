@@ -34,6 +34,7 @@ public:
 	virtual ~LSCDB();
 	
 	PyRepObject *LookupChars(const char *match, bool exact);
+	PyRepObject *LookupPlayerChars(const char *match, bool exact);
 	PyRepObject *GetEVEMailHeaders(uint32 recID);
 	PyRepObject *LookupCorporations(const std::string &);
 	PyRepObject *LookupFactions(const std::string &);

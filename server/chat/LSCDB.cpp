@@ -69,6 +69,26 @@ PyRepObject *LSCDB::LookupChars(const char *match, bool exact) {
 	return(DBResultToRowset(res));
 }
 
+PyRepObject *LSCDB::LookupPlayerChars(const char *match, bool exact) {
+	DBQueryResult res;
+
+	std::string matchEsc;
+	m_db->DoEscapeString(matchEsc, match);
+	if(!m_db->RunQuery(res,
+		"SELECT"
+		" characterID, characterName, typeID"
+		" FROM character_"
+		" WHERE characterID >= 140000000"
+		" AND characterName %s '%s'",
+		exact?"=":"RLIKE", matchEsc.c_str()))
+	{
+		_log(DATABASE__ERROR, "Failed to lookup player char '%s': %s.", matchEsc.c_str(), res.error.c_str());
+		return(NULL);
+	}
+
+	return(DBResultToRowset(res));
+}
+
 //temporarily relocated into ServiceDB until some things get cleaned up...
 uint32 ServiceDB::StoreNewEVEMail(uint32 senderID, uint32 recipID, const char * subject, const char * message, uint64 sentTime) {
 	DBQueryResult res;

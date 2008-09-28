@@ -264,7 +264,7 @@ void Command_spawn(Client *who, CommandDB *db, PyServiceMgr *services, const Sep
 	loc.x += 1500;
 
 	SystemManager *sys = who->System();
-	NPC *it = new NPC(sys, services, i, who->GetCorporationID(), loc);
+	NPC *it = new NPC(sys, services, i, who->GetCorporationID(), who->GetAllianceID(), loc);
 	sys->AddNPC(it);
 }
 void Command_location(Client *who, CommandDB *db, PyServiceMgr *services, const Seperator &args) {

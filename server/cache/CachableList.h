@@ -109,7 +109,7 @@ CACHABLE("config.BulkData.groups", invGroups, TupleSet,
 	"SELECT groupID,categoryID,groupName,description,graphicID,useBasePrice,allowManufacture,allowRecycler,anchored,anchorable,fittableNonSingleton,1 AS published,0 AS dataID FROM invGroups"
 );
 CACHABLE("config.BulkData.shiptypes", invShipTypes, TupleSet,
-	"SELECT shipTypeID,powerCoreTypeID,capacitorTypeID,shieldTypeID,propulsionTypeID,sensorTypeID,armorTypeID,computerTypeID,weaponTypeID,miningTypeID,skillTypeID FROM invShipTypes"
+	"SELECT shipTypeID,weaponTypeID,miningTypeID,skillTypeID FROM invShipTypes"
 );
 CACHABLE("config.BulkData.locations", cacheLocations, TupleSet,
 	//this is such as worthless cache item...

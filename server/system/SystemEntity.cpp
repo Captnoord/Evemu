@@ -167,6 +167,24 @@ const GPoint &DynamicSystemEntity::GetPosition() const {
 	return(m_destiny->GetPosition());
 }
 
+double DynamicSystemEntity::GetMass() const {
+	if(Item() == NULL)
+		return(0.0f);
+	return(Item()->mass());
+}
+
+double DynamicSystemEntity::GetMaxVelocity() const {
+	if(Item() == NULL)
+		return(0.0f);
+	return(Item()->maxVelocity());
+}
+
+double DynamicSystemEntity::GetAgility() const {
+	if(Item() == NULL)
+		return(0.0f);
+	return(Item()->agility());
+}
+
 //TODO: ask the destiny manager to do this for us!
 void DynamicSystemEntity::EncodeDestiny(std::vector<byte> &into) const {
 	int start = into.size();
@@ -252,11 +270,12 @@ void DynamicSystemEntity::EncodeDestiny(std::vector<byte> &into) const {
 		item->head.y = position.y;
 		item->head.z = position.z;
 		item->head.sub_type = AddBallSubType_player;
+
 		item->mass.mass = GetMass();
 		item->mass.cloak = 0;
 		item->mass.unknown52 = 0xFFFFFFFFFFFFFFFFLL;
 		item->mass.corpID = GetCorporationID();
-		item->mass.allianceID = 0xFFFFFFFF;
+		item->mass.allianceID = GetAllianceID();
 		
 		item->ship.max_speed = GetMaxVelocity();
 		item->ship.velocity_x = 0.0;	//TODO: use destiny's velocity
@@ -325,14 +344,12 @@ void Client::MakeDamageState(DoDestinyDamageState &into) const {
 	into.structure = 1.0 - (m_ship->damage() / m_ship->hp());
 }
 
-double NPC::GetRadius() const {
-	return(m_self->radius());
-}
-
 void NPC::EncodeDestiny(std::vector<byte> &into) const {
 	int start = into.size();
 	int slen = 0;
-	
+
+	const GPoint &position = GetPosition();
+
 	/*if(m_orbitingID != 0) {
 		#pragma pack(1)
 		struct AddBall_Orbit {
@@ -388,49 +405,41 @@ void NPC::EncodeDestiny(std::vector<byte> &into) const {
 			NameStruct name;
 		};
 		#pragma pack()
-		
+
 		into.resize(start 
 			+ sizeof(AddBall_Stop) 
 			+ slen*sizeof(uint16) );
 		byte *ptr = &into[start];
 		AddBall_Stop *item = (AddBall_Stop *) ptr;
 		ptr += sizeof(AddBall_Stop);
-		
+
 		item->head.entityID = GetID();
 		item->head.mode = Destiny::DSTBALL_STOP;
-		item->head.radius = m_self->radius();
-		item->head.x = x();
-		item->head.y = y();
-		item->head.z = z();
+		item->head.radius = GetRadius();
+		item->head.x = position.x;
+		item->head.y = position.y;
+		item->head.z = position.z;
 		item->head.sub_type = AddBallSubType_orbitingNPC;
-		
-		item->ship.max_speed = m_self->maxVelocity();
-		item->ship.velocity_x = 0.0;
-		item->ship.velocity_y = 0.0;
-		item->ship.velocity_z = 0.0;
-		item->ship.agility = m_self->agility();
-		item->ship.speed_fraction = 1.0;
-		
-		item->mass.mass = m_self->mass();
+
+		item->mass.mass = GetMass();
 		item->mass.cloak = 0;
 		item->mass.unknown52 = 0xFFFFFFFFFFFFFFFFLL;
 		item->mass.corpID = GetCorporationID();
-		item->mass.allianceID = 0xFFFFFFFF;
-		
+		item->mass.allianceID = GetAllianceID();
+
+		item->ship.max_speed = GetMaxVelocity();
+		item->ship.velocity_x = 0.0;
+		item->ship.velocity_y = 0.0;
+		item->ship.velocity_z = 0.0;
+		item->ship.agility = GetAgility();
+		item->ship.speed_fraction = 1.0;
+
 		item->main.formationID = 0xFF;
-		
+
 		item->name.name_len = slen;	// in number of unicode chars
 		//strcpy_fake_unicode(item->name.name, GetName());
 	}
 }
-
-/*PyRepDict *NPC::MakeSlimItem() const {
-	PyRepDict *slim = DynamicSystemEntity::MakeSlimItem();
-	if(slim == NULL)
-		return(NULL);
-	//Not doing any additions yet, but might need eventually.
-	return(slim);
-}*/
 
 
 
