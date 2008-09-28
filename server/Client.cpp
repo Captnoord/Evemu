@@ -175,8 +175,7 @@ Client::Client(PyServiceMgr *services, EVETCPConnection **con)
   m_moveState(msIdle),
   m_moveTimer(500),
   m_movePoint(0, 0, 0),
-  m_nextNotifySequence(1),
-  m_beyonceBoundCount(0)
+  m_nextNotifySequence(1)
 //  m_nextDestinyUpdate(46751)
 {
 	*con = NULL;
@@ -640,8 +639,6 @@ bool Client::EnterSystem() {
 		m_destiny->SetPosition(Ship()->position(), false);
 		//for now, we always enter a system stopped.
 		m_destiny->Halt(false);
-		//send SetState update
-		m_destiny->SendSetState(Bubble());
 	} /*else {	//just dont do anything extra and let them be where they are
 		_log(CLIENT__ERROR, "Char %s (%lu) is in a bad location %lu", GetName(), GetCharacterID(), GetLocationID());
 		SendErrorMsg("In a bad location %lu", GetLocationID());
@@ -947,7 +944,7 @@ void Client::QueueDestinyEvent(PyRepTuple **multiEvent) {
 void Client::_SendQueuedUpdates(uint32 stamp) {
 	std::vector<PyRepTuple *>::const_iterator cur, end;
 	
-	if(m_destinyUpdateQueue.empty() || m_beyonceBoundCount == 0) {
+	if(m_destinyUpdateQueue.empty()) {
 		//no destiny stuff to do...
 		if(m_destinyEventQueue.empty()) {
 			//no multi-events either...

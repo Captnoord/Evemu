@@ -45,7 +45,6 @@ public:
 	
 	BeyonceBound(PyServiceMgr *mgr, Client *c, ShipDB *db)
 	: PyBoundObject(mgr, "BeyonceBound"),
-	  m_client(c),
 	  m_db(db),
 	  m_dispatch(new Dispatcher(this))
 	{
@@ -61,11 +60,11 @@ public:
 		PyCallable_REG_CALL(BeyonceBound, StargateJump)
 		PyCallable_REG_CALL(BeyonceBound, UpdateStateRequest)
 
-		m_client->BeyonceBoundCreated();
+		if(c->Destiny() != NULL)
+			c->Destiny()->SendSetState(c->Bubble());
 	}
 	virtual ~BeyonceBound() {}
 	virtual void Release() {
-		m_client->BeyonceBoundDestroyed();
 		//I hate this statement
 		delete this;
 	}
@@ -81,7 +80,6 @@ public:
 	PyCallable_DECL_CALL(UpdateStateRequest)
 
 protected:
-	Client *const m_client;
 	ShipDB *const m_db;
 	Dispatcher *const m_dispatch;
 };

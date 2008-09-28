@@ -72,7 +72,6 @@ void SystemEntity::MakeAddBall(DoDestiny_AddBall &addball, uint32 updateID) cons
 	_hex(DESTINY__TRACE, addball.destiny_binary.c_str(), addball.destiny_binary.length());
 	_log(DESTINY__TRACE, "    Ball Decoded:");
 	Destiny::DumpUpdate(DESTINY__TRACE, (const byte *) addball.destiny_binary.c_str(), addball.destiny_binary.length());
-	
 }
 
 PyRepTuple *SystemEntity::MakeDamageState() const {
@@ -279,13 +278,13 @@ double Client::GetRadius() const {
 
 PyRepDict *Client::MakeSlimItem() const {
 	PyRepDict *slim = new PyRepDict();
-	slim->add("bounty", new PyRepInteger(0));
+	slim->add("itemID", new PyRepInteger(GetID()));
+	slim->add("typeID", new PyRepInteger(Ship()->typeID()));
 	slim->add("ownerID", new PyRepInteger(GetCharacterID()));
 	slim->add("charID", new PyRepInteger(GetCharacterID()));
-	slim->add("securityStatus", new PyRepReal(0));
-	slim->add("itemID", new PyRepInteger(GetShipID()));
-	slim->add("typeID", new PyRepInteger(Ship()->typeID()));
 	slim->add("corpID", new PyRepInteger(GetCorporationID()));
+	slim->add("bounty", new PyRepInteger(GetChar().bounty));
+	slim->add("securityStatus", new PyRepReal(GetChar().securityRating));
 	
 	//encode the modules list, if we have any visible modules
 	std::vector<InventoryItem *> items;

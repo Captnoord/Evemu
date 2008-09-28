@@ -279,7 +279,7 @@ public:
 	uint32 GetRole() const { return(m_role); }
 
 	uint32 GetCharacterID() const { return(m_char.charid); }
-	const CharacterData &GetChar() { return(m_char); }
+	const CharacterData &GetChar() const { return(m_char); }
 	uint32 GetCorporationID() const { return(m_char.corporationID); }
 	uint32 GetAllianceID() const { return(m_char.allianceID); }
 	const CorpMemberInfo &GetCorpInfo() const { return(m_corpstate); }
@@ -306,9 +306,6 @@ public:
 	bool EnterSystem();
 	bool Load(uint32 char_id);
 	void JoinCorporationUpdate(uint32 corp_id);
-	//should be done better
-	void BeyonceBoundCreated() { m_beyonceBoundCount++; _log(CLIENT__MESSAGE, "BeyonceBound Created: %lu objects active.", m_beyonceBoundCount); }
-	void BeyonceBoundDestroyed() { m_beyonceBoundCount--; _log(CLIENT__MESSAGE, "BeyonceBound Destroyed: %lu objects remain.", m_beyonceBoundCount); }
 	inline InventoryItem *Ship() const { return(m_ship); }
 	void SavePosition();
 	
@@ -413,7 +410,6 @@ protected:
 private:
 	//queues for destiny updates:
 	std::vector<PyRep *> m_destinyEventQueue;	//we own these. These are events as used in OnMultiEvent
-	uint32 m_beyonceBoundCount;
 	std::vector<PyRepTuple *> m_destinyUpdateQueue;	//we own these. They are the `update` which go into DoDestinyAction
 	void _SendQueuedUpdates(uint32 stamp);
 
