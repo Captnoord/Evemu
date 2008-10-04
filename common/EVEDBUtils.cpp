@@ -697,6 +697,7 @@ PyRep *DBResultToPackedRowList(
 
 	DBResultRow row;
 	while(result.GetRow(row))
+		//this is piece of crap due to header cloning
 		res->add(PackRow(row, columns, true, header->Clone()));
 
 	delete header;
@@ -741,6 +742,7 @@ PyRep *DBResultToPackedRowListTuple(
 
 	DBResultRow row;
 	while(result.GetRow(row))
+		//this is piece of crap due to header cloning
 		rowlist->add(PackRow(row, columns, true, header->Clone()));
 
 	delete header;
@@ -791,6 +793,7 @@ PyRep *DBResultToDBUtilRowList(
 
 	DBResultRow row;
 	while(result.GetRow(row))
+		//this is piece of crap due to header cloning
 		res->list_data.push_back(PackRow(row, columns, true, header->Clone()));
 
 	delete header;
@@ -815,6 +818,7 @@ PyRep *DBResultToDBUtilCRowset(
 
 	DBResultRow row;
 	while(result.GetRow(row))
+		//this is piece of crap due to header cloning
 		res->list_data.push_back(PackRow(row, columns, true, header->Clone()));
 
 	delete header;

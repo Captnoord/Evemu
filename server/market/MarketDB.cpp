@@ -146,7 +146,7 @@ PyRep *MarketDB::GetOrders(uint32 regionID, uint32 typeID) {
 		"   volEntered, minVolume, bid, issued, duration,"
 		"   stationID, regionID, solarSystemID, jumps "
 		" FROM market_orders "
-		" WHERE regionID=%lu AND typeID=%lu AND bid=0", regionID, typeID))
+		" WHERE regionID=%lu AND typeID=%lu AND bid=%d", regionID, typeID, TransactionTypeSell))
 	{
 		codelog(MARKET__ERROR, "Error in query: %s", res.error.c_str());
 		return(NULL);
@@ -163,7 +163,7 @@ PyRep *MarketDB::GetOrders(uint32 regionID, uint32 typeID) {
 		"   volEntered, minVolume, bid, issued, duration,"
 		"   stationID, regionID, solarSystemID, jumps "
 		" FROM market_orders "
-		" WHERE regionID=%lu AND typeID=%lu AND bid=1", regionID, typeID))
+		" WHERE regionID=%lu AND typeID=%lu AND bid=%d", regionID, typeID, TransactionTypeBuy))
 	{
 		delete tup;
 		codelog(MARKET__ERROR, "Error in query: %s", res.error.c_str());

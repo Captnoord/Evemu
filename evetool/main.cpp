@@ -198,6 +198,7 @@ static ThreadReturnType UserInputThread(void *data) {
 		InputQueue.push(strdup(input_buffer));
 		MInputQueue.unlock();
 	}
+	delete input_buffer;
 #endif
 	
 	THREAD_RETURN(0);
