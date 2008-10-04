@@ -101,7 +101,7 @@ int main(int argc, char *argv[]) {
 	INIT_SIGEXCEPT();
 	
 	_log(SERVER__INIT, "EVEmu %s", EVEMU_REVISION);
-	_log(SERVER__INIT, " Supported Client: %s, Version %f, Build %d, MachoNet %d",
+	_log(SERVER__INIT, " Supported Client: %s, Version %.2f, Build %d, MachoNet %d",
 		EVEProjectVersion, EVEVersionNumber, EVEBuildVersion, MachoNetVersion);
 
 	//it is important to do this before doing much of anything, in case they use it.

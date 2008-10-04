@@ -45,6 +45,8 @@
 	<!-- 1 -->
 	<!-- may be boolean or integer -->
 	<raw name="loadTutorialDungeon" />
+	<!-- 2 -->
+	<raw name="unknown" />
   </InlineTuple>
 </element>
 
