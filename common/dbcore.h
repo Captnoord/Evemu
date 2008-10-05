@@ -63,7 +63,10 @@ public:
 	~DBQueryResult();
 
 	typedef enum {
-		Integer,
+		Int8,
+		Int16,
+		Int32,
+		Int64,
 		Real,
 		DateTime,
 		String,
@@ -93,10 +96,10 @@ class DBResultRow {
 public:
 	DBResultRow();
 
-
 	uint32 GetColumnLength(uint32 column) const;
 	
 	bool IsNull(uint32 column) const { return(m_row[column] == NULL); }
+	bool IsSigned(uint32 column) const { return(m_row[column][0] == '-'); }
 	const char *GetText(uint32 column) const { return(m_row[column]); }
 	sint32 GetInt(uint32 column) const;
 	uint32 GetUInt(uint32 column) const;

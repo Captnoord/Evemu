@@ -419,15 +419,18 @@ DBQueryResult::ColType DBQueryResult::ColumnType(uint32 column) const {
 	}
 #endif
 	switch(m_fields[column].type) {
-	case FIELD_TYPE_DECIMAL:
 	case FIELD_TYPE_TINY:
+		return(Int8);
 	case FIELD_TYPE_SHORT:
+		return(Int16);
+	case FIELD_TYPE_INT24:	//3-byte medium int
 	case FIELD_TYPE_LONG:
+		return(Int32);
 	case FIELD_TYPE_LONGLONG:
-	case FIELD_TYPE_INT24:
-		return(Integer);
+		return(Int64);
 	case FIELD_TYPE_FLOAT:
 	case FIELD_TYPE_DOUBLE:
+	case FIELD_TYPE_DECIMAL:	//fixed-point number
 		return(Real);
 	case FIELD_TYPE_TIMESTAMP:
 	case FIELD_TYPE_DATE:

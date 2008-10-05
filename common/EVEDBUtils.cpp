@@ -64,20 +64,20 @@ PyRep *DBColumnToPyRep(DBResultRow &row, uint32 column_index) {
 		if(strchr(row.GetText(column_index), '.') != NULL)
 			return(new PyRepReal(row.GetDouble(column_index)));
         //else, FALLTHROUGH
-	case DBQueryResult::Integer:
-		//quick hack to handle sign, im not sure it does any good at this point.
-		if(row.GetText(column_index)[0] == '-')
+	case DBQueryResult::Int8:
+	case DBQueryResult::Int16:
+	case DBQueryResult::Int32:
+	case DBQueryResult::Int64:
+		//quick check to handle sign, im not sure it does any good at this point.
+		if(row.IsSigned(column_index))
 			return(new PyRepInteger(row.GetInt64(column_index)));
 		return(new PyRepInteger(row.GetUInt64(column_index)));
-		break;
 	case DBQueryResult::Binary:
 		return(new PyRepBuffer((const byte *) row.GetText(column_index), row.GetColumnLength(column_index)));
-		break;
 	case DBQueryResult::DateTime:
 	case DBQueryResult::String:
 	default:
 		return(new PyRepString(row.GetText(column_index)));
-		break;
 	}
 	//unreachable:
 	return(new PyRepNone());
@@ -419,7 +419,10 @@ static uint8 GetTypeSizeIndex(DBTYPE t) {
 //returns "their" DBTYPE based on "our" column type
 static DBTYPE GetPackedColumnType(DBQueryResult::ColType colType) {
 	switch(colType) {
-		case DBQueryResult::Integer:	return(DBTYPE_UI4);
+		case DBQueryResult::Int8:		return(DBTYPE_UI1);
+		case DBQueryResult::Int16:		return(DBTYPE_UI2);
+		case DBQueryResult::Int32:		return(DBTYPE_UI4);
+		case DBQueryResult::Int64:		return(DBTYPE_UI8);
 		case DBQueryResult::Real:		return(DBTYPE_R8);
 		case DBQueryResult::DateTime:	return(DBTYPE_FILETIME);
 		case DBQueryResult::String:		return(DBTYPE_STR);
@@ -438,6 +441,20 @@ static void GetPackedColumnList(const DBQueryResult &res, DBPackedColumnList &in
 		info.index = i;
 		info.name = res.ColumnName(i);
 		info.type = GetPackedColumnType(res.ColumnType(i));
+		into.push_back(info);
+	}
+}
+
+//builds PackedColumnList from DBResultRow
+static void GetPackedColumnList(const DBResultRow &row, DBPackedColumnList &into) {
+	into.clear();
+
+	uint32 cc = row.ColumnCount();
+	for(uint32 i = 0; i < cc; i++) {
+		DBPackedColumnInfo info;
+		info.index = i;
+		info.name = row.ColumnName(i);
+		info.type = GetPackedColumnType(row.ColumnType(i));
 		into.push_back(info);
 	}
 }
@@ -499,7 +516,7 @@ static void EncodePackedField(const DBResultRow &row, const DBPackedColumnInfo &
 	case DBTYPE_FILETIME: into.PushUInt64(row.IsNull(col.index) ? 0 : row.GetUInt64(col.index)); break;
 
 	//encoded as an integer, multiplied by 10000 to get fractional ISK
-	case DBTYPE_CY: into.PushUInt64((row.IsNull(col.index) ? 0.0 : row.GetDouble(col.index))*10000.00); return;
+	case DBTYPE_CY: into.PushUInt64((row.IsNull(col.index) ? 0.0 : row.GetDouble(col.index))*10000.00); break;
 
 	case DBTYPE_R4: into.PushFloat(row.IsNull(col.index) ? 0.0 : row.GetFloat(col.index)); break;
 	case DBTYPE_R8: into.PushDouble(row.IsNull(col.index) ? 0.0 : row.GetDouble(col.index)); break;
@@ -683,7 +700,7 @@ static void _packRowList(
 	} while (result.GetRow(row));
 }*/
 
-PyRep *DBResultToPackedRowList(
+PyRepList *DBResultToPackedRowList(
 	DBQueryResult &result
 ) {
 	DBPackedColumnList columns;
@@ -704,30 +721,9 @@ PyRep *DBResultToPackedRowList(
 	return(res);
 }
 
-PyRep *DBResultToPackedRowListTuple(
+PyRepTuple *DBResultToPackedRowListTuple(
 	DBQueryResult &result
 ) {
-	/*PyRepPackedRowHeader *rhead = new PyRepPackedRowHeader();
-	PyRepPackedResultSet::storage_type rows;
-	
-	_packRowList(result, types, ordering, rows, rhead);
-
-	PyRepTuple *res = new PyRepTuple(2);
-	res->items[0] = rhead;
-	PyRepList *row_list = new PyRepList();
-	res->items[1] = row_list;
-	
-	//move the rows from the typed row vector into the generic list.
-	row_list->items.reserve(rows.size());
-	PyRepPackedResultSet::iterator cur, end;
-	cur = rows.begin();
-	end = rows.end();
-	for(; cur != end; ++cur) {
-		row_list->items.push_back(*cur);
-	}
-	rows.clear();
-	
-	return(res);*/
 	DBPackedColumnList columns;
 	GetPackedColumnList(result, columns);
 
@@ -749,34 +745,16 @@ PyRep *DBResultToPackedRowListTuple(
 	return(res);
 }
 
-PyRep *DBResultToDBUtilRowList(
-	DBQueryResult &result
+PyRepPackedObject2 *DBResultToPackedRowset(
+	DBQueryResult &result,
+	const char *type
 ) {
-	/*PyRepPackedRowHeader *rhead = new PyRepPackedRowHeader();
-	PyRepPackedResultSet *rs = new PyRepPackedResultSet();
-	
-	_packRowList(result, types, ordering, rs->rows, rhead);
-	
-	rs->format = PyRepPackedResultSet::RowList;
-	dbutil_RowList_header head_coder;
-	head_coder.type = "dbutil.RowList";
-	head_coder.packed_header = rhead;
-	
-	uint32 cc = result.ColumnCount();
-	uint32 r;
-	for(r = 0; r < cc; r++) {
-		head_coder.columns.push_back(result.ColumnName(r));
-	}
-	
-	rs->header = head_coder.FastEncode();
-	
-	return(rs);*/
 	DBPackedColumnList columns;
 	GetPackedColumnList(result, columns);
 
 	PyRepPackedObject1 *header = BuildRowDescriptor(columns);
 
-	PyRepPackedObject2 *res = new PyRepPackedObject2("dbutil.RowList");
+	PyRepPackedObject2 *res = new PyRepPackedObject2(type);
 	PyRepDict *d = new PyRepDict;
 	res->args2 = d;
 
@@ -791,29 +769,6 @@ PyRep *DBResultToDBUtilRowList(
 	for(; cur != end; cur++)
 		col_list->add(new PyRepString(cur->name));
 
-	DBResultRow row;
-	while(result.GetRow(row))
-		//this is piece of crap due to header cloning
-		res->list_data.push_back(PackRow(row, columns, true, header->Clone()));
-
-	delete header;
-	return(res);
-}
-
-PyRep *DBResultToDBUtilCRowset(
-	DBQueryResult &result
-) {
-	DBPackedColumnList columns;
-	GetPackedColumnList(result, columns);
-
-	PyRepPackedObject1 *header = BuildRowDescriptor(columns);
-
-	PyRepPackedObject2 *res = new PyRepPackedObject2("dbutil.CRowset");
-	PyRepDict *d = new PyRepDict;
-	res->args2 = d;
-
-	d->add("header", header->Clone());
-
 	OrderPackedColumnList(columns);
 
 	DBResultRow row;
@@ -823,6 +778,19 @@ PyRep *DBResultToDBUtilCRowset(
 
 	delete header;
 	return(res);
+}
+
+PyRepPackedRow *DBRowToPackedRow(
+	DBResultRow &row
+) {
+	DBPackedColumnList columns;
+	GetPackedColumnList(row, columns);
+
+	PyRepPackedObject1 *header = BuildRowDescriptor(columns);
+
+	OrderPackedColumnList(columns);
+
+	return(PackRow(row, columns, true, header));
 }
 
 

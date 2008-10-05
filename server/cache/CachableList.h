@@ -164,19 +164,19 @@ CACHABLE("config.InvContrabandTypes", invContrabandTypes, Rowset,
 );
 
 //GetCharCreationInfo
-KCACHABLE("charCreationInfo.bloodlines", "bloodlines", c_chrBloodlines, DBUtilCRowset,
+KCACHABLE("charCreationInfo.bloodlines", "bloodlines", c_chrBloodlines, PackedRowset,
 	"SELECT bloodlineID,bloodlineName,raceID,description,maleDescription,femaleDescription,shipTypeID,corporationID,perception,willpower,charisma,memory,intelligence,graphicID,shortDescription,shortMaleDescription,shortFemaleDescription,0 AS dataID FROM chrBloodlines"
 );
-KCACHABLE("charCreationInfo.races", "races", c_chrRaces, DBUtilCRowset,
+KCACHABLE("charCreationInfo.races", "races", c_chrRaces, PackedRowset,
 	"SELECT raceID,raceName,description,graphicID,shortDescription,0 AS dataID FROM chrRaces"
 );
-KCACHABLE("charCreationInfo.ancestries", "ancestries", c_chrAncestries, DBUtilCRowset,
+KCACHABLE("charCreationInfo.ancestries", "ancestries", c_chrAncestries, PackedRowset,
 	"SELECT ancestryID,ancestryName,bloodlineID,description,perception,willpower,charisma,memory,intelligence,graphicID,shortDescription,0 AS dataID FROM chrAncestries"
 );
-KCACHABLE("charCreationInfo.schools", "schools", c_chrSchools, DBUtilCRowset,
+KCACHABLE("charCreationInfo.schools", "schools", c_chrSchools, PackedRowset,
 	"SELECT raceID,schoolID,schoolName,description,graphicID,corporationID,agentID,newAgentID FROM chrSchools"
 );
-KCACHABLE("charCreationInfo.attributes", "attributes", c_chrAttributes, DBUtilCRowset,
+KCACHABLE("charCreationInfo.attributes", "attributes", c_chrAttributes, PackedRowset,
 	"SELECT attributeID,attributeName,description,graphicID FROM chrAttributes"
 );
 KCACHABLE("charCreationInfo.bl_accessories", "accessories", bl_accessories, Rowset,
