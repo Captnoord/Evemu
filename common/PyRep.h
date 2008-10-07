@@ -294,6 +294,7 @@ public:
 	virtual void visit(PyVisitor *v) const;
 	
 	PyRepPackedRow *TypedClone() const;
+	void CloneFrom(const PyRepPackedRow *from);
 
 	//integers
 	void PushInt8(const sint8 v) { Push(&v, sizeof(sint8)); }

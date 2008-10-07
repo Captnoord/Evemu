@@ -541,7 +541,7 @@ void PyRepSubStream::EncodeData() {
 		return;
 	if(decoded == NULL)
 		return;
-	data = MarshalOnly(this, length);
+	data = Marshal(this, length, false);
 }
 
 void PyRepSubStream::DecodeData() const {
@@ -754,6 +754,12 @@ PyRepPackedRow::PyRepPackedRow(const PyRep *header, bool own_header, const byte 
 PyRepPackedRow::~PyRepPackedRow() {
 	if(m_ownsHeader)
 		delete m_header;
+
+	rep_list::iterator rcur, rend;
+	rcur = begin();
+	rend = end();
+	for(; rcur != rend; rcur++)
+		delete *rcur;
 }
 
 
@@ -794,12 +800,21 @@ void PyRepPackedRow::Dump(LogType ltype, const char *pfx) const {
 }
 
 PyRepPackedRow *PyRepPackedRow::TypedClone() const {
-	return(new PyRepPackedRow(
+	PyRepPackedRow *res = new PyRepPackedRow(
 		m_ownsHeader ? m_header->Clone() : m_header,
-		m_ownsHeader,
-		m_buffer.empty() ? NULL : &m_buffer[0],
-		m_buffer.size()
-		));
+		m_ownsHeader);
+	res->CloneFrom(this);
+	return(res);
+}
+
+void PyRepPackedRow::CloneFrom(const PyRepPackedRow *from) {
+	Push(from->GetBuffer(), from->GetBufferSize());
+
+	rep_list::const_iterator rcur, rend;
+	rcur = from->begin();
+	rend = from->end();
+	for(; rcur != rend; rcur++)
+		PushPyRep((*rcur)->Clone());
 }
 
 void PyRepPackedRow::visit(PyVisitor *v) const {

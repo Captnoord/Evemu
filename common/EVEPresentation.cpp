@@ -304,7 +304,7 @@ void EVEPresentation::_QueueRep(const PyRep *rep) {
 	}
 	
 	EVENetPacket *packet = new EVENetPacket;
-	packet->data = MarshalAndDeflate(rep, packet->length);
+	packet->data = Marshal(rep, packet->length);
 	if(packet->data == NULL) {
 		_log(NET__PRES_ERROR, "%s: Error marshaling or deflating packet!", GetConnectedAddress().c_str());
 		return;

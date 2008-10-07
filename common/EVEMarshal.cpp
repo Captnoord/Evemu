@@ -391,55 +391,34 @@ public:
 };
 
 //returns ownership of the buffer
-byte *MarshalAndDeflate(const PyRep *rep, uint32 &len) {
+byte *Marshal(const PyRep *rep, uint32 &len, bool deflate, bool inlineSubStream) {
 	len = 0;
-	
+
 	MarshalVisitor v;
-	
-	v.PutByte(SubStreamHeaderByte);
-	v.PutByte(0);		//not sure what these zeros are about right now.
-	v.PutByte(0);
-	v.PutByte(0);
-	v.PutByte(0);
-	
+
+	if(inlineSubStream) {
+		v.PutByte(SubStreamHeaderByte);
+		v.PutByte(0);		//not sure what these zeros are about right now.
+		v.PutByte(0);
+		v.PutByte(0);
+		v.PutByte(0);
+	}
+
 	rep->visit(&v);
-	
+
 	len = v.m_result.size();
 	byte *b = new byte[len];
-	
-	_log(NET__PRES_RAW, "Raw Hex Dump (pre-deflation):");
-	phex(NET__PRES_RAW, &v.m_result[0], len);
-	
-	//TODO: first try to deflate it...
-	
-	
+
 	memcpy(b, &v.m_result[0], len);
 
-	
-	
-	return(b);
-}
+	if(deflate) {
+		_log(NET__PRES_RAW, "Raw Hex Dump (pre-deflation):");
+		phex(NET__PRES_RAW, &v.m_result[0], len);
 
+		//TODO: first try to deflate it...
+		_log(NET__MARSHAL_ERROR, "Deflation requested, but it's not implemented yet.");
+	}
 
-//returns ownership of the buffer
-byte *MarshalOnly(const PyRep *rep, uint32 &len) {
-	len = 0;
-	
-	MarshalVisitor v;
-	
-	v.PutByte(SubStreamHeaderByte);
-	v.PutByte(0);		//not sure what these zeros are about right now.
-	v.PutByte(0);
-	v.PutByte(0);
-	v.PutByte(0);
-	
-	rep->visit(&v);
-	
-	len = v.m_result.size();
-	byte *b = new byte[len];
-	
-	memcpy(b, &v.m_result[0], len);
-	
 	return(b);
 }
 

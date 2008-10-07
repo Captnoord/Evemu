@@ -3,7 +3,6 @@
 <element name="Call_GetTutorialInfo">
 	<InlineTuple>
 		<int name="tutorialID" />
-		<string name="languageID" />
 	</InlineTuple>
 </element>
 
