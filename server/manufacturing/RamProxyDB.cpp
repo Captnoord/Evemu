@@ -406,7 +406,9 @@ bool RamProxyDB::GetRequiredItems(const uint32 typeID, const EVERamActivity acti
 		" LEFT JOIN invTypes AS materialType ON material.requiredTypeID = materialType.typeID"
 		" LEFT JOIN invGroups AS materialGroup ON materialType.groupID = materialGroup.groupID"
 		" WHERE material.typeID = %lu"
-		" AND material.activityID = %d",
+		" AND material.activityID = %d"
+		//this is needed as db is quite crappy ...
+		" AND material.quantity > 0",
 		typeID, (const int)activity))
 	{
 		_log(DATABASE__ERROR, "Failed to query data to build BillOfMaterials: %s.", res.error.c_str());

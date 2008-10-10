@@ -24,8 +24,6 @@
 #include "PyRep.h"
 #include "logsys.h"
 
-static const uint32 ramProductionTimeLimit = 2592000L;	// 30 days
-
 PyCallable_Make_InnerDispatcher(RamProxyService)
 
 RamProxyService::RamProxyService(PyServiceMgr *mgr, DBcore *db)
@@ -172,12 +170,14 @@ PyCallResult RamProxyService::Handle_InstallJob(PyCallArgs &call) {
 				installedItem->Release();
 				return(NULL);
 			}
-		} else
-			bp.m_copy = bp.m_materialLevel = bp.m_productivityLevel = bp.m_licensedProductionRunsRemaining = NULL;
+		} else {
+			bp.copy = false;
+			bp.materialLevel = bp.productivityLevel = bp.licensedProductionRunsRemaining = 0;
+		}
 
 		// if manufacturing from BPC, decrease licensed runs
-		if(args.activityID == ramActivityManufacturing && bp.m_copy) {
-			bp.m_licensedProductionRunsRemaining -= args.runs;
+		if(args.activityID == ramActivityManufacturing && bp.copy) {
+			bp.licensedProductionRunsRemaining -= args.runs;
 			if(!m_db.SetBlueprintProperties(installedItem->itemID(), bp)) {
 				installedItem->Release();
 				return(NULL);
@@ -201,8 +201,8 @@ PyCallResult RamProxyService::Handle_InstallJob(PyCallArgs &call) {
 							args.installationAssemblyLineID, installedItem->itemID(), beginProductionTime, beginProductionTime + uint64(rsp.productionTime) * 10000000L,
 							args.description.c_str(), args.runs, (EVEItemFlags)args.flagOutput, bomLocation->locationID(), args.licensedProductionRuns))
 		{
-			if(args.activityID == ramActivityManufacturing && bp.m_copy) {
-				bp.m_licensedProductionRunsRemaining += args.runs;
+			if(args.activityID == ramActivityManufacturing && bp.copy) {
+				bp.licensedProductionRunsRemaining += args.runs;
 				m_db.SetBlueprintProperties(installedItem->itemID(), bp);
 			}
 
@@ -226,12 +226,12 @@ PyCallResult RamProxyService::Handle_InstallJob(PyCallArgs &call) {
 		end = reqItems.end();
 
 		for(; cur != end; cur++) {
-			if(cur->m_isSkill)
+			if(cur->isSkill)
 				continue;		// not interested
 
 			// calculate needed quantity
-			uint32 qtyNeeded = ceil(cur->m_quantity * rsp.materialMultiplier * args.runs);
-			if(cur->m_damagePerJob == 1.0)
+			uint32 qtyNeeded = ceil(cur->quantity * rsp.materialMultiplier * args.runs);
+			if(cur->damagePerJob == 1.0)
 				qtyNeeded = ceil(qtyNeeded * rsp.charMaterialMultiplier);	// skill multiplier is applied only on fully consumed materials
 
 			std::vector<InventoryItem *>::iterator curi, endi;
@@ -240,7 +240,7 @@ PyCallResult RamProxyService::Handle_InstallJob(PyCallArgs &call) {
 
 			// remove required materials
 			for(; curi != endi; curi++) {
-				if((*curi)->typeID() == cur->m_typeID && (*curi)->ownerID() == call.client->GetCharacterID()) {
+				if((*curi)->typeID() == cur->typeID && (*curi)->ownerID() == call.client->GetCharacterID()) {
 					if(qtyNeeded >= (*curi)->quantity()) {
 						InventoryItem *i = (*curi)->Ref();
 						qtyNeeded -= i->quantity();
@@ -293,11 +293,11 @@ PyCallResult RamProxyService::Handle_CompleteJob(PyCallArgs &call) {
 	cur = reqItems.begin();
 	end = reqItems.end();
 	for(; cur != end; cur++) {
-		if(!cur->m_isSkill && cur->m_damagePerJob != 1.0) {
-			uint32 quantity = floor(cur->m_quantity * runs * (1.0 - cur->m_damagePerJob));
+		if(!cur->isSkill && cur->damagePerJob != 1.0) {
+			uint32 quantity = floor(cur->quantity * runs * (1.0 - cur->damagePerJob));
 			if(quantity == 0)
 				continue;
-			InventoryItem *item = m_manager->item_factory->Spawn(cur->m_typeID, quantity, ownerID, 0, outputFlag);
+			InventoryItem *item = m_manager->item_factory->Spawn(cur->typeID, quantity, ownerID, 0, outputFlag);
 			if(item == NULL) {
 				installedItem->Release();
 				return(NULL);
@@ -342,9 +342,9 @@ PyCallResult RamProxyService::Handle_CompleteJob(PyCallArgs &call) {
 					}
 
 					if(activity == ramActivityResearchingTimeProductivity)
-						bp.m_productivityLevel += runs;
+						bp.productivityLevel += runs;
 					else if(activity == ramActivityResearchingMaterialProductivity)
-						bp.m_materialLevel += runs;
+						bp.materialLevel += runs;
 
 					if(!m_db.SetBlueprintProperties(installedItem->itemID(), bp)) {
 						installedItem->Release();
@@ -359,8 +359,8 @@ PyCallResult RamProxyService::Handle_CompleteJob(PyCallArgs &call) {
 						installedItem->Release();
 						return(NULL);
 					}
-					bp.m_copy = true;
-					bp.m_licensedProductionRunsRemaining = licensedProductionRuns;
+					bp.copy = true;
+					bp.licensedProductionRunsRemaining = licensedProductionRuns;
 
 					InventoryItem *copy;
 					for(uint32 c = 0; c < runs; c++) {
@@ -566,17 +566,17 @@ PyCallResult RamProxyService::_VerifyInstallJob_Call(const Call_InstallJob &args
 	// special checks for blueprints
 	BlueprintProperties bp;
 	if(m_db.GetBlueprintProperties(installedItem->itemID(), bp)) {
-		if(bp.m_copy &&
+		if(bp.copy &&
 			(args.activityID == ramActivityResearchingTimeProductivity || args.activityID == ramActivityResearchingMaterialProductivity))
 				return(PyCallException(MakeException("RamCannotResearchABlueprintCopy")));
 
-		if(bp.m_copy && args.activityID == ramActivityCopying)
+		if(bp.copy && args.activityID == ramActivityCopying)
 			return(PyCallException(MakeException("RamCannotCopyABlueprintCopy")));
 
-		if(!bp.m_copy && args.activityID == ramActivityInvention)
+		if(!bp.copy && args.activityID == ramActivityInvention)
 			return(PyCallException(MakeException("RamCannotInventABlueprintOriginal")));
 
-		if(bp.m_licensedProductionRunsRemaining - args.runs < 0)
+		if(bp.licensedProductionRunsRemaining - args.runs < 0)
 			return(PyCallException(MakeException("RamTooManyProductionRuns")));
 	}
 
@@ -694,11 +694,11 @@ PyCallResult RamProxyService::_VerifyInstallJob_Install(const Rsp_InstallJob &rs
 	end = reqItems.end();
 	for(; cur != end; cur++) {
 		// check skill (quantity is required level)
-		if(cur->m_isSkill) {
-			if(GetSkillLevel(skills, cur->m_typeID) < cur->m_quantity) {
+		if(cur->isSkill) {
+			if(GetSkillLevel(skills, cur->typeID) < cur->quantity) {
 				std::map<std::string, PyRep *> args;
-				args["skill"] = new PyRepString(m_db.GetTypeName(cur->m_typeID));
-				args["skillLevel"] = new PyRepInteger(cur->m_quantity);
+				args["skill"] = new PyRepString(m_db.GetTypeName(cur->typeID));
+				args["skillLevel"] = new PyRepInteger(cur->quantity);
 
 				return(PyCallException(MakeException("NeedSkillForJob", args)));
 			} else
@@ -707,8 +707,8 @@ PyCallResult RamProxyService::_VerifyInstallJob_Install(const Rsp_InstallJob &rs
 			// check materials
 
 			// calculate needed quantity
-			uint32 qtyNeeded = ceil(cur->m_quantity * rsp.materialMultiplier * runs);
-			if(cur->m_damagePerJob == 1.0)
+			uint32 qtyNeeded = ceil(cur->quantity * rsp.materialMultiplier * runs);
+			if(cur->damagePerJob == 1.0)
 				qtyNeeded = ceil(qtyNeeded * rsp.charMaterialMultiplier);	// skill multiplier is applied only on fully consumed materials
 
 			std::vector<const InventoryItem *>::iterator curi, endi;
@@ -716,12 +716,12 @@ PyCallResult RamProxyService::_VerifyInstallJob_Install(const Rsp_InstallJob &rs
 			endi = items.end();
 
 			for(; curi != endi && qtyNeeded > 0; curi++)
-				if((*curi)->typeID() == cur->m_typeID && (*curi)->ownerID() == c->GetCharacterID())
+				if((*curi)->typeID() == cur->typeID && (*curi)->ownerID() == c->GetCharacterID())
 					qtyNeeded = (*curi)->quantity() > qtyNeeded ? 0 : qtyNeeded - (*curi)->quantity();
 
 			if(qtyNeeded > 0) {
 				std::map<std::string, PyRep *> args;
-				args["item"] = new PyRepString(m_db.GetTypeName(cur->m_typeID));
+				args["item"] = new PyRepString(m_db.GetTypeName(cur->typeID));
 
 				return(PyCallException(MakeException("NeedMoreForJob", args)));
 			}
@@ -871,16 +871,16 @@ void RamProxyService::_FillBillOfMaterials(const std::vector<RequiredItem> &reqI
 	end = reqItems.end();
 	for(; cur != end; cur++) {
 		// if it's skill, insert it into special dict for skills
-		if(cur->m_isSkill) {
-			into.skills[cur->m_typeID] = new PyRepInteger(cur->m_quantity);
+		if(cur->isSkill) {
+			into.skills[cur->typeID] = new PyRepInteger(cur->quantity);
 			continue;
 		}
 
 		// otherwise, make line for material list
 		MaterialList_Line line;
-		line.requiredTypeID = cur->m_typeID;
-		line.quantity = cur->m_quantity * runs;
-		line.damagePerJob = cur->m_damagePerJob;
+		line.requiredTypeID = cur->typeID;
+		line.quantity = cur->quantity * runs;
+		line.damagePerJob = cur->damagePerJob;
 		line.isSkillCheck = false;	// no idea what is this for
 		line.requiresHP = false;	// no idea what is this for
 

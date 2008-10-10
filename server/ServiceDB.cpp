@@ -735,10 +735,10 @@ bool ServiceDB::GetBlueprintProperties(const uint32 blueprintID, BlueprintProper
 
 	}
 
-	into.m_copy = row.GetInt(0);
-	into.m_materialLevel = row.GetUInt(1);
-	into.m_productivityLevel = row.GetUInt(2);
-	into.m_licensedProductionRunsRemaining = row.GetInt(3);
+	into.copy = row.GetInt(0);
+	into.materialLevel = row.GetUInt(1);
+	into.productivityLevel = row.GetUInt(2);
+	into.licensedProductionRunsRemaining = row.GetInt(3);
 
 	return(true);
 }
@@ -750,7 +750,7 @@ bool ServiceDB::SetBlueprintProperties(const uint32 blueprintID, const Blueprint
 		"UPDATE invBlueprints"
 		" SET copy = %d, materialLevel = %lu, productivityLevel = %lu, licensedProductionRunsRemaining = %d"
 		" WHERE blueprintID = %lu",
-		(int)bp.m_copy, bp.m_materialLevel, bp.m_productivityLevel, bp.m_licensedProductionRunsRemaining, blueprintID))
+		(int)bp.copy, bp.materialLevel, bp.productivityLevel, bp.licensedProductionRunsRemaining, blueprintID))
 	{
 		_log(DATABASE__ERROR, "Failed to set blueprint properties for blueprintID %lu: %s.", blueprintID, err.c_str());
 		return(false);

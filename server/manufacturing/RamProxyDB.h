@@ -61,13 +61,13 @@ enum EVERace {
 };
 
 struct RequiredItem {
-	RequiredItem(uint32 typeID, uint32 quantity, double damagePerJob, bool isSkill)
-		: m_typeID(typeID), m_quantity(quantity), m_damagePerJob(damagePerJob), m_isSkill(isSkill) {}
+	RequiredItem(uint32 _typeID, uint32 _quantity, double _damagePerJob, bool _isSkill)
+		: typeID(_typeID), quantity(_quantity), damagePerJob(_damagePerJob), isSkill(_isSkill) {}
 
-	uint32 m_typeID;
-	uint32 m_quantity;
-	double m_damagePerJob;
-	bool m_isSkill;
+	uint32 typeID;
+	uint32 quantity;
+	double damagePerJob;
+	bool isSkill;
 };
 
 class RamProxyDB : public ServiceDB {

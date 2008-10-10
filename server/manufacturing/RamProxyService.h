@@ -22,6 +22,8 @@
 #include "../PyService.h"
 #include "../packets/Manufacturing.h"
 
+static const uint32 ramProductionTimeLimit = 60*60*24*30;	//30 days
+
 class RamProxyService : public PyService {
 public:
 	RamProxyService(PyServiceMgr *mgr, DBcore *db);
@@ -39,7 +41,7 @@ private:
 	PyCallResult _VerifyCompleteJob(const Call_CompleteJob &args, Client *const c);
 
 	bool _Calculate(const Call_InstallJob &args, const InventoryItem *const installedItem, Client *const c, Rsp_InstallJob &into);
-	void _FillBillOfMaterials(const std::vector<RequiredItem> &reqItems, const double materialMultiplier, const uint32 runs, BillOfMaterials &into);
+	void _FillBillOfMaterials(const std::vector<RequiredItem> &reqItems, double materialMultiplier, uint32 runs, BillOfMaterials &into);
 
 	PyCallable_DECL_CALL(GetJobs2)
 	PyCallable_DECL_CALL(AssemblyLinesSelect)

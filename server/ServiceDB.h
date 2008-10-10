@@ -50,10 +50,10 @@ class CorpMemberInfo;
 // struct for encapsulating blueprint's attributes
 // for futher info about implementation of blueprints, see notes in file InventoryDB.cpp, line 342
 struct BlueprintProperties {
-	bool m_copy;
-	uint32 m_materialLevel;
-	uint32 m_productivityLevel;
-	sint32 m_licensedProductionRunsRemaining;
+	bool copy;
+	uint32 materialLevel;
+	uint32 productivityLevel;
+	sint32 licensedProductionRunsRemaining;
 };
 
 class ServiceDB {
