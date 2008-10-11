@@ -1,6 +1,6 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+# Visual C++ Express 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EVEServer", "VC9\EVEServer.vcproj", "{7EBEC2E7-7322-475E-B76C-769397DD23BB}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EVETool", "VC9\EVETool.vcproj", "{A8DC0868-C2AA-4C5A-BAE3-F3CB77D4B3A6}"
