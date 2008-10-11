@@ -47,7 +47,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="C:\mysql\include;..\..\common;&quot;..\..\libs\zlib-win32\include&quot;;."
+				AdditionalIncludeDirectories="C:\mysql\include;..\..\..\common;..\..\..\3rdparty\zlib;&quot;..\..\libs\zlib-win32\include&quot;;."
 				PreprocessorDefinitions="WIN32;_WIN32_WINNT=0x0400;_NDEBUG;_DEBUG;USE_RUNTIME_EXCEPTIONS"
 				MinimalRebuild="true"
 				ExceptionHandling="2"

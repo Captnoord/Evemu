@@ -39,7 +39,9 @@ using namespace std;
 	#include <windows.h>
 
 	#define snprintf	_snprintf
-	#define vsnprintf	_vsnprintf
+#if _MSC_VER < 1500
+	//#define vsnprintf	_vsnprintf
+#endif
 	#define strncasecmp	_strnicmp
 	#define strcasecmp  _stricmp
 #else
@@ -58,7 +60,7 @@ using namespace std;
 	#include <errno.h>
 #endif
 
-// normal strncpy doesnt put a null term on copied strings, this one does
+// normal strncpy doesn't put a null term on copied strings, this one does
 // ref: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/wcecrt/htm/_wcecrt_strncpy_wcsncpy.asp
 char* strn0cpy(char* dest, const char* source, int32 size) {
 	if (!dest)
@@ -180,7 +182,7 @@ int32 AppendAnyLenString(char** ret, int32* bufsize, int32* strlen, const char* 
 }
 
 int32 hextoi(char* num) {
-	int len = strlen(num);
+	size_t len = strlen(num);
 	if (len < 3)
 		return 0;
 
@@ -204,7 +206,7 @@ int32 hextoi(char* num) {
 }
 
 int64 hextoi64(char* num) {
-	int len = strlen(num);
+	size_t len = strlen(num);
 	if (len < 3)
 		return 0;
 
@@ -397,9 +399,3 @@ double MakeRandomFloat(double low, double high)
   
 	return (GenerateRandom() / (double)RAND_MAX * diff + (low > high ? high : low));
 }
-
-
-
-
-
-

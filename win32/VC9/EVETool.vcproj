@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="C:\mysql\include;..\..\common;."
+				AdditionalIncludeDirectories="C:\mysql\include;..\..\..\common;."
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;NO_READLINE;_WIN32_WINNT=0x0400"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"

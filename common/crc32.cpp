@@ -112,7 +112,7 @@ uint32 CRC32::GenerateNoFlip(const int8* buf, uint32 bufsize) {
 #undef i386	//darwin seems to think we are generating PIC, and we clobber ebx
 #endif
 
-uint32 CRC32::Update(const int8* buf, uint32 bufsize, uint32 crc32) {
+uint32 CRC32::Update(const int8* buf, uint32 bufsize, uint32 _crc32) {
 #if defined(WIN32)
 	// Register use:
 	//		eax - CRC32 value
@@ -129,7 +129,7 @@ uint32 CRC32::Update(const int8* buf, uint32 bufsize, uint32 crc32) {
 
 //		mov eax, dwCrc32			// Load the pointer to dwCrc32
 //		mov ecx, [eax]				// Dereference the pointer to load dwCrc32
-		mov ecx, crc32				// Load crc32 -Quag
+		mov ecx, _crc32				// Load crc32 -Quag
 
 		lea edi, CRC32Table			// Load the CRC32 table
 
@@ -159,10 +159,10 @@ uint32 CRC32::Update(const int8* buf, uint32 bufsize, uint32 crc32) {
 
 //		mov eax, dwCrc32			// Load the pointer to dwCrc32
 //		mov [eax], ecx				// Write the result
-		mov crc32, ecx				// Write the result -Quag
+		mov _crc32, ecx				// Write the result -Quag
 	}
 	
-	return crc32;
+	return _crc32;
 }
 #elif defined(X86)
 		#warning "Using x86"

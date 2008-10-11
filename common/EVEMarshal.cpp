@@ -117,14 +117,14 @@ public:
 		if(packed.size() >= 0xFF) {
 			PutByte(0xFF);
 			//todo: swap bytes
-			uint32 len = packed.size();
-			PutBytes(&len, sizeof(len));
+			uint32 len = (uint32)packed.size();
+			PutUint32(len);
 		} else {
-			PutByte(packed.size());
+			PutByte((byte)packed.size());
 		}
 		if(!packed.empty())
 			//out goes the data...
-			PutBytes(&packed[0], packed.size());
+			PutBytes(&packed[0], (uint32)packed.size());
 
 		//PyReps follow packed data
 		PyRepPackedRow::rep_list::const_iterator cur, end;
@@ -135,7 +135,7 @@ public:
 	}
 	
 	virtual void VisitString(const PyRepString *rep) {
-		uint32 len = rep->value.length();
+		uint32 len = (uint32)rep->value.length();
 //printf("string\n");
 		if(rep->is_type_1) {
 			if(len < 0xFF) {
@@ -227,7 +227,7 @@ public:
 
 	virtual void VisitPackedObject2(const PyRepPackedObject2 *rep) {
 		PutByte(Op_PackedObject2);
-		//this is little hackish, but we dont have to clone whole contents
+		//this is little hackish, but we don't have to clone whole contents
 		if(rep->args2 == NULL)
 			PutByte(Op_PyOneTuple);
 		else
@@ -239,7 +239,7 @@ public:
 			PutByte(Op_PyTwoTuple);
 		else {
 			PutByte(Op_PyTuple);
-			PutByte(1 + rep->args1->items.size());
+			PutByte(1 + (byte)rep->args1->items.size()); // possible overload (size is 32 bits and your sending a byte)
 		}
 
 		PyRepString s(rep->type, true);
@@ -281,7 +281,7 @@ public:
 			
 			rep->decoded->visit(&v);
 			
-			uint32 length = v.m_result.size();
+			uint32 length = (uint32)v.m_result.size();
 			
 			if(length >= 0xFF) {
 				PutByte(0xFF);
@@ -316,7 +316,7 @@ public:
 	
 	virtual void VisitDict(const PyRepDict *rep) {
 //printf("dict\n");
-		uint32 size = rep->items.size();
+		uint32 size = (uint32)rep->items.size();
 		if(size >= 0xFF) {
 			PutByte(Op_PyDict);
 			PutByte(0xFF);
@@ -336,7 +336,7 @@ public:
 	
 	virtual void VisitList(const PyRepList *rep) {
 //printf("list\n");
-		uint32 size = rep->items.size();
+		uint32 size = (uint32)rep->items.size();
 		if(size >= 0xFF) {
 			PutByte(Op_PyList);
 			PutByte(0xFF);
@@ -354,7 +354,7 @@ public:
 	
 	virtual void VisitTuple(const PyRepTuple *rep) {
 //printf("tuple\n");
-		uint32 size = rep->items.size();
+		uint32 size = (uint32)rep->items.size();
 		if(size >= 0xFF) {
 			PutByte(Op_PyTuple);
 			PutByte(0xFF);
@@ -373,11 +373,11 @@ public:
 	}
 	
 	//TODO: optimize this, it could be done so much better than a vector.
-	void PutByte(byte b) {
+	inline void PutByte(byte b) {
 //printf("Byte 0x%02x\n", b);
 		m_result.push_back(b);
 	}
-	void PutBytes(const void *v, uint32 len) {
+	inline void PutBytes(const void *v, uint32 len) {
 		const byte *b = (const byte *) v;
 		while(len > 0) {
 //printf("Byte 0x%02x -\n", *b);
@@ -385,6 +385,11 @@ public:
 			b++;
 			len--;
 		}
+	}
+
+	inline void PutUint32(uint32 data)
+	{
+		PutBytes((void*)&data,sizeof(uint32));
 	}
 	
 	std::vector<byte> m_result;
@@ -406,7 +411,7 @@ byte *Marshal(const PyRep *rep, uint32 &len, bool deflate, bool inlineSubStream)
 
 	rep->visit(&v);
 
-	len = v.m_result.size();
+	len = (uint32)v.m_result.size();
 	byte *b = new byte[len];
 
 	memcpy(b, &v.m_result[0], len);
