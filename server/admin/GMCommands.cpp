@@ -286,13 +286,17 @@ void Command_clearlog(Client *who, CommandDB *db, PyServiceMgr *services, const 
 
 void Command_getlog(Client *who, CommandDB *db, PyServiceMgr *services, const Seperator &args) {
 	std::string evemail;
+
 	std::list<std::string>::const_iterator cur, end;
-	cur = memory_log.begin(); end = memory_log.end();
-	for(;cur!=end;cur++) {
+	cur = memory_log.begin();
+	end = memory_log.end();
+
+	for(; cur != end; cur++) {
 		evemail += *cur;
+		evemail += "<br>";
 	}
 
-	who->SelfEveMail("Server logs", "%s", evemail.c_str());
+	who->SelfEveMail("Server logs", "Server log of length %lu/%lu records (%lu bytes):<br><br>%s", memory_log.size(), memory_log_limit, evemail.size(), evemail.c_str());
 }
 
 // new command to modify blueprint's attributes, we have to give it blueprint's itemID ... isn't much comfortable, but I don't know about better solution
