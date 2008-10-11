@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="C:\mysql\include;..\common;."
+				AdditionalIncludeDirectories="C:\mysql\include;..\..\common;."
 				PreprocessorDefinitions="WIN32;_WIN32_WINNT=0x0400;_NDEBUG;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -120,7 +120,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="C:\mysql\include;..\common;."
+				AdditionalIncludeDirectories="C:\mysql\include;..\..\common;."
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -182,47 +182,47 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\xmlpktgen\CloneGenerator.cpp"
+				RelativePath="..\..\xmlpktgen\CloneGenerator.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\xmlpktgen\ConstructGenerator.cpp"
+				RelativePath="..\..\xmlpktgen\ConstructGenerator.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\xmlpktgen\DecodeGenerator.cpp"
+				RelativePath="..\..\xmlpktgen\DecodeGenerator.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\xmlpktgen\DestructGenerator.cpp"
+				RelativePath="..\..\xmlpktgen\DestructGenerator.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\xmlpktgen\DumpGenerator.cpp"
+				RelativePath="..\..\xmlpktgen\DumpGenerator.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\xmlpktgen\EncodeGenerator.cpp"
+				RelativePath="..\..\xmlpktgen\EncodeGenerator.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\xmlpktgen\Generator.cpp"
+				RelativePath="..\..\xmlpktgen\Generator.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\xmlpktgen\HeaderGenerator.cpp"
+				RelativePath="..\..\xmlpktgen\HeaderGenerator.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\xmlpktgen\ImplGenerator.cpp"
+				RelativePath="..\..\xmlpktgen\ImplGenerator.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\xmlpktgen\main.cpp"
+				RelativePath="..\..\xmlpktgen\main.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\xmlpktgen\XMLPacketGen.cpp"
+				RelativePath="..\..\xmlpktgen\XMLPacketGen.cpp"
 				>
 			</File>
 		</Filter>
@@ -232,43 +232,43 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\xmlpktgen\CloneGenerator.h"
+				RelativePath="..\..\xmlpktgen\CloneGenerator.h"
 				>
 			</File>
 			<File
-				RelativePath="..\xmlpktgen\ConstructGenerator.h"
+				RelativePath="..\..\xmlpktgen\ConstructGenerator.h"
 				>
 			</File>
 			<File
-				RelativePath="..\xmlpktgen\DecodeGenerator.h"
+				RelativePath="..\..\xmlpktgen\DecodeGenerator.h"
 				>
 			</File>
 			<File
-				RelativePath="..\xmlpktgen\DestructGenerator.h"
+				RelativePath="..\..\xmlpktgen\DestructGenerator.h"
 				>
 			</File>
 			<File
-				RelativePath="..\xmlpktgen\DumpGenerator.h"
+				RelativePath="..\..\xmlpktgen\DumpGenerator.h"
 				>
 			</File>
 			<File
-				RelativePath="..\xmlpktgen\EncodeGenerator.h"
+				RelativePath="..\..\xmlpktgen\EncodeGenerator.h"
 				>
 			</File>
 			<File
-				RelativePath="..\xmlpktgen\Generator.h"
+				RelativePath="..\..\xmlpktgen\Generator.h"
 				>
 			</File>
 			<File
-				RelativePath="..\xmlpktgen\HeaderGenerator.h"
+				RelativePath="..\..\xmlpktgen\HeaderGenerator.h"
 				>
 			</File>
 			<File
-				RelativePath="..\xmlpktgen\ImplGenerator.h"
+				RelativePath="..\..\xmlpktgen\ImplGenerator.h"
 				>
 			</File>
 			<File
-				RelativePath="..\xmlpktgen\XMLPacketGen.h"
+				RelativePath="..\..\xmlpktgen\XMLPacketGen.h"
 				>
 			</File>
 		</Filter>
@@ -282,79 +282,79 @@
 			Name="Common Source"
 			>
 			<File
-				RelativePath="..\common\Base64.cpp"
+				RelativePath="..\..\common\Base64.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\common\crc32.cpp"
+				RelativePath="..\..\common\crc32.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\common\EVEMarshal.cpp"
+				RelativePath="..\..\common\EVEMarshal.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\common\EVEUnmarshal.cpp"
+				RelativePath="..\..\common\EVEUnmarshal.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\common\EVEZeroCompress.cpp"
+				RelativePath="..\..\common\EVEZeroCompress.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\common\logsys.cpp"
+				RelativePath="..\..\common\logsys.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\common\misc.cpp"
+				RelativePath="..\..\common\misc.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\common\MiscFunctions.cpp"
+				RelativePath="..\..\common\MiscFunctions.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\common\packet_functions.cpp"
+				RelativePath="..\..\common\packet_functions.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\common\PyDumpVisitor.cpp"
+				RelativePath="..\..\common\PyDumpVisitor.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\common\PyPacket.cpp"
+				RelativePath="..\..\common\PyPacket.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\common\PyRep.cpp"
+				RelativePath="..\..\common\PyRep.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\common\PyUtils.cpp"
+				RelativePath="..\..\common\PyUtils.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\common\PyVisitor.cpp"
+				RelativePath="..\..\common\PyVisitor.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\3rdparty\tinyxml\tinystr.cpp"
+				RelativePath="..\..\3rdparty\tinyxml\tinystr.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\3rdparty\tinyxml\tinyxml.cpp"
+				RelativePath="..\..\3rdparty\tinyxml\tinyxml.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\3rdparty\tinyxml\tinyxmlerror.cpp"
+				RelativePath="..\..\3rdparty\tinyxml\tinyxmlerror.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\3rdparty\tinyxml\tinyxmlparser.cpp"
+				RelativePath="..\..\3rdparty\tinyxml\tinyxmlparser.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\common\XMLParser.cpp"
+				RelativePath="..\..\common\XMLParser.cpp"
 				>
 			</File>
 		</Filter>
