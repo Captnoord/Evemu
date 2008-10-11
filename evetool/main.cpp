@@ -154,7 +154,7 @@ void TestCache() {
 	PyRepString *s = new PyRepString("charCreationInfo.departments");
 
 	uint32 len = 0;
-	byte *data = MarshalOnly(s, len);
+	byte *data = Marshal(s, len, false);
 	
 	std::string into;
 	Base64::encode(data, len, into, false);
@@ -780,7 +780,7 @@ void TestMarshal() {
 
 	uint32 mlen = 0;
 	printf("Marshaling...\n");
-	byte *marshaled = MarshalOnly(rs, mlen);
+	byte *marshaled = Marshal(rs, mlen, false);
 	delete rs;
 	//byte *marshaled = MarshalOnly(t, mlen);
 	//delete t;
