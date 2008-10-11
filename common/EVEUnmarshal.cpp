@@ -1463,7 +1463,7 @@ static uint32 UnmarshalData(UnmarshalState *state, const byte *packet, uint32 le
 #ifdef PACKED_ROW_HEADER_HACK
 		//do something...
 #else
-		row->Push(&unpacked[0], unpacked.size());
+		row->Push(&unpacked[0], (uint32)unpacked.size());
 #endif
 		//TODO: unmarshal following PyReps as well
 		res = row;

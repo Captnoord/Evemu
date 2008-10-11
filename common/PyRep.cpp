@@ -211,7 +211,7 @@ PyRepSubStream *PyRepBuffer::CreateSubStream() const {
 }
 
 void PyRepString::Dump(FILE *into, const char *pfx) const {
-	if(ContainsNonPrintables(value.c_str(), value.length())) {
+	if(ContainsNonPrintables(value.c_str(), (uint32)value.length())) {
 		fprintf(into, "%sString%s: '<binary, len=%d>'\n", pfx, is_type_1?" (Type1)":"", value.length());
 	} else {
 		fprintf(into, "%sString%s: '%s'\n", pfx, is_type_1?" (Type1)":"", value.c_str());
@@ -219,7 +219,7 @@ void PyRepString::Dump(FILE *into, const char *pfx) const {
 }
 
 void PyRepString::Dump(LogType type, const char *pfx) const {
-	if(ContainsNonPrintables(value.c_str(), value.length())) {
+	if(ContainsNonPrintables(value.c_str(), (uint32)value.length())) {
 		_log(type, "%sString%s: '<binary, len=%d>'", pfx, is_type_1?" (Type1)":"", value.length());
 	} else {
 		_log(type, "%sString%s: '%s'", pfx, is_type_1?" (Type1)":"", value.c_str());

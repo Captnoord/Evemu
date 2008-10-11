@@ -47,7 +47,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="C:\mysql\include;..\..\..\common;..\..\..\3rdparty\zlib;&quot;..\..\libs\zlib-win32\include&quot;;."
+				AdditionalIncludeDirectories="C:\mysql\include;..\..\3rdparty\mysql\include;..\..\3rdparty\zlib;..\..\common"
 				PreprocessorDefinitions="WIN32;_WIN32_WINNT=0x0400;_NDEBUG;_DEBUG;USE_RUNTIME_EXCEPTIONS"
 				MinimalRebuild="true"
 				ExceptionHandling="2"
@@ -72,7 +72,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="wsock32.lib zlib.lib mysqlclient.lib Advapi32.lib user32.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="C:\mysql\lib\debug;&quot;..\..\libs\zlib-win32\lib&quot;"
+				AdditionalLibraryDirectories="C:\mysql\lib\debug;..\..\lib"
 				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -798,10 +798,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\Mutex.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\common\packet_dump.h"
 				>
 			</File>
@@ -881,6 +877,14 @@
 				RelativePath="..\..\common\types.h"
 				>
 			</File>
+			<Filter
+				Name="threading"
+				>
+				<File
+					RelativePath="..\..\common\Mutex.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Common Source"
@@ -970,10 +974,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\Mutex.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\common\packet_dump.cpp"
 				>
 			</File>
@@ -1053,6 +1053,14 @@
 				RelativePath="..\..\common\XMLParser.cpp"
 				>
 			</File>
+			<Filter
+				Name="threading"
+				>
+				<File
+					RelativePath="..\..\common\Mutex.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Packets"

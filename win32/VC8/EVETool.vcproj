@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="C:\mysql\include;..\common;."
+				AdditionalIncludeDirectories="C:\mysql\include;..\..\common;."
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;NO_READLINE;_WIN32_WINNT=0x0400"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -118,7 +118,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="C:\mysql\include;..\common;."
+				AdditionalIncludeDirectories="C:\mysql\include;..\..\common;."
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;NO_READLINE;_WIN32_WINNT=0x0400"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -181,15 +181,15 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\evetool\main.cpp"
+				RelativePath="..\..\evetool\main.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\common\timer.cpp"
+				RelativePath="..\..\common\timer.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\evetool\TriFile.cpp"
+				RelativePath="..\..\evetool\TriFile.cpp"
 				>
 			</File>
 		</Filter>
@@ -199,7 +199,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\evetool\TriFile.h"
+				RelativePath="..\..\evetool\TriFile.h"
 				>
 			</File>
 		</Filter>
@@ -213,103 +213,103 @@
 			Name="Common Source"
 			>
 			<File
-				RelativePath="..\common\Base64.cpp"
+				RelativePath="..\..\common\Base64.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\common\CachedObjectMgr.cpp"
+				RelativePath="..\..\common\CachedObjectMgr.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\common\crc32.cpp"
+				RelativePath="..\..\common\crc32.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\common\DestinyBinDump.cpp"
+				RelativePath="..\..\common\DestinyBinDump.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\common\DirWalker.cpp"
+				RelativePath="..\..\common\DirWalker.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\common\EVEMarshal.cpp"
+				RelativePath="..\..\common\EVEMarshal.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\common\EVEUnmarshal.cpp"
+				RelativePath="..\..\common\EVEUnmarshal.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\common\EVEUtils.cpp"
+				RelativePath="..\..\common\EVEUtils.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\common\EVEZeroCompress.cpp"
+				RelativePath="..\..\common\EVEZeroCompress.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\common\logsys.cpp"
+				RelativePath="..\..\common\logsys.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\common\misc.cpp"
+				RelativePath="..\..\common\misc.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\common\MiscFunctions.cpp"
+				RelativePath="..\..\common\MiscFunctions.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\common\Mutex.cpp"
+				RelativePath="..\..\common\Mutex.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\common\packet_functions.cpp"
+				RelativePath="..\..\common\packet_functions.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\common\PyDumpVisitor.cpp"
+				RelativePath="..\..\common\PyDumpVisitor.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\common\PyPacket.cpp"
+				RelativePath="..\..\common\PyPacket.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\common\PyRep.cpp"
+				RelativePath="..\..\common\PyRep.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\common\PyUtils.cpp"
+				RelativePath="..\..\common\PyUtils.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\common\PyVisitor.cpp"
+				RelativePath="..\..\common\PyVisitor.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\common\RowsetReader.cpp"
+				RelativePath="..\..\common\RowsetReader.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\3rdparty\tinyxml\tinystr.cpp"
+				RelativePath="..\..\3rdparty\tinyxml\tinystr.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\3rdparty\tinyxml\tinyxml.cpp"
+				RelativePath="..\..\3rdparty\tinyxml\tinyxml.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\3rdparty\tinyxml\tinyxmlerror.cpp"
+				RelativePath="..\..\3rdparty\tinyxml\tinyxmlerror.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\3rdparty\tinyxml\tinyxmlparser.cpp"
+				RelativePath="..\..\3rdparty\tinyxml\tinyxmlparser.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\common\XMLParser.cpp"
+				RelativePath="..\..\common\XMLParser.cpp"
 				>
 			</File>
 		</Filter>
@@ -317,11 +317,11 @@
 			Name="Packet"
 			>
 			<File
-				RelativePath="..\packets\General.cpp"
+				RelativePath="..\..\packets\General.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\packets\ObjectCaching.cpp"
+				RelativePath="..\..\packets\ObjectCaching.cpp"
 				>
 			</File>
 		</Filter>

@@ -102,7 +102,7 @@ int main(int argc, char *argv[]) {
 	pthread_create(&thread, NULL, UserInputThread, NULL);
 #endif
 
-	//skip first argument (launch path), we dont need it
+	//skip first argument (launch path), we don't need it
 	argc--;
 	argv++;
 

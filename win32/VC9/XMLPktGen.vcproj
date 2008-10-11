@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="C:\mysql\include;D:\Dev\Evemu\branches\trinity\3rdparty\zlib;..\..\..\common;."
+				AdditionalIncludeDirectories="..\..\3rdparty\zlib;..\..\common"
 				PreprocessorDefinitions="WIN32;_WIN32_WINNT=0x0400;_NDEBUG;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -282,10 +282,6 @@
 			Name="Common Source"
 			>
 			<File
-				RelativePath="..\..\common\Base64.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\common\crc32.cpp"
 				>
 			</File>
@@ -338,25 +334,33 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\3rdparty\tinyxml\tinystr.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\3rdparty\tinyxml\tinyxml.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\3rdparty\tinyxml\tinyxmlerror.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\3rdparty\tinyxml\tinyxmlparser.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\common\XMLParser.cpp"
 				>
 			</File>
+			<Filter
+				Name="3rd Party"
+				>
+				<File
+					RelativePath="..\..\common\Base64.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\3rdparty\tinyxml\tinystr.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\3rdparty\tinyxml\tinyxml.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\3rdparty\tinyxml\tinyxmlerror.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\3rdparty\tinyxml\tinyxmlparser.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>
