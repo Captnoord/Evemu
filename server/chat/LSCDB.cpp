@@ -90,7 +90,7 @@ PyRepObject *LSCDB::LookupPlayerChars(const char *match, bool exact) {
 }
 
 //temporarily relocated into ServiceDB until some things get cleaned up...
-uint32 ServiceDB::StoreNewEVEMail(uint32 senderID, uint32 recipID, const char * subject, const char * message, uint64 sentTime) {
+uint32 LSCDB::StoreMail(uint32 senderID, uint32 recipID, const char * subject, const char * message, uint64 sentTime) {
 	DBQueryResult res;
 	DBerror err;
 	DBResultRow row;
@@ -137,7 +137,7 @@ uint32 ServiceDB::StoreNewEVEMail(uint32 senderID, uint32 recipID, const char * 
 	return (messageID);
 }
 
-PyRepObject *LSCDB::GetEVEMailHeaders(uint32 recID) {
+PyRepObject *LSCDB::GetMailHeaders(uint32 recID) {
 	DBQueryResult res;
 
 	if(!m_db->RunQuery(res,
@@ -152,7 +152,7 @@ PyRepObject *LSCDB::GetEVEMailHeaders(uint32 recID) {
 	return(DBResultToRowset(res));
 }
 
-PyRep *LSCDB::GetEVEMailDetails(uint32 messageID, uint32 readerID) {
+PyRep *LSCDB::GetMailDetails(uint32 messageID, uint32 readerID) {
 	DBQueryResult result;
 	DBResultRow row;
 

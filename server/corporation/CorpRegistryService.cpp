@@ -28,6 +28,7 @@
 #include "../PyBoundObject.h"
 #include "../common/EVEUtils.h"
 #include "../cache/ObjCacheService.h"
+#include "../chat/LSCService.h"
 
 #include "../packets/CorporationPkts.h"
 #include "../packets/General.h"
@@ -437,11 +438,12 @@ PyCallResult CorpRegistryBound::Handle_InsertApplication(PyCallArgs &call) {
 
 	/// Send an evemail to those who can decide
 	/// Well, for the moment, send it to the ceo
-	std::string subject = "New application from " + call.client->GetChar().name,
-				body = res.message;
+	std::string
+		subject = "New application from " + call.client->GetChar().name,
+		body = res.message;
 	std::vector<uint32> recipients;
 	recipients.push_back(m_db->GetCorporationCEO(res.corpID));
-	m_manager->SendNewEveMail(call.client->GetCharacterID(), recipients, subject, body);
+	m_manager->lsc_service->SendMail(call.client->GetCharacterID(), recipients, subject, body);
 
 	/// Reply: ~\x00\x00\x00\x00\x01
 	return NULL;

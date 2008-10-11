@@ -62,11 +62,6 @@ public:
 	PyBoundObject *FindBoundObject(const char *bindID);
 	void ClearBoundObject(const char *bindID);
 
-	// General purpose EVEMail functions... sine all kinds of places need to send it.
-	// These would fit much better in LSCService, maybe the service manager needs to keep a typed pointer to it???
-	void SendNewEveMail(uint32 sender, uint32 recipient, const std::string & subject, const std::string & content) { std::vector<uint32> recs(1, recipient); SendNewEveMail(sender, recs, subject, content); }
-	void SendNewEveMail(uint32 sender, std::vector<uint32> recipients, const std::string & subject, const std::string & content);
-
 	//this is a hack and needs to die:
 	ServiceDB *GetServiceDB() const { return(m_svcDB); }
 
