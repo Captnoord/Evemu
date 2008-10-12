@@ -808,6 +808,27 @@ void Client::_ProcessCallRequest(PyPacket *packet) {
 		_CheckSessionChange();	//send out the session change before the return.
 		
 		_SendCallReturn(packet, &t);
+	} CATCH_SIGEXCEPT(e) {
+		std::string str = e.to_string();
+
+		_log(CLIENT__ERROR, "%s invoked exception %s by calling %s::%s\n%s",
+			GetName(), sigexcept_exception::TypeStrings[e.type], svc->GetName(), call.method.c_str(), str.c_str());
+
+		//replace newline with <br>
+		for(size_t i = str.find("\n"); i < str.max_size(); i = str.find("\n", i))
+			str.replace(i, 1, "<br>");
+
+		//build exception
+		PyRep *except = new PyRepSubStream(MakeCustomError(
+			"Exception %s occured while processing %s::%s<br>"
+			"<br>"
+			"%s",
+			sigexcept_exception::TypeStrings[e.type], svc->GetName(), call.method.c_str(),
+			str.c_str()
+			));
+
+		//send it to client
+		_SendException(packet, WRAPPEDEXCEPTION, &except);
 	} catch(PyException &e) {
 		PyRep *except = e.ssException.hijack();
 
