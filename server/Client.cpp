@@ -438,7 +438,7 @@ void Client::Login(CryptoChallengePacket *pack) {
 	_log(CLIENT__MESSAGE, "Login with %s", pack->user_name.c_str());
 
 	if(!pack->user_password->CheckType(PyRep::PackedObject2)) {
-		_log(CLIENT__ERROR, "Failed to get password: user_password is not PackedObject2.");
+		_log(CLIENT__ERROR, "Failed to get password: user password is not PackedObject2.");
 		return;
 	}
 	PyRepPackedObject2 *obj = (PyRepPackedObject2 *)pack->user_password;
@@ -457,9 +457,7 @@ void Client::Login(CryptoChallengePacket *pack) {
 		e->args = new PyRepTuple(1);
 		e->args->items[0] = new PyRepString("LoginAuthFailed");
 
-		m_net._QueueRep(e);
-		delete e;
-		return;
+		throw(PyException(e));
 	}
 	
 	// this is needed so if we exit before selecting a character, the account online flag would switch back to 0
@@ -762,35 +760,6 @@ void Client::BoardShip(InventoryItem *new_ship) {
 		m_destiny->SetShipCapabilities(m_ship);
 }
 
-void Client::_SendLoginFailed(uint32 callid) {
-	
-	//build the exception
-	macho_MachoException e;
-	e.in_response_to = AUTHENTICATION_REQ;
-	e.exception_type = WRAPPEDEXCEPTION;
-	e.payload = new PyRepSubStream(MakeException("LoginAuthFailed"));
-
-	//build the packet:
-	PyPacket *p = new PyPacket();
-	p->type_string = "macho.ErrorResponse";
-	p->type = ERRORRESPONSE;
-	
-	p->source.type = PyAddress::Any;
-
-	p->dest.type = PyAddress::Client;
-	p->dest.typeID = GetAccountID();
-	p->dest.callID = callid;
-
-	p->userid = 0;
-	
-	p->payload = e.Encode();
-	
-	p->named_payload = new PyRepDict();
-	p->named_payload->add("channel", new PyRepString("authentication"));
-	
-	FastQueuePacket(&p);
-}
-
 void Client::_ProcessCallRequest(PyPacket *packet) {
 
 	PyService *svc = m_services->LookupService(packet);
@@ -827,12 +796,11 @@ void Client::_ProcessCallRequest(PyPacket *packet) {
 	
 	//build arguments
 	PyCallArgs args(this, &call.arg_tuple, &call.arg_dict);
+
+	try {
+		//parts of call may be consumed here
+		PyCallResult result = svc->Call(call, args);
 	
-	//parts of call may be consumed here
-	PyCallResult result = svc->Call(call, args);
-	
-	switch(result.type) {
-	case PyCallResult::RegularResult: {
 		//successful call.
 		PyRepTuple *t = new PyRepTuple(1);
 		t->items[0] = result.ssResult.hijack();
@@ -840,13 +808,10 @@ void Client::_ProcessCallRequest(PyPacket *packet) {
 		_CheckSessionChange();	//send out the session change before the return.
 		
 		_SendCallReturn(packet, &t);
-	} break;
-	
-	case PyCallResult::ThrowException: {
-		PyRep *except = result.ssResult.hijack();
+	} catch(PyException &e) {
+		PyRep *except = e.ssException.hijack();
+
 		_SendException(packet, WRAPPEDEXCEPTION, &except);
-	} break;
-	//no default on purpose
 	}
 }
 

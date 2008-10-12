@@ -81,9 +81,82 @@ PyPacket *EVEPresentation::PopPacket() {
 
 	if(is_log_enabled(NET__PRES_REP)) {
 		_log(NET__PRES_REP, "%s: Raw Rep Dump:", GetConnectedAddress().c_str());
-		r->Dump(stdout, "    ");
+		r->Dump(NET__PRES_REP, "    ");
 	}
 
+	try {
+		return(_Dispatch(r));
+	} catch(PyException &e) {
+		//send it raw
+		PyRepSubStream *ss = e.ssException.hijack();
+		if(ss->decoded != NULL)
+			_QueueRep(ss->decoded);
+		else
+			_log(NET__PRES_ERROR, "Trying to throw invalid payload.");
+		delete ss;
+		//do recurse
+		return(PopPacket());
+	}
+}
+
+
+void EVEPresentation::QueuePacket(PyPacket *p) {
+	if(p == NULL)
+		return;
+	p = p->Clone();
+	FastQueuePacket(&p);
+}
+
+void EVEPresentation::FastQueuePacket(PyPacket **p) {
+	if(p == NULL || *p == NULL)
+		return;
+	
+	PyRep *r = (*p)->Encode();
+	if(r == NULL) {
+		_log(NET__PRES_ERROR, "%s: Failed to encode???", GetConnectedAddress().c_str());
+		delete *p;
+		*p = NULL;
+		return;
+	}
+	delete *p;
+	*p = NULL;
+
+	_QueueRep(r);
+	delete r;
+}
+
+void EVEPresentation::_QueueRep(const PyRep *rep) {
+	if(is_log_enabled(NET__PRES_REP_OUT)) {
+		_log(NET__PRES_REP_OUT, "%s: Outbound Rep:", GetConnectedAddress().c_str());
+		PyLogsysDump dv(NET__PRES_REP_OUT);
+		rep->visit(&dv);
+	}
+	
+	EVENetPacket *packet = new EVENetPacket;
+	packet->data = Marshal(rep, packet->length);
+	if(packet->data == NULL) {
+		_log(NET__PRES_ERROR, "%s: Error marshaling or deflating packet!", GetConnectedAddress().c_str());
+		return;
+	}
+
+	_NetQueuePacket(&packet);
+}
+
+void EVEPresentation::_NetQueuePacket(EVENetPacket **p) {
+	if((*p)->length > EVESocketMaxNumberOfBytes) {
+		_log(NET__PRES_ERROR, "%s: tried to queue a packet which is too large! %lu exceeds the hard coded limit of %lu bytes!", GetConnectedAddress().c_str(), (*p)->length, EVESocketMaxNumberOfBytes);
+		delete *p;
+		*p = NULL;
+		return;
+	}
+	
+	_log(NET__PRES_RAW_OUT, "Outbound Raw Packet:");
+	_hex(NET__PRES_RAW_OUT, (*p)->data, (*p)->length);
+	
+	net->FastQueuePacket(p);
+}
+
+PyPacket *EVEPresentation::_Dispatch(PyRep *r) {
 	switch(m_state) {
 		case VersionNotReceived: {
 			//we are waiting for their version information...
@@ -194,6 +267,9 @@ PyPacket *EVEPresentation::PopPacket() {
 		}	break;
 			
 		case CryptoRequestReceived_ChallengeWait: {
+			//just to be sure
+			if(m_request != NULL)
+				delete m_request;
 			m_request = new CryptoChallengePacket;
 			if(!m_request->Decode(&r)) {
 				_log(NET__PRES_ERROR, "%s: Received invalid crypto challenge!", GetConnectedAddress().c_str());
@@ -254,6 +330,7 @@ PyPacket *EVEPresentation::PopPacket() {
 			m_request = NULL;
 
 			m_state = AcceptingPackets;
+
 		}	break;
 
 		case AcceptingPackets: {
@@ -268,63 +345,6 @@ PyPacket *EVEPresentation::PopPacket() {
 	}
 	//recurse, just in case the next packet is here already.
 	return(PopPacket());
-}
-
-
-void EVEPresentation::QueuePacket(PyPacket *p) {
-	if(p == NULL)
-		return;
-	p = p->Clone();
-	FastQueuePacket(&p);
-}
-
-void EVEPresentation::FastQueuePacket(PyPacket **p) {
-	if(p == NULL || *p == NULL)
-		return;
-	
-	PyRep *r = (*p)->Encode();
-	if(r == NULL) {
-		_log(NET__PRES_ERROR, "%s: Failed to encode???", GetConnectedAddress().c_str());
-		delete *p;
-		*p = NULL;
-		return;
-	}
-	delete *p;
-	*p = NULL;
-
-	_QueueRep(r);
-	delete r;
-}
-
-void EVEPresentation::_QueueRep(const PyRep *rep) {
-	if(is_log_enabled(NET__PRES_REP_OUT)) {
-		_log(NET__PRES_REP_OUT, "%s: Outbound Rep:", GetConnectedAddress().c_str());
-		PyLogsysDump dv(NET__PRES_REP_OUT);
-		rep->visit(&dv);
-	}
-	
-	EVENetPacket *packet = new EVENetPacket;
-	packet->data = Marshal(rep, packet->length);
-	if(packet->data == NULL) {
-		_log(NET__PRES_ERROR, "%s: Error marshaling or deflating packet!", GetConnectedAddress().c_str());
-		return;
-	}
-
-	_NetQueuePacket(&packet);
-}
-
-void EVEPresentation::_NetQueuePacket(EVENetPacket **p) {
-	if((*p)->length > EVESocketMaxNumberOfBytes) {
-		_log(NET__PRES_ERROR, "%s: tried to queue a packet which is too large! %lu exceeds the hard coded limit of %lu bytes!", GetConnectedAddress().c_str(), (*p)->length, EVESocketMaxNumberOfBytes);
-		delete *p;
-		*p = NULL;
-		return;
-	}
-	
-	_log(NET__PRES_RAW_OUT, "Outbound Raw Packet:");
-	_hex(NET__PRES_RAW_OUT, (*p)->data, (*p)->length);
-	
-	net->FastQueuePacket(p);
 }
 
 void EVEPresentation::_SendHandshake() {

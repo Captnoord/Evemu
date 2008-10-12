@@ -50,6 +50,7 @@ public:
 protected:
 	void _QueueRep(const PyRep *rep);
 	void _NetQueuePacket(EVENetPacket **p);
+	PyPacket *_Dispatch(PyRep *r);
 	void _SendHandshake();
 
 	EVETCPConnection *const net;	//we do not own this, is never NULL

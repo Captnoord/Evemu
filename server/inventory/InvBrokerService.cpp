@@ -126,8 +126,8 @@ protected:
 	
 	InventoryDB *const m_db;
 
-	PyCallResult _ExecAdd(Client *c, const std::vector<uint32> &items, uint32 quantity, EVEItemFlags flag);
-	PyCallResult _ValidateAdd( Client *c, const std::vector<uint32> &items, uint32 quantity, EVEItemFlags flag);
+	PyRep *_ExecAdd(Client *c, const std::vector<uint32> &items, uint32 quantity, EVEItemFlags flag);
+	void _ValidateAdd( Client *c, const std::vector<uint32> &items, uint32 quantity, EVEItemFlags flag);
 };
 
 
@@ -496,7 +496,7 @@ PyCallResult InventoryBound::Handle_StackAll(PyCallArgs &call) {
 	return(NULL);
 }
 
-PyCallResult InventoryBound::_ValidateAdd( Client *c, const std::vector<uint32> &items, uint32 quantity, EVEItemFlags flag)
+void InventoryBound::_ValidateAdd( Client *c, const std::vector<uint32> &items, uint32 quantity, EVEItemFlags flag)
 {
 
 	double totalVolume = 0.0;
@@ -528,7 +528,7 @@ PyCallResult InventoryBound::_ValidateAdd( Client *c, const std::vector<uint32> 
 			//Can only put drones in drone bay
 			//Return ErrorResponse
 			sourceItem->Release();
-			return(PyCallException(MakeException("ItemCannotBeInDroneBay", std::map<std::string, PyRep *>())));
+			throw(PyException(MakeUserError("ItemCannotBeInDroneBay")));
 	}
 
 
@@ -554,14 +554,13 @@ PyCallResult InventoryBound::_ValidateAdd( Client *c, const std::vector<uint32> 
 			std::map<std::string, PyRep *> args;
 			args["available"] = new PyRepReal(m_item->GetRemainingCapacity( flag ));
 			args["volume"] = new PyRepReal(totalVolume);
-			return(PyCallException(MakeException("NotEnoughCargoSpace", args)));
+			throw(PyException(MakeUserError("NotEnoughCargoSpace", args)));
 		}
 	}
-	return(NULL);
 }
 	
 
-PyCallResult InventoryBound::_ExecAdd(Client *c, const std::vector<uint32> &items, uint32 quantity, EVEItemFlags flag) {
+PyRep *InventoryBound::_ExecAdd(Client *c, const std::vector<uint32> &items, uint32 quantity, EVEItemFlags flag) {
 	
 	bool fLoadoutRequest = false;
 	
@@ -580,14 +579,7 @@ PyCallResult InventoryBound::_ExecAdd(Client *c, const std::vector<uint32> &item
 	else
 	{
 		//Make sure all items can be moved successfully will be ok
-		PyCallResult returnResult = _ValidateAdd(c, items, quantity, flag);
-
-		if( returnResult.type != PyCallResult::RegularResult )
-		{
-			//Invalid add, return the ErrorResponse
-			return(returnResult);
-		}
-
+		_ValidateAdd(c, items, quantity, flag);
 	}
 	
 	

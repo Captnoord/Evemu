@@ -91,39 +91,6 @@
     </InlineTuple>
 </element>
 
-<element name="Inventory_QuantityLessThanMinimumPortionException">
- <object name="exceptionClass" type="ccp_exceptions.UserError">
-  <InlineDict>
-    <IDEntry key="args">
-      <InlineTuple name="args_tuple">
-        <string name="exceptionType" default="QuantityLessThanMinimumPortion" />
-        <InlineDict>
-          <IDEntry key="typename">
-            <string name="typeName" />
-          </IDEntry>
-          <IDEntry key="portion">
-            <int name="portionSize" />
-          </IDEntry>
-        </InlineDict>
-      </InlineTuple>
-    </IDEntry>
-    <IDEntry key="msg">
-      <string name="exceptTypeDict" default="QuantityLessThanMinimumPortion" />
-    </IDEntry>
-    <IDEntry key="dict">
-      <InlineDict name="arg_dict">
-        <IDEntry key="typename">
-          <string name="typeName_dict" />
-        </IDEntry>
-        <IDEntry key="portion">
-          <int name="portionSize_dict" />
-        </IDEntry>
-      </InlineDict>
-    </IDEntry>
-  </InlineDict>
- </object>
-</element>
-
 <element name="Inventory_CallStackAll">
     <InlineTuple none_marker="0">
         <int name="locationFlag" none_marker="0"/>

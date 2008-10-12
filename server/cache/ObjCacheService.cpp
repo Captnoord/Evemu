@@ -156,7 +156,7 @@ PyCallResult ObjCacheService::Handle_GetCachableObject(PyCallArgs &call) {
 	/*if(m_cache.IsCacheUpToDate(args.objectID, args.version, args.timestamp)) {
 		//they throw an exception for "its up to date", lets give it a try...
 		objectCaching_CacheOK except;
-		return(PyCallException(except.FastEncode()));
+		return(PyException(except.FastEncode()));
 	}*/
 	
 	PyRepObject *result = m_cache.GetCachedObject(args.objectID);

@@ -53,46 +53,25 @@ public:
 
 
 
-class PyCallRawResult;
-class PyCallException;
-
 class PyCallResult {
 protected:
-	friend class PyCallRawResult;
-	friend class PyCallException;
 	PyCallResult();
 public:
-	typedef enum {
-		RegularResult,
-		ThrowException
-	} ResultType;
-	
 	PyCallResult(PyRep *result);	//takes ownership
 	~PyCallResult();
-	
-	ResultType type;
 	
 	//I dislike smart pointers, but I need them here due to copying when returning objects
 	counted_ptr<PyRepSubStream> ssResult;	//must never be NULL
 };
 
-class PyCallRawResult {
-public:
-	//ss is consumed
-	PyCallRawResult(PyRepSubStream *ss);
-	~PyCallRawResult();
-	operator PyCallResult();
+class PyException {
 protected:
-	counted_ptr<PyRepSubStream> m_ss;
-};
+	PyException();
+public:
+	PyException(PyRep *except);		//takes ownership
+	~PyException();
 
-class PyCallException {
-public:
-	PyCallException(PyRepObject *except);
-	~PyCallException();
-	operator PyCallResult();
-protected:
-	counted_ptr<PyRepSubStream> m_ss;
+	counted_ptr<PyRepSubStream> ssException;	//must never be NULL
 };
 
 

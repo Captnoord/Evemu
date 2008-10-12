@@ -53,7 +53,7 @@ protected:
 	double m_tax;
 	
 	double _CalcReprocessingEfficiency(const InventoryItem *const client, const InventoryItem *const item = NULL) const;
-	PyCallResult _GetQuote(const uint32 itemID, const Client *const c, bool throwException = false) const;
+	PyRep *_GetQuote(const uint32 itemID, const Client *const c, bool throwException = false) const;
 };
 
 PyCallable_Make_InnerDispatcher(ReprocessingServiceBound)
@@ -192,9 +192,9 @@ PyCallResult ReprocessingServiceBound::Handle_GetQuotes(PyCallArgs &call) {
 	end = call_arg.itemIDs.end();
 
 	for(; cur != end; cur++) {
-		PyCallResult quote = _GetQuote(*cur, call.client, false);
-		if( quote.type == PyCallResult::RegularResult && !quote.ssResult->decoded->CheckType(PyRep::None) )
-			rsp.quotes[*cur] = quote.ssResult->decoded->Clone();
+		PyRep *quote = _GetQuote(*cur, call.client, false);
+		if(quote != NULL)
+			rsp.quotes[*cur] = quote;
 	}
 
 	result = rsp.Encode();
@@ -312,7 +312,7 @@ double ReprocessingServiceBound::_CalcReprocessingEfficiency(const InventoryItem
 	return(efficiency);
 }
 
-PyCallResult ReprocessingServiceBound::_GetQuote(const uint32 itemID, const Client *const c, bool throwException) const {
+PyRep *ReprocessingServiceBound::_GetQuote(const uint32 itemID, const Client *const c, bool throwException) const {
 	InventoryItem *item = m_manager->item_factory->Load(itemID, true);
 	if(item == NULL)
 		return(NULL);	// No action as GetQuote is also called for reprocessed items (prolly for check)
@@ -329,13 +329,12 @@ PyCallResult ReprocessingServiceBound::_GetQuote(const uint32 itemID, const Clie
 		return(NULL);
 	}
 	if(item->quantity() < portionSize && throwException) {
-		Inventory_QuantityLessThanMinimumPortionException except;
-		except.exceptionType = except.exceptTypeDict = "QuantityLessThanMinimumPortion";
-		except.portionSize = except.portionSize_dict = portionSize;
-		except.typeName = except.typeName_dict = item->itemName().c_str();
+		std::map<std::string, PyRep *> args;
+		args["typename"] = new PyRepString(item->itemName().c_str());
+		args["portion"] = new PyRepInteger(portionSize);
 
 		item->Release();
-		return(PyCallException(except.Encode()));
+		throw(PyException(MakeUserError("QuantityLessThanMinimumPortion", args)));
 	}
 
 	Rsp_GetQuote res;

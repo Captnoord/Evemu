@@ -128,16 +128,6 @@ PyCallResult PyService::Handle_MachoBindObject(PyCallArgs &call) {
 		
 		PyCallResult result = our_obj->Call(sub_call, sub_args);
 
-				
-		switch(result.type) {
-		case PyCallResult::RegularResult:
-			break;	//continue processing.
-		
-		case PyCallResult::ThrowException:
-			return(result);
-		//no default on purpose
-		}
-
 		//we have to strip off the substream wrapper.
 		result.ssResult->DecodeData();	//just to be sure.
 		if(result.ssResult->decoded == NULL) {

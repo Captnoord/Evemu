@@ -364,8 +364,6 @@ public:
 	//FunctorTimerQueue::TimerID Delay( uint32 time_in_ms, ClientFunctor **functor );
 	
 protected:
-	//login stuff:
-	void _SendLoginFailed(uint32 callid);
 	void _SendPingRequest();
 	
 	void _ProcessNotification(PyPacket *packet);

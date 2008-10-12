@@ -4,6 +4,7 @@
 #include "CommandDB.h"
 #include "../common/logsys.h"
 #include "../Client.h"
+#include "../PyCallable.h"
 
 CommandDispatcher::CommandDispatcher(CommandDB *db, PyServiceMgr *services)
 : m_db(db),
@@ -25,21 +26,36 @@ CommandDispatcher::~CommandDispatcher() {
 bool CommandDispatcher::Execute(Client *from, const char *msg) const {
 	//might want to check for # or / at the begining of this crap.
 	Seperator sep(msg+1);
+
+	if(sep.argnum == 0) {
+		//empty command, return list of commands
+		PyRepString *reason = new PyRepString("Commands: ");
+
+		std::map<std::string, CommandRecord *>::const_iterator cur, end;
+		cur = m_commands.begin();
+		end = m_commands.end();
+		reason->value += "[";
+		for(; cur != end; cur++)
+			reason->value += "'" + cur->second->command + "',";
+		reason->value += "]";
+
+		std::map<std::string, PyRep *> args;
+		args["reason"] = reason;
+		throw(PyException(MakeUserError("", args)));
+	}
 	
 	std::map<std::string, CommandRecord *>::const_iterator res;
 	res = m_commands.find(sep.arg[0]);
 	if(res == m_commands.end()) {
 		_log(COMMAND__ERROR, "Unable to find command '%s' for %s", sep.arg[0], from->GetName());
-		from->SendErrorMsg("Unknown command '%s'", sep.arg[0]);
-		return(true);
+		throw(PyException(MakeCustomError("Unknown command '%s'", sep.arg[0])));
 	}
 	
 	CommandRecord *rec = res->second;
 
 	if((from->GetRole() & rec->required_role) != rec->required_role) {
 		_log(COMMAND__ERROR, "Access denied to %s for command '%s', had role 0x%x, need role 0x%x", from->GetName(), rec->command.c_str(), from->GetRole(), rec->required_role);
-		from->SendErrorMsg("Access denied to command '%s'", sep.arg[0]);
-		return(true);
+		throw(PyException(MakeCustomError("Access denied to command '%s'", sep.arg[0])));
 	}
 
 	CommandFunc func = rec->function;

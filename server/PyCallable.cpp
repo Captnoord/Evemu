@@ -40,22 +40,19 @@ PyCallResult PyCallable::Call(PyCallStream &call, PyCallArgs &args) {
 	args.Dump(SERVICE__CALL_TRACE);
 	
 	//call the dispatcher, capturing the result.
-	PyCallResult res = m_serviceDispatch->Dispatch(call.method, args);
-	
-	if(is_log_enabled(SERVICE__CALL_TRACE)) {
-		switch(res.type) {
-		case PyCallResult::RegularResult:
-			_log(SERVICE__CALL_TRACE, "%s Service: Call %s returned:", m_callableName.c_str(), call.method.c_str());
-			break;
-		case PyCallResult::ThrowException:
-			_log(SERVICE__CALL_TRACE, "%s Service: Call %s threw exception:", m_callableName.c_str(), call.method.c_str());
-			break;
-		//no default on purpose
-		}
+	try {
+		PyCallResult res = m_serviceDispatch->Dispatch(call.method, args);
+
+		_log(SERVICE__CALL_TRACE, "%s Service: Call %s returned:", m_callableName.c_str(), call.method.c_str());
 		res.ssResult->Dump(SERVICE__CALL_TRACE, "      ");
+
+		return(res);
+	} catch(PyException &e) {
+		_log(SERVICE__CALL_TRACE, "%s Service: Call %s threw exception:", m_callableName.c_str(), call.method.c_str());
+		e.ssException->Dump(SERVICE__CALL_TRACE, "      ");
+
+		throw;
 	}
-	
-	return(res);
 }
 
 
@@ -114,15 +111,13 @@ void PyCallArgs::Dump(LogType type) const {
 }
 
 PyCallResult::PyCallResult()
-: type(RegularResult),
-  ssResult(NULL)
+: ssResult(NULL)
 {
-	_log(SERVER__INIT, "Constructing regular NULL");
+	_log(SERVER__INIT, "Constructing Regular NULL");
 }
 
 PyCallResult::PyCallResult(PyRep *result)
-: type(RegularResult),
-  ssResult(
+: ssResult(
 	  (result==NULL)
 	  ? (new PyRepSubStream(new PyRepNone()))
 	  : (new PyRepSubStream(result))
@@ -135,38 +130,24 @@ PyCallResult::~PyCallResult() {
 	_log(SERVER__INIT, "Destroying Regular %p", &(*ssResult));
 }
 
-PyCallRawResult::PyCallRawResult(PyRepSubStream *ss)
-: m_ss(ss) {
-	_log(SERVER__INIT, "Constructing Raw %p", &(*m_ss));
+PyException::PyException()
+: ssException(NULL)
+{
+	_log(SERVER__INIT, "Constructing Exception NULL");
 }
 
-PyCallRawResult::~PyCallRawResult() {
-	_log(SERVER__INIT, "Destroying Raw %p", &(*m_ss));
+PyException::PyException(PyRep *except)
+: ssException(
+		(except==NULL)
+		? (new PyRepSubStream(new PyRepNone))
+		: (new PyRepSubStream(except))
+		)
+{
+	_log(SERVER__INIT, "Constructing Exception %p", &(*ssException));
 }
 
-PyCallRawResult::operator PyCallResult() {
-	_log(SERVER__INIT, "Casting Raw %p", &(*m_ss));
-	PyCallResult res;
-	res.ssResult = m_ss;
-	res.type = PyCallResult::RegularResult;
-	return(res);
-}
-
-PyCallException::PyCallException(PyRepObject *except)
-: m_ss(new PyRepSubStream(except)) {
-	_log(SERVER__INIT, "Constructing Exception %p", &(*m_ss));
-}
-
-PyCallException::~PyCallException() {
-	_log(SERVER__INIT, "Destroying Exception %p", &(*m_ss));
-}
-
-PyCallException::operator PyCallResult() {
-	_log(SERVER__INIT, "Casting Exception %p", &(*m_ss));
-	PyCallResult res;
-	res.ssResult = m_ss;
-	res.type = PyCallResult::ThrowException;
-	return(res);
+PyException::~PyException() {
+	_log(SERVER__INIT, "Destroying Exception %p", &(*ssException));
 }
 
 
