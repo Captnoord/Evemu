@@ -167,7 +167,7 @@ uint32 CRC32::Update(const int8* buf, uint32 bufsize, uint32 _crc32) {
 #elif defined(X86)
 		#warning "Using x86"
 		register uint32  val __asm ( "ax" );
-		val = crc32;
+		val = _crc32;
 
 __asm __volatile (
 		"xorl	%%ebx, %%ebx\n"
@@ -242,8 +242,8 @@ __asm __volatile (
 }
 #else
 	for(uint32 i=0; i < bufsize; i++)
-		Calc(buf[i], crc32);
-	return crc32;
+		Calc(buf[i], _crc32);
+	return _crc32;
 }
 #endif
 

@@ -26,7 +26,7 @@ public:
 	static uint32			GenerateNoFlip(const int8* buf, uint32 bufsize); // Same as Generate(), but without the ~
 	
 	// Multiple buffer CRC32
-	static uint32			Update(const int8* buf, uint32 bufsize, uint32 crc32 = 0xFFFFFFFF);
+	static uint32			Update(const int8* buf, uint32 bufsize, uint32 _crc32 = 0xFFFFFFFF);
 	static inline uint32	Finish(uint32 crc32)	{ return ~crc32; }
 	static inline void		Finish(uint32* crc32)	{ *crc32 = ~(*crc32); }
 	
