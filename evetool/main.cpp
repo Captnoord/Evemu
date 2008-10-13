@@ -329,7 +329,7 @@ void ListCache(const char *in_filter) {
 		if(len < 4 || b[0] != '~')
 			continue;
 		
-		PyRep *rep = InflateAndUnmarshal(b, len-3);
+		PyRep *rep = InflateAndUnmarshal(b, uint32(len-3));
 
 		std::string hexed;
 		char buf[10];
@@ -611,8 +611,7 @@ void TriToOBJ(const Seperator &command) {
 }
 
 //based on PyString_DecodeEscape from python.
-static bool PyString_DecodeEscape(const char *s,
-				vector<byte> &result)
+static bool PyString_DecodeEscape(const char *s, vector<byte> &result)
 {
 	int c;
 	const char *end;
@@ -718,8 +717,6 @@ void UnmarshalLogText(const Seperator &command) {
 
 void TestMarshal() {
 	//PyRepTuple *t = new PyRepTuple(2);
-	
-	
 	PyRepPackedObject1 *dbrowdesc = new PyRepPackedObject1("blue.DBRowDescriptor");
 	dbrowdesc->args = new PyRepTuple(1);
 

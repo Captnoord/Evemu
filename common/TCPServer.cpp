@@ -149,7 +149,7 @@ void BaseTCPServer::ListenNewConnections() {
 
 bool BaseTCPServer::Open(int16 in_port, char* errbuf) {
 	
-	if (errbuf == true)
+	if (errbuf != NULL)
 	{
 		errbuf[0] = 0;
 	}
