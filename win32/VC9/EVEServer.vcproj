@@ -71,6 +71,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="wsock32.lib zlib.lib mysqlclient.lib Advapi32.lib user32.lib"
+				OutputFile=".\..\..\bin\$(ConfigurationName)\$(ProjectName).exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\3rdparty\mysql\lib\debug;..\..\lib"
 				IgnoreDefaultLibraryNames=""

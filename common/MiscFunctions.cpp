@@ -191,7 +191,7 @@ int32 hextoi(char* num) {
 
 	int32 ret = 0;
 	int mul = 1;
-	for (int i=len-1; i>=2; i--) {
+	for (size_t i=len-1; i>=2; i--) {
 		if (num[i] >= 'A' && num[i] <= 'F')
 			ret += ((num[i] - 'A') + 10) * mul;
 		else if (num[i] >= 'a' && num[i] <= 'f')
@@ -215,7 +215,7 @@ int64 hextoi64(char* num) {
 
 	int64 ret = 0;
 	int mul = 1;
-	for (int i=len-1; i>=2; i--) {
+	for (size_t i=len-1; i>=2; i--) {
 		if (num[i] >= 'A' && num[i] <= 'F')
 			ret += ((num[i] - 'A') + 10) * mul;
 		else if (num[i] >= 'a' && num[i] <= 'f')
@@ -393,7 +393,7 @@ double MakeRandomFloat(double low, double high)
 
 	if(!seeded)
 	{
-		SeedRandom(time(0) * (time(0) % (int)diff));
+		SeedRandom(unsigned int(time(0)) * unsigned int((time(0)) % (int)diff));
 		seeded = true;
 	}
   
