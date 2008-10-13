@@ -808,7 +808,7 @@ void Client::_ProcessCallRequest(PyPacket *packet) {
 		_CheckSessionChange();	//send out the session change before the return.
 		
 		_SendCallReturn(packet, &t);
-	} CATCH_SIGEXCEPT(e) {
+	}catch(sigexcept_exception e) { //ATCH_SIGEXCEPT(e) {
 		std::string str = e.to_string();
 
 		_log(CLIENT__ERROR, "%s invoked exception %s by calling %s::%s\n%s",
@@ -1406,6 +1406,7 @@ void Client::JoinCorporationUpdate(uint32 corp_id) {
 	//logs indicate that we need to push this update out asap.
 	_CheckSessionChange();
 }
+
 /*
 FunctorTimerQueue::TimerID Client::Delay( uint32 time_in_ms, void (Client::* clientCall)() ) {
 	Functor *f = new SimpleClientFunctor(this, clientCall);

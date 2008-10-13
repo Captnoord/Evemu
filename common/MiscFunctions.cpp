@@ -1,4 +1,4 @@
-/*  EVEmu: EVE Online Server Emulator
+/*  eVEmu: EVE Online Server Emulator
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -393,7 +393,7 @@ double MakeRandomFloat(double low, double high)
 
 	if(!seeded)
 	{
-		SeedRandom(unsigned int(time(0)) * unsigned int((time(0)) % (int)diff));
+		SeedRandom((unsigned int)time(0) * (unsigned int)(time(0) % (int)diff));
 		seeded = true;
 	}
   
