@@ -68,7 +68,7 @@ protected:
 	const Type m_type;
 };
 
-//storing all integers (and bools) as uint62s is a lot of crazyness right now
+//storing all integers (and bools) as uint64s is a lot of craziness right now
 //but its better than a ton of virtual functions to achieve the same thing.
 class PyRepInteger : public PyRep {
 public:

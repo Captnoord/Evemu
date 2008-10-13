@@ -51,7 +51,7 @@ class BaseTCPServer;
 class ServerPacket;
 
 #define TCPConnection_ErrorBufferSize	1024
-#define MaxTCPReceiveBuffferSize		524288
+#define MaxTCPReceiveBufferSize			524288
 
 
 #ifndef DEF_eConnectionType

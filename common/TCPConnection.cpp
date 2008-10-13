@@ -670,9 +670,9 @@ bool TCPConnection::RecvData(char* errbuf) {
 		recvbuf_size += 5120;
 		safe_delete_array(recvbuf);
 		recvbuf = tmpbuf;
-		if (recvbuf_size >= MaxTCPReceiveBuffferSize) {
+		if (recvbuf_size >= MaxTCPReceiveBufferSize) {
 			if (errbuf)
-				snprintf(errbuf, TCPConnection_ErrorBufferSize, "TCPConnection::RecvData(): recvbuf_size >= MaxTCPReceiveBuffferSize");
+				snprintf(errbuf, TCPConnection_ErrorBufferSize, "TCPConnection::RecvData(): recvbuf_size >= MaxTCPReceiveBufferSize");
 			return false;
 		}
 	}
