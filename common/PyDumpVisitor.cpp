@@ -134,15 +134,15 @@ void PyDumpVisitor::VisitBuffer(const PyRepBuffer *rep) {
 
 	//kinda hackish:
 	if(rep->GetLength() > 2 && *(rep->GetBuffer()) == GZipStreamHeaderByte) {
-		byte *ucbuf = new byte[rep->GetLength()*10];	//bullshit length
-		uint32 outlen = InflatePacket(rep->GetBuffer(), rep->GetLength(), ucbuf, rep->GetLength()*10, true);
-		if(outlen > 0) {
+		uint32 len = rep->GetLength();
+		byte *buf = InflatePacket(rep->GetBuffer(), len, true);
+		if(buf != NULL) {
 			std::string p(top());
 			p += "  ";
-			_print("  Data buffer contains gzipped data of length %lu", outlen);
-			_hexDump(ucbuf, outlen);
+			_print("  Data buffer contains gzipped data of length %lu", len);
+			_hexDump(buf, len);
+			delete[] buf;
 		}
-		delete[] ucbuf;
 	} else if(rep->GetLength() > 0) {
 		_hexDump(rep->GetBuffer(), rep->GetLength());
 	}

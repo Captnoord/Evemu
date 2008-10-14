@@ -812,7 +812,7 @@ void Client::_ProcessCallRequest(PyPacket *packet) {
 		std::string str = e.to_string();
 
 		_log(CLIENT__ERROR, "%s invoked exception %s by calling %s::%s\n%s",
-			GetName(), sigexcept_exception::TypeStrings[e.type], svc->GetName(), call.method.c_str(), str.c_str());
+			GetName(), e.type_string(), svc->GetName(), call.method.c_str(), str.c_str());
 
 		//replace newline with <br>
 		for(size_t i = str.find("\n"); i < str.max_size(); i = str.find("\n", i))
@@ -823,7 +823,7 @@ void Client::_ProcessCallRequest(PyPacket *packet) {
 			"Exception %s occured while processing %s::%s<br>"
 			"<br>"
 			"%s",
-			sigexcept_exception::TypeStrings[e.type], svc->GetName(), call.method.c_str(),
+			e.type_string(), svc->GetName(), call.method.c_str(),
 			str.c_str()
 			));
 

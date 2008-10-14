@@ -158,15 +158,15 @@ void PyRepBuffer::Dump(FILE *into, const char *pfx) const {
 
 	//kinda hackish:
 	if(m_length > 2 && *m_value == GZipStreamHeaderByte) {
-		byte *ucbuf = new byte[m_length*10];	//bullshit length
-		uint32 outlen = InflatePacket(m_value, m_length, ucbuf, m_length*10, true);
-		if(outlen > 0) {
+		uint32 len = GetLength();
+		byte *buf = InflatePacket(GetBuffer(), len, true);
+		if(buf != NULL) {
 			string p(pfx);
 			p += "  ";
-			fprintf(into, "%sData buffer contains gzipped data of length %lu\n", p.c_str(), outlen);
-			pfxPreviewHexDump(p.c_str(), into, ucbuf, outlen);
+			fprintf(into, "%sData buffer contains gzipped data of length %lu\n", p.c_str(), len);
+			pfxPreviewHexDump(p.c_str(), into, buf, len);
+			delete[] buf;
 		}
-		delete[] ucbuf;
 	}
 }
 
@@ -175,15 +175,15 @@ void PyRepBuffer::Dump(LogType type, const char *pfx) const {
 
 	//kinda hackish:
 	if(m_length > 2 && *m_value == GZipStreamHeaderByte) {
-		byte *ucbuf = new byte[m_length*10];	//bullshit length
-		uint32 outlen = InflatePacket(m_value, m_length, ucbuf, m_length*10, true);
-		if(outlen > 0) {
+		uint32 len = GetLength();
+		byte *buf = InflatePacket(GetBuffer(), len, true);
+		if(buf != NULL) {
 			string p(pfx);
 			p += "  ";
-			_log(type, "%sData buffer contains gzipped data of length %lu", p.c_str(), outlen);
-			pfxPreviewHexDump(p.c_str(), type, ucbuf, outlen);
+			_log(type, "%sData buffer contains gzipped data of length %lu", p.c_str(), len);
+			pfxPreviewHexDump(p.c_str(), type, buf, len);
+			delete[] buf;
 		}
-		delete[] ucbuf;
 	}
 }
 
@@ -191,19 +191,19 @@ PyRepSubStream *PyRepBuffer::CreateSubStream() const {
 	if(*m_value == SubStreamHeaderByte) {
 		return(new PyRepSubStream(m_value, m_length));
 	} else if(m_length > 2 && *m_value == GZipStreamHeaderByte) {
-		byte *ucbuf = new byte[m_length*10];	//bullshit length
-		uint32 outlen = InflatePacket(m_value, m_length, ucbuf, m_length*10, true);
-		
+		uint32 len = GetLength();
+		byte *buf = InflatePacket(GetBuffer(), len, true);
+
 		PyRepSubStream *res = NULL;
-		if(outlen == 0) {
+		if(buf == NULL) {
 			//unable to unzip, this does not appear to be a stream, so refuse to turn into one.
-		} else if(*ucbuf != SubStreamHeaderByte) {
+		} else if(*buf != SubStreamHeaderByte) {
 			//wrong header byte, this does not appear to be a stream, so refuse to turn into one.
 		} else {
-			res = new PyRepSubStream(ucbuf, outlen);
+			res = new PyRepSubStream(buf, len);
 		}
-		
-		delete[] ucbuf;
+
+		delete[] buf;
 		return(res);
 	}
 	//else, we dont think this is a substream, so dont become one.

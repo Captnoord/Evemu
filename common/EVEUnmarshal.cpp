@@ -54,11 +54,9 @@ PyRep *InflateAndUnmarshal(const byte *body, uint32 body_len) {
 	if(*body != SubStreamHeaderByte) {
 		if(body_len > sizeof(uint32) && *((const uint32 *) body) == 0) {
 			//winging it here...
-			uint32 buflen = body_len*10;	//bullshit multiplier!
-			uchar *buf = new uchar[buflen];
-			body_len = InflatePacket(body+12, body_len-12, buf, buflen);
-			if(body_len == 0) {
-				delete[] buf;
+			body_len -= 12;
+			byte *buf = InflatePacket(body+12, body_len);
+			if(buf == NULL) {
 				_log(NET__PRES_ERROR, "Failed to inflate special packet!");
 				_log(NET__PRES_DEBUG, "Raw Hex Dump:");
 				_hex(NET__PRES_DEBUG, body, body_len);
@@ -68,11 +66,8 @@ PyRep *InflateAndUnmarshal(const byte *body, uint32 body_len) {
 				_log(NET__UNMARSHAL_ERROR, "Special Inflated packet of len %d to length %d\n", orig_body_len, body_len);
 			}
 		} else {
-			uint32 buflen = body_len*10;	//bullshit multiplier!
-			uchar *buf = new uchar[buflen];
-			body_len = InflatePacket(body, body_len, buf, buflen);
-			if(body_len == 0) {
-				delete[] buf;
+			byte *buf = InflatePacket(body, body_len);
+			if(buf == NULL) {
 				_log(NET__PRES_ERROR, "Failed to inflate packet!");
 				_log(NET__PRES_DEBUG, "Raw Hex Dump:");
 				_hex(NET__PRES_DEBUG, body, body_len);

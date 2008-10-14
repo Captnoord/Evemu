@@ -152,7 +152,7 @@ PyCallResult RamProxyService::Handle_InstallJob(PyCallArgs &call) {
 	// if 'quoteOnly' is 1 -> send quote, if 0 -> install job
 	if(((PyRepInteger *)call.byname["quoteOnly"])->value) {
 		installedItem->Release();	// not needed anymore
-		_FillBillOfMaterials(reqItems, rsp.materialMultiplier * rsp.charMaterialMultiplier, args.runs, rsp.bom);
+		_FillBillOfMaterials(reqItems, rsp.materialMultiplier, rsp.charMaterialMultiplier, args.runs, rsp.bom);
 		return(rsp.Encode());
 	} else {
 		// verify install
@@ -694,12 +694,11 @@ void RamProxyService::_VerifyInstallJob_Install(const Rsp_InstallJob &rsp, const
 		if(cur->isSkill) {
 			if(GetSkillLevel(skills, cur->typeID) < cur->quantity) {
 				std::map<std::string, PyRep *> args;
-				args["skill"] = new PyRepString(m_db.GetTypeName(cur->typeID));
+				args["item"] = new PyRepString(m_db.GetTypeName(cur->typeID));
 				args["skillLevel"] = new PyRepInteger(cur->quantity);
 
-				throw(PyException(MakeUserError("NeedSkillForJob", args)));
-			} else
-				continue;
+				throw(PyException(MakeUserError("RamNeedSkillForJob", args)));
+			}
 		} else {
 			// check materials
 
@@ -720,7 +719,7 @@ void RamProxyService::_VerifyInstallJob_Install(const Rsp_InstallJob &rsp, const
 				std::map<std::string, PyRep *> args;
 				args["item"] = new PyRepString(m_db.GetTypeName(cur->typeID));
 
-				throw(PyException(MakeUserError("NeedMoreForJob", args)));
+				throw(PyException(MakeUserError("RamNeedMoreForJob", args)));
 			}
 		}
 	}
@@ -857,7 +856,7 @@ bool RamProxyService::_Calculate(const Call_InstallJob &args, const InventoryIte
 	return(true);
 }
 
-void RamProxyService::_FillBillOfMaterials(const std::vector<RequiredItem> &reqItems, const double materialMultiplier, const uint32 runs, BillOfMaterials &into) {
+void RamProxyService::_FillBillOfMaterials(const std::vector<RequiredItem> &reqItems, double materialMultiplier, double charMaterialMultiplier, uint32 runs, BillOfMaterials &into) {
 	std::vector<RequiredItem>::const_iterator cur, end;
 	cur = reqItems.begin();
 	end = reqItems.end();
@@ -871,7 +870,7 @@ void RamProxyService::_FillBillOfMaterials(const std::vector<RequiredItem> &reqI
 		// otherwise, make line for material list
 		MaterialList_Line line;
 		line.requiredTypeID = cur->typeID;
-		line.quantity = cur->quantity * runs;
+		line.quantity = ceil(cur->quantity * materialMultiplier * runs);
 		line.damagePerJob = cur->damagePerJob;
 		line.isSkillCheck = false;	// no idea what is this for
 		line.requiresHP = false;	// no idea what is this for
@@ -882,10 +881,10 @@ void RamProxyService::_FillBillOfMaterials(const std::vector<RequiredItem> &reqI
 			into.extras.lines.add(line.Encode());
 		} else {
 			// if there are losses, make line for waste material list
-			if(materialMultiplier > 1.0) {
+			if(charMaterialMultiplier > 1.0) {
 				MaterialList_Line wastage;
 				wastage.CloneFrom(&line);		// simply copy origial line ...
-				wastage.quantity = ceil(wastage.quantity * (materialMultiplier - 1.0));	// ... and calculate proper quantity
+				wastage.quantity = ceil(wastage.quantity * (charMaterialMultiplier - 1.0));	// ... and calculate proper quantity
 
 				into.wasteMaterials.lines.add(wastage.Encode());
 			}

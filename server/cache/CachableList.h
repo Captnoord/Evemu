@@ -72,23 +72,38 @@ CACHABLE("config.BulkData.ramaltypes", ramALTypes, TupleSet,
 CACHABLE("config.BulkData.ramcompletedstatuses", ramCompletedStatuses, TupleSet,
 	"SELECT completedStatusID,completedStatusName,completedStatusText FROM ramCompletedStatuses"
 );
-//no:
+//returns what each item consists of
 CACHABLE("config.BulkData.ramtypematerials", ramTypeMaterials, Rowset,
-	"SELECT typeID,requiredTypeID AS materialTypeID,quantity FROM typeActivityMaterials"
-	//as a blue.DBRow set
-	//SELECT requiredTypeID AS typeID,typeID AS materialTypeID,quantity FROM TL2MaterialsForTypeWithActivity
-	/*
-uint32 quantity;
-uint16 materialTypeID;
-uint16 typeID;
-    */
+	"SELECT"
+		" typeID,"
+		" requiredTypeID AS materialTypeID,"
+		" quantity"
+	" FROM typeActivityMaterials"
+		" WHERE activityID = 6"	//duplicating
+		" AND damagePerJob = 1.0"
+	" UNION"
+	" SELECT"
+		" productTypeID AS typeID,"
+		" requiredTypeID AS materialTypeID,"
+		" quantity"
+	" FROM typeActivityMaterials"
+	" JOIN invBlueprintTypes ON typeID = blueprintTypeID"
+		" WHERE activityID = 1"	//manufacturing
+		" AND damagePerJob = 1.0"
 );
 //no:
 CACHABLE("config.BulkData.ramtyperequirements", ramTypeRequirements, Rowset,
-	//hacking recycle
-	"SELECT typeID,activityID,requiredTypeID,quantity,damagePerJob,1 AS recycle FROM typeActivityMaterials"
+	"SELECT"
+		" typeID,"
+		" activityID,"
+		" requiredTypeID,"
+		" quantity,"
+		" damagePerJob,"
+		" 0 AS recycle"	//hacking
+	" FROM typeActivityMaterials"
+		" WHERE damagePerJob != 1.0"
+		//" OR recycle = 1"	//this is valid as well, but since we hack recycle it's not usable
 	//as a blue.DBRow set
-	//SELECT typeID,activity,requiredTypeID,quantity,damagePerJob,recycle FROM TL2MaterialsForTypeWithActivity
 	/*
 double damagePerJob;
 uint32 activity;

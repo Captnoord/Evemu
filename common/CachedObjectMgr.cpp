@@ -204,9 +204,9 @@ void CachedObjectMgr::_UpdateCache(const PyRep *objectID, byte **data, uint32 le
 
 	//This is not as complete as the python, as they indicate to the netcode (with compressedPart) 
 	//how much of the packet is compressed when considering this packet for compression when sending
-	byte *buf = new byte[length];
-	uint32 deflen = DeflatePacket(*data, length, buf, length);
-	if(deflen == 0 || deflen >= length) {
+	uint32 deflen = length;
+	byte *buf = DeflatePacket(*data, deflen);
+	if(buf == NULL || deflen >= length) {
 		//failed to deflate or it did no good (client checks this)
 		//passes ownership of the encoded buffer to the new PyRepBuffer
 		delete[] buf;
