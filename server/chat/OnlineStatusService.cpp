@@ -42,7 +42,7 @@ OnlineStatusService::~OnlineStatusService() {
 }
 
 
-PyCallResult OnlineStatusService::Handle_GetInitialState(PyCallArgs &call) {
+PyResult OnlineStatusService::Handle_GetInitialState(PyCallArgs &call) {
 
 	//this is used to query the initial online state of all friends.
 

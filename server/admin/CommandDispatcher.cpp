@@ -23,7 +23,7 @@ CommandDispatcher::~CommandDispatcher() {
 	delete m_db;
 }
 
-bool CommandDispatcher::Execute(Client *from, const char *msg) const {
+PyResult CommandDispatcher::Execute(Client *from, const char *msg) const {
 	//might want to check for # or / at the begining of this crap.
 	Seperator sep(msg+1);
 
@@ -58,10 +58,7 @@ bool CommandDispatcher::Execute(Client *from, const char *msg) const {
 		throw(PyException(MakeCustomError("Access denied to command '%s'", sep.arg[0])));
 	}
 
-	CommandFunc func = rec->function;
-	func(from, m_db, m_services, sep);
-	
-	return(true);
+	return(rec->function(from, m_db, m_services, sep));
 }
 
 void CommandDispatcher::AddCommand(const char *cmd, const char *desc, uint32 required_role, CommandFunc function) {

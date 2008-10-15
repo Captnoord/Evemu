@@ -161,7 +161,7 @@ PyBoundObject *InvBrokerService::_CreateBoundObject(Client *c, const PyRep *bind
 }
 
 //this is a view into the entire inventory item.
-PyCallResult InvBrokerBound::Handle_GetInventoryFromId(PyCallArgs &call) {
+PyResult InvBrokerBound::Handle_GetInventoryFromId(PyCallArgs &call) {
 	Call_TwoIntegerArgs args;
 	if (!args.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "%s: Bad arguments", call.client->GetName());
@@ -183,7 +183,7 @@ PyCallResult InvBrokerBound::Handle_GetInventoryFromId(PyCallArgs &call) {
 }
 
 //this is a view into an inventory item using a specific flag.
-PyCallResult InvBrokerBound::Handle_GetInventory(PyCallArgs &call) {
+PyResult InvBrokerBound::Handle_GetInventory(PyCallArgs &call) {
 	Inventory_GetInventory args;
 	if(!args.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "Unable to decode arguments");
@@ -232,7 +232,7 @@ PyCallResult InvBrokerBound::Handle_GetInventory(PyCallArgs &call) {
 	return(result);
 }
 
-PyCallResult InvBrokerBound::Handle_SetLabel(PyCallArgs &call) {
+PyResult InvBrokerBound::Handle_SetLabel(PyCallArgs &call) {
 	CallSetLabel args;
 	if(!args.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "Unable to decode arguments");
@@ -259,7 +259,7 @@ PyCallResult InvBrokerBound::Handle_SetLabel(PyCallArgs &call) {
 	return(NULL);
 }
 
-PyCallResult InvBrokerBound::Handle_TrashItems(PyCallArgs &call) {
+PyResult InvBrokerBound::Handle_TrashItems(PyCallArgs &call) {
 	Call_SingleIntList args;
 	if(!args.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "Unable to decode arguments");
@@ -283,7 +283,7 @@ PyCallResult InvBrokerBound::Handle_TrashItems(PyCallArgs &call) {
 	return(new PyRepList());
 }
 
-PyCallResult InventoryBound::Handle_List(PyCallArgs &call) {
+PyResult InventoryBound::Handle_List(PyCallArgs &call) {
 	PyRep *result = NULL;
 
 	//TODO: check to make sure we are allowed to list this container
@@ -302,7 +302,7 @@ PyCallResult InventoryBound::Handle_List(PyCallArgs &call) {
 	return(result);
 }
 
-PyCallResult InventoryBound::Handle_ReplaceCharges(PyCallArgs &call) {
+PyResult InventoryBound::Handle_ReplaceCharges(PyCallArgs &call) {
 	Inventory_CallReplaceCharges args;
 	if(!args.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "Unable to decode arguments");
@@ -347,7 +347,7 @@ PyCallResult InventoryBound::Handle_ReplaceCharges(PyCallArgs &call) {
 }
 
 
-PyCallResult InventoryBound::Handle_ListStations(PyCallArgs &call) {
+PyResult InventoryBound::Handle_ListStations(PyCallArgs &call) {
 	codelog(SERVICE__ERROR, "Unimplemented.");
 
 	util_Rowset rowset;
@@ -358,7 +358,7 @@ PyCallResult InventoryBound::Handle_ListStations(PyCallArgs &call) {
 	return(rowset.Encode());
 }
 
-PyCallResult InventoryBound::Handle_GetItem(PyCallArgs &call) {
+PyResult InventoryBound::Handle_GetItem(PyCallArgs &call) {
 	PyRep *result = NULL;
 
 	result = m_item->GetEntityRow();
@@ -368,7 +368,7 @@ PyCallResult InventoryBound::Handle_GetItem(PyCallArgs &call) {
 	return(result);
 }
 
-PyCallResult InventoryBound::Handle_Add(PyCallArgs &call) {
+PyResult InventoryBound::Handle_Add(PyCallArgs &call) {
 
 	
 	if((call.tuple)->items.size() == 3) {
@@ -403,7 +403,7 @@ PyCallResult InventoryBound::Handle_Add(PyCallArgs &call) {
 	return(NULL);
 }
 
-PyCallResult InventoryBound::Handle_MultiAdd(PyCallArgs &call) {
+PyResult InventoryBound::Handle_MultiAdd(PyCallArgs &call) {
 	if((call.tuple)->items.size() == 1) {
 		
 		Call_SingleIntList args;
@@ -431,7 +431,7 @@ PyCallResult InventoryBound::Handle_MultiAdd(PyCallArgs &call) {
 	return(NULL);
 }
 
-PyCallResult InventoryBound::Handle_MultiMerge(PyCallArgs &call) {
+PyResult InventoryBound::Handle_MultiMerge(PyCallArgs &call) {
 	
 	//Decode Args
 	Inventory_CallMultiMerge elements;
@@ -477,7 +477,7 @@ PyCallResult InventoryBound::Handle_MultiMerge(PyCallArgs &call) {
 	return(NULL);
 }
 
-PyCallResult InventoryBound::Handle_StackAll(PyCallArgs &call) {
+PyResult InventoryBound::Handle_StackAll(PyCallArgs &call) {
 
 	Call_SingleIntegerArg arg;
 

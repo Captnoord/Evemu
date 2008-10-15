@@ -43,7 +43,7 @@ NetService::~NetService() {
 	delete m_dispatch;
 }
 
-PyCallResult NetService::Handle_GetInitVals(PyCallArgs &call) {
+PyResult NetService::Handle_GetInitVals(PyCallArgs &call) {
 	PyRepTuple *result = new PyRepTuple(2);
 	PyRepString str("machoNet.serviceInfo");
 
@@ -140,7 +140,7 @@ PyCallResult NetService::Handle_GetInitVals(PyCallArgs &call) {
 	return(result);
 }
 
-PyCallResult NetService::Handle_GetTime(PyCallArgs &call) {
+PyResult NetService::Handle_GetTime(PyCallArgs &call) {
 	return(new PyRepInteger(Win32TimeNow()));
 }
 

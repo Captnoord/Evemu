@@ -88,7 +88,7 @@ PyBoundObject *DungeonService::_CreateBoundObject(Client *c, const PyRep *bind_a
 }*/
 
 
-PyCallResult DungeonService::Handle_DEGetFactions(PyCallArgs &call) {
+PyResult DungeonService::Handle_DEGetFactions(PyCallArgs &call) {
 	//PyRep *result = NULL;
 
 	_log(SERVICE__ERROR, "Unhandled DEGetFactions");
@@ -97,7 +97,7 @@ PyCallResult DungeonService::Handle_DEGetFactions(PyCallArgs &call) {
 }
 
 
-PyCallResult DungeonService::Handle_DEGetDungeons(PyCallArgs &call) {
+PyResult DungeonService::Handle_DEGetDungeons(PyCallArgs &call) {
 	//PyRep *result = NULL;
 	//dict args:
 	// factionID
@@ -113,7 +113,7 @@ PyCallResult DungeonService::Handle_DEGetDungeons(PyCallArgs &call) {
 }
 
 
-PyCallResult DungeonService::Handle_DEGetRooms(PyCallArgs &call) {
+PyResult DungeonService::Handle_DEGetRooms(PyCallArgs &call) {
 	//dict arg: dungeonVID
 	//PyRep *result = NULL;
 

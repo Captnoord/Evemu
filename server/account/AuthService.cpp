@@ -67,12 +67,12 @@ AuthService::~AuthService() {
 }
 
 
-PyCallResult AuthService::Handle_Ping(PyCallArgs &call) {
+PyResult AuthService::Handle_Ping(PyCallArgs &call) {
 	return(new PyRepInteger(Win32TimeNow()));
 }
 
 
-PyCallResult AuthService::Handle_GetPostAuthenticationMessage(PyCallArgs &call) {
+PyResult AuthService::Handle_GetPostAuthenticationMessage(PyCallArgs &call) {
 	PyRep *result = NULL;
 /*
 	PyRepObject *o = new PyRepObject();

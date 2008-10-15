@@ -93,7 +93,7 @@ PyBoundObject *StationSvcService::_CreateBoundObject(Client *c, PyRep *bind_args
 }*/
 
 
-PyCallResult StationSvcService::Handle_GetSolarSystem(PyCallArgs &call) {
+PyResult StationSvcService::Handle_GetSolarSystem(PyCallArgs &call) {
 	Call_SingleIntegerArg arg;
 	if(!arg.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "%s: Bad arguments", call.client->GetName());
@@ -102,7 +102,7 @@ PyCallResult StationSvcService::Handle_GetSolarSystem(PyCallArgs &call) {
 	return(m_db.GetSolarSystem(arg.arg));
 }
 
-PyCallResult StationSvcService::Handle_GetStation(PyCallArgs &call) {
+PyResult StationSvcService::Handle_GetStation(PyCallArgs &call) {
 	Call_SingleIntegerArg arg;
 	if (!arg.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "%s: Bad arguments", call.client->GetName());

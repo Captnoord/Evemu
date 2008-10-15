@@ -37,7 +37,7 @@ FactionWarMgrService::FactionWarMgrService(PyServiceMgr *mgr, DBcore *db)
 	PyCallable_REG_CALL(FactionWarMgrService, GetFactionMilitiaCorporation)
 }
 
-PyCallResult FactionWarMgrService::Handle_GetWarFactions(PyCallArgs &call) {
+PyResult FactionWarMgrService::Handle_GetWarFactions(PyCallArgs &call) {
 	ObjectCachedMethodID method_id(GetName(), "GetWarFactions");
 
 	if(!m_manager->GetCache()->IsCacheLoaded(method_id)) {
@@ -50,7 +50,7 @@ PyCallResult FactionWarMgrService::Handle_GetWarFactions(PyCallArgs &call) {
 	return(m_manager->GetCache()->MakeObjectCachedMethodCallResult(method_id));
 }
 
-PyCallResult FactionWarMgrService::Handle_GetFacWarSystems(PyCallArgs &call) {
+PyResult FactionWarMgrService::Handle_GetFacWarSystems(PyCallArgs &call) {
 	_log(SERVICE__ERROR, "%s::GetFacWarSystems not fully unimplemented.", GetName());
 
 	ObjectCachedMethodID method_id(GetName(), "GetFacWarSystems");
@@ -65,7 +65,7 @@ PyCallResult FactionWarMgrService::Handle_GetFacWarSystems(PyCallArgs &call) {
 	return(m_manager->GetCache()->MakeObjectCachedMethodCallResult(method_id));
 }
 
-PyCallResult FactionWarMgrService::Handle_GetCharacterRankOverview(PyCallArgs &call) {
+PyResult FactionWarMgrService::Handle_GetCharacterRankOverview(PyCallArgs &call) {
 	Call_SingleIntegerArg arg;
 	if(!arg.Decode(&call.tuple)) {
 		_log(SERVICE__ERROR, "Failed to decode args.");
@@ -84,7 +84,7 @@ PyCallResult FactionWarMgrService::Handle_GetCharacterRankOverview(PyCallArgs &c
 	return(rs.Encode());
 }
 
-PyCallResult FactionWarMgrService::Handle_GetFactionMilitiaCorporation(PyCallArgs &call) {
+PyResult FactionWarMgrService::Handle_GetFactionMilitiaCorporation(PyCallArgs &call) {
 	Call_SingleIntegerArg arg;
 	if(!arg.Decode(&call.tuple)) {
 		_log(SERVICE__ERROR, "Failed to decode args.");

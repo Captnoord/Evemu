@@ -162,11 +162,11 @@ PyBoundObject *CorpRegistryService::_CreateBoundObject(Client *c, const PyRep *b
 }
 
 
-PyCallResult CorpRegistryBound::Handle_GetEveOwners(PyCallArgs &call) {
+PyResult CorpRegistryBound::Handle_GetEveOwners(PyCallArgs &call) {
 	return (m_db->GetEveOwners());
 }
 
-PyCallResult CorpRegistryBound::Handle_GetInfoWindowDataForChar(PyCallArgs &call) {
+PyResult CorpRegistryBound::Handle_GetInfoWindowDataForChar(PyCallArgs &call) {
 	//takes characterID
 
 	_log(CLIENT__MESSAGE, "%s: GetInfoWindowDataForChar not implemented!", GetName());
@@ -174,7 +174,7 @@ PyCallResult CorpRegistryBound::Handle_GetInfoWindowDataForChar(PyCallArgs &call
 	return(new PyRepNone());
 }
 
-PyCallResult CorpRegistryBound::Handle_GetLockedItemLocations(PyCallArgs &call) {
+PyResult CorpRegistryBound::Handle_GetLockedItemLocations(PyCallArgs &call) {
 	//takes characterID
 
 	_log(CLIENT__MESSAGE, "%s: GetLockedItemLocations not implemented!", GetName());
@@ -184,10 +184,10 @@ PyCallResult CorpRegistryBound::Handle_GetLockedItemLocations(PyCallArgs &call) 
 	return(new PyRepList());
 }
 
-PyCallResult CorpRegistryBound::Handle_GetCorporation(PyCallArgs &call) {
+PyResult CorpRegistryBound::Handle_GetCorporation(PyCallArgs &call) {
 	return(m_db->GetCorporation(call.client->GetCorporationID()));
 }
-PyCallResult CorpRegistryBound::Handle_GetCorporations(PyCallArgs &call) {
+PyResult CorpRegistryBound::Handle_GetCorporations(PyCallArgs &call) {
 	Call_SingleIntegerArg arg;
 	if (!arg.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "Bad incoming params.");
@@ -198,7 +198,7 @@ PyCallResult CorpRegistryBound::Handle_GetCorporations(PyCallArgs &call) {
 }
 
 
-PyCallResult CorpRegistryBound::Handle_AddCorporation(PyCallArgs &call) {
+PyResult CorpRegistryBound::Handle_AddCorporation(PyCallArgs &call) {
 	Call_AddCorporation args;
 
 	if (!args.Decode(&call.tuple)) {
@@ -311,7 +311,7 @@ bool CorpRegistryBound::JoinCorporation(Client *who, uint32 newCorpID, const Cor
 	return(true);
 }
 
-PyCallResult CorpRegistryBound::Handle_GetSuggestedTickerNames(PyCallArgs &call) {
+PyResult CorpRegistryBound::Handle_GetSuggestedTickerNames(PyCallArgs &call) {
 	Call_SingleStringArg arg;
 	if (!arg.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "%s: Bad arguments", call.client->GetName());
@@ -333,14 +333,14 @@ PyCallResult CorpRegistryBound::Handle_GetSuggestedTickerNames(PyCallArgs &call)
 	return result;
 }
 
-PyCallResult CorpRegistryBound::Handle_GetStations(PyCallArgs &call) {
+PyResult CorpRegistryBound::Handle_GetStations(PyCallArgs &call) {
 	// No param
 
 	// Need to fetch stations of current corporation...
 	return m_db->GetStations(call.client->GetCorporationID());
 }
 
-PyCallResult CorpRegistryBound::Handle_GetOffices(PyCallArgs &call) {
+PyResult CorpRegistryBound::Handle_GetOffices(PyCallArgs &call) {
 	
 	_log(CLIENT__MESSAGE, "CorpRegistryBound bind request for OfficeList of corp %lu", call.client->GetCorporationID());
 
@@ -375,7 +375,7 @@ PyCallResult CorpRegistryBound::Handle_GetOffices(PyCallArgs &call) {
 	return res;
 }
 
-PyCallResult SparseCorpOfficeListBound::Handle_Fetch(PyCallArgs &call) {
+PyResult SparseCorpOfficeListBound::Handle_Fetch(PyCallArgs &call) {
 	Call_TwoIntegerArgs args;
 	if (!args.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "%s: Bad arguments", call.client->GetName());
@@ -385,14 +385,14 @@ PyCallResult SparseCorpOfficeListBound::Handle_Fetch(PyCallArgs &call) {
 	return m_db->Fetch(call.client->GetCorporationID(), args.arg1, args.arg2);
 }
 
-PyCallResult CorpRegistryBound::Handle_GetMyApplications(PyCallArgs &call) {
+PyResult CorpRegistryBound::Handle_GetMyApplications(PyCallArgs &call) {
 	/// We have a dict
 	/// With an STI and an integer
 	/// Ignore them for now
 	return m_db->GetMyApplications(call.client->GetCharacterID());
 }
 
-PyCallResult CorpRegistryBound::Handle_InsertApplication(PyCallArgs &call) {
+PyResult CorpRegistryBound::Handle_InsertApplication(PyCallArgs &call) {
 	/** Incoming:
 	 *  Integer: 777777777 <- corp id
 	 *  String: "Ignore me" <- text that was entered into the box
@@ -503,7 +503,7 @@ void CorpRegistryBound::FillOCApplicationChange(Notify_OnCorporationApplicationC
 	}
 }
 
-PyCallResult CorpRegistryBound::Handle_GetApplications(PyCallArgs &call) {
+PyResult CorpRegistryBound::Handle_GetApplications(PyCallArgs &call) {
 	/** Incoming:
 	 *  Nothing at all
 	 */
@@ -527,7 +527,7 @@ typedef enum {	//from eveConstants
 	crpApplicationRenegotiatedByCorporation = 5,
 	crpApplicationAcceptedByCorporation = 6
 } CorpApplicationStatus;
-PyCallResult CorpRegistryBound::Handle_UpdateApplicationOffer(PyCallArgs &call) {
+PyResult CorpRegistryBound::Handle_UpdateApplicationOffer(PyCallArgs &call) {
 	/** Incoming:
 	 *  Tuple
 	 *   - int 140000017	<- this is the charID, whose app should be handled
@@ -699,7 +699,7 @@ PyCallResult CorpRegistryBound::Handle_UpdateApplicationOffer(PyCallArgs &call) 
 	return new PyRepInteger(1);
 }
 
-PyCallResult CorpRegistryBound::Handle_DeleteApplication(PyCallArgs & call) {
+PyResult CorpRegistryBound::Handle_DeleteApplication(PyCallArgs & call) {
 	/** Incoming:
 	 *  tuple of 2 elements, corpID and charID
 	 */
@@ -738,7 +738,7 @@ PyCallResult CorpRegistryBound::Handle_DeleteApplication(PyCallArgs & call) {
 	return new PyRepInteger(1);
 }
 
-PyCallResult CorpRegistryBound::Handle_UpdateApplication(PyCallArgs &call) {
+PyResult CorpRegistryBound::Handle_UpdateApplication(PyCallArgs &call) {
 	Call_UpdateApplication args;
 	if (!args.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "%s: Bad arguments", call.client->GetName());
@@ -780,7 +780,7 @@ PyCallResult CorpRegistryBound::Handle_UpdateApplication(PyCallArgs &call) {
 	return NULL;
 }
 
-PyCallResult CorpRegistryBound::Handle_UpdateDivisionNames(PyCallArgs &call) {
+PyResult CorpRegistryBound::Handle_UpdateDivisionNames(PyCallArgs &call) {
 	Call_UpdateDivisionNames divs;
 
 	if (!divs.Decode(&call.tuple)) {
@@ -809,7 +809,7 @@ PyCallResult CorpRegistryBound::Handle_UpdateDivisionNames(PyCallArgs &call) {
 	return(new PyRepNone());
 }
 
-PyCallResult CorpRegistryBound::Handle_UpdateCorporation(PyCallArgs &call) {
+PyResult CorpRegistryBound::Handle_UpdateCorporation(PyCallArgs &call) {
 	Call_UpdateCorporation upd;
 
 	if (!upd.Decode(&call.tuple)) {
@@ -837,7 +837,7 @@ PyCallResult CorpRegistryBound::Handle_UpdateCorporation(PyCallArgs &call) {
 	return new PyRepNone();
 }
 
-PyCallResult CorpRegistryBound::Handle_UpdateLogo(PyCallArgs &call) {
+PyResult CorpRegistryBound::Handle_UpdateLogo(PyCallArgs &call) {
 	Call_UpdateLogo upd;
 
 	if (!upd.Decode(&call.tuple)) {

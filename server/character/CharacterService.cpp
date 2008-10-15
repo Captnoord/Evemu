@@ -75,7 +75,7 @@ CharacterService::~CharacterService() {
 	delete m_dispatch;
 }
 
-PyCallResult CharacterService::Handle_GetCharactersToSelect(PyCallArgs &call) {
+PyResult CharacterService::Handle_GetCharactersToSelect(PyCallArgs &call) {
 	
 	PyRep *result = NULL;
 
@@ -88,7 +88,7 @@ PyCallResult CharacterService::Handle_GetCharactersToSelect(PyCallArgs &call) {
 	return(result);
 }
 
-PyCallResult CharacterService::Handle_GetCharacterToSelect(PyCallArgs &call) {
+PyResult CharacterService::Handle_GetCharacterToSelect(PyCallArgs &call) {
 	PyRep *result = NULL;
 	Call_SingleIntegerArg args;
 	if(!args.Decode(&call.tuple)) {
@@ -105,7 +105,7 @@ PyCallResult CharacterService::Handle_GetCharacterToSelect(PyCallArgs &call) {
 	return(result);
 }
 
-PyCallResult CharacterService::Handle_SelectCharacterID(PyCallArgs &call) {
+PyResult CharacterService::Handle_SelectCharacterID(PyCallArgs &call) {
 	CallSelectCharacterID args;
 	if(!args.Decode(&call.tuple)) {
 		codelog(CLIENT__ERROR, "Failed to parse args from account %lu", call.client->GetAccountID());
@@ -142,11 +142,11 @@ PyCallResult CharacterService::Handle_SelectCharacterID(PyCallArgs &call) {
 	return(NULL);
 }
 
-PyCallResult CharacterService::Handle_GetOwnerNoteLabels(PyCallArgs &call) {
+PyResult CharacterService::Handle_GetOwnerNoteLabels(PyCallArgs &call) {
 	return m_db.GetOwnerNoteLabels(call.client->GetCharacterID());
 }
 
-PyCallResult CharacterService::Handle_GetCharCreationInfo(PyCallArgs &call) {
+PyResult CharacterService::Handle_GetCharCreationInfo(PyCallArgs &call) {
 	PyRep *result = NULL;
 
 	PyRepDict *cachables = new PyRepDict();
@@ -162,7 +162,7 @@ PyCallResult CharacterService::Handle_GetCharCreationInfo(PyCallArgs &call) {
 	return(result);
 }
 
-PyCallResult CharacterService::Handle_GetCharNewExtraCreationInfo(PyCallArgs &call) {
+PyResult CharacterService::Handle_GetCharNewExtraCreationInfo(PyCallArgs &call) {
 	PyRepDict *result = new PyRepDict();
 
 	m_manager->GetCache()->InsertCacheHints(
@@ -173,7 +173,7 @@ PyCallResult CharacterService::Handle_GetCharNewExtraCreationInfo(PyCallArgs &ca
 	return(result);
 }
 
-PyCallResult CharacterService::Handle_GetAppearanceInfo(PyCallArgs &call) {
+PyResult CharacterService::Handle_GetAppearanceInfo(PyCallArgs &call) {
 	PyRep *result = NULL;
 
 	PyRepDict *cachables = new PyRepDict();
@@ -189,7 +189,7 @@ PyCallResult CharacterService::Handle_GetAppearanceInfo(PyCallArgs &call) {
 	return(result);
 }
 
-PyCallResult CharacterService::Handle_ValidateName(PyCallArgs &call) {
+PyResult CharacterService::Handle_ValidateName(PyCallArgs &call) {
 	Call_SingleStringArg arg;
 
 	if(!arg.Decode(&call.tuple)) {
@@ -200,12 +200,12 @@ PyCallResult CharacterService::Handle_ValidateName(PyCallArgs &call) {
 	return(new PyRepBoolean(m_db.ValidateCharName(arg.arg.c_str())));
 }
 
-PyCallResult CharacterService::Handle_ValidateNameEx(PyCallArgs &call) {
+PyResult CharacterService::Handle_ValidateNameEx(PyCallArgs &call) {
 	//just redirect it now
 	return(Handle_ValidateName(call));
 }
 
-PyCallResult CharacterService::Handle_CreateCharacter(PyCallArgs &call) {
+PyResult CharacterService::Handle_CreateCharacter(PyCallArgs &call) {
 	CallCreateCharacter arg;
 	if(!arg.Decode(&call.tuple)) {
 		_log(CLIENT__ERROR, "Failed to decode CreateCharacter arg.");
@@ -411,11 +411,11 @@ PyCallResult CharacterService::Handle_CreateCharacter(PyCallArgs &call) {
 	return(new PyRepInteger(cdata.charid));
 }
 
-PyCallResult CharacterService::Handle_Ping(PyCallArgs &call) {
+PyResult CharacterService::Handle_Ping(PyCallArgs &call) {
 	return(new PyRepInteger(call.client->GetAccountID()));
 }
 
-PyCallResult CharacterService::Handle_PrepareCharacterForDelete(PyCallArgs &call) {
+PyResult CharacterService::Handle_PrepareCharacterForDelete(PyCallArgs &call) {
 	/*                                                                              
      * Deletion is apparently a timed process, and is related to the
      * deletePrepareDateTime column in the char select result.
@@ -465,7 +465,7 @@ PyCallResult CharacterService::Handle_PrepareCharacterForDelete(PyCallArgs &call
 	return(new PyRepInteger(Win32TimeNow() + Win32Time_Second*5));
 }
 
-PyCallResult CharacterService::Handle_CancelCharacterDeletePrepare(PyCallArgs &call) {
+PyResult CharacterService::Handle_CancelCharacterDeletePrepare(PyCallArgs &call) {
 	
 	Call_SingleIntegerArg args;
 	if(!args.Decode(&call.tuple)) {
@@ -479,7 +479,7 @@ PyCallResult CharacterService::Handle_CancelCharacterDeletePrepare(PyCallArgs &c
 	return(NULL);
 }
 
-PyCallResult CharacterService::Handle_AddOwnerNote(PyCallArgs &call) {
+PyResult CharacterService::Handle_AddOwnerNote(PyCallArgs &call) {
 	
 	Call_AddOwnerNote args;
 
@@ -498,7 +498,7 @@ PyCallResult CharacterService::Handle_AddOwnerNote(PyCallArgs &call) {
 	return(new PyRepInteger(noteID));
 }
 
-PyCallResult CharacterService::Handle_EditOwnerNote(PyCallArgs &call) {
+PyResult CharacterService::Handle_EditOwnerNote(PyCallArgs &call) {
 	
 	Call_EditOwnerNote args;
 
@@ -515,7 +515,7 @@ PyCallResult CharacterService::Handle_EditOwnerNote(PyCallArgs &call) {
 	return(new PyRepInteger(args.noteID));
 }
 
-PyCallResult CharacterService::Handle_GetOwnerNote(PyCallArgs &call) {
+PyResult CharacterService::Handle_GetOwnerNote(PyCallArgs &call) {
 	Call_SingleIntegerArg arg;
 	if (!arg.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "%s: Bad arguments", call.client->GetName());
@@ -525,7 +525,7 @@ PyCallResult CharacterService::Handle_GetOwnerNote(PyCallArgs &call) {
 }
 
 
-PyCallResult CharacterService::Handle_GetHomeStation(PyCallArgs &call) {
+PyResult CharacterService::Handle_GetHomeStation(PyCallArgs &call) {
 	//returns the station ID of the station where this player's Clone is
 	PyRep *result = NULL;
 
@@ -536,7 +536,7 @@ PyCallResult CharacterService::Handle_GetHomeStation(PyCallArgs &call) {
 	return(result);
 }
 
-PyCallResult CharacterService::Handle_GetCloneTypeID(PyCallArgs &call) {
+PyResult CharacterService::Handle_GetCloneTypeID(PyCallArgs &call) {
 	PyRep *result = NULL;
 	
 	_log(CLIENT__ERROR, "GetCloneTypeID() is not really implemented.");
@@ -547,7 +547,7 @@ PyCallResult CharacterService::Handle_GetCloneTypeID(PyCallArgs &call) {
 	return(result);
 }
 
-PyCallResult CharacterService::Handle_GetRecentShipKillsAndLosses(PyCallArgs &call) {
+PyResult CharacterService::Handle_GetRecentShipKillsAndLosses(PyCallArgs &call) {
 	_log(SERVICE__WARNING, "%s::GetRecentShipKillsAndLosses unimplemented.", GetName());
 
 	util_Rowset rs;
@@ -579,7 +579,7 @@ PyCallResult CharacterService::Handle_GetRecentShipKillsAndLosses(PyCallArgs &ca
 
 
 /////////////////////////
-PyCallResult CharacterService::Handle_GetCharacterDescription(PyCallArgs &call) {
+PyResult CharacterService::Handle_GetCharacterDescription(PyCallArgs &call) {
 	PyRep *result = NULL;
 	Call_SingleIntegerArg args;
 	
@@ -600,7 +600,7 @@ PyCallResult CharacterService::Handle_GetCharacterDescription(PyCallArgs &call) 
 
 
 //////////////////////////////////
-PyCallResult CharacterService::Handle_SetCharacterDescription(PyCallArgs &call) {
+PyResult CharacterService::Handle_SetCharacterDescription(PyCallArgs &call) {
 	Call_SingleStringArg args;
 	
 	if(!args.Decode(&call.tuple)) {
@@ -613,7 +613,7 @@ PyCallResult CharacterService::Handle_SetCharacterDescription(PyCallArgs &call) 
 	return(NULL);
 }
 
-PyCallResult CharacterService::Handle_GetCharacterAppearanceList(PyCallArgs &call) {
+PyResult CharacterService::Handle_GetCharacterAppearanceList(PyCallArgs &call) {
 	Call_SingleIntList args;
 	
 	if(!args.Decode(&call.tuple)) {
@@ -644,7 +644,7 @@ PyCallResult CharacterService::Handle_GetCharacterAppearanceList(PyCallArgs &cal
  *
  *  **LSMoura
  */
-PyCallResult CharacterService::Handle_GetNote(PyCallArgs &call) {
+PyResult CharacterService::Handle_GetNote(PyCallArgs &call) {
 	Call_SingleIntegerArg args;
 
 	if(!args.Decode(&call.tuple)) {
@@ -663,7 +663,7 @@ PyCallResult CharacterService::Handle_GetNote(PyCallArgs &call) {
  *
  *  **LSMoura
  */
-PyCallResult CharacterService::Handle_SetNote(PyCallArgs &call) {
+PyResult CharacterService::Handle_SetNote(PyCallArgs &call) {
 	Call_SetNote args;
 	
 	if(!args.Decode(&call.tuple)) {

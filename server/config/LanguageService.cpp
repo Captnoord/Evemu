@@ -87,14 +87,14 @@ PyBoundObject *LanguageService::_CreateBoundObject(Client *c, PyRepTuple *bind_a
 }*/
 
 
-PyCallResult LanguageService::Handle_GetLanguages(PyCallArgs &call) {
+PyResult LanguageService::Handle_GetLanguages(PyCallArgs &call) {
 	PyRep *result = NULL;
 
 	result = m_db.ListLanguages();
 	
 	return(result);
 }
-PyCallResult LanguageService::Handle_GetTextsForGroup(PyCallArgs &call) {
+PyResult LanguageService::Handle_GetTextsForGroup(PyCallArgs &call) {
 	Call_GetTextsForGroup args;
 
 	if (!args.Decode(&call.tuple)) {

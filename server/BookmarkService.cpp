@@ -43,7 +43,7 @@ BookmarkService::~BookmarkService() {
 }
 
 
-PyCallResult BookmarkService::Handle_GetBookmarks(PyCallArgs &call) {
+PyResult BookmarkService::Handle_GetBookmarks(PyCallArgs &call) {
 	PyRep *result = NULL;
 
 	PyRepObject *rowset = new PyRepObject();
@@ -78,7 +78,7 @@ PyCallResult BookmarkService::Handle_GetBookmarks(PyCallArgs &call) {
 }
 
 
-PyCallResult BookmarkService::Handle_BookmarkLocation(PyCallArgs &call) {
+PyResult BookmarkService::Handle_BookmarkLocation(PyCallArgs &call) {
 	//takes (locationID, None, description)
 	PyRep *result = NULL;
 

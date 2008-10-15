@@ -793,22 +793,21 @@ void Client::_ProcessCallRequest(PyPacket *packet) {
 		packet->dest.Dump(CLIENT__CALL_DUMP, "  To: ");
 		call.Dump(CLIENT__CALL_DUMP, &dumper);
 	}
-	
+
 	//build arguments
 	PyCallArgs args(this, &call.arg_tuple, &call.arg_dict);
 
 	try {
 		//parts of call may be consumed here
-		PyCallResult result = svc->Call(call, args);
-	
+		PyResult result = svc->Call(call, args);
+
 		//successful call.
-		PyRepTuple *t = new PyRepTuple(1);
-		t->items[0] = result.ssResult.hijack();
-		
+		PyRep *res = result.ssResult.hijack();
+
 		_CheckSessionChange();	//send out the session change before the return.
-		
-		_SendCallReturn(packet, &t);
-	}catch(sigexcept_exception e) { //ATCH_SIGEXCEPT(e) {
+
+		_SendCallReturn(packet, &res);
+	} catch(sigexcept_exception e) /* CATCH_SIGEXCEPT(e) */ {
 		std::string str = e.to_string();
 
 		_log(CLIENT__ERROR, "%s invoked exception %s by calling %s::%s\n%s",
@@ -819,13 +818,13 @@ void Client::_ProcessCallRequest(PyPacket *packet) {
 			str.replace(i, 1, "<br>");
 
 		//build exception
-		PyRep *except = new PyRepSubStream(MakeCustomError(
+		PyRep *except = MakeCustomError(
 			"Exception %s occured while processing %s::%s<br>"
 			"<br>"
 			"%s",
 			e.type_string(), svc->GetName(), call.method.c_str(),
 			str.c_str()
-			));
+			);
 
 		//send it to client
 		_SendException(packet, WRAPPEDEXCEPTION, &except);
@@ -865,7 +864,7 @@ void Client::_ProcessNotification(PyPacket *packet) {
 	_CheckSessionChange();	//just for good measure...
 }
 
-void Client::_SendCallReturn(PyPacket *req, PyRepTuple **return_value, const char *channel) {
+void Client::_SendCallReturn(PyPacket *req, PyRep **return_value, const char *channel) {
 	
 	//build the packet:
 	PyPacket *p = new PyPacket();
@@ -880,7 +879,8 @@ void Client::_SendCallReturn(PyPacket *req, PyRepTuple **return_value, const cha
 
 	p->userid = m_accountID;
 	
-	p->payload = *return_value;
+	p->payload = new PyRepTuple(1);
+	p->payload->items[0] = new PyRepSubStream(*return_value);
 	*return_value = NULL;	//consumed
 	
 	if(channel != NULL) {

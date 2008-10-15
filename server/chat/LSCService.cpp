@@ -73,7 +73,7 @@ LSCService::~LSCService() {
 	}
 }
 
-PyCallResult LSCService::Handle_GetChannels(PyCallArgs &call) {
+PyResult LSCService::Handle_GetChannels(PyCallArgs &call) {
 	/*
 		Assume this is only called when the char's logging in.
 		Next step from the client is to join to all channels that's been sent by this
@@ -138,11 +138,11 @@ PyCallResult LSCService::Handle_GetChannels(PyCallArgs &call) {
 	return info.Encode();
 }
 
-PyCallResult LSCService::Handle_GetRookieHelpChannel(PyCallArgs &call) {
+PyResult LSCService::Handle_GetRookieHelpChannel(PyCallArgs &call) {
 	return(new PyRepInteger(1));
 }
 
-PyCallResult LSCService::Handle_JoinChannels(PyCallArgs &call) {
+PyResult LSCService::Handle_JoinChannels(PyCallArgs &call) {
 	CallJoinChannels args;
 	
 	std::set<uint32> toJoin;
@@ -218,7 +218,7 @@ PyCallResult LSCService::Handle_JoinChannels(PyCallArgs &call) {
 	return ml;
 }
 
-PyCallResult LSCService::Handle_LeaveChannels(PyCallArgs &call) {
+PyResult LSCService::Handle_LeaveChannels(PyCallArgs &call) {
 	CallLeaveChannels args;
 
 	if(!args.Decode(&call.tuple)) {
@@ -283,7 +283,7 @@ void LSCService::CharacterLogout(uint32 charID, OnLSC_SenderInfo * si) {
 	delete si;
 }
 
-PyCallResult LSCService::Handle_LeaveChannel(PyCallArgs &call) {
+PyResult LSCService::Handle_LeaveChannel(PyCallArgs &call) {
 	CallLeaveChannel arg;
 	if (!arg.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "%s: Bad arguments", call.client->GetName());
@@ -323,7 +323,7 @@ PyCallResult LSCService::Handle_LeaveChannel(PyCallArgs &call) {
 
 	return NULL;
 }
-PyCallResult LSCService::Handle_CreateChannel(PyCallArgs &call) {
+PyResult LSCService::Handle_CreateChannel(PyCallArgs &call) {
 	Call_SingleStringArg name;
 	if (!name.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "%s: Bad arguments", call.client->GetName());
@@ -341,7 +341,7 @@ PyCallResult LSCService::Handle_CreateChannel(PyCallArgs &call) {
 
 	return reply.Encode();
 }
-PyCallResult LSCService::Handle_DestroyChannel(PyCallArgs &call) {
+PyResult LSCService::Handle_DestroyChannel(PyCallArgs &call) {
 	Call_SingleIntegerArg arg;
 	if (!arg.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "%s: Bad arguments", call.client->GetName());
@@ -358,7 +358,7 @@ PyCallResult LSCService::Handle_DestroyChannel(PyCallArgs &call) {
 
 	return new PyRepNone();
 }
-PyCallResult LSCService::Handle_SendMessage(PyCallArgs &call) {
+PyResult LSCService::Handle_SendMessage(PyCallArgs &call) {
 	uint32 channelID;
 	PyRepTuple * arg = call.tuple;
 
@@ -461,11 +461,11 @@ void LSCService::InitiateStaticChannels() {
 }
 
 	
-PyCallResult LSCService::Handle_GetMyMessages(PyCallArgs &call) {
+PyResult LSCService::Handle_GetMyMessages(PyCallArgs &call) {
 	return(m_db.GetMailHeaders(call.client->GetCharacterID()));
 }
 
-PyCallResult LSCService::Handle_GetMessageDetails(PyCallArgs &call) {
+PyResult LSCService::Handle_GetMessageDetails(PyCallArgs &call) {
 	Call_TwoIntegerArgs args;
 	if(!args.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "%s: Bad arguments", call.client->GetName());
@@ -477,7 +477,7 @@ PyCallResult LSCService::Handle_GetMessageDetails(PyCallArgs &call) {
 	return(m_db.GetMailDetails(args.arg2, args.arg1));
 }
 
-PyCallResult LSCService::Handle_Page(PyCallArgs &call) {
+PyResult LSCService::Handle_Page(PyCallArgs &call) {
 	Call_Page args;
 	if(!args.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "%s: Bad arguments", call.client->GetName());
@@ -541,7 +541,7 @@ void Client::SelfEveMail(const char *subject, const char *fmt, ...) {
 	m_services->lsc_service->SendMail(GetCharacterID(), GetCharacterID(), subject, str);
 }
 
-PyCallResult LSCService::Handle_MarkMessagesRead(PyCallArgs &call) {
+PyResult LSCService::Handle_MarkMessagesRead(PyCallArgs &call) {
 	Call_SingleIntList args;
 	if(!args.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "%s: Bad arguments", call.client->GetName());
@@ -557,7 +557,7 @@ PyCallResult LSCService::Handle_MarkMessagesRead(PyCallArgs &call) {
 	return(NULL);
 }
 
-PyCallResult LSCService::Handle_DeleteMessages(PyCallArgs &call) {
+PyResult LSCService::Handle_DeleteMessages(PyCallArgs &call) {
 	Call_DeleteMessages args;
 	if(!args.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "%s: Bad arguments", call.client->GetName());
@@ -580,7 +580,7 @@ PyCallResult LSCService::Handle_DeleteMessages(PyCallArgs &call) {
 }
 
 
-bool LSCService::ExecuteCommand(Client *from, const char *msg) {
+PyResult LSCService::ExecuteCommand(Client *from, const char *msg) {
 	return(m_commandDispatch->Execute(from, msg));
 }
 

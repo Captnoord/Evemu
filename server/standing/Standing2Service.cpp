@@ -51,7 +51,7 @@ Standing2Service::~Standing2Service() {
 }
 
 
-PyCallResult Standing2Service::Handle_GetMyKillRights(PyCallArgs &call) {
+PyResult Standing2Service::Handle_GetMyKillRights(PyCallArgs &call) {
 	PyRep *result = NULL;
 
 	PyRepTuple *tu = new PyRepTuple(2);
@@ -64,7 +64,7 @@ PyCallResult Standing2Service::Handle_GetMyKillRights(PyCallArgs &call) {
 	return(result);
 }
 
-PyCallResult Standing2Service::Handle_GetMyStandings(PyCallArgs &call) {
+PyResult Standing2Service::Handle_GetMyStandings(PyCallArgs &call) {
 	PyRep *result = NULL;
 
 	PyRep *charstandings;
@@ -92,7 +92,7 @@ PyCallResult Standing2Service::Handle_GetMyStandings(PyCallArgs &call) {
 }
 
 
-PyCallResult Standing2Service::Handle_GetNPCNPCStandings(PyCallArgs &call) {
+PyResult Standing2Service::Handle_GetNPCNPCStandings(PyCallArgs &call) {
 	PyRep *result = NULL;
 
 	ObjectCachedMethodID method_id(GetName(), "GetNPCNPCStandings");
@@ -114,7 +114,7 @@ PyCallResult Standing2Service::Handle_GetNPCNPCStandings(PyCallArgs &call) {
 	return(result);
 }
 
-PyCallResult Standing2Service::Handle_GetSecurityRating(PyCallArgs &call) {
+PyResult Standing2Service::Handle_GetSecurityRating(PyCallArgs &call) {
 	//takes an integer: characterID
 	Call_SingleIntegerArg arg;
 	if(!arg.Decode(&call.tuple)) {
@@ -125,7 +125,7 @@ PyCallResult Standing2Service::Handle_GetSecurityRating(PyCallArgs &call) {
 	return(new PyRepReal(m_db.GetSecurityRating(arg.arg)));
 }
 
-PyCallResult Standing2Service::Handle_GetStandingTransactions(PyCallArgs &call) {
+PyResult Standing2Service::Handle_GetStandingTransactions(PyCallArgs &call) {
 	Call_GetStandingTransactions args;
 	if (!args.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "%s: Bad arguments", call.client->GetName());
@@ -137,7 +137,7 @@ PyCallResult Standing2Service::Handle_GetStandingTransactions(PyCallArgs &call) 
 	return (result);
 }
 
-PyCallResult Standing2Service::Handle_GetCharStandings(PyCallArgs &call) {
+PyResult Standing2Service::Handle_GetCharStandings(PyCallArgs &call) {
 	ObjectCachedMethodID method_id(GetName(), "GetCharStandings");
 
 	if(!m_manager->GetCache()->IsCacheLoaded(method_id)) {

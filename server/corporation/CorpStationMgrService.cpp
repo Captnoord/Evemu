@@ -108,7 +108,7 @@ PyBoundObject *CorpStationMgrService::_CreateBoundObject(Client *c, const PyRep 
 }
 
 
-PyCallResult CorpStationMgrIMBound::Handle_GetEveOwners(PyCallArgs &call) {
+PyResult CorpStationMgrIMBound::Handle_GetEveOwners(PyCallArgs &call) {
 	PyRep *result = NULL;
 	
 	//start building the Rowset
@@ -143,7 +143,7 @@ PyCallResult CorpStationMgrIMBound::Handle_GetEveOwners(PyCallArgs &call) {
 }
 
 
-PyCallResult CorpStationMgrIMBound::Handle_GetCorporateStationInfo(PyCallArgs &call) {
+PyResult CorpStationMgrIMBound::Handle_GetCorporateStationInfo(PyCallArgs &call) {
     /* returns:
      *  list(
      *      eveowners:
@@ -207,7 +207,7 @@ PyCallResult CorpStationMgrIMBound::Handle_GetCorporateStationInfo(PyCallArgs &c
 }
 
 
-PyCallResult CorpStationMgrIMBound::Handle_DoStandingCheckForStationService(PyCallArgs &call) {
+PyResult CorpStationMgrIMBound::Handle_DoStandingCheckForStationService(PyCallArgs &call) {
 	
 	// takes an int (seen 512 and 1024 and 2048)
 	//seems to return None, or throw an exception
@@ -216,7 +216,7 @@ PyCallResult CorpStationMgrIMBound::Handle_DoStandingCheckForStationService(PyCa
 	return(result);
 }
 
-PyCallResult CorpStationMgrIMBound::Handle_GetPotentialHomeStations(PyCallArgs &call) {
+PyResult CorpStationMgrIMBound::Handle_GetPotentialHomeStations(PyCallArgs &call) {
 	PyRep *result = NULL;
 	//returns a rowset: stationID, typeID
 
@@ -226,7 +226,7 @@ PyCallResult CorpStationMgrIMBound::Handle_GetPotentialHomeStations(PyCallArgs &
 	return(result);
 }
 
-PyCallResult CorpStationMgrIMBound::Handle_SetHomeStation(PyCallArgs &call) {
+PyResult CorpStationMgrIMBound::Handle_SetHomeStation(PyCallArgs &call) {
 
 	//this takes an integer: stationID
 	//price is prompted for on the client side.
@@ -236,7 +236,7 @@ PyCallResult CorpStationMgrIMBound::Handle_SetHomeStation(PyCallArgs &call) {
 	return(new PyRepNone());
 }
 
-PyCallResult CorpStationMgrIMBound::Handle_SetCloneTypeID(PyCallArgs &call) {
+PyResult CorpStationMgrIMBound::Handle_SetCloneTypeID(PyCallArgs &call) {
 
 	//this takes an integer: cloneTypeID
 	//price is prompted for on the client side.
@@ -246,7 +246,7 @@ PyCallResult CorpStationMgrIMBound::Handle_SetCloneTypeID(PyCallArgs &call) {
 	return(new PyRepNone());
 }
 
-PyCallResult CorpStationMgrIMBound::Handle_GetQuoteForRentingAnOffice(PyCallArgs &call) {
+PyResult CorpStationMgrIMBound::Handle_GetQuoteForRentingAnOffice(PyCallArgs &call) {
 	// No incoming params...
 	uint32 stationID = call.client->GetStationID();
 
@@ -254,7 +254,7 @@ PyCallResult CorpStationMgrIMBound::Handle_GetQuoteForRentingAnOffice(PyCallArgs
 	// the dialog box will be displayed... have to make sure this doesn't fail
 	return (new PyRepInteger(m_db->GetQuoteForRentingAnOffice(stationID)));
 }
-PyCallResult CorpStationMgrIMBound::Handle_RentOffice(PyCallArgs &call) {
+PyResult CorpStationMgrIMBound::Handle_RentOffice(PyCallArgs &call) {
 	// 1 param, corp rent price	//TODO: check against what we think it should cost.
 	Call_SingleIntegerArg arg;
 	if (!arg.Decode(&call.tuple)) {

@@ -49,7 +49,7 @@ PyBoundObject *PosMgrService::_CreateBoundObject(Client *c, PyRep *bind_args) {
 	return(new PosMgrServiceBound(m_manager, &m_db));
 }*/
 
-PyCallResult PosMgrService::Handle_GetControlTowerFuelRequirements(PyCallArgs &args) {
+PyResult PosMgrService::Handle_GetControlTowerFuelRequirements(PyCallArgs &args) {
 	return m_db.GetControlTowerFuelRequirements();
 }
 

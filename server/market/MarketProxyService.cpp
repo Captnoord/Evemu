@@ -101,7 +101,7 @@ PyBoundObject *MarketProxyService::_CreateBoundObject(Client *c, const PyRep *bi
 }*/
 
 
-PyCallResult MarketProxyService::Handle_GetStationAsks(PyCallArgs &call) {
+PyResult MarketProxyService::Handle_GetStationAsks(PyCallArgs &call) {
 	PyRep *result = NULL;
 	
 	uint32 locid = call.client->GetLocationID();
@@ -119,7 +119,7 @@ PyCallResult MarketProxyService::Handle_GetStationAsks(PyCallArgs &call) {
 }
 
 
-PyCallResult MarketProxyService::Handle_GetSystemAsks(PyCallArgs &call) {
+PyResult MarketProxyService::Handle_GetSystemAsks(PyCallArgs &call) {
 	PyRep *result = NULL;
 	
 	uint32 locid = call.client->GetSystemID();
@@ -137,7 +137,7 @@ PyCallResult MarketProxyService::Handle_GetSystemAsks(PyCallArgs &call) {
 }
 
 
-PyCallResult MarketProxyService::Handle_GetRegionBest(PyCallArgs &call) {
+PyResult MarketProxyService::Handle_GetRegionBest(PyCallArgs &call) {
 	PyRep *result = NULL;
 	
 	uint32 locid = call.client->GetSystemID();
@@ -162,7 +162,7 @@ PyCallResult MarketProxyService::Handle_GetRegionBest(PyCallArgs &call) {
 	return(result);
 }
 
-PyCallResult MarketProxyService::Handle_GetMarketGroups(PyCallArgs &call) {
+PyResult MarketProxyService::Handle_GetMarketGroups(PyCallArgs &call) {
 	PyRep *result = NULL;
 
 	ObjectCachedMethodID method_id(GetName(), "GetMarketGroups");
@@ -186,7 +186,7 @@ PyCallResult MarketProxyService::Handle_GetMarketGroups(PyCallArgs &call) {
 	return(result);
 }
 
-PyCallResult MarketProxyService::Handle_GetOrders(PyCallArgs &call) {
+PyResult MarketProxyService::Handle_GetOrders(PyCallArgs &call) {
 	Call_SingleIntegerArg args;	//itemID
 	if(!args.Decode(&call.tuple)) {
 		codelog(MARKET__ERROR, "Invalid arguments");
@@ -217,7 +217,7 @@ PyCallResult MarketProxyService::Handle_GetOrders(PyCallArgs &call) {
 	return(result);
 }
 
-PyCallResult MarketProxyService::Handle_GetCharOrders(PyCallArgs &call) {
+PyResult MarketProxyService::Handle_GetCharOrders(PyCallArgs &call) {
 	//no arguments
 	PyRep *result = NULL;
 	
@@ -230,7 +230,7 @@ PyCallResult MarketProxyService::Handle_GetCharOrders(PyCallArgs &call) {
 	return(result);
 }
 
-PyCallResult MarketProxyService::Handle_GetOldPriceHistory(PyCallArgs &call) {
+PyResult MarketProxyService::Handle_GetOldPriceHistory(PyCallArgs &call) {
 	Call_SingleIntegerArg args;	//itemID
 	if(!args.Decode(&call.tuple)) {
 		codelog(MARKET__ERROR, "Invalid arguments");
@@ -261,7 +261,7 @@ PyCallResult MarketProxyService::Handle_GetOldPriceHistory(PyCallArgs &call) {
 	return(result);
 }
 
-PyCallResult MarketProxyService::Handle_GetNewPriceHistory(PyCallArgs &call) {
+PyResult MarketProxyService::Handle_GetNewPriceHistory(PyCallArgs &call) {
 	Call_SingleIntegerArg args;	//itemID
 	if(!args.Decode(&call.tuple)) {
 		codelog(MARKET__ERROR, "Invalid arguments");
@@ -292,7 +292,7 @@ PyCallResult MarketProxyService::Handle_GetNewPriceHistory(PyCallArgs &call) {
 	return(result);
 }
 
-PyCallResult MarketProxyService::Handle_PlaceCharOrder(PyCallArgs &call) {
+PyResult MarketProxyService::Handle_PlaceCharOrder(PyCallArgs &call) {
 	Call_PlaceCharOrder args;
 	if(!args.Decode(&call.tuple)) {
 		codelog(MARKET__ERROR, "Invalid arguments");

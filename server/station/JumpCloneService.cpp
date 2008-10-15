@@ -83,7 +83,7 @@ PyBoundObject *JumpCloneService::_CreateBoundObject(Client *c, const PyRep *bind
 	return(new JumpCloneBound(m_manager, &m_db));
 }
 
-PyCallResult JumpCloneBound::Handle_InstallCloneInStation(PyCallArgs &call) {
+PyResult JumpCloneBound::Handle_InstallCloneInStation(PyCallArgs &call) {
 	//takes no arguments, returns no arguments
 
 	_log(CLIENT__ERROR, "%s: Unhandled InstallCloneInStation", GetName());
@@ -91,7 +91,7 @@ PyCallResult JumpCloneBound::Handle_InstallCloneInStation(PyCallArgs &call) {
 	return(new PyRepNone());
 }
 
-PyCallResult JumpCloneBound::Handle_GetCloneState(PyCallArgs &call) {
+PyResult JumpCloneBound::Handle_GetCloneState(PyCallArgs &call) {
 	
 	//returns (clones, implants, timeLastJump)
 	//where jumpClones is a rowset? with at least columns: jumpCloneID, locationID
@@ -107,7 +107,7 @@ PyCallResult JumpCloneBound::Handle_GetCloneState(PyCallArgs &call) {
 }
 
 /*
-PyCallResult JumpCloneService::Handle_(PyCallArgs &call) {
+PyResult JumpCloneService::Handle_(PyCallArgs &call) {
 	PyRep *result = NULL;
 
 	return(result);

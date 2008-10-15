@@ -39,7 +39,7 @@ FactoryService::~FactoryService() {
 	delete m_dispatch;
 }
 
-PyCallResult FactoryService::Handle_GetBlueprintAttributes(PyCallArgs &call) {
+PyResult FactoryService::Handle_GetBlueprintAttributes(PyCallArgs &call) {
 	PyRep *result = NULL;
 
 	Call_SingleIntegerArg args;
@@ -56,7 +56,7 @@ PyCallResult FactoryService::Handle_GetBlueprintAttributes(PyCallArgs &call) {
 	return(rsp.Encode());
 }
 
-PyCallResult FactoryService::Handle_GetMaterialsForTypeWithActivity(PyCallArgs &call) {
+PyResult FactoryService::Handle_GetMaterialsForTypeWithActivity(PyCallArgs &call) {
 	PyRep *result = NULL;
 
 	Call_TwoIntegerArgs call_args;
@@ -73,7 +73,7 @@ PyCallResult FactoryService::Handle_GetMaterialsForTypeWithActivity(PyCallArgs &
 	return(result);
 }
 
-PyCallResult FactoryService::Handle_GetMaterialCompositionOfItemType(PyCallArgs &call) {
+PyResult FactoryService::Handle_GetMaterialCompositionOfItemType(PyCallArgs &call) {
 	PyRep *result = NULL;
 
 	Call_SingleIntegerArg call_args;

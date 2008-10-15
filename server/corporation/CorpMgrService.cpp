@@ -47,7 +47,7 @@ CorpMgrService::~CorpMgrService() {
 }
 
 
-PyCallResult CorpMgrService::Handle_GetPublicInfo(PyCallArgs &call) {
+PyResult CorpMgrService::Handle_GetPublicInfo(PyCallArgs &call) {
 	Call_SingleIntegerArg corpID;
 	if (!corpID.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "Bad param");

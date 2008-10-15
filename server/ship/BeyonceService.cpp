@@ -109,7 +109,7 @@ PyBoundObject *BeyonceService::_CreateBoundObject(Client *c, const PyRep *bind_a
 }
 
 
-PyCallResult BeyonceService::Handle_GetFormations(PyCallArgs &call) {
+PyResult BeyonceService::Handle_GetFormations(PyCallArgs &call) {
 	PyRep *result = NULL;
 
 	ObjectCachedMethodID method_id(GetName(), "GetRefTypes");
@@ -210,7 +210,7 @@ PyCallResult BeyonceService::Handle_GetFormations(PyCallArgs &call) {
 
 
 /*
-PyCallResult BeyonceService::Handle_(PyCallArgs &call) {
+PyResult BeyonceService::Handle_(PyCallArgs &call) {
 	PyRep *result = NULL;
 
 	return(result);
@@ -219,7 +219,7 @@ PyCallResult BeyonceService::Handle_(PyCallArgs &call) {
 
 
 
-PyCallResult BeyonceBound::Handle_FollowBall(PyCallArgs &call) {
+PyResult BeyonceBound::Handle_FollowBall(PyCallArgs &call) {
 	//freakin python... the second arg is coming in as a real some times..
 	PyRepTuple *iargs = call.tuple;
 
@@ -268,7 +268,7 @@ PyCallResult BeyonceBound::Handle_FollowBall(PyCallArgs &call) {
 	return(NULL);
 }
 
-PyCallResult BeyonceBound::Handle_SetSpeedFraction(PyCallArgs &call) {
+PyResult BeyonceBound::Handle_SetSpeedFraction(PyCallArgs &call) {
 	Call_SingleRealArg arg;
 	if(!arg.Decode(&call.tuple)) {
 		codelog(CLIENT__ERROR, "%s: failed to decode args", call.client->GetName());
@@ -286,7 +286,7 @@ PyCallResult BeyonceBound::Handle_SetSpeedFraction(PyCallArgs &call) {
 	return(NULL);
 }
 
-PyCallResult BeyonceBound::Handle_GotoDirection(PyCallArgs &call) {
+PyResult BeyonceBound::Handle_GotoDirection(PyCallArgs &call) {
 	Call_PointArg arg;
 	if(!arg.Decode(&call.tuple)) {
 		codelog(CLIENT__ERROR, "%s: failed to decode args", call.client->GetName());
@@ -304,7 +304,7 @@ PyCallResult BeyonceBound::Handle_GotoDirection(PyCallArgs &call) {
 	return(NULL);
 }
 
-PyCallResult BeyonceBound::Handle_Orbit(PyCallArgs &call) {
+PyResult BeyonceBound::Handle_Orbit(PyCallArgs &call) {
 	Call_TwoIntegerArgs arg;
 	if(!arg.Decode(&call.tuple)) {
 		codelog(CLIENT__ERROR, "%s: failed to decode args", call.client->GetName());
@@ -334,7 +334,7 @@ PyCallResult BeyonceBound::Handle_Orbit(PyCallArgs &call) {
 	return(NULL);
 }
 
-PyCallResult BeyonceBound::Handle_WarpToStuff(PyCallArgs &call) {
+PyResult BeyonceBound::Handle_WarpToStuff(PyCallArgs &call) {
 	CallWarpToStuff arg;
 	if(!arg.Decode(&call.tuple)) {
 		codelog(CLIENT__ERROR, "%s: failed to decode args", call.client->GetName());
@@ -354,7 +354,7 @@ PyCallResult BeyonceBound::Handle_WarpToStuff(PyCallArgs &call) {
 	return(NULL);
 }
 
-PyCallResult BeyonceBound::Handle_UpdateStateRequest(PyCallArgs &call) {
+PyResult BeyonceBound::Handle_UpdateStateRequest(PyCallArgs &call) {
 	//no arguments.
 	
 	DestinyManager *destiny = call.client->Destiny();
@@ -369,7 +369,7 @@ PyCallResult BeyonceBound::Handle_UpdateStateRequest(PyCallArgs &call) {
 	return(NULL);
 }
 
-PyCallResult BeyonceBound::Handle_Stop(PyCallArgs &call) {
+PyResult BeyonceBound::Handle_Stop(PyCallArgs &call) {
 
 	DestinyManager *destiny = call.client->Destiny();
 	if(destiny == NULL) {
@@ -382,7 +382,7 @@ PyCallResult BeyonceBound::Handle_Stop(PyCallArgs &call) {
 	return(NULL);
 }
 
-PyCallResult BeyonceBound::Handle_Dock(PyCallArgs &call) {
+PyResult BeyonceBound::Handle_Dock(PyCallArgs &call) {
 	Call_SingleIntegerArg arg;
 	if(!arg.Decode(&call.tuple)) {
 		codelog(CLIENT__ERROR, "%s: failed to decode args", call.client->GetName());
@@ -423,7 +423,7 @@ PyCallResult BeyonceBound::Handle_Dock(PyCallArgs &call) {
 	return(NULL);
 }
 
-PyCallResult BeyonceBound::Handle_StargateJump(PyCallArgs &call) {
+PyResult BeyonceBound::Handle_StargateJump(PyCallArgs &call) {
 	Call_TwoIntegerArgs arg;
 	if(!arg.Decode(&call.tuple)) {
 		codelog(CLIENT__ERROR, "%s: failed to decode args", call.client->GetName());

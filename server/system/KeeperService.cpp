@@ -85,7 +85,7 @@ PyBoundObject *KeeperService::_CreateBoundObject(Client *c, const PyRep *bind_ar
 }
 
 
-PyCallResult KeeperService::Handle_GetLevelEditor(PyCallArgs &call) {
+PyResult KeeperService::Handle_GetLevelEditor(PyCallArgs &call) {
 	PyRep *result = NULL;
 	
 	KeeperBound *ib = new KeeperBound(m_manager, &m_db);

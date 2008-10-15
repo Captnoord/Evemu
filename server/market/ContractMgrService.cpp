@@ -30,7 +30,7 @@ ContractMgrService::ContractMgrService(PyServiceMgr *mgr)
 	PyCallable_REG_CALL(ContractMgrService, NumRequiringAttention);
 }
 
-PyCallResult ContractMgrService::Handle_NumRequiringAttention(PyCallArgs &call) {
+PyResult ContractMgrService::Handle_NumRequiringAttention(PyCallArgs &call) {
 	_log(SERVICE__WARNING, "%s: NumReqiringAttention unimplemented.", GetName());
 
 	PyRepDict *args = new PyRepDict;

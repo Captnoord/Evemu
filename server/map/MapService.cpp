@@ -47,7 +47,7 @@ MapService::~MapService() {
 }
 
 
-PyCallResult MapService::Handle_GetStationExtraInfo(PyCallArgs &call) {
+PyResult MapService::Handle_GetStationExtraInfo(PyCallArgs &call) {
 	//takes no arguments
 	//returns tuple(
 	// 	stations: rowset stationID,solarSystemID,operationID,stationTypeID,ownerID
@@ -96,7 +96,7 @@ PyCallResult MapService::Handle_GetStationExtraInfo(PyCallArgs &call) {
 }
 
 
-PyCallResult MapService::Handle_GetSolarSystemPseudoSecurities(PyCallArgs &call) {
+PyResult MapService::Handle_GetSolarSystemPseudoSecurities(PyCallArgs &call) {
 	PyRep *result = NULL;
 
 	ObjectCachedMethodID method_id(GetName(), "GetSolarSystemPseudoSecurities");
@@ -119,7 +119,7 @@ PyCallResult MapService::Handle_GetSolarSystemPseudoSecurities(PyCallArgs &call)
 }
 
 
-PyCallResult MapService::Handle_GetStuckSystems(PyCallArgs &call) {
+PyResult MapService::Handle_GetStuckSystems(PyCallArgs &call) {
 	PyRep *result = NULL;
 
 	result = new PyRepDict();

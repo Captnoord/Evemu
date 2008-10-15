@@ -46,7 +46,7 @@ BillMgrService::~BillMgrService() {
 }
 
 
-PyCallResult BillMgrService::Handle_GetBillTypes(PyCallArgs &call) {
+PyResult BillMgrService::Handle_GetBillTypes(PyCallArgs &call) {
 	PyRep *result = NULL;
 
 	ObjectCachedMethodID method_id(GetName(), "GetRefTypes");
@@ -126,13 +126,13 @@ PyCallResult BillMgrService::Handle_GetBillTypes(PyCallArgs &call) {
 	return(result);
 }
 
-PyCallResult BillMgrService::Handle_GetCorporationBills(PyCallArgs &call) {
+PyResult BillMgrService::Handle_GetCorporationBills(PyCallArgs &call) {
 	// No incoming params
 	uint32 corpID = call.client->GetCorporationID();
 
 	return m_db.GetCorporationBills(corpID, true);
 }
-PyCallResult BillMgrService::Handle_GetCorporationBillsReceivable(PyCallArgs &call) {
+PyResult BillMgrService::Handle_GetCorporationBillsReceivable(PyCallArgs &call) {
 	uint32 corpID = call.client->GetCorporationID();
 
 	return m_db.GetCorporationBills(corpID, false);

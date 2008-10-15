@@ -49,7 +49,7 @@ CorporationService::~CorporationService() {
 }
 
 
-PyCallResult CorporationService::Handle_GetFactionInfo(PyCallArgs &call) {
+PyResult CorporationService::Handle_GetFactionInfo(PyCallArgs &call) {
 	
 	GetFactionInfoRsp rsp;
 	
@@ -119,13 +119,13 @@ PyCallResult CorporationService::Handle_GetFactionInfo(PyCallArgs &call) {
 }
 
 
-PyCallResult CorporationService::Handle_GetNPCDivisions(PyCallArgs &call) {
+PyResult CorporationService::Handle_GetNPCDivisions(PyCallArgs &call) {
 	PyRep *result = m_db.ListNPCDivisions();
 	
 	return(result);
 }
 
-PyCallResult CorporationService::Handle_GetEmploymentRecord(PyCallArgs &call) {
+PyResult CorporationService::Handle_GetEmploymentRecord(PyCallArgs &call) {
 	Call_SingleIntegerArg args;
 	if (!args.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "Bad arguments");

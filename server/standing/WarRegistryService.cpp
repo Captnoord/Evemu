@@ -70,7 +70,7 @@ PyBoundObject *WarRegistryService::_CreateBoundObject(Client *c, const PyRep *bi
 	return(new WarRegistryBound(m_manager, args.arg1));
 }
 
-PyCallResult WarRegistryBound::Handle_GetWars(PyCallArgs &call) {
+PyResult WarRegistryBound::Handle_GetWars(PyCallArgs &call) {
 	_log(SERVICE__ERROR, "GetWars unimplemented.");
 
 	util_IndexRowset irowset;

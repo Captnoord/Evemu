@@ -26,14 +26,14 @@
 #include "ServiceDB.h"
 #include "../common/EVEUtils.h"
 
-class PyRepSubStream;
 class Client;
-class PyCallStream;
+
+class PyRep;
 class PyRepTuple;
 class PyRepDict;
-class PyRepObject;
-class PyRep;
+
 class PyServiceMgr;
+class PyCallStream;
 
 
 
@@ -53,15 +53,15 @@ public:
 
 
 
-class PyCallResult {
+class PyResult {
 protected:
-	PyCallResult();
+	PyResult();
 public:
-	PyCallResult(PyRep *result);	//takes ownership
-	~PyCallResult();
+	PyResult(PyRep *result);	//takes ownership
+	~PyResult();
 	
 	//I dislike smart pointers, but I need them here due to copying when returning objects
-	counted_ptr<PyRepSubStream> ssResult;	//must never be NULL
+	counted_ptr<PyRep> ssResult;	//must never be NULL
 };
 
 class PyException {
@@ -71,7 +71,7 @@ public:
 	PyException(PyRep *except);		//takes ownership
 	~PyException();
 
-	counted_ptr<PyRepSubStream> ssException;	//must never be NULL
+	counted_ptr<PyRep> ssException;	//must never be NULL
 };
 
 
@@ -83,7 +83,7 @@ public:
 	class CallDispatcher {
 	public:
 		virtual ~CallDispatcher() {}
-		virtual PyCallResult Dispatch(const std::string &method_name, PyCallArgs &call) = 0;
+		virtual PyResult Dispatch(const std::string &method_name, PyCallArgs &call) = 0;
 	};
 	
 	PyCallable(PyServiceMgr *mgr, const char *callableName);
@@ -92,7 +92,7 @@ public:
 	const char *GetName() const { return(m_callableName.c_str()); }
 	
 	//returns ownership:
-	virtual PyCallResult Call(PyCallStream &call, PyCallArgs &args);
+	virtual PyResult Call(PyCallStream &call, PyCallArgs &args);
 	
 protected:
 	void _SetCallDispatcher(CallDispatcher *d) { m_serviceDispatch = d; }

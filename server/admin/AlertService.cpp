@@ -43,7 +43,7 @@ AlertService::~AlertService() {
 }
 
 
-PyCallResult AlertService::Handle_BeanCount(PyCallArgs &call) {
+PyResult AlertService::Handle_BeanCount(PyCallArgs &call) {
 	PyRep *result = NULL;
 
 	PyRepTuple *tt;
@@ -65,7 +65,7 @@ PyCallResult AlertService::Handle_BeanCount(PyCallArgs &call) {
 	return(result);
 }
 
-PyCallResult AlertService::Handle_BeanDelivery(PyCallArgs &call) {
+PyResult AlertService::Handle_BeanDelivery(PyCallArgs &call) {
 	PyRep *result = NULL;
 	/*                                                                              
      *

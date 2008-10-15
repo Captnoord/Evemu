@@ -92,7 +92,7 @@ PyBoundObject *InsuranceService::_CreateBoundObject(Client *c, PyRep *bind_args)
 }*/
 
 
-PyCallResult InsuranceService::Handle_GetContractForShip(PyCallArgs &call) {
+PyResult InsuranceService::Handle_GetContractForShip(PyCallArgs &call) {
 	PyRep *result = NULL;
 
 	result = new PyRepNone();

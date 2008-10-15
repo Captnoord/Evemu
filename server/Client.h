@@ -373,7 +373,7 @@ protected:
 	
 	//call stuff
 	void _ProcessCallRequest(PyPacket *packet);
-	void _SendCallReturn(PyPacket *req, PyRepTuple **return_value, const char *channel = NULL);
+	void _SendCallReturn(PyPacket *req, PyRep **return_value, const char *channel = NULL);
 	void _SendException(PyPacket *req, MACHONETERR_TYPE type, PyRep **payload);
 
 	InventoryItem *m_ship;

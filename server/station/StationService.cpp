@@ -43,12 +43,12 @@ StationService::~StationService() {
 }
 
 
-PyCallResult StationService::Handle_GetStationItemBits(PyCallArgs &call) {
+PyResult StationService::Handle_GetStationItemBits(PyCallArgs &call) {
 	return m_db.GetStationItemBits(call.client->GetStationID());
 }
 
 
-PyCallResult StationService::Handle_GetGuests(PyCallArgs &call) {
+PyResult StationService::Handle_GetGuests(PyCallArgs &call) {
 	PyRepList *res = new PyRepList();
 
 	PyRepTuple *t = new PyRepTuple(4);

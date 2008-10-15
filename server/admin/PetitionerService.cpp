@@ -86,7 +86,7 @@ PyBoundObject *PetitionerService::_CreateBoundObject(Client *c, PyRep *bind_args
 }*/
 
 
-PyCallResult PetitionerService::Handle_GetCategories(PyCallArgs &call) {
+PyResult PetitionerService::Handle_GetCategories(PyCallArgs &call) {
 	//takes no arguments
 	
 	PyRepList *result = new PyRepList();
@@ -98,7 +98,7 @@ PyCallResult PetitionerService::Handle_GetCategories(PyCallArgs &call) {
 }
 
 
-PyCallResult PetitionerService::Handle_GetUnreadMessages(PyCallArgs &call) {
+PyResult PetitionerService::Handle_GetUnreadMessages(PyCallArgs &call) {
 	//takes no arguments
 
 	//unknown...

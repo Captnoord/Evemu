@@ -105,7 +105,7 @@ PyBoundObject *ShipService::_CreateBoundObject(Client *c, const PyRep *bind_args
 }
 
 
-PyCallResult ShipBound::Handle_Board(PyCallArgs &call) {
+PyResult ShipBound::Handle_Board(PyCallArgs &call) {
 	Call_SingleIntegerArg args;
 	if(!args.Decode(&call.tuple)) {
 		codelog(CLIENT__ERROR, "%s: failed to decode arguments", call.client->GetName());
@@ -129,7 +129,7 @@ PyCallResult ShipBound::Handle_Board(PyCallArgs &call) {
 }
 
 
-PyCallResult ShipBound::Handle_Undock(PyCallArgs &call) {
+PyResult ShipBound::Handle_Undock(PyCallArgs &call) {
 	Call_SingleBoolArg args;
 	if(!args.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "Failed to decode arguments");
@@ -175,7 +175,7 @@ PyCallResult ShipBound::Handle_Undock(PyCallArgs &call) {
 	return(NULL);
 }
 
-PyCallResult ShipBound::Handle_AssembleShip(PyCallArgs &call) {
+PyResult ShipBound::Handle_AssembleShip(PyCallArgs &call) {
 	//TODO: Return correct values
 	Call_AssembleShip args;
 	if(!args.Decode(&call.tuple)) {
@@ -193,7 +193,7 @@ PyCallResult ShipBound::Handle_AssembleShip(PyCallArgs &call) {
 	return(NULL);
 }
 
-PyCallResult ShipBound::Handle_Drop(PyCallArgs &call) {
+PyResult ShipBound::Handle_Drop(PyCallArgs &call) {
 	if(!IsSolarSystem(call.client->GetLocationID())) {
 		_log(SERVICE__ERROR, "%s: Trying to drop items when not in space!", call.client->GetName());
 		return(new PyRepList());
@@ -270,7 +270,7 @@ PyCallResult ShipBound::Handle_Drop(PyCallArgs &call) {
 	return(successfully_dropped.Encode());
 }
 
-PyCallResult ShipBound::Handle_ScoopDrone(PyCallArgs &call) {
+PyResult ShipBound::Handle_ScoopDrone(PyCallArgs &call) {
 	Call_SingleIntList args;
 	if(!args.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "Failed to decode arguments");
@@ -310,7 +310,7 @@ PyCallResult ShipBound::Handle_ScoopDrone(PyCallArgs &call) {
 	return(NULL);
 }
 
-PyCallResult ShipBound::Handle_Jettison(PyCallArgs &call) {
+PyResult ShipBound::Handle_Jettison(PyCallArgs &call) {
 	//TODO: Add correct return values
 	
 	Call_SingleIntList args;
@@ -367,7 +367,7 @@ PyCallResult ShipBound::Handle_Jettison(PyCallArgs &call) {
 }
 
 
-PyCallResult ShipBound::Handle_Eject(PyCallArgs &call) {
+PyResult ShipBound::Handle_Eject(PyCallArgs &call) {
 	//no arguments.
 
 	//spawn capsule (inside ship, flagCapsule, singleton)

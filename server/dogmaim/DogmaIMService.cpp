@@ -109,7 +109,7 @@ PyBoundObject *DogmaIMService::_CreateBoundObject(Client *c, const PyRep *bind_a
 }
 
 
-PyCallResult DogmaIMService::Handle_GetAttributeTypes(PyCallArgs &call) {
+PyResult DogmaIMService::Handle_GetAttributeTypes(PyCallArgs &call) {
 	PyRep *result = NULL;
 
 	PyRep *hint = call.client->GetServices()->GetCache()->GetCacheHint("dogmaIM.attributesByName");
@@ -125,7 +125,7 @@ PyCallResult DogmaIMService::Handle_GetAttributeTypes(PyCallArgs &call) {
 	return(result);
 }
 
-PyCallResult DogmaIMBound::Handle_ShipGetInfo(PyCallArgs &call) {
+PyResult DogmaIMBound::Handle_ShipGetInfo(PyCallArgs &call) {
 	//takes no arguments
 	
 	PyRepObject *result = call.client->Ship()->ShipGetInfo();
@@ -137,7 +137,7 @@ PyCallResult DogmaIMBound::Handle_ShipGetInfo(PyCallArgs &call) {
     return(result);
 }
 
-PyCallResult DogmaIMBound::Handle_ItemGetInfo(PyCallArgs &call) {
+PyResult DogmaIMBound::Handle_ItemGetInfo(PyCallArgs &call) {
 	Call_SingleIntegerArg args;
 	if(!args.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "Failed to decode arguments");
@@ -160,7 +160,7 @@ PyCallResult DogmaIMBound::Handle_ItemGetInfo(PyCallArgs &call) {
     return(result);
 }
 
-PyCallResult DogmaIMBound::Handle_CharGetInfo(PyCallArgs &call) {
+PyResult DogmaIMBound::Handle_CharGetInfo(PyCallArgs &call) {
 	//no arguments
 	
 	PyRepObject *result = call.client->Item()->CharGetInfo();
@@ -172,7 +172,7 @@ PyCallResult DogmaIMBound::Handle_CharGetInfo(PyCallArgs &call) {
 	return(result);
 }
 
-PyCallResult DogmaIMBound::Handle_CheckSendLocationInfo(PyCallArgs &call) {
+PyResult DogmaIMBound::Handle_CheckSendLocationInfo(PyCallArgs &call) {
 	//no arguments
 	PyRep *result = NULL;
 
@@ -182,7 +182,7 @@ PyCallResult DogmaIMBound::Handle_CheckSendLocationInfo(PyCallArgs &call) {
 	return(result);
 }
 
-PyCallResult DogmaIMBound::Handle_GetTargets(PyCallArgs &call) {
+PyResult DogmaIMBound::Handle_GetTargets(PyCallArgs &call) {
 	//no arguments
 	PyRep *result = NULL;
 	
@@ -191,7 +191,7 @@ PyCallResult DogmaIMBound::Handle_GetTargets(PyCallArgs &call) {
 	return(result);
 }
 
-PyCallResult DogmaIMBound::Handle_GetTargeters(PyCallArgs &call) {
+PyResult DogmaIMBound::Handle_GetTargeters(PyCallArgs &call) {
 	//no arguments
 	PyRep *result = NULL;
 	
@@ -200,7 +200,7 @@ PyCallResult DogmaIMBound::Handle_GetTargeters(PyCallArgs &call) {
 	return(result);
 }
 
-PyCallResult DogmaIMBound::Handle_Activate(PyCallArgs &call) {
+PyResult DogmaIMBound::Handle_Activate(PyCallArgs &call) {
 	Call_Dogma_Activate args;
 	if(!args.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "Unable to decode arguments from '%s'", call.client->GetName());
@@ -216,7 +216,7 @@ PyCallResult DogmaIMBound::Handle_Activate(PyCallArgs &call) {
 	return(new PyRepInteger(res));
 }
 
-PyCallResult DogmaIMBound::Handle_Deactivate(PyCallArgs &call) {
+PyResult DogmaIMBound::Handle_Deactivate(PyCallArgs &call) {
 	Call_Dogma_Deactivate args;
 	if(!args.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "Unable to decode arguments from '%s'", call.client->GetName());
@@ -242,7 +242,7 @@ PyCallResult DogmaIMBound::Handle_Deactivate(PyCallArgs &call) {
 	return(NULL);
 }
 
-PyCallResult DogmaIMBound::Handle_AddTarget(PyCallArgs &call) {
+PyResult DogmaIMBound::Handle_AddTarget(PyCallArgs &call) {
 	Call_SingleIntegerArg args;
 	if(!args.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "Unable to decode arguments from '%s'", call.client->GetName());
@@ -271,7 +271,7 @@ PyCallResult DogmaIMBound::Handle_AddTarget(PyCallArgs &call) {
 	return(rsp.FastEncode());
 }
 
-PyCallResult DogmaIMBound::Handle_RemoveTarget(PyCallArgs &call) {
+PyResult DogmaIMBound::Handle_RemoveTarget(PyCallArgs &call) {
 	Call_SingleIntegerArg args;
 	if(!args.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "Unable to decode arguments from '%s'", call.client->GetName());
@@ -294,7 +294,7 @@ PyCallResult DogmaIMBound::Handle_RemoveTarget(PyCallArgs &call) {
 	return(NULL);
 }
 
-PyCallResult DogmaIMBound::Handle_ClearTargets(PyCallArgs &call) {
+PyResult DogmaIMBound::Handle_ClearTargets(PyCallArgs &call) {
 	//no arguments.
 	
 	call.client->targets.ClearTargets();

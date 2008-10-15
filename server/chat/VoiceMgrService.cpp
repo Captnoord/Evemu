@@ -30,7 +30,7 @@ VoiceMgrService::VoiceMgrService(PyServiceMgr *mgr)
 	PyCallable_REG_CALL(VoiceMgrService, VoiceEnabled);
 }
 
-PyCallResult VoiceMgrService::Handle_VoiceEnabled(PyCallArgs &call) {
+PyResult VoiceMgrService::Handle_VoiceEnabled(PyCallArgs &call) {
 	//maybe in future, but not now ...
 	return(new PyRepInteger(0));
 }

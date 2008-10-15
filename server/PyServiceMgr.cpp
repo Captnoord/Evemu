@@ -43,7 +43,7 @@ public:
 	BoundCaller(PyServiceMgr *mgr)
 	: PyService(mgr, "BoundCallFakeService") {
 	}
-	virtual PyCallResult Call(PyCallStream &call, PyCallArgs &args) {
+	virtual PyResult Call(PyCallStream &call, PyCallArgs &args) {
 		if(call.remoteObject != 0) {
 			_log(SERVICE__ERROR, "Service-less message received with an integer remote object ID %lu!", call.remoteObject);
 			return(NULL);

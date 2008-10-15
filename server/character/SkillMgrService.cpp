@@ -95,7 +95,7 @@ PyBoundObject *SkillMgrService::_CreateBoundObject(Client *c, const PyRep *bind_
 }
 
 
-PyCallResult SkillMgrBound::Handle_CharStartTrainingSkill(PyCallArgs &call) {
+PyResult SkillMgrBound::Handle_CharStartTrainingSkill(PyCallArgs &call) {
 	//takes itemid
 	Call_SingleIntegerArg args;
 	if(!args.Decode(&call.tuple)) {
@@ -117,7 +117,7 @@ PyCallResult SkillMgrBound::Handle_CharStartTrainingSkill(PyCallArgs &call) {
 }
 
 
-PyCallResult SkillMgrBound::Handle_GetEndOfTraining(PyCallArgs &call) {
+PyResult SkillMgrBound::Handle_GetEndOfTraining(PyCallArgs &call) {
 	//takes itemid
 	Call_SingleIntegerArg args;
 	if(!args.Decode(&call.tuple)) {
@@ -136,7 +136,7 @@ PyCallResult SkillMgrBound::Handle_GetEndOfTraining(PyCallArgs &call) {
 	return(result);
 }
 
-PyCallResult SkillMgrBound::Handle_GetSkillHistory(PyCallArgs &call) {
+PyResult SkillMgrBound::Handle_GetSkillHistory(PyCallArgs &call) {
 	_log(SERVICE__WARNING, "%s: GetSkillHistory unimplemented.", GetName());
 
 	util_Rowset rowset;
@@ -150,7 +150,7 @@ PyCallResult SkillMgrBound::Handle_GetSkillHistory(PyCallArgs &call) {
 	return(rowset.Encode());
 }
 
-PyCallResult SkillMgrBound::Handle_CharAddImplant(PyCallArgs &call) {
+PyResult SkillMgrBound::Handle_CharAddImplant(PyCallArgs &call) {
 	//takes itemid
 	Call_SingleIntegerArg args;
 	if(!args.Decode(&call.tuple)) {
@@ -166,7 +166,7 @@ PyCallResult SkillMgrBound::Handle_CharAddImplant(PyCallArgs &call) {
 }
 
 
-PyCallResult SkillMgrBound::Handle_RemoveImplantFromCharacter(PyCallArgs &call) {
+PyResult SkillMgrBound::Handle_RemoveImplantFromCharacter(PyCallArgs &call) {
 	//takes itemid
 	Call_SingleIntegerArg args;
 	if(!args.Decode(&call.tuple)) {

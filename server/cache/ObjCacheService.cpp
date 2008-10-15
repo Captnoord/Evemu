@@ -140,7 +140,7 @@ ObjCacheService::~ObjCacheService() {
 	delete m_dispatch;
 }
 
-PyCallResult ObjCacheService::Handle_GetCachableObject(PyCallArgs &call) {
+PyResult ObjCacheService::Handle_GetCachableObject(PyCallArgs &call) {
 	CallGetCachableObject args;
 	if(!args.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "%s: Unable to decode arguments", call.client->GetName());

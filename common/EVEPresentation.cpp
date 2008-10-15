@@ -88,12 +88,9 @@ PyPacket *EVEPresentation::PopPacket() {
 		return(_Dispatch(r));
 	} catch(PyException &e) {
 		//send it raw
-		PyRepSubStream *ss = e.ssException.hijack();
-		if(ss->decoded != NULL)
-			_QueueRep(ss->decoded);
-		else
-			_log(NET__PRES_ERROR, "Trying to throw invalid payload.");
-		delete ss;
+		PyRep *payload = e.ssException.hijack();
+		_QueueRep(payload);
+		delete payload;
 		//do recurse
 		return(PopPacket());
 	}

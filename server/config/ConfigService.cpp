@@ -55,7 +55,7 @@ ConfigService::~ConfigService() {
 	delete m_dispatch;
 }
 
-PyCallResult ConfigService::Handle_GetMultiOwnersEx(PyCallArgs &call) {
+PyResult ConfigService::Handle_GetMultiOwnersEx(PyCallArgs &call) {
 	PyRep *result = NULL;
 
 	//parse the PyRep to get the list of IDs to query.
@@ -70,7 +70,7 @@ PyCallResult ConfigService::Handle_GetMultiOwnersEx(PyCallArgs &call) {
 	return(result);
 }
 
-PyCallResult ConfigService::Handle_GetMultiAllianceShortNamesEx(PyCallArgs &call) {
+PyResult ConfigService::Handle_GetMultiAllianceShortNamesEx(PyCallArgs &call) {
 	PyRep *result = NULL;
 
 	//parse the PyRep to get the list of IDs to query.
@@ -86,7 +86,7 @@ PyCallResult ConfigService::Handle_GetMultiAllianceShortNamesEx(PyCallArgs &call
 }
 
 
-PyCallResult ConfigService::Handle_GetMultiLocationsEx(PyCallArgs &call) {
+PyResult ConfigService::Handle_GetMultiLocationsEx(PyCallArgs &call) {
 	PyRep *result = NULL;
 
 	//parse the PyRep to get the list of IDs to query.
@@ -101,7 +101,7 @@ PyCallResult ConfigService::Handle_GetMultiLocationsEx(PyCallArgs &call) {
 	return(result);
 }
 
-PyCallResult ConfigService::Handle_GetMultiCorpTickerNamesEx(PyCallArgs &call) {
+PyResult ConfigService::Handle_GetMultiCorpTickerNamesEx(PyCallArgs &call) {
 	PyRep *result = NULL;
 
 	//parse the PyRep to get the list of IDs to query.
@@ -116,7 +116,7 @@ PyCallResult ConfigService::Handle_GetMultiCorpTickerNamesEx(PyCallArgs &call) {
 	return(result);
 }
 
-PyCallResult ConfigService::Handle_GetMultiGraphicsEx(PyCallArgs &call) {
+PyResult ConfigService::Handle_GetMultiGraphicsEx(PyCallArgs &call) {
 	PyRep *result = NULL;
 
 	//parse the PyRep to get the list of IDs to query.
@@ -133,7 +133,7 @@ PyCallResult ConfigService::Handle_GetMultiGraphicsEx(PyCallArgs &call) {
 
 
 
-PyCallResult ConfigService::Handle_GetUnits(PyCallArgs &call) {
+PyResult ConfigService::Handle_GetUnits(PyCallArgs &call) {
 	PyRep *result = NULL;
 	
 	result = m_db.GetUnits();
@@ -142,7 +142,7 @@ PyCallResult ConfigService::Handle_GetUnits(PyCallArgs &call) {
 }
 
 
-PyCallResult ConfigService::Handle_GetMap(PyCallArgs &call) {
+PyResult ConfigService::Handle_GetMap(PyCallArgs &call) {
 	Call_SingleIntegerArg args;
 	if(!args.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "Failed to decode arguments");
@@ -154,7 +154,7 @@ PyCallResult ConfigService::Handle_GetMap(PyCallArgs &call) {
 	return(result);
 }
 
-PyCallResult ConfigService::Handle_GetMapObjects(PyCallArgs &call) {
+PyResult ConfigService::Handle_GetMapObjects(PyCallArgs &call) {
 /*
   args (entityID,
     wantRegions (given universe),
@@ -252,7 +252,7 @@ PyCallResult ConfigService::Handle_GetMapObjects(PyCallArgs &call) {
 	return(result);
 }
 
-PyCallResult ConfigService::Handle_GetMultiInvTypesEx(PyCallArgs &call) {
+PyResult ConfigService::Handle_GetMultiInvTypesEx(PyCallArgs &call) {
 	PyRep *result = NULL;
 
 	//parse the PyRep to get the list of IDs to query.
@@ -268,7 +268,7 @@ PyCallResult ConfigService::Handle_GetMultiInvTypesEx(PyCallArgs &call) {
 }
 
 
-PyCallResult ConfigService::Handle_GetMapConnections(PyCallArgs &call) {
+PyResult ConfigService::Handle_GetMapConnections(PyCallArgs &call) {
 _log(SERVICE__ERROR, "Unhandled ConfigService::GetMapConnections");
 	/*
 [PyRep]   Args:   [ 4]   [ 0]   [ 1]     [ 1] String: 'GetMapConnections'
@@ -297,7 +297,7 @@ CREATE TABLE GetMapConnections (
 
 	return(NULL);
 }
-PyCallResult ConfigService::Handle_GetStationSolarSystemsByOwner(PyCallArgs &call) {
+PyResult ConfigService::Handle_GetStationSolarSystemsByOwner(PyCallArgs &call) {
 	Call_SingleIntegerArg arg;
 	if (!arg.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "Bad arguments");
@@ -309,7 +309,7 @@ PyCallResult ConfigService::Handle_GetStationSolarSystemsByOwner(PyCallArgs &cal
 	return m_db.GetStationSolarSystemsByOwner(arg.arg);
 }
 
-PyCallResult ConfigService::Handle_GetCelestialStatistic(PyCallArgs &call) {
+PyResult ConfigService::Handle_GetCelestialStatistic(PyCallArgs &call) {
 	Call_SingleIntegerArg arg;
 	if (!arg.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "Bad arguments");

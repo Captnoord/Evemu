@@ -123,7 +123,7 @@ bool ReprocessingServiceBound::Load() {
 	return(m_db->LoadStatic(m_stationID, m_staEfficiency, m_tax));
 }
 
-PyCallResult ReprocessingServiceBound::Handle_GetOptionsForItemTypes(PyCallArgs &call) {
+PyResult ReprocessingServiceBound::Handle_GetOptionsForItemTypes(PyCallArgs &call) {
 	PyRep *result = NULL;
 
 	Call_GetOptionsForItemTypes call_args;
@@ -150,7 +150,7 @@ PyCallResult ReprocessingServiceBound::Handle_GetOptionsForItemTypes(PyCallArgs 
 	return(result);
 }
 
-PyCallResult ReprocessingServiceBound::Handle_GetReprocessingInfo(PyCallArgs &call) {
+PyResult ReprocessingServiceBound::Handle_GetReprocessingInfo(PyCallArgs &call) {
 	PyRep *result = NULL;
 
 	Rsp_GetReprocessingInfo rsp;
@@ -165,7 +165,7 @@ PyCallResult ReprocessingServiceBound::Handle_GetReprocessingInfo(PyCallArgs &ca
 	return(result);
 }
 
-PyCallResult ReprocessingServiceBound::Handle_GetQuote(PyCallArgs &call) {
+PyResult ReprocessingServiceBound::Handle_GetQuote(PyCallArgs &call) {
 	PyRep *result = NULL;
 
 	Call_SingleIntegerArg call_args;	// itemID
@@ -177,7 +177,7 @@ PyCallResult ReprocessingServiceBound::Handle_GetQuote(PyCallArgs &call) {
 	return(_GetQuote(call_args.arg, call.client, true));
 }
 
-PyCallResult ReprocessingServiceBound::Handle_GetQuotes(PyCallArgs &call) {
+PyResult ReprocessingServiceBound::Handle_GetQuotes(PyCallArgs &call) {
 	PyRep *result = NULL;
 
 	Call_GetQuotes call_arg;
@@ -202,7 +202,7 @@ PyCallResult ReprocessingServiceBound::Handle_GetQuotes(PyCallArgs &call) {
 	return(result);
 }
 
-PyCallResult ReprocessingServiceBound::Handle_Reprocess(PyCallArgs &call) {
+PyResult ReprocessingServiceBound::Handle_Reprocess(PyCallArgs &call) {
 	if(!IsStation(call.client->GetLocationID())) {
 		_log(SERVICE__MESSAGE, "Character %s tried to reprocess, but isn't is station.", call.client->GetName());
 		return(NULL);

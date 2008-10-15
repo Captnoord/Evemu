@@ -48,7 +48,7 @@ TutorialService::~TutorialService() {
 	delete m_dispatch;
 }
 
-PyCallResult TutorialService::Handle_GetTutorialInfo(PyCallArgs &call) {
+PyResult TutorialService::Handle_GetTutorialInfo(PyCallArgs &call) {
 	Call_GetTutorialInfo args;
 	if(!args.Decode(&call.tuple)) {
 		codelog(CLIENT__ERROR, "Can't parse args.");
@@ -84,24 +84,24 @@ PyCallResult TutorialService::Handle_GetTutorialInfo(PyCallArgs &call) {
 	return(rsp.Encode());
 }
 
-PyCallResult TutorialService::Handle_GetTutorials(PyCallArgs &call) {
+PyResult TutorialService::Handle_GetTutorials(PyCallArgs &call) {
 	return(m_db.GetAllTutorials());
 }
 
-PyCallResult TutorialService::Handle_GetCriterias(PyCallArgs &call) {
+PyResult TutorialService::Handle_GetCriterias(PyCallArgs &call) {
 	return(m_db.GetAllCriterias());
 }
 
-PyCallResult TutorialService::Handle_GetCategories(PyCallArgs &call) {
+PyResult TutorialService::Handle_GetCategories(PyCallArgs &call) {
 	return(m_db.GetCategories());
 }
 
-PyCallResult TutorialService::Handle_GetContextHelp(PyCallArgs &call) {
+PyResult TutorialService::Handle_GetContextHelp(PyCallArgs &call) {
 	//unimplemented
 	return(new PyRepList());
 }
 
-PyCallResult TutorialService::Handle_GetCharacterTutorialState(PyCallArgs &call) {
+PyResult TutorialService::Handle_GetCharacterTutorialState(PyCallArgs &call) {
 	util_Rowset rs;
 
 	rs.header.push_back("characterID");

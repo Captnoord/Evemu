@@ -132,7 +132,7 @@ PyBoundObject *AgentMgrService::_CreateBoundObject(Client *c, const PyRep *bind_
 }
 
 
-PyCallResult AgentMgrService::Handle_GetAgents(PyCallArgs &call) {
+PyResult AgentMgrService::Handle_GetAgents(PyCallArgs &call) {
 	PyRep *result = NULL;
 
 	ObjectCachedMethodID method_id(GetName(), "GetAgents");
@@ -156,7 +156,7 @@ PyCallResult AgentMgrService::Handle_GetAgents(PyCallArgs &call) {
 	return(result);
 }
 
-PyCallResult AgentMgrService::Handle_GetMyJournalDetails(PyCallArgs &call) {
+PyResult AgentMgrService::Handle_GetMyJournalDetails(PyCallArgs &call) {
 	PyRep *result = NULL;
 
 	PyRepTuple *t = new PyRepTuple(3);
@@ -168,7 +168,7 @@ PyCallResult AgentMgrService::Handle_GetMyJournalDetails(PyCallArgs &call) {
 	return(result);
 }
 
-PyCallResult AgentMgrBound::Handle_GetInfoServiceDetails(PyCallArgs &call) {
+PyResult AgentMgrBound::Handle_GetInfoServiceDetails(PyCallArgs &call) {
 	//takes no arguments
 	
 	codelog(SERVICE__ERROR, "%s: GetInfoServiceDetails unimplemented.", GetName());
@@ -176,7 +176,7 @@ PyCallResult AgentMgrBound::Handle_GetInfoServiceDetails(PyCallArgs &call) {
 	return(new PyRepNone());
 }
 
-PyCallResult AgentMgrBound::Handle_DoAction(PyCallArgs &call) {
+PyResult AgentMgrBound::Handle_DoAction(PyCallArgs &call) {
 	//takes a single argument, which may be None, or may be an integer actionID
 	Call_SingleArg args;
 	if(!args.Decode(&call.tuple)) {
@@ -213,7 +213,7 @@ PyCallResult AgentMgrBound::Handle_DoAction(PyCallArgs &call) {
 }
 
 
-PyCallResult AgentMgrBound::Handle_GetMyJournalDetails(PyCallArgs &call) {
+PyResult AgentMgrBound::Handle_GetMyJournalDetails(PyCallArgs &call) {
 	PyRep *result = NULL;
 
 	PyRepTuple *t = new PyRepTuple(3);

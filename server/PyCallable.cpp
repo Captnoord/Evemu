@@ -34,14 +34,14 @@ PyCallable::~PyCallable()
 {
 }
 
-PyCallResult PyCallable::Call(PyCallStream &call, PyCallArgs &args) {
+PyResult PyCallable::Call(PyCallStream &call, PyCallArgs &args) {
 
 	_log(SERVICE__CALLS, "%s Service: calling %s", m_callableName.c_str(), call.method.c_str());
 	args.Dump(SERVICE__CALL_TRACE);
 	
 	//call the dispatcher, capturing the result.
 	try {
-		PyCallResult res = m_serviceDispatch->Dispatch(call.method, args);
+		PyResult res = m_serviceDispatch->Dispatch(call.method, args);
 
 		_log(SERVICE__CALL_TRACE, "%s Service: Call %s returned:", m_callableName.c_str(), call.method.c_str());
 		res.ssResult->Dump(SERVICE__CALL_TRACE, "      ");
@@ -110,23 +110,23 @@ void PyCallArgs::Dump(LogType type) const {
 	}
 }
 
-PyCallResult::PyCallResult()
+PyResult::PyResult()
 : ssResult(NULL)
 {
 	_log(SERVER__INIT, "Constructing Regular NULL");
 }
 
-PyCallResult::PyCallResult(PyRep *result)
+PyResult::PyResult(PyRep *result)
 : ssResult(
 	  (result==NULL)
-	  ? (new PyRepSubStream(new PyRepNone()))
-	  : (new PyRepSubStream(result))
+	  ? new PyRepNone()
+	  : result
 	  )
 {
 	_log(SERVER__INIT, "Constructing Regular %p", &(*ssResult));
 }
 
-PyCallResult::~PyCallResult() {
+PyResult::~PyResult() {
 	_log(SERVER__INIT, "Destroying Regular %p", &(*ssResult));
 }
 
@@ -139,8 +139,8 @@ PyException::PyException()
 PyException::PyException(PyRep *except)
 : ssException(
 		(except==NULL)
-		? (new PyRepSubStream(new PyRepNone))
-		: (new PyRepSubStream(except))
+		? new PyRepNone
+		: except
 		)
 {
 	_log(SERVER__INIT, "Constructing Exception %p", &(*ssException));

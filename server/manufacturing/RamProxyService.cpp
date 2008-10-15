@@ -44,7 +44,7 @@ RamProxyService::~RamProxyService() {
 	delete m_dispatch;
 }
 
-PyCallResult RamProxyService::Handle_GetJobs2(PyCallArgs &call) {
+PyResult RamProxyService::Handle_GetJobs2(PyCallArgs &call) {
 	Call_GetJobs2 args;
 	if(!args.Decode(&call.tuple)) {
 		_log(SERVICE__ERROR, "Failed to decode call args.");
@@ -61,7 +61,7 @@ PyCallResult RamProxyService::Handle_GetJobs2(PyCallArgs &call) {
 	return(m_db.GetJobs2(args.ownerID, args.completed, args.fromDate, args.toDate));
 }
 
-PyCallResult RamProxyService::Handle_AssemblyLinesSelect(PyCallArgs &call) {
+PyResult RamProxyService::Handle_AssemblyLinesSelect(PyCallArgs &call) {
 	Call_AssemblyLinesSelect args;
 
 	if(!args.Decode(&call.tuple)) {
@@ -86,7 +86,7 @@ PyCallResult RamProxyService::Handle_AssemblyLinesSelect(PyCallArgs &call) {
 	}
 }
 
-PyCallResult RamProxyService::Handle_AssemblyLinesGet(PyCallArgs &call) {
+PyResult RamProxyService::Handle_AssemblyLinesGet(PyCallArgs &call) {
 	Call_SingleIntegerArg arg;	// containerID
 
 	if(!arg.Decode(&call.tuple)) {
@@ -97,7 +97,7 @@ PyCallResult RamProxyService::Handle_AssemblyLinesGet(PyCallArgs &call) {
 	return(m_db.AssemblyLinesGet(arg.arg));
 }
 
-PyCallResult RamProxyService::Handle_InstallJob(PyCallArgs &call) {
+PyResult RamProxyService::Handle_InstallJob(PyCallArgs &call) {
 	Call_InstallJob args;
 	if(!args.Decode(&call.tuple)) {
 		_log(SERVICE__ERROR, "Failed to decode args.");
@@ -259,7 +259,7 @@ PyCallResult RamProxyService::Handle_InstallJob(PyCallArgs &call) {
 	}
 }
 
-PyCallResult RamProxyService::Handle_CompleteJob(PyCallArgs &call) {
+PyResult RamProxyService::Handle_CompleteJob(PyCallArgs &call) {
 	Call_CompleteJob args;
 
 	if(!args.Decode(&call.tuple)) {

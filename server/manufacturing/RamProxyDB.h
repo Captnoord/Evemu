@@ -22,6 +22,7 @@
 #include "PyRep.h"
 #include "../inventory/InventoryItem.h"
 
+//from table 'ramActivities'
 enum EVERamActivity {
 	ramActivityNone = 0,
 	ramActivityManufacturing = 1,
@@ -34,6 +35,7 @@ enum EVERamActivity {
 	ramActivityInvention = 8
 };
 
+//from table 'ramCompletedStatuses'
 enum EVERamCompletedStatus {
 	ramCompletedStatusDelivered = 1,
 	ramCompletedStatusAbort = 2,
@@ -42,22 +44,13 @@ enum EVERamCompletedStatus {
 	ramCompletedStatusDestruction = 5
 };
 
+//restrictionMask from table 'ramAssemblyLines'
 enum EVERamRestrictionMask {
 	ramRestrictNone = 0,
 	ramRestrictBySecurity = 1,
 	ramRestrictByStanding = 2,
 	ramRestrictByCorp = 4,
 	ramRestrictByAlliance = 8
-};
-
-// I'm pretty sure this shouldn't be here
-enum EVERace {
-	raceCaldari = 1,
-	raceMinmatar = 2,
-	raceAmarr = 4,
-	raceGallente = 8,
-	raceJove = 16,
-	racePirate = 32
 };
 
 struct RequiredItem {
