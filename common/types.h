@@ -20,6 +20,11 @@
 #define TYPES_H
 
 
+#ifndef WIN32
+	#include <stdint.h>
+#endif
+
+
 /* Use correct types for x64 platforms, too */
 #ifdef WIN32
 	typedef signed __int64 int64;
@@ -72,9 +77,9 @@ typedef unsigned long		uint32;*/
 	#define I64x "%I64x"
 	#define I64X "%I64X"
 #else
-	typedef unsigned long long	int64;
-	typedef unsigned long long	uint64;
-	typedef signed long long	int64;
+	//typedef unsigned long long	int64;
+	//typedef unsigned long long	uint64;
+	//typedef signed long long	int64;
 	//for printf() compatibility
 	#define I64d "%lld"
 	#define I64u "%llu"
@@ -116,7 +121,7 @@ typedef const char Const_char;	//for perl XS
 
 #ifndef WIN32
 // More WIN32 compatibility
-	typedef unsigned long DWORD;
+	//typedef unsigned long DWORD;
 	typedef unsigned char BYTE;
 	typedef char CHAR;
 	typedef unsigned short WORD;
