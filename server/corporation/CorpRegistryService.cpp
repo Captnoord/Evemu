@@ -212,7 +212,7 @@ PyCallResult CorpRegistryBound::Handle_AddCorporation(PyCallArgs &call) {
 		codelog(SERVICE__ERROR, "%s: Failed to determine corporation costs.", call.client->GetName());
 		return(new PyRepInteger(0));
 	}
-	sint32 corp_cost = corp_costu;
+	int32 corp_cost = corp_costu;
 	
 	if(call.client->GetBalance() < double(corp_cost)) {
 		_log(SERVICE__ERROR, "%s: Cannot afford corporation startup costs!", call.client->GetName());

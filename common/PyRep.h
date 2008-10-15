@@ -297,13 +297,13 @@ public:
 	void CloneFrom(const PyRepPackedRow *from);
 
 	//integers
-	void PushInt8(const sint8 v) { Push(&v, sizeof(sint8)); }
+	void PushInt8(const int8 v) { Push(&v, sizeof(int8)); }
 	void PushUInt8(const uint8 v) { Push(&v, sizeof(uint8)); }
-	void PushInt16(const sint16 v) { Push(&v, sizeof(sint16)); }
+	void PushInt16(const int16 v) { Push(&v, sizeof(int16)); }
 	void PushUInt16(const uint16 v) { Push(&v, sizeof(uint16)); }
-	void PushInt32(const sint32 v) { Push(&v, sizeof(sint32)); }
+	void PushInt32(const int32 v) { Push(&v, sizeof(int32)); }
 	void PushUInt32(const uint32 v) { Push(&v, sizeof(uint32)); }
-	void PushInt64(const sint64 v) { Push(&v, sizeof(sint64)); }
+	void PushInt64(const int64 v) { Push(&v, sizeof(int64)); }
 	void PushUInt64(const uint64 v) { Push(&v, sizeof(uint64)); }
 
 	//floating point

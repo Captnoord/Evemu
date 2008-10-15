@@ -263,7 +263,7 @@ bool RamProxyDB::GetAssemblyLineVerifyProperties(const uint32 assemblyLineID, ui
 	return(true);
 }
 
-bool RamProxyDB::InstallJob(const uint32 ownerID, const  uint32 installerID, const uint32 assemblyLineID, const uint32 installedItemID, const uint64 beginProductionTime, const uint64 endProductionTime, const char *description, const uint32 runs, const EVEItemFlags outputFlag, const uint32 installedInSolarSystem, const sint32 licensedProductionRuns) {
+bool RamProxyDB::InstallJob(const uint32 ownerID, const  uint32 installerID, const uint32 assemblyLineID, const uint32 installedItemID, const uint64 beginProductionTime, const uint64 endProductionTime, const char *description, const uint32 runs, const EVEItemFlags outputFlag, const uint32 installedInSolarSystem, const int32 licensedProductionRuns) {
 	DBerror err;
 
 	// insert job

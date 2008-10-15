@@ -294,7 +294,7 @@ PyRepDict *DBResultToIntRowDict(DBQueryResult &result, uint32 key_index, const c
 	while(result.GetRow(row)) {
 		//this could be more effecient by not building the column list each time, but cloning it instead.
 		PyRepObject *r = DBRowToRow(row, type);
-		sint32 k = row.GetInt(key_index);
+		int32 k = row.GetInt(key_index);
 		if(k == 0)
 			continue;	//likely a non-integer key
 		res->items[
@@ -313,10 +313,10 @@ PyRepDict *DBResultToIntIntDict(DBQueryResult &result) {
 	while(result.GetRow(row)) {
 		if(row.IsNull(0))
 			continue;	//no working with NULL keys...
-		sint32 k = row.GetInt(0);
+		int32 k = row.GetInt(0);
 		if(k == 0)
 			continue;	//likely a non-integer key
-		sint32 v;
+		int32 v;
 		if(row.IsNull(1))
 			v = 0;		//we can deal with assuming NULL == 0
 		else
@@ -337,7 +337,7 @@ void DBResultToIntIntDict(DBQueryResult &result, std::map<uint32, uint32> &into)
 		if(row.IsNull(0))
 			continue;	//no working with NULL keys...
 		uint32 k = row.GetUInt(0);
-		sint32 v;
+		int32 v;
 		if(row.IsNull(1))
 			v = 0;		//we can deal with assuming NULL == 0
 		else

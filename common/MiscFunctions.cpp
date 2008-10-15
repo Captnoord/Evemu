@@ -162,7 +162,7 @@ int32 AppendAnyLenString(char** ret, int32* bufsize, int32* strlen, const char* 
 	char* oldret = 0;
 	va_list argptr;
 	va_start(argptr, format);
-	while (chars == -1 || chars >= (sint32)(*bufsize-*strlen)) {
+	while (chars == -1 || chars >= (int32)(*bufsize-*strlen)) {
 		if (chars == -1)
 			*bufsize += 256;
 		else
@@ -259,13 +259,13 @@ bool atobool(char* iBool) {
 	return false;
 }
 
-sint32 filesize(FILE* fp) {
+int32 filesize(FILE* fp) {
 #ifdef WIN32
 	return _filelength(_fileno(fp));
 #else
 	struct stat file_stat;
 	fstat(fileno(fp), &file_stat);
-	return (sint32) file_stat.st_size;
+	return (int32) file_stat.st_size;
 /*	int32 tmp = 0;
 	while (!feof(fp)) {
 		fseek(fp, tmp++, SEEK_SET);

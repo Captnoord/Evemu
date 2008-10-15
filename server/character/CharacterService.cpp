@@ -134,7 +134,7 @@ PyCallResult CharacterService::Handle_SelectCharacterID(PyCallArgs &call) {
 		}
 	}*/
 
-	//we dont care about tutorial dungeon right now
+	//we don't care about tutorial dungeon right now
 	if(call.client->Load(args.charID))
 		//johnsus - characterOnline mod
 		m_db.SetCharacterOnlineStatus(args.charID,true);

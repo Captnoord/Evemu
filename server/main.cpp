@@ -261,7 +261,8 @@ int main(int argc, char *argv[]) {
 		//check for timeouts in other threads
 		//timeout_manager.CheckTimeouts();
 
-		while ((tcpc = tcps.NewQueuePop())) {
+		while ((tcpc = tcps.NewQueuePop())) 
+		{
 			struct in_addr in;
 			in.s_addr = tcpc->GetrIP();
 			_log(SERVER__CLIENTS, "New TCP connection from %s:%d", inet_ntoa(in),tcpc->GetrPort());
@@ -273,12 +274,9 @@ int main(int argc, char *argv[]) {
 		entity_list.Process();
 		services.Process();
 		
-		/*if (numclients == 0) {
-			Sleep(50);
-			continue;
-		}*/
 		Sleep(3);	//this should be a parameter
 	}
+
 	_log(SERVER__SHUTDOWN,"main loop stopped");
 	_log(SERVER__SHUTDOWN,"TCP listener stopped.");
 	tcps.Close();

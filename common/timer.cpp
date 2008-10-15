@@ -187,6 +187,5 @@ const int32 Timer::SetCurrentTime()
 	last_time = this_time;
 	current_seconds = read_time.tv_sec;
 
-//	cerr << "Current time:" << current_time << endl;
 	return current_time;
 }

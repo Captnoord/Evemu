@@ -87,7 +87,7 @@ public:
 	void			AsyncConnect(int32 irIP, int16 irPort);
 	virtual void	Disconnect();
 
-	bool			Send(const uchar* data, sint32 size);
+	bool			Send(const uchar* data, int32 size);
 	
 	char*			PopLine();		//returns ownership of allocated byte array
 	inline int32	GetrIP()	const		{ return rIP; }
@@ -151,24 +151,24 @@ protected:
 	MyQueue<char> LineOutQueue;
 	
 	uchar*	recvbuf;
-	sint32	recvbuf_size;
-	sint32	recvbuf_used;
+	int32	recvbuf_size;
+	int32	recvbuf_used;
 	
-	sint32	recvbuf_echo;
+	int32	recvbuf_echo;
 	volatile bool	pEcho;
 	
 	Mutex	MSendQueue;
 	uchar*	sendbuf;
-	sint32	sendbuf_size;
-	sint32	sendbuf_used;
-	bool	ServerSendQueuePop(uchar** data, sint32* size);
-	bool	ServerSendQueuePopForce(uchar** data, sint32* size);		//does a lock() instead of a trylock()
+	int32	sendbuf_size;
+	int32	sendbuf_used;
+	bool	ServerSendQueuePop(uchar** data, int32* size);
+	bool	ServerSendQueuePopForce(uchar** data, int32* size);		//does a lock() instead of a trylock()
 	
-	void	ServerSendQueuePushEnd(const uchar* head_data, sint32 head_size, const uchar* data, sint32 size);
-	void	ServerSendQueuePushEnd(const uchar* data, sint32 size);
-	void	ServerSendQueuePushEnd(const uchar* head_data, sint32 head_size, uchar** data, sint32 size);
-	void	ServerSendQueuePushEnd(uchar** data, sint32 size);
-	void	ServerSendQueuePushFront(uchar* data, sint32 size);
+	void	ServerSendQueuePushEnd(const uchar* head_data, int32 head_size, const uchar* data, int32 size);
+	void	ServerSendQueuePushEnd(const uchar* data, int32 size);
+	void	ServerSendQueuePushEnd(const uchar* head_data, int32 head_size, uchar** data, int32 size);
+	void	ServerSendQueuePushEnd(uchar** data, int32 size);
+	void	ServerSendQueuePushFront(uchar* data, int32 size);
 	
 private:
 	void FinishDisconnect();

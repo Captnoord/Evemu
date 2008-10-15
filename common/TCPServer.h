@@ -77,9 +77,9 @@ public:
 	virtual ~TCPServer() {
 		StopLoopAndWait();
 	
-		//im not sure what the right thing to do here is...
+		//i'm not sure what the right thing to do here is...
 		//we are freeing a connection which somebody likely has a pointer to..
-		//but, we really shouldent ever get called anyhow..
+		//but, we really shouldn't ever get called anyhow..
 		vitr cur, end;
 		cur = m_list.begin();
 		end = m_list.end();
@@ -134,17 +134,3 @@ protected:
 
 
 #endif /*TCPSERVER_H_*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -441,7 +441,7 @@ PyCallResult MarketProxyService::Handle_PlaceCharOrder(PyCallArgs &call) {
 			item->Delete();
 		} else {
 			//update the item.
-			if(!item->AlterQuantity(-sint32(args.quantity), true)) {
+			if(!item->AlterQuantity(-int32(args.quantity), true)) {
 				codelog(MARKET__ERROR, "%s: Failed to consume %lu units from item %lu", call.client->GetName(), args.quantity, item->itemID());
 				item->Release();
 				return(NULL);

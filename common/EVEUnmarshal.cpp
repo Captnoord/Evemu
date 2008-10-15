@@ -240,7 +240,7 @@ static uint32 UnmarshalData(UnmarshalState *state, const byte *packet, uint32 le
 			_log(NET__UNMARSHAL_ERROR, "Not enough data for short arg\n");
 			break;
 		}
-		sint16 value = *((const sint16 *) packet);
+		int16 value = *((const int16 *) packet);
 		
 		_log(NET__UNMARSHAL_TRACE, "%s(0x%x)Op_PyShort %d", pfx, opcode, value);
 		

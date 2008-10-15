@@ -104,15 +104,15 @@ public:
 	void PutOffline();
 	void ChangeFlag(EVEItemFlags flag, bool notify=true);
 	bool Contains(InventoryItem *item, bool recursive=false) const;
-	bool AlterQuantity(sint32 qty_change, bool notify=true);
-	bool SetQuantity(sint32 qty_new, bool notify=true);
+	bool AlterQuantity(int32 qty_change, bool notify=true);
+	bool SetQuantity(int32 qty_new, bool notify=true);
 	bool ChangeSingleton(bool singleton, bool notify=true);
 	void StackContainedItems( EVEItemFlags flag, uint32 forOwner = NULL);
 	double GetRemainingCapacity( EVEItemFlags flag) const;
 	
-	InventoryItem *Split(sint32 qty_to_take, bool notify=true);
+	InventoryItem *Split(int32 qty_to_take, bool notify=true);
 	//consumes ref!
-	bool Merge(InventoryItem *to_merge, sint32 qty=0, bool notify=true);
+	bool Merge(InventoryItem *to_merge, int32 qty=0, bool notify=true);
 	
 	//do we want to impose recursive const?
 	InventoryItem *FindFirstByFlag(EVEItemFlags flag, bool newref = false);

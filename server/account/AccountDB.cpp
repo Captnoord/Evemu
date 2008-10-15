@@ -101,7 +101,7 @@ bool ServiceDB::GiveCash(
 	double balance,
 	const char *reason)
 {
-//the only unknow it is argID1 , what is it ?
+//the only unknown it is argID1 , what is it ?
 	DBQueryResult res;
 	DBerror err;	
 	

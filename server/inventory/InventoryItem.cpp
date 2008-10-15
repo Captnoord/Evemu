@@ -732,7 +732,7 @@ void InventoryItem::ChangeFlag(EVEItemFlags new_flag, bool notify) {
 	}
 }
 
-bool InventoryItem::AlterQuantity(sint32 qty_change, bool notify) {
+bool InventoryItem::AlterQuantity(int32 qty_change, bool notify) {
 	if(qty_change == 0)
 		return(true);
 
@@ -774,7 +774,7 @@ bool InventoryItem::AlterQuantity(sint32 qty_change, bool notify) {
 	return(true);
 }
 
-bool InventoryItem::SetQuantity(sint32 qty_new, bool notify) {
+bool InventoryItem::SetQuantity(int32 qty_new, bool notify) {
 		
 	//if an object has its singleton set then it shouldn't be able to add/remove qty
 	if( m_singleton == true)
@@ -808,7 +808,7 @@ bool InventoryItem::SetQuantity(sint32 qty_new, bool notify) {
 	return(true);
 }
 
-InventoryItem *InventoryItem::Split(sint32 qty_to_take, bool notify) {
+InventoryItem *InventoryItem::Split(int32 qty_to_take, bool notify) {
 	if(qty_to_take <= 0) {
 		_log(ITEM__ERROR, "%s (%lu): Asked to split into a chunk of %ld", itemName().c_str(), itemID(), qty_to_take);
 		return(NULL);
@@ -834,7 +834,7 @@ InventoryItem *InventoryItem::Split(sint32 qty_to_take, bool notify) {
 	return( res );
 }
 
-bool InventoryItem::Merge(InventoryItem *to_merge, sint32 qty, bool notify) {
+bool InventoryItem::Merge(InventoryItem *to_merge, int32 qty, bool notify) {
 	if(to_merge == NULL) {
 		_log(ITEM__ERROR, "%s (%lu): Cannot merge with NULL item.", itemName().c_str(), itemID());
 		return(false);

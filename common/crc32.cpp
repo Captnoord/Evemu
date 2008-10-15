@@ -20,7 +20,7 @@
 #include <assert.h>
 #include <memory.h>
 
-int32 CRC32Table[256] =
+uint32 CRC32Table[256] =
 {
 	0x00000000, 0x77073096, 0xEE0E612C, 0x990951BA,
 	0x076DC419, 0x706AF48F, 0xE963A535, 0x9E6495A3,
@@ -91,11 +91,11 @@ int32 CRC32Table[256] =
 	0xB40BBE37, 0xC30C8EA1, 0x5A05DF1B, 0x2D02EF8D
 };
 
-uint32 CRC32::Generate(const int8* buf, uint32 bufsize) {
+uint32 CRC32::Generate(const uint8* buf, uint32 bufsize) {
 	return Finish(Update(buf, bufsize));
 }
 
-uint32 CRC32::GenerateNoFlip(const int8* buf, uint32 bufsize) {
+uint32 CRC32::GenerateNoFlip(const uint8* buf, uint32 bufsize) {
 	return Update(buf, bufsize);
 }
 
@@ -112,7 +112,7 @@ uint32 CRC32::GenerateNoFlip(const int8* buf, uint32 bufsize) {
 #undef i386	//darwin seems to think we are generating PIC, and we clobber ebx
 #endif
 
-uint32 CRC32::Update(const int8* buf, uint32 bufsize, uint32 _crc32) {
+uint32 CRC32::Update(const uint8* buf, uint32 bufsize, uint32 _crc32) {
 #if defined(WIN32)
 	// Register use:
 	//		eax - CRC32 value
@@ -247,6 +247,6 @@ __asm __volatile (
 }
 #endif
 
-inline void CRC32::Calc(const int8 byte, uint32& crc32) {
+inline void CRC32::Calc(const uint8 byte, uint32& crc32) {
 	crc32 = ((crc32) >> 8) ^ CRC32Table[(byte) ^ ((crc32) & 0x000000FF)];
 }

@@ -37,7 +37,7 @@
 static const uint32 HackCacheNodeID = 333444;
 
 
-//run through the rep, concatinating all the strings together and noting if
+//run through the rep, concatenating all the strings together and noting if
 //there are ano non-string types in the rep (lists and tuples are OK)
 class StringCollapseVisitor : public PyVisitor {
 public:

@@ -249,7 +249,7 @@ bool Client::ProcessNet() {
 			return(false);
 		
 		if(m_pingTimer.Check()) {
-			_log(CLIENT__TRACE, "%s: Sending ping reqest.", GetName());
+			_log(CLIENT__TRACE, "%s: Sending ping request.", GetName());
 			_SendPingRequest();
 		}
 		
@@ -524,7 +524,7 @@ void Client::_CheckSessionChange() {
 	_log(CLIENT__SESSION, "Session updated, sending session change");
 	scn.changes.Dump(CLIENT__SESSION, "  Changes: ");
 
-	//this is prolly not nescesary...
+	//this is prolly not necessary...
 	scn.nodesOfInterest.push_back(m_services->GetNodeID());
 
 	//build the packet:
@@ -961,7 +961,7 @@ void Client::_SendQueuedUpdates(uint32 stamp) {
 	m_destinyUpdateQueue.clear();
 	
 	//right now, we never wait. I am sure they do this for a reason, but
-	//I havent found it yet
+	//I haven't found it yet
 	dum.waitForBubble = false;
 
 	//encode any multi-events which go along with it.

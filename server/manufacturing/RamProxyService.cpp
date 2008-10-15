@@ -248,7 +248,7 @@ PyCallResult RamProxyService::Handle_InstallJob(PyCallArgs &call) {
 						qtyNeeded -= i->quantity();
 						i->Delete();
 					} else {
-						(*curi)->AlterQuantity(-(sint32)qtyNeeded);
+						(*curi)->AlterQuantity(-(int32)qtyNeeded);
 						break;	// we are done, stop searching
 					}
 				}

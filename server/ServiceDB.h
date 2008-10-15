@@ -53,7 +53,7 @@ struct BlueprintProperties {
 	bool copy;
 	uint32 materialLevel;
 	uint32 productivityLevel;
-	sint32 licensedProductionRunsRemaining;
+	int32 licensedProductionRunsRemaining;
 };
 
 class ServiceDB {

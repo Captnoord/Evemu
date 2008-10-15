@@ -25,7 +25,7 @@
 	#include "logsys.h"
 #endif
 
-void UnpackZeroCompressed(const byte *in_buf, uint32 in_length, std::vector<byte> &buffer) {
+void UnpackZeroCompressed(const byte *in_buf, int32 in_length, std::vector<byte> &buffer) {
 	buffer.clear();
 	if(in_buf == NULL || in_length == 0)
 		return;
@@ -73,7 +73,7 @@ void UnpackZeroCompressed(const byte *in_buf, uint32 in_length, std::vector<byte
 	_log(NET__ZEROINFL, "  Zero-inflating buffer yields %d inflated bytes", buffer.size());
 }
 
-void PackZeroCompressed(const byte *in_buf, uint32 in_length, std::vector<byte> &out_buf) {
+void PackZeroCompressed(const byte *in_buf, int32 in_length, std::vector<byte> &out_buf) {
 	out_buf.clear();
 	if(in_buf == NULL || in_length == 0)
 		return;

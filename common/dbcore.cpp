@@ -394,7 +394,7 @@ bool DBQueryResult::GetRow(DBResultRow &into) {
 	MYSQL_ROW row = mysql_fetch_row(m_res);
 	if(row == NULL)
 		return(false);
-	unsigned long *lengths = mysql_fetch_lengths(m_res);
+	uint32 *lengths = (uint32*)mysql_fetch_lengths(m_res);
 	if(lengths == NULL)
 		return(false);
 	into.SetData(this, row, lengths);
@@ -517,7 +517,7 @@ uint32 DBResultRow::GetColumnLength(uint32 column) const {
 
 //these all assume that row is valid.. its your fault if it is not!
 
-sint32 DBResultRow::GetInt(uint32 column) const {
+int32 DBResultRow::GetInt(uint32 column) const {
 #ifdef COLUMN_BOUNDS_CHECKING
 	if(column >= ColumnCount()) {
 		_log(DATABASE__ERROR, "GetInt: Column index %d exceeds number of columns (%d) in row", column, ColumnCount());
@@ -539,7 +539,7 @@ uint32 DBResultRow::GetUInt(uint32 column) const {
 	return(strtoul(m_row[column], NULL, 0));
 }
 
-sint64 DBResultRow::GetInt64(uint32 column) const {
+int64 DBResultRow::GetInt64(uint32 column) const {
 #ifdef COLUMN_BOUNDS_CHECKING
 	if(column >= ColumnCount()) {
 		_log(DATABASE__ERROR, "GetInt: Column index %d exceeds number of columns (%d) in row", column, ColumnCount());

@@ -101,9 +101,9 @@ public:
 	bool IsNull(uint32 column) const { return(m_row[column] == NULL); }
 	bool IsSigned(uint32 column) const { return(m_row[column][0] == '-'); }
 	const char *GetText(uint32 column) const { return(m_row[column]); }
-	sint32 GetInt(uint32 column) const;
+	int32 GetInt(uint32 column) const;
 	uint32 GetUInt(uint32 column) const;
-	sint64 GetInt64(uint32 column) const;
+	int64 GetInt64(uint32 column) const;
 	uint64 GetUInt64(uint32 column) const;
 	float GetFloat(uint32 column) const;
 	double GetDouble(uint32 column) const;
