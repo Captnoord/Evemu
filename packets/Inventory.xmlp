@@ -46,6 +46,13 @@
   </InlineTuple>
 </element>
 
+<element name="Call_TrashItems">
+	<InlineTuple>
+		<intlist name="items" />
+		<int name="locationID" />
+	</InlineTuple>
+</element>
+
 <element name="Inventory_CallAdd">
   <InlineTuple>
       <int name="itemID" />

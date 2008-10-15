@@ -260,22 +260,25 @@ PyResult InvBrokerBound::Handle_SetLabel(PyCallArgs &call) {
 }
 
 PyResult InvBrokerBound::Handle_TrashItems(PyCallArgs &call) {
-	Call_SingleIntList args;
+	Call_TrashItems args;
 	if(!args.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "Unable to decode arguments");
 		return(new PyRepList());
 	}
-	
+
+	InventoryItem *item;
 	std::vector<uint32>::const_iterator cur, end;
-	cur = args.ints.begin();
-	end = args.ints.end();
-	for(; cur != end; cur++)
-	{
-		InventoryItem *item = m_manager->item_factory->Load(*cur, false);
+	cur = args.items.begin();
+	end = args.items.end();
+	for(; cur != end; cur++) {
+		item = m_manager->item_factory->Load(*cur, false);
 		if(item == NULL) 
 			codelog(SERVICE__ERROR, "%s: Unable to load item %lu to delete it. Skipping.", call.client->GetName(), *cur);
 		else if(call.client->GetCharacterID() != item->ownerID()) {
 			codelog(SERVICE__ERROR, "%s: Tried to trash item %lu which is not yours. Skipping.", call.client->GetName(), *cur);
+			item->Release();
+		} else if(item->locationID() != args.locationID) {
+			codelog(SERVICE__ERROR, "%s: Item %lu is not in location %lu. Skipping.", call.client->GetName(), *cur, args.locationID);
 			item->Release();
 		} else
 			item->Delete();
