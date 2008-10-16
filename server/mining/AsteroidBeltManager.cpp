@@ -3,8 +3,6 @@
 #include "MiningDB.h"
 #include "Asteroid.h"
 
-#define ASTEROID_GROWTH_INTERVAL_MS 3600000 //RuleI(Mining, AsteroidGrowthInterval_ms)
-
 AsteroidBeltManager::AsteroidBeltManager(MiningDB *db, uint32 belt_id)
 : m_beltID(belt_id),
   m_db(db),

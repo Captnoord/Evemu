@@ -215,7 +215,6 @@ void SystemBubble::_SendAddBalls(SystemEntity *to_who) {
 		return;
 	}
 	
-	//this is pretty crappy...
 	uint32 updateID = DestinyManager::GetStamp();
 		
 	std::vector<byte> destiny_buffer(sizeof(Destiny::AddBall_header));
@@ -290,7 +289,6 @@ void SystemBubble::_BubblecastAddBall(SystemEntity *about_who) {
 	
 	DoDestiny_AddBall addball;
 	about_who->MakeAddBall(addball, 
-		//this is pretty crappy... but it kinda makes sense too...
 		DestinyManager::GetStamp()
 		);
 	
