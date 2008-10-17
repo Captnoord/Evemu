@@ -541,7 +541,7 @@ void PyRepSubStream::EncodeData() {
 		return;
 	if(decoded == NULL)
 		return;
-	data = Marshal(this, length, false);
+	data = Marshal(this, length);
 }
 
 void PyRepSubStream::DecodeData() const {

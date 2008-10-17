@@ -182,7 +182,7 @@ void CachedObjectMgr::UpdateCache(const PyRep *objectID, PyRep **in_cached_data)
 	*in_cached_data = NULL;
 
 	uint32 len;
-	byte *buf = Marshal(cached_data, len, false);
+	byte *buf = Marshal(cached_data, len);
 
 	_UpdateCache(objectID, &buf, len);
 
@@ -513,7 +513,7 @@ PyCachedObjectDecoder *CachedObjectMgr::LoadCachedObject(PyRep *key, const char 
 void CachedObjectMgr::GetCacheFileName(PyRep *key, std::string &into) {
 	
 	uint32 len = 0;
-	byte *data = Marshal(key, len, false);
+	byte *data = Marshal(key, len);
 	
 	Base64::encode(data, len, into, false);
 	

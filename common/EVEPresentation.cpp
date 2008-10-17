@@ -16,15 +16,16 @@
 */
 
 #include "../common/common.h"
+#include "../common/logsys.h"
 
 #include "EVEPresentation.h"
 #include "EVEVersion.h"
 #include "PyPacket.h"
+#include "packet_functions.h"
 #include "PyRep.h"
 #include "EVEUnmarshal.h"
 #include "EVEMarshal.h"
 #include "PyDumpVisitor.h"
-#include "../common/logsys.h"
 
 #include "../packets/Crypto.h"
 
@@ -132,8 +133,24 @@ void EVEPresentation::_QueueRep(const PyRep *rep) {
 	EVENetPacket *packet = new EVENetPacket;
 	packet->data = Marshal(rep, packet->length);
 	if(packet->data == NULL) {
-		_log(NET__PRES_ERROR, "%s: Error marshaling or deflating packet!", GetConnectedAddress().c_str());
+		_log(NET__PRES_ERROR, "%s: Error marshaling packet!", GetConnectedAddress().c_str());
 		return;
+	}
+
+	if(packet->length > EVEDeflationBytesLimit) {
+		//packet large enough, deflate it
+		uint32 deflen = packet->length;
+		byte *deflated = DeflatePacket(packet->data, deflen);
+
+		if(deflen != 0 && deflated != NULL) {
+			//deflation successfull
+			_log(NET__PRES_TRACE, "%s: Successfully deflated packet from length %lu to length %lu (%.02f).", GetConnectedAddress().c_str(), packet->length, deflen, double(deflen)/double(packet->length));
+
+			delete[] packet->data;
+			packet->length = deflen;
+			packet->data = deflated;
+		} else
+			_log(NET__PRES_ERROR, "%s: Failed to deflate packet of length %lu, sending uncompressed.", GetConnectedAddress().c_str(), packet->length);
 	}
 
 	_NetQueuePacket(&packet);

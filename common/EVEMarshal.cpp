@@ -387,8 +387,7 @@ public:
 		}
 	}
 
-	inline void PutUint32(uint32 data)
-	{
+	inline void PutUint32(uint32 data) {
 		PutBytes((void*)&data,sizeof(uint32));
 	}
 	
@@ -396,9 +395,7 @@ public:
 };
 
 //returns ownership of the buffer
-byte *Marshal(const PyRep *rep, uint32 &len, bool deflate, bool inlineSubStream) {
-	len = 0;
-
+byte *Marshal(const PyRep *rep, uint32 &len, bool inlineSubStream) {
 	MarshalVisitor v;
 
 	if(inlineSubStream) {
@@ -415,14 +412,6 @@ byte *Marshal(const PyRep *rep, uint32 &len, bool deflate, bool inlineSubStream)
 	byte *b = new byte[len];
 
 	memcpy(b, &v.m_result[0], len);
-
-	if(deflate) {
-		_log(NET__PRES_RAW, "Raw Hex Dump (pre-deflation):");
-		phex(NET__PRES_RAW, &v.m_result[0], len);
-
-		//TODO: first try to deflate it...
-		_log(NET__MARSHAL_ERROR, "Deflation requested, but it's not implemented yet.");
-	}
 
 	return(b);
 }
