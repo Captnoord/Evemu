@@ -16,13 +16,16 @@
 */
 
 #include <math.h>	// for ceil() and floor() to properly round quantities
-#include "RamProxyService.h"
-#include "../Client.h"
-#include "../packets/Manufacturing.h"
-#include "../packets/General.h"
-#include "../PyServiceCD.h"
+
 #include "PyRep.h"
 #include "logsys.h"
+
+#include "RamProxyService.h"
+#include "../Client.h"
+#include "../PyServiceCD.h"
+
+#include "../packets/Manufacturing.h"
+#include "../packets/General.h"
 
 PyCallable_Make_InnerDispatcher(RamProxyService)
 

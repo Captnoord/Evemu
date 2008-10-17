@@ -735,10 +735,10 @@ bool RamProxyDB::_GetMultipliers(const uint32 assemblyLineID, uint32 groupID, do
 	// check table ramAssemblyLineTypeDetailPerGroup first
 	if(!m_db->RunQuery(res,
 				"SELECT materialMultiplier, timeMultiplier"
-				" FROM ramAssemblyLineTypeDetailPerGroup AS grpDetail"
-				" LEFT JOIN ramAssemblyLines AS assemblyLine ON assemblyLine.assemblyLineTypeID = grpDetail.assemblyLineTypeID"
-				" WHERE assemblyLine.assemblyLineID = %lu"
-				" AND grpDetail.groupID = %lu",
+				" FROM ramAssemblyLineTypeDetailPerGroup"
+				" JOIN ramAssemblyLines USING (assemblyLineTypeID)"
+				" WHERE assemblyLineID = %lu"
+				" AND groupID = %lu",
 				assemblyLineID, groupID))
 	{
 		_log(DATABASE__ERROR, "Failed to check producability of group %lu by line %lu: %s", groupID, assemblyLineID, res.error.c_str());
@@ -755,11 +755,11 @@ bool RamProxyDB::_GetMultipliers(const uint32 assemblyLineID, uint32 groupID, do
 	// then ramAssemblyLineTypeDetailPerCategory
 	if(!m_db->RunQuery(res,
 				"SELECT materialMultiplier, timeMultiplier"
-				" FROM ramAssemblyLineTypeDetailPerCategory AS catDetail"
-				" LEFT JOIN ramAssemblyLines AS assemblyLine ON assemblyLine.assemblyLineTypeID = catDetail.assemblyLineTypeID"
-				" LEFT JOIN invGroups AS grp ON grp.categoryID = catDetail.categoryID"
-				" WHERE assemblyLine.assemblyLineID = %lu"
-				" AND grp.groupID = %lu",
+				" FROM ramAssemblyLineTypeDetailPerCategory"
+				" JOIN ramAssemblyLines USING (assemblyLineTypeID)"
+				" JOIN invGroups USING (categoryID)"
+				" WHERE assemblyLineID = %lu"
+				" AND groupID = %lu",
 				assemblyLineID, groupID))
 	{
 		_log(DATABASE__ERROR, "Failed to check producability of group %lu by line %lu: %s", groupID, assemblyLineID, res.error.c_str());

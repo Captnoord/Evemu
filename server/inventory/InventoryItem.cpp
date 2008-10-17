@@ -30,8 +30,6 @@
 
 
 InventoryItem::InventoryItem(
-	InventoryDB *db,
-	EntityList *ents,
 	ItemFactory *fact,
 	uint32 _itemID, 
 	const char *_itemName,
@@ -62,8 +60,6 @@ InventoryItem::InventoryItem(
   m_customInfo(_customInfo),
   m_groupID(_groupID),
   m_categoryID(_categoryID),
-  m_db(db),
-  m_entities(ents),
   m_inDB(inDB),
   m_staticLoaded(false),
   m_attributesLoaded(inDB?false:true),	//non-DB items have no attributes stored in the DB...
@@ -143,7 +139,7 @@ void InventoryItem::Delete() {
 	factory->_DeleteItem(this);
 	
 	//now we take ourself out of the DB
-	m_db->DeleteItem(this);
+	factory->db().DeleteItem(this);
 	
 	//and now we destroy ourself.
 	if(m_refCount != 1) {
@@ -161,7 +157,7 @@ void InventoryItem::Delete() {
 }
 
 void InventoryItem::Save(bool recursive) {
-	m_db->SaveAttributes(this);
+	factory->db().SaveAttributes(this);
 	
 	if(recursive) {
 		InventoryItem *i;
@@ -182,9 +178,9 @@ bool InventoryItem::LoadStatic() {
 	m_int_attributes.clear();
 	m_double_attributes.clear();
 	
-	if(!m_db->LoadEntityAttributes(this))
+	if(!factory->db().LoadEntityAttributes(this))
 		return(false);
-	if(!m_db->LoadItemAttributes(this))
+	if(!factory->db().LoadItemAttributes(this))
 		return(false);
 	
 	m_staticLoaded = true;
@@ -199,7 +195,7 @@ bool InventoryItem::Load(bool recurse) {
 	//load player/ship/other non-static attributes.
 	if(!m_attributesLoaded) {
 		if(m_inDB) {	//no bother checking the DB if the item has never been there..
-			if(!m_db->LoadPersistentAttributes(this))
+			if(!factory->db().LoadPersistentAttributes(this))
 				return(false);
 		}
 		m_attributesLoaded = true;
@@ -221,7 +217,7 @@ bool InventoryItem::LoadContents(bool recursive) {
 
 	//load the list of items we need
 	std::vector<uint32> m_itemIDs;
-	if(!m_db->GetItemContents(this, m_itemIDs))
+	if(!factory->db().GetItemContents(this, m_itemIDs))
 		return(false);
 	
 	//Now get each one from the factory (possibly recursing)
@@ -660,7 +656,7 @@ void InventoryItem::RemoveContainedItem(InventoryItem *it) {
 }
 
 void InventoryItem::Rename(const char *to) {
-	if(!m_db->RenameItem(m_itemID, to)) {
+	if(!factory->db().RenameItem(m_itemID, to)) {
 		codelog(ITEM__ERROR, "%s (%lu): Failed to rename in the DB", m_itemName.c_str(), m_itemID);
 		return;
 	}
@@ -678,7 +674,7 @@ void InventoryItem::Move(uint32 location, EVEItemFlags new_flag, bool notify) {
 	if(location == old_location && new_flag == old_flag)
 		return;	//nothing to do...
 	
-	if(!m_db->MoveEntity(m_itemID, location, new_flag)) {
+	if(!factory->db().MoveEntity(m_itemID, location, new_flag)) {
 		codelog(ITEM__ERROR, "%s (%lu): Failed to move in the DB to %lu", m_itemName.c_str(), m_itemID, location);
 		return;
 	}
@@ -717,7 +713,7 @@ void InventoryItem::ChangeFlag(EVEItemFlags new_flag, bool notify) {
 	if(new_flag == old_flag)
 		return;	//nothing to do...
 	
-	if(!m_db->MoveEntity(m_itemID, m_locationID, new_flag)) {
+	if(!factory->db().MoveEntity(m_itemID, m_locationID, new_flag)) {
 		codelog(ITEM__ERROR, "%s (%lu): Failed to change flag to %d", m_itemName.c_str(), m_itemID, new_flag);
 		return;
 	}
@@ -753,7 +749,7 @@ bool InventoryItem::AlterQuantity(int32 qty_change, bool notify) {
 		return(false);
 	}
 	
-	if(!m_db->ChangeQuantity(m_itemID, new_qty)) {
+	if(!factory->db().ChangeQuantity(m_itemID, new_qty)) {
 		codelog(ITEM__ERROR, "%s (%lu): Failed to change quantity in the DB to %lu", m_itemName.c_str(), m_itemID, new_qty);
 		return(false);
 	}
@@ -788,7 +784,7 @@ bool InventoryItem::SetQuantity(int32 qty_new, bool notify) {
 	uint32 old_qty = m_quantity;
 	uint32 new_qty = qty_new;
 	
-	if(!m_db->ChangeQuantity(m_itemID, new_qty)) {
+	if(!factory->db().ChangeQuantity(m_itemID, new_qty)) {
 		codelog(ITEM__ERROR, "%s (%lu): Failed to change quantity in the DB to %lu", m_itemName.c_str(), m_itemID, new_qty);
 		return(false);
 	}
@@ -827,8 +823,8 @@ InventoryItem *InventoryItem::Split(int32 qty_to_take, bool notify) {
 	if(res->categoryID() == EVEDB::invCategories::Blueprint) {
 		// copy blueprint properties
 		BlueprintProperties bp;
-		m_db->GetBlueprintProperties(itemID(), bp);
-		m_db->SetBlueprintProperties(res->itemID(), bp);
+		factory->db().GetBlueprintProperties(itemID(), bp);
+		factory->db().SetBlueprintProperties(res->itemID(), bp);
 	}
 
 	return( res );
@@ -876,7 +872,7 @@ bool InventoryItem::ChangeSingleton(bool new_singleton, bool notify)
 	if(new_singleton == old_singleton)
 		return(true);	//nothing to do...
 	
-	if(!m_db->ChangeSingletonEntity(m_itemID, new_singleton)) {
+	if(!factory->db().ChangeSingletonEntity(m_itemID, new_singleton)) {
 		codelog(ITEM__ERROR, "%s (%lu): Failed to change singleton to %d", m_itemName.c_str(), m_itemID, new_singleton);
 		return(false);
 	}
@@ -898,7 +894,7 @@ void InventoryItem::ChangeOwner(uint32 new_owner, bool notify) {
 	if(new_owner == old_owner)
 		return;	//nothing to do...
 	
-	if(!m_db->ChangeOwner(m_itemID, new_owner)) {
+	if(!factory->db().ChangeOwner(m_itemID, new_owner)) {
 		codelog(ITEM__ERROR, "%s (%lu): Failed to change owner in the DB to %lu", m_itemName.c_str(), m_itemID, new_owner);
 		return;
 	}
@@ -922,7 +918,7 @@ void InventoryItem::ChangeOwner(uint32 new_owner, bool notify) {
 //contents of changes are consumed and cleared
 void InventoryItem::SendItemChange(uint32 toID, std::map<uint32, PyRep *> &changes) const {
 	//TODO: figure out the appropriate list of interested people...
-	Client *c = m_entities->FindCharacter(toID);
+	Client *c = factory->entity_list->FindCharacter(toID);
 	if(c == NULL)
 		return;	//not found or not online...
 	
@@ -952,7 +948,7 @@ void InventoryItem::SetOnline(bool newval) {
 	//bool old = isOnline();
 	Set_isOnline(newval);
 	
-	Client *c = m_entities->FindCharacter(m_ownerID);
+	Client *c = factory->entity_list->FindCharacter(m_ownerID);
 	if(c == NULL)
 		return;	//not found or not online...
 	
@@ -995,11 +991,11 @@ void InventoryItem::SaveAttribute_int(Attr attr) const {
 	std::map<Attr, int>::const_iterator res;
 	res = m_int_attributes.find(attr);
 	if(res == m_int_attributes.end()) {
-		if(!m_db->EraseAttribute(itemID(), attr)) {
+		if(!factory->db().EraseAttribute(itemID(), attr)) {
 			codelog(ITEM__ERROR, "%s (%lu): Failed to delete attribute %d", m_itemName.c_str(), m_itemID, attr);
 		}
 	} else {
-		if(!m_db->UpdateAttribute_int(itemID(), attr, res->second)) {
+		if(!factory->db().UpdateAttribute_int(itemID(), attr, res->second)) {
 			codelog(ITEM__ERROR, "%s (%lu): Failed to save int attribute %d", m_itemName.c_str(), m_itemID, attr);
 		}
 	}
@@ -1009,11 +1005,11 @@ void InventoryItem::SaveAttribute_double(Attr attr) const {
 	std::map<Attr, double>::const_iterator res;
 	res = m_double_attributes.find(attr);
 	if(res == m_double_attributes.end()) {
-		if(!m_db->EraseAttribute(itemID(), attr)) {
+		if(!factory->db().EraseAttribute(itemID(), attr)) {
 			codelog(ITEM__ERROR, "%s (%lu): Failed to delete attribute %d", m_itemName.c_str(), m_itemID, attr);
 		}
 	} else {
-		if(!m_db->UpdateAttribute_double(itemID(), attr, res->second)) {
+		if(!factory->db().UpdateAttribute_double(itemID(), attr, res->second)) {
 			codelog(ITEM__ERROR, "%s (%lu): Failed to save double attribute %d", m_itemName.c_str(), m_itemID, attr);
 		}
 	}
@@ -1024,7 +1020,7 @@ void InventoryItem::SetCustomInfo(const char *ci) {
 		m_customInfo = "";
 	else
 		m_customInfo = ci;
-	m_db->SetCustomInfo(m_itemID, ci);
+	factory->db().SetCustomInfo(m_itemID, ci);
 }
 
 bool InventoryItem::Contains(InventoryItem *item, bool recursive) const {
@@ -1059,7 +1055,7 @@ void InventoryItem::TrainSkill(InventoryItem *skill) {
 		return;
 	}
 	
-	Client *c = m_entities->FindCharacter(m_ownerID);
+	Client *c = factory->entity_list->FindCharacter(m_ownerID);
 	
 	//stop training our old skill...
 	//search for all, just in case we screwed up
@@ -1111,8 +1107,11 @@ void InventoryItem::TrainSkill(InventoryItem *skill) {
 }
 
 void InventoryItem::Relocate(const GPoint &pos) {
+	if(m_position == pos)
+		return;
+
 	m_position = pos;
-	m_db->RelocateEntity(m_itemID, m_position.x, m_position.y, m_position.z);
+	factory->db().RelocateEntity(m_itemID, m_position.x, m_position.y, m_position.z);
 }
 
 void InventoryItem::StackContainedItems(EVEItemFlags locFlag, uint32 forOwner) {
@@ -1135,22 +1134,14 @@ void InventoryItem::StackContainedItems(EVEItemFlags locFlag, uint32 forOwner) {
 	}
 }
 
-double InventoryItem::GetRemainingCapacity(EVEItemFlags locationFlag) const
-{
+double InventoryItem::GetRemainingCapacity(EVEItemFlags locationFlag) const {
 	double remainingCargoSpace;
 	//Get correct initial cargo value
 	//TODO: Deal with cargo space bonuses
-	switch (locationFlag)
-	{
-	case flagCargoHold:
-		remainingCargoSpace = capacity();
-		break;
-	case flagDroneBay:
-		remainingCargoSpace = droneCapacity();
-		break;
-	default:
-		remainingCargoSpace = 0.0;
-		break;
+	switch (locationFlag) {
+		case flagCargoHold: remainingCargoSpace = capacity(); break;
+		case flagDroneBay:	remainingCargoSpace = droneCapacity(); break;
+		default:			remainingCargoSpace = 0.0; break;
 	}
 	
 	//TODO: And implement Sizes for packaged ships
@@ -1159,10 +1150,8 @@ double InventoryItem::GetRemainingCapacity(EVEItemFlags locationFlag) const
 	end = m_contents.end();
 	
 	for(; cur != end; cur++) {
-		if( cur->second->flag() == locationFlag)
-		{
-		remainingCargoSpace -= (cur->second->quantity()*cur->second->volume());
-		}
+		if(cur->second->flag() == locationFlag)
+			remainingCargoSpace -= (cur->second->quantity() * cur->second->volume());
 	}
 
 	return(remainingCargoSpace);
