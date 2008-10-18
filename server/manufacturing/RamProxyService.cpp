@@ -16,7 +16,7 @@
 */
 
 #include <math.h>	// for ceil() and floor() to properly round quantities
-
+#include <stdio.h>
 #include "PyRep.h"
 #include "logsys.h"
 
@@ -901,9 +901,9 @@ void RamProxyService::_EncodeMissingMaterials(const std::vector<RequiredItem> &r
 		for(; curi != endi && qtyReq > 0; curi++) {
 			if((*curi)->typeID() == cur->typeID && (*curi)->ownerID() == c->GetCharacterID()) {
 				if(cur->isSkill)
-					qtyReq -= min(qtyReq, (*curi)->skillLevel());
+					qtyReq -= std::min(qtyReq, (*curi)->skillLevel());
 				else
-					qtyReq -= min(qtyReq, (*curi)->quantity());
+					qtyReq -= std::min(qtyReq, (*curi)->quantity());
 			}
 		}
 		if(qtyReq > 0)
