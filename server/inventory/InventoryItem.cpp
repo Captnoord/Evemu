@@ -709,15 +709,15 @@ void InventoryItem::Move(uint32 location, EVEItemFlags new_flag, bool notify) {
 
 void InventoryItem::ChangeFlag(EVEItemFlags new_flag, bool notify) {
 	EVEItemFlags old_flag = m_flag;
-	
+
 	if(new_flag == old_flag)
 		return;	//nothing to do...
-	
+
 	if(!factory->db().MoveEntity(m_itemID, m_locationID, new_flag)) {
 		codelog(ITEM__ERROR, "%s (%lu): Failed to change flag to %d", m_itemName.c_str(), m_itemID, new_flag);
 		return;
 	}
-	
+
 	m_flag = new_flag;
 
 	//notify about the changes.
@@ -732,49 +732,17 @@ bool InventoryItem::AlterQuantity(int32 qty_change, bool notify) {
 	if(qty_change == 0)
 		return(true);
 
-	//if an object has its singleton set then it shouldn't be able to add/remove qty
-	if( m_singleton == true)
-	{
-		//Print error
-		codelog(ITEM__ERROR, "%s (%lu): Failed to add/remove quantity %lu , the items singleton bit is set", m_itemName.c_str(), m_itemID, qty_change);
-		//return false
-		return(false);
-	}
-
-	uint32 old_qty = m_quantity;
-	uint32 new_qty = m_quantity + qty_change;
-
-	if(qty_change < 0 && m_quantity < uint32(-qty_change)) {
+	if((int32(m_quantity) + qty_change) < 0) {
 		codelog(ITEM__ERROR, "%s (%lu): Tried to remove %ld quantity from stack of %lu", m_itemName.c_str(), m_itemID, -qty_change, m_quantity);
 		return(false);
 	}
-	
-	if(!factory->db().ChangeQuantity(m_itemID, new_qty)) {
-		codelog(ITEM__ERROR, "%s (%lu): Failed to change quantity in the DB to %lu", m_itemName.c_str(), m_itemID, new_qty);
-		return(false);
-	}
-	
-	m_quantity = new_qty;
 
-	
-
-	//notify about the changes.
-	if(notify) {
-		std::map<uint32, PyRep *> changes;
-
-		//send the notify to the new owner.
-		changes[ixQuantity] = new PyRepInteger(old_qty);
-		SendItemChange(m_ownerID, changes);	//changes is consumed
-	}
-	
-	return(true);
+	return(SetQuantity(uint32(m_quantity + qty_change), notify));
 }
 
-bool InventoryItem::SetQuantity(int32 qty_new, bool notify) {
-		
+bool InventoryItem::SetQuantity(uint32 qty_new, bool notify) {
 	//if an object has its singleton set then it shouldn't be able to add/remove qty
-	if( m_singleton == true)
-	{
+	if(m_singleton) {
 		//Print error
 		codelog(ITEM__ERROR, "%s (%lu): Failed to set quantity %lu , the items singleton bit is set", m_itemName.c_str(), m_itemID, qty_new);
 		//return false
@@ -788,10 +756,9 @@ bool InventoryItem::SetQuantity(int32 qty_new, bool notify) {
 		codelog(ITEM__ERROR, "%s (%lu): Failed to change quantity in the DB to %lu", m_itemName.c_str(), m_itemID, new_qty);
 		return(false);
 	}
-	
+
 	m_quantity = new_qty;
-	
-	
+
 	//notify about the changes.
 	if(notify) {
 		std::map<uint32, PyRep *> changes;

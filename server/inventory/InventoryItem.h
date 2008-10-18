@@ -97,7 +97,7 @@ public:
 	void Relocate(const GPoint &pos);
 	void SetCustomInfo(const char *ci);
 	bool AlterQuantity(int32 qty_change, bool notify=true);
-	bool SetQuantity(int32 qty_new, bool notify=true);
+	bool SetQuantity(uint32 qty_new, bool notify=true);
 	bool ChangeSingleton(bool singleton, bool notify=true);
 	
 	/*
