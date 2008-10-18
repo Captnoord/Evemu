@@ -41,7 +41,8 @@ private:
 	void _VerifyCompleteJob(const Call_CompleteJob &args, Client *const c);
 
 	bool _Calculate(const Call_InstallJob &args, const InventoryItem *const installedItem, Client *const c, Rsp_InstallJob &into);
-	void _FillBillOfMaterials(const std::vector<RequiredItem> &reqItems, double materialMultiplier, double charMaterialMultiplier, uint32 runs, BillOfMaterials &into);
+	void _EncodeBillOfMaterials(const std::vector<RequiredItem> &reqItems, double materialMultiplier, double charMaterialMultiplier, uint32 runs, BillOfMaterials &into);
+	void _EncodeMissingMaterials(const std::vector<RequiredItem> &reqItems, const PathElement &bomLocation, Client *const c, double materialMultiplier, double charMaterialMultiplier, uint32 runs, std::map<uint32, PyRep *> &into);
 
 	PyCallable_DECL_CALL(GetJobs2)
 	PyCallable_DECL_CALL(AssemblyLinesSelect)

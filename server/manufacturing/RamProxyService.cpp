@@ -155,7 +155,8 @@ PyResult RamProxyService::Handle_InstallJob(PyCallArgs &call) {
 	// if 'quoteOnly' is 1 -> send quote, if 0 -> install job
 	if(((PyRepInteger *)call.byname["quoteOnly"])->value) {
 		installedItem->Release();	// not needed anymore
-		_FillBillOfMaterials(reqItems, rsp.materialMultiplier, rsp.charMaterialMultiplier, args.runs, rsp.bom);
+		_EncodeBillOfMaterials(reqItems, rsp.materialMultiplier, rsp.charMaterialMultiplier, args.runs, rsp.bom);
+		_EncodeMissingMaterials(reqItems, pathBomLocation, call.client, rsp.materialMultiplier, rsp.charMaterialMultiplier, args.runs, rsp.missingMaterials);
 		return(rsp.Encode());
 	} else {
 		// verify install
@@ -313,69 +314,65 @@ PyResult RamProxyService::Handle_CompleteJob(PyCallArgs &call) {
 	// if not cancelled, realize result of activity
 	if(!args.cancel)
 		switch(activity) {
-			case ramActivityManufacturing:
-				{
-					uint32 productTypeID = m_db.GetBlueprintProduct(installedItem->typeID());
-					if(productTypeID == NULL) {
-						installedItem->Release();
-						return(NULL);
-					}
-					uint32 portionSize = m_db.GetPortionSize(productTypeID);
-					if(portionSize == NULL) {
-						installedItem->Release();
-						return(NULL);
-					}
-					InventoryItem *item = m_manager->item_factory->Spawn(productTypeID, portionSize * runs, ownerID, 0, outputFlag);
-					if(item == NULL) {
-						installedItem->Release();
-						return(NULL);
-					}
-					item->Move(args.containerID, outputFlag);
-					item->Release();
-					break;
+			case ramActivityManufacturing: {
+				uint32 productTypeID = m_db.GetBlueprintProduct(installedItem->typeID());
+				if(productTypeID == NULL) {
+					installedItem->Release();
+					return(NULL);
 				}
-
+				uint32 portionSize = m_db.GetPortionSize(productTypeID);
+				if(portionSize == NULL) {
+					installedItem->Release();
+					return(NULL);
+				}
+				InventoryItem *item = m_manager->item_factory->Spawn(productTypeID, portionSize * runs, ownerID, 0, outputFlag);
+				if(item == NULL) {
+					installedItem->Release();
+					return(NULL);
+				}
+				item->Move(args.containerID, outputFlag);
+				item->Release();
+				break;
+			}
 			case ramActivityResearchingTimeProductivity:
-			case ramActivityResearchingMaterialProductivity:
-				{
-					BlueprintProperties bp;
-					if(!m_db.GetBlueprintProperties(installedItem->itemID(), bp)) {
-						installedItem->Release();
-						return(NULL);
-					}
-
-					if(activity == ramActivityResearchingTimeProductivity)
-						bp.productivityLevel += runs;
-					else if(activity == ramActivityResearchingMaterialProductivity)
-						bp.materialLevel += runs;
-
-					if(!m_db.SetBlueprintProperties(installedItem->itemID(), bp)) {
-						installedItem->Release();
-						return(NULL);
-					}
-					break;
+			case ramActivityResearchingMaterialProductivity: {
+				BlueprintProperties bp;
+				if(!m_db.GetBlueprintProperties(installedItem->itemID(), bp)) {
+					installedItem->Release();
+					return(NULL);
 				}
-			case ramActivityCopying:
-				{
-					BlueprintProperties bp;
-					if(!m_db.GetBlueprintProperties(installedItem->itemID(), bp)) {
-						installedItem->Release();
-						return(NULL);
-					}
-					bp.copy = true;
-					bp.licensedProductionRunsRemaining = licensedProductionRuns;
 
-					InventoryItem *copy;
-					for(uint32 c = 0; c < runs; c++) {
-						// I think blueprints are always singleton ... BTW I can't understand why SpawnSigleton requires more args than Spawn
-						copy = m_manager->item_factory->SpawnSingleton(installedItem->typeID(), ownerID, 0, outputFlag, installedItem->itemName().c_str(), GPoint());
-						if(copy == NULL)
-							continue;
-						m_db.SetBlueprintProperties(copy->itemID(), bp);	// when this fails, nothing we can do about it, blueprint is already spawned
-						copy->Move(args.containerID, outputFlag);
-						copy->Release();
-					}
+				if(activity == ramActivityResearchingTimeProductivity)
+					bp.productivityLevel += runs;
+				else if(activity == ramActivityResearchingMaterialProductivity)
+					bp.materialLevel += runs;
+
+				if(!m_db.SetBlueprintProperties(installedItem->itemID(), bp)) {
+					installedItem->Release();
+					return(NULL);
 				}
+				break;
+			}
+			case ramActivityCopying: {
+				BlueprintProperties bp;
+				if(!m_db.GetBlueprintProperties(installedItem->itemID(), bp)) {
+					installedItem->Release();
+					return(NULL);
+				}
+				bp.copy = true;
+				bp.licensedProductionRunsRemaining = licensedProductionRuns;
+
+				InventoryItem *copy;
+				for(uint32 c = 0; c < runs; c++) {
+					// I think blueprints are always singleton ... BTW I can't understand why SpawnSigleton requires more args than Spawn
+					copy = m_manager->item_factory->SpawnSingleton(installedItem->typeID(), ownerID, 0, outputFlag, installedItem->itemName().c_str(), GPoint());
+					if(copy == NULL)
+						continue;
+					m_db.SetBlueprintProperties(copy->itemID(), bp);	// when this fails, nothing we can do about it, blueprint is already spawned
+					copy->Move(args.containerID, outputFlag);
+					copy->Release();
+				}
+			}
 		}
 
 	installedItem->Release();
@@ -763,7 +760,7 @@ bool RamProxyService::_Calculate(const Call_InstallJob &args, const InventoryIte
 	if(!into.productionTime)
 		return(false);
 
-	uint32 productGroupID = NULL;
+	uint32 productGroupID = installedItem->groupID();	//default
 	// perform some activity-specific actions
 	switch(args.activityID) {
 		case ramActivityManufacturing: {
@@ -782,45 +779,24 @@ bool RamProxyService::_Calculate(const Call_InstallJob &args, const InventoryIte
 			into.charTimeMultiplier = c->Item()->manufactureTimeMultiplier();
 
 			switch(m_db.GetRace(productTypeID)) {
-				case raceCaldari:
-					into.charTimeMultiplier *= double(c->Item()->caldariTechTimePercent()) / 100.0;
-					break;
-
-				case raceMinmatar:
-					into.charTimeMultiplier *= double(c->Item()->minmatarTechTimePercent()) / 100.0;
-					break;
-
-				case raceAmarr:
-					into.charTimeMultiplier *= double(c->Item()->amarrTechTimePercent()) / 100.0;
-					break;
-
-				case raceGallente:
-					into.charTimeMultiplier *= double(c->Item()->gallenteTechTimePercent()) / 100.0;
-					break;
+				case raceCaldari:	into.charTimeMultiplier *= double(c->Item()->caldariTechTimePercent()) / 100.0; break;
+				case raceMinmatar:	into.charTimeMultiplier *= double(c->Item()->minmatarTechTimePercent()) / 100.0; break;
+				case raceAmarr:		into.charTimeMultiplier *= double(c->Item()->amarrTechTimePercent()) / 100.0; break;
+				case raceGallente:	into.charTimeMultiplier *= double(c->Item()->gallenteTechTimePercent()) / 100.0; break;
 			}
-
 			break;
 		}
-
 		case ramActivityResearchingTimeProductivity: {
-			productGroupID = installedItem->groupID();
-
 			into.charMaterialMultiplier = double(c->Item()->researchCostPercent()) / 100.0;
 			into.charTimeMultiplier = c->Item()->manufacturingTimeResearchSpeed();
 			break;
 		}
-
 		case ramActivityResearchingMaterialProductivity: {
-			productGroupID = installedItem->groupID();
-
 			into.charMaterialMultiplier = double(c->Item()->researchCostPercent()) / 100.0;
 			into.charTimeMultiplier = c->Item()->mineralNeedResearchSpeed();
 			break;
 		}
-
 		case ramActivityCopying: {
-			productGroupID = installedItem->groupID();
-
 			uint32 maxProductionLimit = m_db.GetMaxProductionLimit(installedItem->typeID());
 			if(!maxProductionLimit)
 				return(false);
@@ -832,10 +808,7 @@ bool RamProxyService::_Calculate(const Call_InstallJob &args, const InventoryIte
 			into.charTimeMultiplier = c->Item()->copySpeedPercent();
 			break;
 		}
-
 		default: {
-			productGroupID = NULL;
-
 			into.charMaterialMultiplier = 1.0;
 			into.charTimeMultiplier = 1.0;
 			break;
@@ -848,7 +821,7 @@ bool RamProxyService::_Calculate(const Call_InstallJob &args, const InventoryIte
 
 	// calculate the remaining things
 	into.productionTime *= into.timeMultiplier * into.charTimeMultiplier * args.runs;
-	into.usageCost *= into.productionTime % 3600 ? (into.productionTime / 3600) + 1 : into.productionTime / 3600;
+	into.usageCost *= ceil(into.productionTime / 3600.0);
 	into.cost = into.installCost + into.usageCost;
 
 	// I "hope" this is right, simple tells client how soon will his job be started
@@ -859,7 +832,7 @@ bool RamProxyService::_Calculate(const Call_InstallJob &args, const InventoryIte
 	return(true);
 }
 
-void RamProxyService::_FillBillOfMaterials(const std::vector<RequiredItem> &reqItems, double materialMultiplier, double charMaterialMultiplier, uint32 runs, BillOfMaterials &into) {
+void RamProxyService::_EncodeBillOfMaterials(const std::vector<RequiredItem> &reqItems, double materialMultiplier, double charMaterialMultiplier, uint32 runs, BillOfMaterials &into) {
 	std::vector<RequiredItem>::const_iterator cur, end;
 	cur = reqItems.begin();
 	end = reqItems.end();
@@ -894,7 +867,47 @@ void RamProxyService::_FillBillOfMaterials(const std::vector<RequiredItem> &reqI
 			into.rawMaterials.lines.add(line.Encode());
 		}
 	}
+}
 
-	return;
+void RamProxyService::_EncodeMissingMaterials(const std::vector<RequiredItem> &reqItems, const PathElement &bomLocation, Client *const c, double materialMultiplier, double charMaterialMultiplier, uint32 runs, std::map<uint32, PyRep *> &into) {
+	//query out what we need
+	std::vector<const InventoryItem *> skills, items;
+
+	//get the skills
+	c->Item()->FindByFlag(flagSkill, skills);
+	c->Item()->FindByFlag(flagSkillInTraining, skills);
+
+	//get the items
+	InventoryItem *bomContainer = m_manager->item_factory->Load(bomLocation.locationID, true);
+	if(bomContainer == NULL)
+		return;
+	bomContainer->FindByFlag(EVEItemFlags(bomLocation.flag), items);
+	bomContainer->Release();
+
+	//now do the check
+	std::vector<RequiredItem>::const_iterator cur, end;
+	cur = reqItems.begin();
+	end = reqItems.end();
+	for(; cur != end; cur++) {
+		uint32 qtyReq = cur->quantity;
+		if(!cur->isSkill) {
+			qtyReq = ceil(qtyReq * materialMultiplier * runs);
+			if(cur->damagePerJob == 1.0)
+				qtyReq = ceil(qtyReq * charMaterialMultiplier);
+		}
+		std::vector<const InventoryItem *>::const_iterator curi, endi;
+		curi = cur->isSkill ? skills.begin() : items.begin();
+		endi = cur->isSkill ? skills.end() : items.end();
+		for(; curi != endi && qtyReq > 0; curi++) {
+			if((*curi)->typeID() == cur->typeID && (*curi)->ownerID() == c->GetCharacterID()) {
+				if(cur->isSkill)
+					qtyReq -= min(qtyReq, (*curi)->skillLevel());
+				else
+					qtyReq -= min(qtyReq, (*curi)->quantity());
+			}
+		}
+		if(qtyReq > 0)
+			into[cur->typeID] = new PyRepInteger(qtyReq);
+	}
 }
 

@@ -37,6 +37,7 @@ enum EVERamActivity {
 
 //from table 'ramCompletedStatuses'
 enum EVERamCompletedStatus {
+	ramCompletedStatusInProgress = 0,
 	ramCompletedStatusDelivered = 1,
 	ramCompletedStatusAbort = 2,
 	ramCompletedStatusGMAbort = 3,

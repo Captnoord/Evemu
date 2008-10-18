@@ -49,6 +49,7 @@ PyRep *RamProxyDB::GetJobs2(const uint32 ownerID, const bool completed, const ui
 		" job.runs,"
 		" job.installTime,"
 		" job.beginProductionTime,"
+		" job.pauseProductionTime,"
 		" job.endProductionTime,"
 		" job.completedStatusID != 0 AS completed,"
 		" job.licensedProductionRuns,"
@@ -65,7 +66,8 @@ PyRep *RamProxyDB::GetJobs2(const uint32 ownerID, const bool completed, const ui
 		" WHERE job.ownerID = %lu"
 		" AND job.completedStatusID %s 0"
 		" AND job.installTime >= " I64u
-		" AND job.endProductionTime <= " I64u,
+		" AND job.endProductionTime <= " I64u
+		" GROUP BY job.jobID",
 		ownerID, (completed ? "!=" : "="), fromDate, toDate))
 	{
 		_log(DATABASE__ERROR, "Failed to query jobs for owner %lu: %s", ownerID, res.error.c_str());
