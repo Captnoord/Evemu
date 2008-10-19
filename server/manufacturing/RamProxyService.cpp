@@ -901,9 +901,9 @@ void RamProxyService::_EncodeMissingMaterials(const std::vector<RequiredItem> &r
 		for(; curi != endi && qtyReq > 0; curi++) {
 			if((*curi)->typeID() == cur->typeID && (*curi)->ownerID() == c->GetCharacterID()) {
 				if(cur->isSkill)
-					qtyReq -= min(qtyReq, (*curi)->skillLevel());
+					qtyReq -= std::min((uint32)qtyReq, (uint32)(*curi)->skillLevel());
 				else
-					qtyReq -= min(qtyReq, (*curi)->quantity());
+					qtyReq -= std::min((uint32)qtyReq, (uint32)(*curi)->quantity());
 			}
 		}
 		if(qtyReq > 0)
