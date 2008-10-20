@@ -108,7 +108,7 @@ PyRepObject *CharacterDB::GetCharSelectInfo(uint32 characterID) {
 
 static std::string _ToStr(uint32 v) {
 	char buf[32];
-	snprintf(buf, 32, "%lu", v);
+	snprintf(buf, 32, "%u", v);
 	return(buf);
 }
 
@@ -472,7 +472,7 @@ bool CharacterDB::DeleteCharacter(uint32 characterID) {
 	
 	//we delete mail sent FROM this player too, otherwise intersting things will happen when it is read again.
 	if (!m_db->RunQuery(res,
-		"SELECT messageID FROM evemail WHERE channelID=%lu OR senderID=%lu", characterID, characterID))
+		"SELECT messageID FROM eveMail WHERE channelID=%lu OR senderID=%lu", characterID, characterID))
 	{
 		codelog(SERVICE__ERROR, "Error in mail query (not stopping): %s", res.error.c_str());
 	} else {
@@ -480,14 +480,14 @@ bool CharacterDB::DeleteCharacter(uint32 characterID) {
 		while (res.GetRow(row)) {
 			found = true;
 			if (!m_db->RunQuery(err, 
-				"DELETE FROM evemailDetails WHERE messageID=%lu", row.GetUInt(0)))
+				"DELETE FROM eveMailDetails WHERE messageID=%lu", row.GetUInt(0)))
 			{
 				codelog(SERVICE__ERROR, "Error in query (not stopping): %s", err.c_str());
 			}
 		}
 		if(found) {
 			if(!m_db->RunQuery(err,
-				"DELETE FROM evemail WHERE channelID=%lu OR senderID=%lu", characterID, characterID))
+				"DELETE FROM eveMail WHERE channelID=%lu OR senderID=%lu", characterID, characterID))
 			{
 				codelog(SERVICE__ERROR, "Error in query (not stopping): %s", err.c_str());
 			}
