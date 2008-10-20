@@ -123,17 +123,12 @@ bool Mutex::trylock() {
 	cout << "TryLocking Mutex" << endl;
 #endif
 #ifdef WIN32
-	#if(_WIN32_WINNT >= 0x0400)
-		if (TrylockSupported)
-			return (TryEnterCriticalSection(&CSMutex) == TRUE);
-		else {
-			EnterCriticalSection(&CSMutex);
-			return true;
-		}
-	#else
+	if (TrylockSupported)
+		return (TryEnterCriticalSection(&CSMutex) == TRUE);
+	else {
 		EnterCriticalSection(&CSMutex);
 		return true;
-	#endif
+	}
 #else
 	return (pthread_mutex_trylock(&CSMutex) == 0);
 #endif
