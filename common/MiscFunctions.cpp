@@ -21,8 +21,11 @@
 #include <time.h>
 #include <math.h>
 #ifndef WIN32
+#include <netdb.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #endif
 #include <iostream>
 #include <iomanip>

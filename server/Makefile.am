@@ -76,6 +76,8 @@ libcharacter_a_SOURCES = \
 	character/SkillMgrService.h
 
 libchat_a_SOURCES = \
+	chat/VoiceMgrService.cpp \
+	chat/VoiceMgrService.h \
 	chat/LookupService.cpp \
 	chat/LookupService.h \
 	chat/LSCChannel.cpp \
@@ -147,6 +149,8 @@ libmap_a_SOURCES = \
 	map/MapService.h
 
 libmarket_a_SOURCES = \
+	market/ContractMgrService.h \
+	market/ContractMgrService.cpp \
 	market/BillMgrService.cpp \
 	market/BillMgrService.h \
 	market/MarketDB.cpp \
@@ -211,6 +215,12 @@ libspawn_a_SOURCES = \
 	spawn/SpawnManager.h
 
 libstanding_a_SOURCES = \
+	standing/FactionWarMgrService.h \
+	standing/FactionWarMgrDB.cpp \
+	standing/WarRegistryService.h \
+	standing/FactionWarMgrService.cpp \
+	standing/WarRegistryService.cpp \
+	standing/FactionWarMgrDB.h \
 	standing/Standing2Service.cpp \
 	standing/Standing2Service.h \
 	standing/StandingDB.cpp \
