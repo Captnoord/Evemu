@@ -15,52 +15,8 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _EVEPCH_
-#define _EVEPCH_
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <time.h>
-#include <math.h>
-#include <errno.h>
-
-#if defined( __WIN32__ ) || defined( WIN32 ) || defined( _WIN32 )
-#  define WIN32_LEAN_AND_MEAN
-#  define _WIN32_WINNT 0x0500
-#  define NOMINMAX
-#  include <windows.h>
-#else
-#  include <string.h>
-#  define MAX_PATH 1024
-#endif
-
-#ifdef min
-#undef min
-#endif
-
-#ifdef max
-#undef max
-#endif
-
-/*#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <time.h>
-#include <math.h>
-#include <errno.h>*/
-#include <string>
-#include <vector>
-#include <list>
-#include <set>
-#include <list>
-#include <string>
-#include <map>
-#include <queue>
-#include <sstream>
-#include <algorithm>
-
-using namespace std;
+#ifndef __EVEPCH_H
+#define __EVEPCH_H
 
 // common files first
 #include "../../common/common.h"
@@ -320,4 +276,4 @@ using namespace std;
 // client stuff
 #include "../../server/Client.h"
 
-#endif//_EVEPCH_
+#endif//__EVEPCH_H

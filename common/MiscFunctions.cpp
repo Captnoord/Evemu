@@ -33,12 +33,12 @@
 
 using namespace std;
 
-#ifdef WIN32
+/*#ifdef WIN32
 	#include <windows.h>
 
 	#define snprintf	_snprintf
 #if _MSC_VER < 1500
-	//#define vsnprintf	_vsnprintf
+	#define vsnprintf	_vsnprintf
 #endif
 	#define strncasecmp	_strnicmp
 	#define strcasecmp  _stricmp
@@ -56,7 +56,7 @@ using namespace std;
 	#include <unistd.h>
 	#include <netdb.h>
 	#include <errno.h>
-#endif
+#endif*/
 
 // normal strncpy doesn't put a null term on copied strings, this one does
 // ref: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/wcecrt/htm/_wcecrt_strncpy_wcsncpy.asp

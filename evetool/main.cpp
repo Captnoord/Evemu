@@ -624,7 +624,7 @@ static bool PyString_DecodeEscape(const char *s, vector<byte> &result)
 		return NULL;
 	p = buf = PyString_AsString(v);
 	*/
-	int len = strlen(s);
+	int len = (int)strlen(s);
 	end = s + len;
 	while (s < end) {
 		if (*s != '\\') {
