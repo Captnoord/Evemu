@@ -15,22 +15,9 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
-
-#include "CorporationService.h"
-#include "../common/logsys.h"
-#include "../common/PyRep.h"
-#include "../common/PyPacket.h"
-#include "../Client.h"
-#include "../PyServiceCD.h"
-#include "../PyServiceMgr.h"
-#include "../common/EVEUtils.h"
-
-#include "../packets/CorporationPkts.h"
-#include "../packets/General.h"
+#include "EvemuPCH.h"
 
 PyCallable_Make_InnerDispatcher(CorporationService)
-
 
 CorporationService::CorporationService(PyServiceMgr *mgr, DBcore *db)
 : PyService(mgr, "corporationSvc"),

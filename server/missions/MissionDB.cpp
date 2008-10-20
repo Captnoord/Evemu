@@ -15,11 +15,7 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "MissionDB.h"
-#include "../common/dbcore.h"
-#include "../common/logsys.h"
-#include "../common/EVEDBUtils.h"
-#include "Agent.h"
+#include "EvemuPCH.h"
 
 MissionDB::MissionDB(DBcore *db)
 : ServiceDB(db)

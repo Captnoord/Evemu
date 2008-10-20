@@ -43,17 +43,7 @@ Static Bodies:
 	- position
 
 
-detech clients moving into aggro radii
-
-
-
-
-
-
-
-
-
-
+detect clients moving into agro radius
 
 */
 
@@ -63,7 +53,7 @@ detech clients moving into aggro radii
 #ifndef EVE_CLIENT_H
 #define EVE_CLIENT_H
 
-#include "../common/packet_types.h"
+/*#include "../common/packet_types.h"
 #include "../common/timer.h"
 #include "../common/gpoint.h"
 
@@ -75,8 +65,10 @@ detech clients moving into aggro radii
 #include "system/SystemEntity.h"
 #include "ship/ModuleManager.h"
 #include "../common/EVEUtils.h"
-#include "../common/EVEPresentation.h"
+#include "../common/EVEPresentation.h"*/
 
+#include "system/SystemEntity.h"
+#include "ship/ModuleManager.h"
 
 class PyPacket;
 class PyRep;
@@ -243,7 +235,7 @@ public:
 	
 protected:
 	//this could be done a TON better, but want to get something
-	//working first, it is call encapsulated in here, so it shoud
+	//working first, it is call encapsulated in here, so it should
 	//be simple to gut this object and put in a real scheduler.
 	class Entry {
 	public:

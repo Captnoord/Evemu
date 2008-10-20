@@ -15,18 +15,7 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
-
-#include "CorporationDB.h"
-#include "../common/dbcore.h"
-#include "../common/logsys.h"
-#include "../common/EVEDBUtils.h"
-#include "../common/EVEUtils.h"
-#include "../packets/General.h"
-#include "../packets/CorporationPkts.h"
-#include "../Client.h"	//for CorpMemberInfo
-#include "../ServiceDB.h"
-#include "CorporationCarrier.h"
+#include "EvemuPCH.h"
 
 CorporationDB::CorporationDB(DBcore *db)
 : ServiceDB(db)

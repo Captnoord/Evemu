@@ -28,12 +28,8 @@
 #include "logsys.h"
 #include "MiscFunctions.h"
 #include "misc.h"
-//#include "../common/MiscFunctions.h"
 
 #define COLUMN_BOUNDS_CHECKING
-
-
-
 
 DBcore::DBcore() {
 	mysql_init(&mysql);

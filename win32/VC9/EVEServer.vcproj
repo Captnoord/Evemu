@@ -46,18 +46,20 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/MP"
 				Optimization="0"
-				AdditionalIncludeDirectories="C:\mysql\include;..\..\3rdparty\mysql\include;..\..\3rdparty\zlib;..\..\common"
-				PreprocessorDefinitions="WIN32;_WIN32_WINNT=0x0400;_DEBUG;USE_RUNTIME_EXCEPTIONS"
-				MinimalRebuild="true"
+				AdditionalIncludeDirectories="..\..\3rdparty\mysql\include;..\..\3rdparty\zlib;..\..\common;..\..\server;..\"
+				PreprocessorDefinitions="WIN32;_DEBUG;USE_RUNTIME_EXCEPTIONS;_CRT_SECURE_NO_WARNINGS"
+				MinimalRebuild="false"
 				ExceptionHandling="2"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
-				WarningLevel="3"
+				WarningLevel="0"
 				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="4"
+				DebugInformationFormat="3"
 				DisableSpecificWarnings="4244;4355;4996"
+				ShowIncludes="false"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -73,7 +75,7 @@
 				AdditionalDependencies="wsock32.lib zlib.lib mysqlclient.lib Advapi32.lib user32.lib"
 				OutputFile=".\..\..\bin\$(ConfigurationName)\$(ProjectName).exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\3rdparty\mysql\lib\debug;..\..\lib"
+				AdditionalLibraryDirectories="..\..\3rdparty\mysql\lib\debug;..\..\lib;&quot;..\..\lib\$(ConfigurationName)\&quot;"
 				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -629,6 +631,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\server\EvemuPCH.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\server\EVEmuServerConfig.h"
 				>
 			</File>
@@ -805,34 +811,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\PyDumpVisitor.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\common\PyLookupDump.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\common\PyPacket.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\common\PyRep.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\common\PyUtils.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\common\PyVisitor.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\common\PyXMLGenerator.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\common\queue.h"
 				>
 			</File>
@@ -850,10 +828,6 @@
 			</File>
 			<File
 				RelativePath="..\..\common\StreamPacketizer.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\common\TCPBasicServer.h"
 				>
 			</File>
 			<File
@@ -877,6 +851,38 @@
 				>
 				<File
 					RelativePath="..\..\common\Mutex.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Python"
+				>
+				<File
+					RelativePath="..\..\common\PyDumpVisitor.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\common\PyLookupDump.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\common\PyPacket.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\common\PyRep.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\common\PyUtils.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\common\PyVisitor.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\common\PyXMLGenerator.h"
 					>
 				</File>
 			</Filter>

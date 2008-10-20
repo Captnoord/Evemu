@@ -15,28 +15,9 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
-
-#include "CorpRegistryService.h"
-#include "../common/logsys.h"
-#include "../common/PyRep.h"
-#include "../common/PyPacket.h"
-#include "../Client.h"
-#include "../EntityList.h"
-#include "../PyServiceCD.h"
-#include "../PyServiceMgr.h"
-#include "../PyBoundObject.h"
-#include "../common/EVEUtils.h"
-#include "../cache/ObjCacheService.h"
-#include "../chat/LSCService.h"
-
-#include "../packets/CorporationPkts.h"
-#include "../packets/General.h"
-#include "../packets/Wallet.h"
+#include "EvemuPCH.h"
 
 PyCallable_Make_InnerDispatcher(CorpRegistryService)
-
-
 
 class CorpRegistryBound
 : public PyBoundObject {

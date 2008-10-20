@@ -15,9 +15,10 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "ContractMgrService.h"
-#include "../Client.h"
-#include "../PyServiceCD.h"
+#include "EvemuPCH.h"
+//#include "ContractMgrService.h"
+
+
 
 PyCallable_Make_InnerDispatcher(ContractMgrService)
 

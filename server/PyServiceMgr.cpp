@@ -17,18 +17,7 @@
 
 
 
-#include "PyServiceMgr.h"
-
-#include "../common/logsys.h"
-#include "../common/PyRep.h"
-#include "../common/PyPacket.h"
-#include "../common/EVEUtils.h"
-
-#include "PyService.h"
-#include "PyCallable.h"
-#include "PyBoundObject.h"
-#include "EntityList.h"
-#include "cache/ObjCacheService.h"
+#include "EvemuPCH.h"
 
 /*                                                                              
  * This is a quick proxy object which receives any calls with no service in

@@ -19,18 +19,8 @@
 //note, using /slashes from LSC requires ROLE_SLASH
 
 
+#include "EvemuPCH.h"
 
-#include "SlashService.h"
-#include "../common/logsys.h"
-#include "../common/PyRep.h"
-#include "../common/PyPacket.h"
-#include "../Client.h"
-#include "../PyServiceCD.h"
-#include "../PyServiceMgr.h"
-#include "CommandDispatcher.h"
-//#include "../PyBoundObject.h"
-
-#include "../packets/General.h"
 
 PyCallable_Make_InnerDispatcher(SlashService)
 

@@ -15,13 +15,8 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#include "EvemuPCH.h"
 
-
-#include "common.h"
-#include "TCPServer.h"
-#include "logsys.h"
-
-#include <stdio.h>
 #ifdef WIN32
 	#include <process.h>
 #else
@@ -37,17 +32,6 @@
 
 
 #define SERVER_LOOP_GRANULARITY 3	//# of ms between checking our socket/queues
-
-inline uint32 now()
-{	
-#ifdef WIN32
-	return GetTickCount();
-#else
-	struct timeval tv;
-	gettimeofday(&tv, NULL);
-	return (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
-#endif
-}
 
 BaseTCPServer::BaseTCPServer(int16 in_port) {
 	NextID = 1;
@@ -263,5 +247,3 @@ bool BaseTCPServer::IsOpen() {
 	MSock.unlock();
 	return ret;
 }
-
-

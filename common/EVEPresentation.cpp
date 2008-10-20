@@ -15,23 +15,7 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "../common/common.h"
-#include "../common/logsys.h"
-
-#include "EVEPresentation.h"
-#include "EVEVersion.h"
-#include "PyPacket.h"
-#include "packet_functions.h"
-#include "PyRep.h"
-#include "EVEUnmarshal.h"
-#include "EVEMarshal.h"
-#include "PyDumpVisitor.h"
-
-#include "../packets/Crypto.h"
-
-//unfortunately, account login is now more low-level, so we need to include this
-#include "../server/Client.h"
-#include "../server/PyCallable.h"
+#include "EvemuPCH.h"
 
 static const byte handshakeFunc[] = {
 	0x74, 0x04, 0x00, 0x00, 0x00, 0x4E, 0x6F, 0x6E, 0x65	//marshaled Python string "None"
@@ -52,7 +36,7 @@ EVEPresentation::EVEPresentation(
 EVEPresentation::~EVEPresentation() {
 	delete m_request;
 	//let the server thread know we are done with this connection
-	net->Free();
+	//net->Free();
 }
 
 bool EVEPresentation::Connected() const {
@@ -321,7 +305,7 @@ PyPacket *EVEPresentation::_Dispatch(PyRep *r) {
 			server_shake.cluster_usercount = m_userCount;
 			server_shake.proxy_nodeid = 0xFFAA;
 			server_shake.user_logonqueueposition = 1;
-			server_shake.challenge_responsehash = "654"; /* binascii.crc_hqx of 64 zero bytes in a string, in a single element tuple, marshaled */
+			server_shake.challenge_responsehash = "654"; // binascii.crc_hqx of 64 zero bytes in a string, in a single element tuple, marshaled
 			
 			r = server_shake.Encode();
 			_QueueRep(r);
@@ -385,6 +369,7 @@ std::string EVEPresentation::GetConnectedAddress() const {
 	in.s_addr = net->GetrIP();
 	snprintf(buf, sizeof(buf), "%s:%d", inet_ntoa(in), net->GetrPort());
 	return(buf);
+	//return net->GetrIP();
 }
 
 

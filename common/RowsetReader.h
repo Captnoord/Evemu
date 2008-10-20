@@ -14,6 +14,7 @@
   along with this program; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+
 #ifndef __ROWSETREADER_H_INCL__
 #define __ROWSETREADER_H_INCL__
 
@@ -21,7 +22,6 @@
 #include <string>
 #include "../packets/General.h"
 #include "PyVisitor.h"
-//#include "logsys.h"
 
 /*
  * this object is incredibly slow, so dont use it a lot...

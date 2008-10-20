@@ -24,7 +24,6 @@ using namespace std;
 
 #define DEBUG_MUTEX_CLASS 0
 #if DEBUG_MUTEX_CLASS >= 1
-	
 #endif
 
 #ifdef WIN32

@@ -16,21 +16,8 @@
 */
 
 
+#include "EvemuPCH.h"
 
-#include "InvBrokerService.h"
-#include "../common/logsys.h"
-#include "../common/PyRep.h"
-#include "../common/PyPacket.h"
-#include "../Client.h"
-#include "../PyServiceCD.h"
-#include "../PyServiceMgr.h"
-#include "../PyBoundObject.h"
-#include "../inventory/ItemFactory.h"
-#include "../inventory/InventoryItem.h"
-#include "../common/EVEUtils.h"
-
-#include "../packets/General.h"
-#include "../packets/Inventory.h"
 
 PyCallable_Make_InnerDispatcher(InvBrokerService)
 

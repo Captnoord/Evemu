@@ -15,19 +15,8 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#include "EvemuPCH.h"
 
-#include "PyService.h"
-#include "PyServiceMgr.h"
-#include "PyBoundObject.h"
-#include "../common/logsys.h"
-#include "../common/PyRep.h"
-#include "../common/PyPacket.h"
-#include "../common/misc.h"
-#include "../common/EVEUtils.h"
-#include "Client.h"
-
-#include "../packets/ObjectCaching.h"
-#include "../packets/General.h"
 
 PyService::PyService(PyServiceMgr *mgr, const char *serviceName)
 : PyCallable(mgr, serviceName)

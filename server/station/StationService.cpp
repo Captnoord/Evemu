@@ -16,14 +16,8 @@
 */
 
 
+#include "EvemuPCH.h"
 
-#include "StationService.h"
-#include "../common/logsys.h"
-#include "../common/PyRep.h"
-#include "../common/PyPacket.h"
-#include "../Client.h"
-#include "../PyServiceCD.h"
-#include "../PyServiceMgr.h"
 
 PyCallable_Make_InnerDispatcher(StationService)
 

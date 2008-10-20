@@ -15,12 +15,7 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
-#include "TargetManager.h"
-#include "../common/logsys.h"
-#include "../common/PyRep.h"
-#include "../system/SystemManager.h"
-#include "../system/SystemEntity.h"
+#include "EvemuPCH.h"
 
 TargetManager::TargetManager(SystemEntity *self)
 : m_destroyed(false),

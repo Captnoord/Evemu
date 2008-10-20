@@ -19,7 +19,7 @@
 
 namespace Destiny {
 
-const char *const DSTBALL_modeNames[] = {
+	const char *const DSTBALL_modeNames[] = {
 	"GOTO",
 	"FOLLOW",
 	"STOP",

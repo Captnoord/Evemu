@@ -15,12 +15,7 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "logsys.h"
-#include "dbcore.h"
-#include "PyRep.h"
-#include "EVEDBUtils.h"
-#include "../ServiceDB.h"
-#include "FactoryDB.h"
+#include "EvemuPCH.h"
 
 FactoryDB::FactoryDB(DBcore *db)
 : ServiceDB(db)

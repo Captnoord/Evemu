@@ -55,7 +55,6 @@ private:
 	Mutex*	mut;
 };
 
-
 // Somewhat untested...
 // Multi-read, single write mutex -Quagmire
 class MRMutex {

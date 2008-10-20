@@ -15,13 +15,7 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
-#include "PyCallable.h"
-#include "../common/logsys.h"
-#include "../common/PyRep.h"
-#include "../common/PyPacket.h"
-#include "EntityList.h"
-#include "PyServiceMgr.h"
+#include "EvemuPCH.h"
 
 PyCallable::PyCallable(PyServiceMgr *mgr, const char *callableName)
 : m_manager(mgr),

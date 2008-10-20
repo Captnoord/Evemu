@@ -14,18 +14,8 @@
   along with this program; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+#include "EvemuPCH.h"
 
-#include "InventoryItem.h"
-#include "ItemFactory.h"
-#include "../common/PyRep.h"
-#include "../ServiceDB.h"
-#include "../EntityList.h"
-#include "../Client.h"
-#include "../common/EVEUtils.h"
-
-#include "../packets/Inventory.h"
-#include "../packets/General.h"
-#include "../packets/DogmaIM.h"
 
 
 

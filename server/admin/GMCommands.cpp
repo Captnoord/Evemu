@@ -15,16 +15,7 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "AllCommands.h"
-#include "../inventory/InventoryItem.h"
-#include "../inventory/ItemFactory.h"
-#include "../NPC.h"
-#include "../ship/DestinyManager.h"
-#include "../system/SystemManager.h"
-
-#include "../packets/Inventory.h"
-#include "../packets/General.h"
-
+#include "EvemuPCH.h"
 
 PyResult Command_summon(Client *who, CommandDB *db, PyServiceMgr *services, const Seperator &args) {
 	if(!args.IsNumber(1)) {

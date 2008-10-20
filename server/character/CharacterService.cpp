@@ -15,26 +15,9 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
-#include "CharacterService.h"
-#include "../common/logsys.h"
-#include "../common/PyRep.h"
-#include "../common/PyPacket.h"
-#include "../common/EVEUtils.h"
-#include "../Client.h"
-#include "../PyServiceCD.h"
-#include "../PyServiceMgr.h"
-#include "../cache/ObjCacheService.h"
-#include "../EntityList.h"
-#include "../common/EVEUtils.h"
-#include "../inventory/InventoryItem.h"
-#include "../inventory/ItemFactory.h"
-
-#include "../packets/General.h"
-#include "../packets/Character.h"
+#include "EvemuPCH.h"
 
 PyCallable_Make_InnerDispatcher(CharacterService)
-
 
 CharacterService::CharacterService(PyServiceMgr *mgr, DBcore *dbc)
 : PyService(mgr, "character"),

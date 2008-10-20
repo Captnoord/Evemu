@@ -15,27 +15,9 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
-
-#include "BeyonceService.h"
-#include "../common/logsys.h"
-#include "../common/PyRep.h"
-#include "../common/PyPacket.h"
-#include "../common/gpoint.h"
-#include "../Client.h"
-#include "../PyServiceCD.h"
-#include "../PyServiceMgr.h"
-#include "../PyBoundObject.h"
-#include "../cache/ObjCacheService.h"
-#include "../ship/DestinyManager.h"
-#include "../system/SystemManager.h"
-
-#include "../packets/General.h"
-#include "../packets/Destiny.h"
+#include "EvemuPCH.h"
 
 PyCallable_Make_InnerDispatcher(BeyonceService)
-
-
 
 class BeyonceBound
 : public PyBoundObject {

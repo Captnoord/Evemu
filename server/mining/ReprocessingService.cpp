@@ -14,17 +14,8 @@
   along with this program; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+#include "EvemuPCH.h"
 
-#include "ReprocessingService.h"
-#include "../common/logsys.h"
-#include "../common/PyRep.h"
-#include "../Client.h"
-#include "../PyServiceCD.h"
-#include "../PyServiceMgr.h"
-#include "../PyBoundObject.h"
-#include "../packets/General.h"
-#include "../packets/Inventory.h"
-#include "../inventory/InventoryItem.h"
 
 PyCallable_Make_InnerDispatcher(ReprocessingService)
 

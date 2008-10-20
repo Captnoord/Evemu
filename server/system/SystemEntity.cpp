@@ -15,18 +15,8 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#include "EvemuPCH.h"
 
-#include "SystemEntity.h"
-#include "../common/DestinyStructs.h"
-#include "../common/DestinyBinDump.h"
-#include "../common/PyRep.h"
-#include "../Client.h"
-#include "../NPC.h"
-#include "../inventory/InventoryItem.h"
-#include "../packets/Destiny.h"
-#include "../ship/DestinyManager.h"
-#include "../system/Damage.h"
-#include "../common/EVEUtils.h"
 
 
 using namespace Destiny;

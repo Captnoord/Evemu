@@ -45,7 +45,6 @@
 #include "types.h"
 #include "Mutex.h"
 #include "queue.h"
-//#include "MiscFunctions.h"
 
 class BaseTCPServer;
 class ServerPacket;

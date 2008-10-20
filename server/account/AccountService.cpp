@@ -16,20 +16,9 @@
 */
 
 
+#include "EvemuPCH.h"
 
-#include "AccountService.h"
-#include "../common/logsys.h"
-#include "../common/PyRep.h"
-#include "../common/PyPacket.h"
-#include "../common/EVEUtils.h"
-#include "../Client.h"
-#include "../PyServiceCD.h"
-#include "../PyServiceMgr.h"
-#include "../EntityList.h"
-#include "../packets/General.h"
-#include "../packets/Inventory.h"
-#include "../packets/Wallet.h"
-#include "../cache/ObjCacheService.h"
+
 
 PyCallable_Make_InnerDispatcher(AccountService)
 

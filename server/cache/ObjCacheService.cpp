@@ -16,19 +16,8 @@
 */
 
 
+#include "EvemuPCH.h"
 
-#include "ObjCacheService.h"
-
-#include "../common/logsys.h"
-#include "../common/PyRep.h"
-#include "../common/PyPacket.h"
-#include "../common/CachedObjectMgr.h"
-
-#include "../Client.h"
-#include "../PyServiceCD.h"
-#include "../PyServiceMgr.h"
-
-#include "../packets/ObjectCaching.h"
 
 
 const char *const ObjCacheService::LoginCachableObjects[] = {

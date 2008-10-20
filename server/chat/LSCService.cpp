@@ -16,21 +16,8 @@
 */
 
 
+#include "EvemuPCH.h"
 
-#include "LSCService.h"
-#include "../common/logsys.h"
-#include "../common/PyRep.h"
-#include "../common/PyPacket.h"
-#include "../common/packet_types.h"
-#include "../Client.h"
-#include "../PyServiceCD.h"
-#include "../PyServiceMgr.h"
-#include "../admin/CommandDispatcher.h"
-#include "../common/EVEUtils.h"
-#include "../common/MiscFunctions.h"
-
-#include "../packets/LSCPkts.h"
-#include "../packets/General.h"
 
 PyCallable_Make_InnerDispatcher(LSCService)
 

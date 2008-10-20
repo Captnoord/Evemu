@@ -37,12 +37,6 @@
 	#endif
 #endif
 
-#ifdef WIN32
-	// VS6 doesn't like the length of STL generated names: disabling
-	#pragma warning(disable:4786)
-	#pragma warning(disable:4996)
-#endif
-
 #ifndef WIN32
 	#define DebugBreak()			if(0) {}
 #endif
@@ -61,6 +55,7 @@
 	#define strncasecmp	_strnicmp
 	#define strcasecmp	_stricmp
 	#include <process.h>
+
 #else
 	#include "unix.h"
 	#include <pthread.h>

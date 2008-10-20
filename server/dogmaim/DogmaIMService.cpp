@@ -16,23 +16,8 @@
 */
 
 
+#include "EvemuPCH.h"
 
-#include "DogmaIMService.h"
-#include "../common/logsys.h"
-#include "../common/PyRep.h"
-#include "../common/PyPacket.h"
-#include "../common/EVEUtils.h"
-#include "../Client.h"
-#include "../PyServiceCD.h"
-#include "../PyBoundObject.h"
-#include "../PyServiceMgr.h"
-#include "../cache/ObjCacheService.h"
-#include "../inventory/InventoryItem.h"
-#include "../inventory/ItemFactory.h"
-#include "../system/SystemManager.h"
-
-#include "../packets/General.h"
-#include "../packets/DogmaIM.h"
 
 PyCallable_Make_InnerDispatcher(DogmaIMService)
 

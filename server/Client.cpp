@@ -15,52 +15,7 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
-
-
-#include "../common/common.h"
-#include <errno.h>
-#include <stdio.h>
-#include <string.h>
-
-#include "Client.h"
-#include "../common/PyPacket.h"
-#include "../common/PyRep.h"
-#include "../common/logsys.h"
-#include "../common/EVEMarshal.h"
-#include "../common/packet_functions.h"
-#include "../common/Base64.h"
-#include "../common/misc.h"
-#include "../common/EVEUnmarshal.h"
-#include "../common/EVEVersion.h"
-#include "../common/PyDumpVisitor.h"
-#include "../common/DestinyStructs.h"
-#include "../common/EVEUtils.h"
-#include "../common/MiscFunctions.h"
-#include "../common/sigexcept/sigexcept.h"
-
-#include "../packets/AccountPkts.h"
-#include "../packets/Crypto.h"
-#include "../packets/General.h"
-#include "../packets/Inventory.h"
-#include "../packets/Wallet.h"
-#include "../packets/Character.h"
-#include "../packets/DogmaIM.h"
-#include "../packets/Destiny.h"
-
-#include "PyService.h"
-#include "PyServiceMgr.h"
-#include "ServiceDB.h"
-#include "EntityList.h"
-#include "chat/LSCChannel.h"
-#include "chat/LSCService.h"
-#include "inventory/InventoryItem.h"
-#include "inventory/ItemFactory.h"
-#include "cache/ObjCacheService.h"
-#include "ship/DestinyManager.h"
-#include "system/SystemManager.h"
-#include "system/Damage.h"
-#include "NPC.h"
+#include "EvemuPCH.h"
 
 static const uint32 PING_INTERVAL_US = 60000;
 
@@ -243,7 +198,7 @@ void Client::FastQueuePacket(PyPacket **p) {
 }
 
 bool Client::ProcessNet() {
-	TRY_SIGEXCEPT {
+	//TRY_SIGEXCEPT {
 		
 		if(!m_net.Connected())
 			return(false);
@@ -283,10 +238,10 @@ bool Client::ProcessNet() {
 		}
 	
 		return(true);
-	} CATCH_SIGEXCEPT(e) {
+	/*} CATCH_SIGEXCEPT(e) {
 		  _log(CLIENT__ERROR, "%s: Exception caught processing network packets\n%s", GetName(), e.stack_string().c_str());
 		  return(false);
-	}
+	}*/
 }
 
 void Client::Process() {
@@ -797,7 +752,7 @@ void Client::_ProcessCallRequest(PyPacket *packet) {
 	//build arguments
 	PyCallArgs args(this, &call.arg_tuple, &call.arg_dict);
 
-	try {
+	//try {
 		//parts of call may be consumed here
 		PyResult result = svc->Call(call, args);
 
@@ -807,7 +762,7 @@ void Client::_ProcessCallRequest(PyPacket *packet) {
 		_CheckSessionChange();	//send out the session change before the return.
 
 		_SendCallReturn(packet, &res);
-	} catch(sigexcept_exception e) /* CATCH_SIGEXCEPT(e) */ {
+	/*} catch(sigexcept_exception e)
 		std::string str = e.to_string();
 
 		_log(CLIENT__ERROR, "%s invoked exception %s by calling %s::%s\n%s",
@@ -832,7 +787,7 @@ void Client::_ProcessCallRequest(PyPacket *packet) {
 		PyRep *except = e.ssException.hijack();
 
 		_SendException(packet, WRAPPEDEXCEPTION, &except);
-	}
+	}*/
 }
 
 void Client::_ProcessNotification(PyPacket *packet) {

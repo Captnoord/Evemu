@@ -15,20 +15,8 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#include "EvemuPCH.h"
 
-#include "SkillMgrService.h"
-#include "../common/logsys.h"
-#include "../common/PyRep.h"
-#include "../common/PyPacket.h"
-#include "../common/EVEUtils.h"
-#include "../Client.h"
-#include "../PyServiceCD.h"
-#include "../PyServiceMgr.h"
-#include "../PyBoundObject.h"
-#include "../inventory/InventoryItem.h"
-#include "../inventory/ItemFactory.h"
-
-#include "../packets/General.h"
 
 PyCallable_Make_InnerDispatcher(SkillMgrService)
 

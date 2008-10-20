@@ -15,27 +15,9 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
-#include "CorpStationMgrService.h"
-#include "../common/logsys.h"
-#include "../common/PyRep.h"
-#include "../common/PyPacket.h"
-#include "../common/packet_types.h"
-#include "../packets/General.h"
-#include "../packets/Wallet.h"
-#include "../packets/LSCPkts.h"
-#include "../Client.h"
-#include "../EntityList.h"
-#include "../PyServiceCD.h"
-#include "../PyServiceMgr.h"
-#include "../PyBoundObject.h"
-#include "../cache/ObjCacheService.h"
-#include "../chat/LSCService.h"
-#include "../common/EVEUtils.h"
-#include "CorporationCarrier.h"
+#include "EvemuPCH.h"
 
 PyCallable_Make_InnerDispatcher(CorpStationMgrService)
-
 
 class CorpStationMgrIMBound
 : public PyBoundObject {

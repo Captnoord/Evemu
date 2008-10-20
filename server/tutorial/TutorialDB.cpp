@@ -15,13 +15,7 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
-#include "TutorialDB.h"
-#include "../common/dbcore.h"
-#include "../common/logsys.h"
-#include "../common/EVEDBUtils.h"
-#include "../common/PyRep.h"
-
+#include "EvemuPCH.h"
 
 TutorialDB::TutorialDB(DBcore *db) 
 : ServiceDB(db)

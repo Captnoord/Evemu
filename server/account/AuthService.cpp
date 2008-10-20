@@ -15,15 +15,7 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "AuthService.h"
-#include "../common/logsys.h"
-#include "../common/PyRep.h"
-#include "../common/PyPacket.h"
-#include "../common/EVEUtils.h"
-#include "../common/EVEmuRevision.h"
-#include "../Client.h"
-#include "../PyServiceCD.h"
-#include "../PyServiceMgr.h"
+#include "EvemuPCH.h"
 
 #ifdef SHOW_LOGIN_MESSAGE
 //some adverts - may be customized
@@ -34,7 +26,7 @@ static const char *const loginMessage =
 	"<body>"
 		"Welcome to <b>EVEmu Server " EVEMU_REVISION "</b>.<br>"
 		"<br>"
-		"You can find a lot of interesing info about this project at <a href=\"http://evemu.sourceforge.net/\">SoureForge.net</a> or at <a href=\"http://mmoforge.org/gf/project/evemu\">MMOForge.org</a>.<br>"
+		"You can find a lot of interesting info about this project at <a href=\"http://evemu.sourceforge.net/\">SoureForge.net</a> or at <a href=\"http://mmoforge.org/gf/project/evemu\">MMOForge.org</a>.<br>"
 		"<br>"
 		"You can also join our IRC channel at <b>irc.mmoforge.org:6667</b>, channel <b>#evemu</b>.<br>"
 		"<br>"

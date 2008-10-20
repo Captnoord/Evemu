@@ -15,18 +15,7 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "SystemBubble.h"
-#include "SystemEntity.h"
-#include "SystemManager.h"
-#include "../ship/DestinyManager.h"
-
-#include "../common/PyRep.h"
-#include "../common/DestinyStructs.h"
-#include "../common/DestinyBinDump.h"
-#include "../common/logsys.h"
-
-#include "../packets/Destiny.h"
-
+#include "EvemuPCH.h"
 
 SystemBubble::SystemBubble(const GPoint &center, double radius)
 : m_center(center),

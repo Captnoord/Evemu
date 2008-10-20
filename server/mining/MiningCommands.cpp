@@ -15,17 +15,7 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "../admin/AllCommands.h"
-
-#include "../inventory/InventoryItem.h"
-#include "../inventory/ItemFactory.h"
-#include "../system/SystemManager.h"
-#include "Asteroid.h"
-//#include "../NPC.h"
-//#include "../ship/DestinyManager.h"
-
-//#include "../packets/Inventory.h"
-//#include "../packets/General.h"
+#include "EvemuPCH.h"
 
 double randf() {
 	return rand() / (RAND_MAX + 1.);

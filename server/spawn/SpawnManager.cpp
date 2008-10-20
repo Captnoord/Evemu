@@ -15,15 +15,7 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "SpawnManager.h"
-#include "../system/SystemManager.h"
-#include "MiscFunctions.h"
-#include "../common/logsys.h"
-#include "../PyServiceMgr.h"
-#include "../NPC.h"
-#include "../ship/DestinyManager.h"
-#include "../inventory/InventoryItem.h"
-#include <vector>
+#include "EvemuPCH.h"
 
 SpawnGroup::Entry::Entry(
 	uint32 _spawnGroupID,

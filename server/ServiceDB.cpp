@@ -16,16 +16,8 @@
 */
 
 
+#include "EvemuPCH.h"
 
-#include "ServiceDB.h"
-#include "../common/dbcore.h"
-#include "../common/logsys.h"
-#include "../common/PyRep.h"
-#include "../common/EVEDBUtils.h"
-#include "../common/gpoint.h"
-#include "inventory/InventoryItem.h"
-#include "inventory/ItemFactory.h"
-#include "Client.h"	//for CharacterData and CorpMemberInfo
 
 ServiceDB::ServiceDB(DBcore *db)
 : m_db(db)

@@ -15,26 +15,8 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#include "EvemuPCH.h"
 
-#include "SystemManager.h"
-#include "SystemEntity.h"
-#include "SystemEntities.h"
-#include "SystemBubble.h"
-#include "../common/DestinyStructs.h"
-#include "../common/DestinyBinDump.h"
-#include "../packets/Destiny.h"
-#include "../common/PyRep.h"
-#include "../common/EVEUtils.h"
-#include "../Client.h"
-#include "../NPC.h"
-#include "../inventory/InventoryItem.h"
-#include "../spawn/SpawnManager.h"
-#include "../chat/LSCService.h"
-#include "../EntityList.h"
-#include "../PyServiceMgr.h"
-
-//temp until we move the dynamic entity factory out.
-#include "../mining/Asteroid.h"
 
 using namespace Destiny;
 

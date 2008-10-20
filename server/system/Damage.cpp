@@ -15,20 +15,9 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "Damage.h"
-#include "../common/EVEUtils.h"
-#include "../spawn/SpawnManager.h"
-#include "../inventory/InventoryItem.h"
-#include "../inventory/ItemFactory.h"
-#include "../system/SystemEntity.h"
-#include "../system/SystemManager.h"
-#include "../ship/DestinyManager.h"
-#include "../Client.h"
-#include "../NPC.h"
-#include "../PyServiceMgr.h"
+#include "EvemuPCH.h"
 
-#include "../packets/DogmaIM.h"
-#include "../packets/Destiny.h"
+
 
 
 Damage::Damage(

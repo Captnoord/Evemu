@@ -14,18 +14,7 @@
   along with this program; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-#include <math.h>	// for ceil() and floor() to properly round quantities
-
-#include "PyRep.h"
-#include "logsys.h"
-
-#include "RamProxyService.h"
-#include "../Client.h"
-#include "../PyServiceCD.h"
-
-#include "../packets/Manufacturing.h"
-#include "../packets/General.h"
+#include "EvemuPCH.h"
 
 PyCallable_Make_InnerDispatcher(RamProxyService)
 

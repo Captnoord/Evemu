@@ -18,12 +18,6 @@
 #ifndef TCPSERVER_H_
 #define TCPSERVER_H_
 
-#include "common.h"
-#include "Mutex.h"
-
-#include <vector>
-#include <queue>
-
 #define TCPServer_ErrorBufferSize	1024
 
 //this is the non-connection type specific server.

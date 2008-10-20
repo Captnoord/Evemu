@@ -16,17 +16,8 @@
 */
 
 
+#include "EvemuPCH.h"
 
-#include "MapService.h"
-#include "../common/logsys.h"
-#include "../common/PyRep.h"
-#include "../common/PyPacket.h"
-#include "../common/packet_functions.h"
-#include "../Client.h"
-#include "../PyServiceCD.h"
-#include "../PyServiceMgr.h"
-#include "../cache/ObjCacheService.h"
-#include "../packets/General.h"
 
 PyCallable_Make_InnerDispatcher(MapService)
 

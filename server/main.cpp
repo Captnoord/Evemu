@@ -15,82 +15,13 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
-
-#include "../common/common.h"
+#include "EvemuPCH.h"
 
 #include <signal.h>
 
-#include "../common/EVETCPServer.h"
-#include "../common/logsys.h"
-#include "../common/EVETCPConnection.h"
-#include "../common/EVEPresentation.h"
-#include "../common/timer.h"
-#include "../common/PyRep.h"
-#include "../common/dbcore.h"
-#include "../common/EVEmuRevision.h"
-#include "../common/EVEVersion.h"
-#include "PyServiceMgr.h"
-#include "EVEmuServerConfig.h"
-
-
-#include "EntityList.h"
-#include "NetService.h"
-#include "Client.h"
-
-//services:
-#include "account/AccountService.h"
-#include "missions/AgentMgrService.h"
-#include "missions/MissionMgrService.h"
-#include "admin/AlertService.h"
-#include "account/AuthService.h"
-#include "market/BillMgrService.h"
-#include "BookmarkService.h"
-#include "character/CharacterService.h"
-#include "character/CharMgrService.h"
-#include "character/SkillMgrService.h"
-#include "config/ConfigService.h"
-#include "config/LanguageService.h"
-#include "corporation/CorpMgrService.h"
-#include "corporation/CorpStationMgrService.h"
-#include "corporation/CorporationService.h"
-#include "corporation/CorpRegistryService.h"
-#include "dogmaim/DogmaIMService.h"
-#include "inventory/InvBrokerService.h"
-#include "chat/LSCService.h"
-#include "chat/LookupService.h"
-#include "chat/VoiceMgrService.h"
-#include "admin/AllCommands.h"
-#include "admin/CommandDispatcher.h"
-#include "admin/CommandDB.h"
-#include "admin/PetitionerService.h"
-#include "admin/SlashService.h"
-#include "ship/ShipService.h"
-#include "ship/InsuranceService.h"
-#include "ship/BeyonceService.h"
-#include "map/MapService.h"
-#include "cache/ObjCacheService.h"
-#include "chat/OnlineStatusService.h"
-#include "standing/Standing2Service.h"
-#include "standing/WarRegistryService.h"
-#include "standing/FactionWarMgrService.h"
-#include "station/StationService.h"
-#include "station/StationSvcService.h"
-#include "station/JumpCloneService.h"
-#include "system/KeeperService.h"
-#include "system/DungeonService.h"
-#include "market/MarketProxyService.h"
-#include "market/ContractMgrService.h"
-#include "tutorial/TutorialService.h"
-#include "mining/ReprocessingService.h"
-#include "manufacturing/FactoryService.h"
-#include "manufacturing/RamProxyService.h"
-#include "posmgr/PosMgrService.h"
-
-//int catch_segv;
-
-#define IMPLEMENT_SIGEXCEPT
-#include "../common/sigexcept/sigexcept.h"
+//#define USE_RUNTIME_EXCEPTIONS 1
+//#define IMPLEMENT_SIGEXCEPT 1
+//#include "../common/sigexcept/sigexcept.h"
 
 static void CatchSignal(int sig_num);
 static bool InitSignalHandlers();
@@ -98,11 +29,13 @@ static bool InitSignalHandlers();
 static volatile bool RunLoops = true;
 
 int main(int argc, char *argv[]) {
-	INIT_SIGEXCEPT();
+	//INIT_SIGEXCEPT();
 	
 	_log(SERVER__INIT, "EVEmu %s", EVEMU_REVISION);
 	_log(SERVER__INIT, " Supported Client: %s, Version %.2f, Build %d, MachoNet %d",
 		EVEProjectVersion, EVEVersionNumber, EVEBuildVersion, MachoNetVersion);
+
+	//ThreadPool.Startup();
 
 	//it is important to do this before doing much of anything, in case they use it.
 	Timer::SetCurrentTime();

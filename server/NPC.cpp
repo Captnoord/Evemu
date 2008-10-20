@@ -21,7 +21,7 @@
 #include "inventory/InventoryItem.h"
 #include "inventory/ItemFactory.h"
 #include "../common/logsys.h"
-#include "PyServiceMgr.h"
+
 #include "ship/DestinyManager.h"
 #include "system/SystemManager.h"
 

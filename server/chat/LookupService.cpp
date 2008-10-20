@@ -16,15 +16,8 @@
 */
 
 
+#include "EvemuPCH.h"
 
-#include "LookupService.h"
-#include "../common/logsys.h"
-#include "../common/PyRep.h"
-#include "../common/PyPacket.h"
-#include "../Client.h"
-#include "../PyServiceCD.h"
-#include "../PyServiceMgr.h"
-#include "../packets/LSCPkts.h"
 
 PyCallable_Make_InnerDispatcher(LookupService)
 

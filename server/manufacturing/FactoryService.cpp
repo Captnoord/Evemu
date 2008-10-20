@@ -14,12 +14,8 @@
   along with this program; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+#include "EvemuPCH.h"
 
-#include "FactoryService.h"
-#include "../Client.h"
-#include "PyRep.h"
-#include "../PyServiceCD.h"
-#include "../packets/General.h"
 
 PyCallable_Make_InnerDispatcher(FactoryService)
 

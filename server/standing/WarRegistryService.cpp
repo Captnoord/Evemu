@@ -15,12 +15,9 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "WarRegistryService.h"
-#include "../Client.h"
-#include "../PyServiceCD.h"
-#include "../PyBoundObject.h"
+#include "EvemuPCH.h"
 
-#include "../packets/General.h"
+
 
 PyCallable_Make_InnerDispatcher(WarRegistryService)
 

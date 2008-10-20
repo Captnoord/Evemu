@@ -595,8 +595,8 @@ bool TCPConnection::Process() {
 	case TCPS_Connected:
 		// only receive data in the connected state, no others...
 		if (!RecvData(errbuf)) {
-		    struct in_addr	in;
-			in.s_addr = GetrIP();
+		    //struct in_addr	in;
+			//in.s_addr = GetrIP();
 			//cout << inet_ntoa(in) << ":" << GetrPort() << ": " << errbuf << endl;
 			return false;
 		}

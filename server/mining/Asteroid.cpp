@@ -1,10 +1,5 @@
 
-#include "Asteroid.h"
-#include "../common/DestinyStructs.h"
-#include "../common/gpoint.h"
-#include "../common/logsys.h"
-#include "../inventory/InventoryItem.h"
-#include "../system/Damage.h"
+#include "EvemuPCH.h"
 
 using namespace Destiny;
 

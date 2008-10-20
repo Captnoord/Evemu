@@ -16,24 +16,7 @@
 */
 
 
-
-#include "ShipService.h"
-#include "../common/logsys.h"
-#include "../common/PyRep.h"
-#include "../common/PyPacket.h"
-#include "../Client.h"
-#include "../PyServiceCD.h"
-#include "../PyServiceMgr.h"
-#include "../PyBoundObject.h"
-#include "../inventory/InventoryItem.h"
-#include "../inventory/ItemFactory.h"
-#include "../system/SystemManager.h"
-#include "../NPC.h"
-#include "../ship/DestinyManager.h"
-
-#include "../packets/General.h"
-#include "../packets/Inventory.h"
-#include "../packets/Destiny.h"
+#include "EvemuPCH.h"
 
 PyCallable_Make_InnerDispatcher(ShipService)
 

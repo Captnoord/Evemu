@@ -15,17 +15,9 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "SystemEntities.h"
-#include "../common/DestinyStructs.h"
-#include "../common/PyRep.h"
-#include "../packets/Destiny.h"
-#include "../common/EVEUtils.h"
-#include "../common/tables/invGroups.h"
-#include "../mining/AsteroidBeltManager.h"
-
+#include "EvemuPCH.h"
 
 using namespace Destiny;
-
 
 SimpleSystemEntity *SimpleSystemEntity::MakeEntity(SystemManager *system, const DBSystemEntity &entity) {
 	switch(entity.groupID) {

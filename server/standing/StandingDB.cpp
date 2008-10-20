@@ -15,14 +15,7 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
-
-#include "StandingDB.h"
-#include "../common/dbcore.h"
-#include "../common/logsys.h"
-#include "../common/EVEDBUtils.h"
-
-#include "../packets/General.h"
+#include "EvemuPCH.h"
 
 StandingDB::StandingDB(DBcore *db)
 : ServiceDB(db)
