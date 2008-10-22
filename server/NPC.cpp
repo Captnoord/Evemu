@@ -15,16 +15,7 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "NPC.h"
-#include "npc/NPCAI.h"
-#include "spawn/SpawnManager.h"
-#include "inventory/InventoryItem.h"
-#include "inventory/ItemFactory.h"
-#include "../common/logsys.h"
-
-#include "ship/DestinyManager.h"
-#include "system/SystemManager.h"
-
+#include "EvemuPCH.h"
 
 NPC::NPC(
 	SystemManager *system,

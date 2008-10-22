@@ -340,7 +340,7 @@ void SystemDungeonEntranceEntity::EncodeDestiny(std::vector<byte> &into) const {
 
 	item->head.entityID = m_self->itemID();
 	item->head.mode = Destiny::DSTBALL_STOP;
-	item->head.radius = m_self->radius();
+	item->head.radius = GetRadius();
 	const GPoint &pos = m_self->position();
 	item->head.x = pos.x;
 	item->head.y = pos.y;
@@ -358,7 +358,7 @@ void SystemDungeonEntranceEntity::EncodeDestiny(std::vector<byte> &into) const {
 	item->miniballs.balls[0].x = -7701.181;
 	item->miniballs.balls[0].y = 8060.06;
 	item->miniballs.balls[0].z = 2778.900;
-	item->miniballs.balls[0].radius = m_self->radius();
+	item->miniballs.balls[0].radius = GetRadius();
 
 	//slide pointer over points...
 	item = (AddBall_Dungeon *) (((byte *) item)+(miniball_count-1)*sizeof(MiniBall));

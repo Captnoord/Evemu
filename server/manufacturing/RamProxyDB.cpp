@@ -15,10 +15,7 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "RamProxyDB.h"
-#include "dbcore.h"
-#include "../common/EVEUtils.h"
-#include "../common/EVEDBUtils.h"
+#include "EvemuPCH.h"
 
 RamProxyDB::RamProxyDB(DBcore *db)
 : ServiceDB(db)
@@ -419,7 +416,7 @@ bool RamProxyDB::GetRequiredItems(const uint32 typeID, const EVERamActivity acti
 
 	DBResultRow row;
 	while(res.GetRow(row))
-		into.push_back(RequiredItem(row.GetUInt(0), row.GetUInt(1), row.GetFloat(2), row.GetInt(3)));
+		into.push_back(RequiredItem(row.GetUInt(0), row.GetUInt(1), row.GetFloat(2), row.GetInt(3) ? true : false));
 
 	return(true);
 }

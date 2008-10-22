@@ -214,16 +214,6 @@ PyResult DogmaIMBound::Handle_Deactivate(PyCallArgs &call) {
 	
 	call.client->modules.Deactivate(args.itemID, args.effectName);
 
-	/*InventoryItem *item = m_manager->item_factory->Load(args.itemID, false);
-	if(item == NULL) {
-		codelog(SERVICE__ERROR, "%s: Unable to load item %lu", call.client->GetName(), args.itemID);
-		return (NULL);
-	}
-	
-	if(args.effectName == "online") {
-		item->PutOffline();
-	}*/
-	
 	return(NULL);
 }
 

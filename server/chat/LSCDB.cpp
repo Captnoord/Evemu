@@ -17,16 +17,7 @@
 
 
 
-#include "LSCDB.h"
-#include "../common/dbcore.h"
-#include "../common/logsys.h"
-#include "../common/EVEDBUtils.h"
-#include "../common/EVEUtils.h"
-#include "LSCService.h"
-#include "LSCChannel.h"
-
-#include "../packets/General.h"
-#include "../packets/LSCPkts.h"
+#include "EvemuPCH.h"
 
 LSCDB::LSCDB(DBcore *db)
 : ServiceDB(db)

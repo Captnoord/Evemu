@@ -372,7 +372,7 @@ PyRep *TargetManager::Encode_GetTargets() const {
 	cur = m_targets.begin();
 	end = m_targets.end();
 	for(; cur != end; cur++) {
-		result->add(new PyRepInteger(cur->first->GetID()));
+		result->addInt(cur->first->GetID());
 	}
 
 	return(result);
@@ -385,7 +385,7 @@ PyRep *TargetManager::Encode_GetTargeters() const {
 	cur = m_targetedBy.begin();
 	end = m_targetedBy.end();
 	for(; cur != end; cur++) {
-		result->add(new PyRepInteger(cur->first->GetID()));
+		result->addInt(cur->first->GetID());
 	}
 
 	return(result);
