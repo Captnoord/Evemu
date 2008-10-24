@@ -87,19 +87,21 @@ AM_CONDITIONAL(EVETOOL, test x$evetool = xtrue)
 # Check for zlib
 AC_CHECK_LIB(z, deflate,, AC_MSG_ERROR([can't find zlib]))
 
-	# Check for pcap
-	AC_CHECK_LIB(pcap, pcap_open_live,, AC_MSG_ERROR([can't find libpcap]))
-	AC_CHECK_HEADERS(pcap.h,, AC_MSG_ERROR([can't find pcap.h]))
+# Check for pcap
+AC_CHECK_LIB(pcap, pcap_open_live,, AC_MSG_ERROR([can't find libpcap]))
+AC_CHECK_HEADERS(pcap.h,, AC_MSG_ERROR([can't find pcap.h]))
 
-	# nids
-	AC_CHECK_LIB(nids, nids_init,, AC_MSG_ERROR([can't find libnids]))
-	AC_CHECK_HEADERS(nids.h,, AC_MSG_ERROR([can't find nids.h]))
+# nids
+AC_CHECK_LIB(nids, nids_init,, AC_MSG_ERROR([can't find libnids]))
+AC_CHECK_HEADERS(nids.h,, AC_MSG_ERROR([can't find nids.h]))
 
-	# libnet
-	AC_CHECK_LIB(net, main,, AC_MSG_ERROR([can't find libnet]))
-	LIBNET_CFLAGS=`libnet-config --defines`
-	AC_SUBST(LIBNET_CFLAGS)
+# libnet
+AC_CHECK_LIB(net, main,, AC_MSG_ERROR([can't find libnet]))
+LIBNET_CFLAGS=`libnet-config --defines`
+AC_SUBST(LIBNET_CFLAGS)
 
+# readline
+AC_CHECK_HEADERS(readline/readline.h,, AC_MSG_ERROR([can't find readline]))
 
 # Define compile/library flags.
 AC_SUBST(AM_CXXFLAGS, "$AM_CXXFLAGS $INCLUDES $MYSQL_CFLAGS -Wall -DTIXML_USE_STL $LIBNET_CFLAGS")
