@@ -32,6 +32,7 @@ AH_TEMPLATE([USING_BIG_ENDIAN], Define this if you are on a big-endian system.)
 AH_TEMPLATE([USING_LITTLE_ENDIAN], Define this if you are on a non-big-endian system.)
 AH_TEMPLATE([X64], Define this if you are under an X64-based operating system.)
 AH_TEMPLATE([X86], Define this if you are under an X86-based 32bit operating system.)
+AH_TEMPLATE([EVEMU_REVISION], The revision of the latest checkout)
 
 # Checks for libraries.
 
@@ -115,6 +116,19 @@ AC_C_CONST
 AC_C_INLINE
 
 # Checks for library functions.
+
+# Extract the latest SVN revision
+AC_CHECK_PROG([SVNVERSION], [svnversion], yes)
+if test -z "$SVNVERSION"; then
+	AC_MSG_ERROR(Subversion 'svnversion' not found)
+else
+	EVEMU_REVISION=`/usr/bin/env svnversion -n`
+	if test -z "$EVEMU_REVISION"; then EVEMU_REVISION="n/a"; fi
+
+	AC_MSG_NOTICE(Extracted SVN version: $EVEMU_REVISION)
+	AC_DEFINE_UNQUOTED(EVEMU_REVISION,["\$Rev: $EVEMU_REVISION \$"])
+	AC_SUBST(EVEMU_REVISION)
+fi
 
 AC_CONFIG_FILES([
 	Makefile
