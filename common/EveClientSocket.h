@@ -3,7 +3,7 @@
 	LICENSE:
 	------------------------------------------------------------------------------------
 	This file is part of EVEmu: EVE Online Server Emulator
-	Copyright 2003 - 2008 The EVEmu Team
+	Copyright 2007 - 2008 The EVEmu Team
 	For the latest information visit http://evemu.mmoforge.org
 	------------------------------------------------------------------------------------
 	This program is free software; you can redistribute it and/or modify it under
@@ -27,7 +27,7 @@
 #define CLIENTSOCKET_SENDBUF_SIZE 131078
 #define CLIENTOCKET_RECVBUF_SIZE 16384
 
-// burst sending related stuff
+// 'outpacket' queue system, part of a reliable packet sending system
 enum OUTPACKET_RESULT
 {
 	OUTPACKET_RESULT_SUCCESS				= 1,
@@ -39,49 +39,53 @@ enum OUTPACKET_RESULT
 //authorize state machine
 enum EVE_AUTH_STATE
 {
-	EVE_AUTH_STATE_HANDSHAKE,			// version handshake
-	EVE_AUTH_STATE_QUEUE_COMMAND,
-	EVE_AUTH_STATE_NO_CRYPTO,			//
-	EVE_AUTH_STATE_CRYPTO_CHALLENGE,
-	EVE_AUTH_STATE_HANDSHAKE_SEND,
-	EVE_AUTH_STATE_DONE,				// finished
+	EVE_AUTH_STATE_HANDSHAKE,			// old VersionNotReceived					| version handshake
+	EVE_AUTH_STATE_QUEUE_COMMAND,		// old WaitingForCommand					| expect queue commands
+	EVE_AUTH_STATE_NO_CRYPTO,			// old CryptoRequestNotReceived				| expecting 'crypto' stuff
+	EVE_AUTH_STATE_CRYPTO_CHALLENGE,	// old CryptoRequestReceived_ChallengeWait	| 
+	EVE_AUTH_STATE_HANDSHAKE_SEND,		// old CryptoHandshakeSent					| waiting for handshake result
+	EVE_AUTH_STATE_DONE,				// old AcceptingPackets						| finished authorization
 };
 
 class EveClientSocket : public Socket
 {
 public:
-
+	// state machine function pointer typedef
 	typedef void (EveClientSocket::*stateProc)(PyRep&);
 
 	EveClientSocket(SOCKET fd);
 	~EveClientSocket();
 
-	// wrapper functions make the code readable
-	ASCENT_INLINE void _sendHandShake();
-	ASCENT_INLINE void _sendQueuePos( int queuePos );
-	ASCENT_INLINE void _sendAccept();
+	ASCENT_INLINE void HandleHandShake();
 
-	ASCENT_INLINE void _sendRequirePasswordType(int passwordType);
-
-
-	void HandleHandShake();
-
-	// simple packet send function
-	ASCENT_INLINE OUTPACKET_RESULT _outPacket(EVENetPacket * packet);
-
+	// basic PyRep send function
 	ASCENT_INLINE void OutPacket(PyRep * packet );
 
 	void OnRead();
 	void OnConnect();
 	void OnDisconnect();
 
-	bool Authed;
+	bool m_Authed;
 
-	//void (EveClientSocket::*currentStateMachine)(PyRep&);
+protected:
+	// Internal functions
 
-	stateProc currentStateMachine;
+	/************************************************************************/
+	/* Python packet send wrapper functions make the code readable          */
+	/************************************************************************/
+	ASCENT_INLINE void _sendHandShake();
+	ASCENT_INLINE void _sendQueuePos( int queuePos );
+	ASCENT_INLINE void _sendAccept();
+	ASCENT_INLINE void _sendRequirePasswordType(int passwordType);
 
-	// the authorization state machine
+	/************************************************************************/
+	/* raw Python packet send function                                      */
+	/************************************************************************/
+	ASCENT_INLINE OUTPACKET_RESULT _outPacket(EVENetPacket * packet);
+
+	/************************************************************************/
+	/* Authorization state machine                                          */
+	/************************************************************************/
 	void _authStateHandshake(PyRep& packet);
 	void _authStateQueueCommand(PyRep& packet);
 	void _authStateNoCrypto(PyRep& packet);
@@ -89,7 +93,8 @@ public:
 	void _authStateHandshakeSend(PyRep& packet);
 	void _authStateDone(PyRep& packet);
 
-protected:
+	
+	stateProc m_currentStateMachine;
 
 private:
 

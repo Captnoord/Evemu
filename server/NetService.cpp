@@ -15,16 +15,11 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
-
 #include "EvemuPCH.h"
 
 PyCallable_Make_InnerDispatcher(NetService)
 
-NetService::NetService(PyServiceMgr *mgr)
-: PyService(mgr, "machoNet"),
-m_dispatch(new Dispatcher(this))
-{
+NetService::NetService(PyServiceMgr *mgr) : PyService(mgr, "machoNet"), m_dispatch(new Dispatcher(this)) {
 	_SetCallDispatcher(m_dispatch);
 
 	PyCallable_REG_CALL(NetService, GetInitVals)
@@ -135,23 +130,3 @@ PyResult NetService::Handle_GetInitVals(PyCallArgs &call) {
 PyResult NetService::Handle_GetTime(PyCallArgs &call) {
 	return(new PyRepInteger(Win32TimeNow()));
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

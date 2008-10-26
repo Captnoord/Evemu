@@ -27,16 +27,11 @@
 #include "../common/EVEUtils.h"
 
 class Client;
-
 class PyRep;
 class PyRepTuple;
 class PyRepDict;
-
 class PyServiceMgr;
 class PyCallStream;
-
-
-
 
 class PyCallArgs {
 public:
@@ -49,9 +44,6 @@ public:
 	PyRepTuple *tuple;		//we own this, but it may be taken
 	std::map<std::string, PyRep *> byname;	//we own this, but elements may be taken.
 };
-
-
-
 
 class PyResult {
 protected:
@@ -73,10 +65,6 @@ public:
 
 	counted_ptr<PyRep> ssException;	//must never be NULL
 };
-
-
-
-
 
 class PyCallable {
 public:

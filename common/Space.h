@@ -3,7 +3,7 @@
 	LICENSE:
 	------------------------------------------------------------------------------------
 	This file is part of EVEmu: EVE Online Server Emulator
-	Copyright 2003 - 2008 The EVEmu Team
+	Copyright 2007 - 2008 The EVEmu Team
 	For the latest information visit http://evemu.mmoforge.org
 	------------------------------------------------------------------------------------
 	This program is free software; you can redistribute it and/or modify it under
@@ -29,6 +29,17 @@ class SERVER_DECL Space : public Singleton<Space>
 {
 public:
 	Space();
+
+	size_t GetConnectionCount()
+	{
+		return mAcceptedConnections;
+	}
+
+	size_t GetAuthorizedCount()
+	{
+		return mAuthorizedConnections;
+	}
+
 	size_t mAcceptedConnections;
 	size_t mAuthorizedConnections;
 };

@@ -219,7 +219,7 @@ bool PyPacket::Decode(PyRep *&in_packet) {
 	tuple->items[4] = NULL;	//we keep this one
 
 
-	//options dict
+	//options 'dict'
 	if(tuple->items[5]->CheckType(PyRep::None)) {
 		named_payload = NULL;
 	} else if(tuple->items[5]->CheckType(PyRep::Dict)) {
@@ -270,10 +270,6 @@ PyRep *PyPacket::Encode() {
 	
 	return(new PyRepObject(type_string, arg_tuple));
 }
-
-
-
-
 
 PyAddress::PyAddress()
 : type(Invalid),
@@ -973,7 +969,7 @@ PyRepTuple *EVENotificationStream::Encode() {
 	arg_tuple->items[1] = new PyRepString(method.c_str());
 
 	//args
-	//TODO: we dont really need to clone this if we can figure out a way to say "this is read only"
+	//TODO: we don't really need to clone this if we can figure out a way to say "this is read only"
 	//or if we can change this encode method to consume the PyCallStream (which will almost always be the case)
 	arg_tuple->items[2] = args->Clone();
 	

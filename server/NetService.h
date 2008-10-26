@@ -15,9 +15,8 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
-#ifndef __NET_H_INCL__
-#define __NET_H_INCL__
+#ifndef _NET_SERVICE_H
+#define _NET_SERVICE_H
 
 #include "PyService.h"
 
@@ -34,9 +33,4 @@ protected:
 	PyCallable_DECL_CALL(GetTime)
 };
 
-
-
-
-#endif
-
-
+#endif//_NET_SERVICE_H

@@ -24,11 +24,8 @@
 #include "../CrashHandler.h"
 
 #ifdef WIN32
-
 	#include <process.h>
-
 #else
-	
 	volatile int threadid_count = 0;
 	Mutex m_threadIdLock;
 	int GenerateThreadId()
@@ -38,7 +35,6 @@
 		m_threadIdLock.Release();
 		return i;
 	}
-
 #endif//WIN32
 
 #define THREAD_RESERVE 5
@@ -97,7 +93,7 @@ void ThreadContextPool::ExecuteTask(ThreadContext * ExecutionTarget)
 	--_threadsEaten;
 
 	// grab one from the pool, if we have any.
-	if(m_freeThreads.size())
+	if(m_freeThreads.size() != 0)
 	{
 		t = *m_freeThreads.begin();
 		m_freeThreads.erase(m_freeThreads.begin());
@@ -233,7 +229,7 @@ void ThreadContextPool::Shutdown()
 
 	for(ThreadSet::iterator itr = m_activeThreads.begin(); itr != m_activeThreads.end(); ++itr)
 	{
-		if((*itr)->ExecutionTarget)
+		if((*itr)->ExecutionTarget != NULL)
 			(*itr)->ExecutionTarget->OnShutdown();
 	}
 	_mutex.Release();
@@ -241,7 +237,7 @@ void ThreadContextPool::Shutdown()
 	for(;;)
 	{
 		_mutex.Acquire();
-		if(m_activeThreads.size() || m_freeThreads.size())
+		if(m_activeThreads.size() != 0 || m_freeThreads.size() != 0)
 		{
 			Log.Notice("ThreadPool", "%u threads remaining...",m_activeThreads.size() + m_freeThreads.size() );
 			_mutex.Release();
@@ -280,13 +276,13 @@ static unsigned long WINAPI thread_proc(void* param)
 	{
 		if(t->ExecutionTarget != NULL)
 		{
-			if( RunThread( t->ExecutionTarget ) )
+			if(RunThread( t->ExecutionTarget ) == true)
 				delete t->ExecutionTarget;
 
 			t->ExecutionTarget = NULL;
 		}
 
-		if(!ThreadPool.ThreadExit(t))
+		if(ThreadPool.ThreadExit(t) == false)
 		{
 			//Log.Debug("ThreadPool", "Thread %u exiting.", tid);
 			break;
@@ -337,13 +333,13 @@ static void * thread_proc(void * param)
 	{
 		if(t->ExecutionTarget != NULL)
 		{
-			if(t->ExecutionTarget->run())
+			if(t->ExecutionTarget->run()== true)
 				delete t->ExecutionTarget;
 
 			t->ExecutionTarget = NULL;
 		}
 
-		if(!ThreadPool.ThreadExit(t))
+		if(ThreadPool.ThreadExit(t) == false)
 			break;
 		else
 		{
