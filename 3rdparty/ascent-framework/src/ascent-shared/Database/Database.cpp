@@ -17,7 +17,6 @@
  *
  */
 
-
 #include "DatabaseEnv.h"
 #include "../CrashHandler.h"
 #include "../NGLog.h"
