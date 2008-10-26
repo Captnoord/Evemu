@@ -64,6 +64,15 @@
 #else
 	#include "unix.h"
 	#include <pthread.h>
+	#include <sys/socket.h>
+	#include <netinet/in.h>
+	#include <arpa/inet.h>
+	#include <netdb.h>
+	#include <unistd.h>
+	#include <errno.h>
+	#include <fcntl.h>
+	#define INVALID_SOCKET -1
+	#define SOCKET_ERROR -1
 #endif
 
 #include <stdio.h>
@@ -114,5 +123,6 @@ using namespace std;
 
 #include "./types.h"
 #include "./unix.h"
+#include "./queue.h"
 	
 #endif

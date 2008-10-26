@@ -44,16 +44,16 @@ int main(int argc, char *argv[]) {
 	}
 
 #ifdef WIN32
-	//this is a hack to deal with the issue that we cannot seem to get
-	//VC++ to properly track the dependancies for custom build rules,
-	//which results in it always rebuilding the XML packets, which makes
+	// this is a hack to deal with the issue that we cannot seem to get
+	// VC++ to properly track the dependancies for custom build rules,
+	// which results in it always rebuilding the XML packets, which makes
 	// build times incredibly long. This checks file modification dates
 	// similar to `make` before actually building anything... however,
 	// on unix, where make is doing this for us, we also set ourself
 	// dependant on the xmlpktgen binary itself, so if it changes, we
 	// will rebuild all the xmlp files... so this check is not adequate.
 	// It would be better to have this code preform the same check, but
-	// for now, I dont feel like writting it, so I just exclude this check
+	// for now, I don't feel like writing it, so I just exclude this check
 	// on unix, and let make do its job.
 	struct stat xml_stat, cpp_stat, h_stat;
 	if(stat(xml.c_str(), &xml_stat) < 0) {

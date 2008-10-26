@@ -97,7 +97,9 @@ unsigned sym_engine::module(char * buf, unsigned len)
 		return 0;
 
 	HANDLE hProc = SymGetProcessHandle();
-	HMODULE hMod = (HMODULE)SymGetModuleBase (hProc, m_address);
+	DWORD mod = SymGetModuleBase (hProc, m_address);
+
+	HMODULE hMod = *(HMODULE*)&mod;
 	if (!hMod) return 0;
 	return get_module_basename(hMod, buf, len);	
 }
@@ -456,7 +458,7 @@ bool sym_engine::guard::load_module(HANDLE hProcess, HMODULE hMod)
 	// "Debugging Applications" John Robbins	
     // For whatever reason, SymLoadModule can return zero, but it still loads the modules. Sheez.
 	SetLastError(ERROR_SUCCESS);
-    if (!SymLoadModule(hProcess, hFile, filename, 0, (DWORD)hMod, 0) && 
+    if (!SymLoadModule(hProcess, hFile, filename, 0, *(DWORD*)&hMod, 0) && 
 		ERROR_SUCCESS != GetLastError())
 	{
 		return false;

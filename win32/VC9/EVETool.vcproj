@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;..\..\include\ascent-shared&quot;;..\..\3rdparty\zlib;..\..\common"
+				AdditionalIncludeDirectories="&quot;..\..\3rdparty\ascent-framework\include\ascent-shared/Threading&quot;;&quot;..\..\3rdparty\ascent-framework\include\ascent-share&quot;;&quot;..\..\include\ascent-shared&quot;;..\..\3rdparty\zlib;..\..\common"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;NO_READLINE;_CRT_SECURE_NO_WARNINGS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"

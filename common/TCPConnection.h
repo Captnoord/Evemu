@@ -19,32 +19,9 @@
 #ifndef TCP_CONNECTION_H
 #define TCP_CONNECTION_H
 
-#ifdef WIN32
-	#define snprintf	_snprintf
-#if _MSC_VER < 1500
-	#define vsnprintf	_vsnprintf
-#endif
-	#define strncasecmp	_strnicmp
-	#define strcasecmp  _stricmp
-
-	#include <process.h>
-#else
-	#include <pthread.h>
-	#include <sys/socket.h>
-	#include <netinet/in.h>
-	#include <arpa/inet.h>
-	#include <netdb.h>
-	#include <unistd.h>
-	#include <errno.h>
-	#include <fcntl.h>
-	#define INVALID_SOCKET -1
-	#define SOCKET_ERROR -1
-
-#endif
-
-#include "types.h"
-#include "Mutex.h"
-#include "queue.h"
+//#include "types.h"
+//#include "Mutex.h"
+//#include "queue.h"
 
 class BaseTCPServer;
 class ServerPacket;

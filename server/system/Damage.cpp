@@ -17,9 +17,6 @@
 
 #include "EvemuPCH.h"
 
-
-
-
 Damage::Damage(
 	double _kinetic,
 	double _thermal,
@@ -74,11 +71,6 @@ Damage::~Damage() {
 	if(charge != NULL)
 		charge->Release();
 }
-
-
-
-
-
 
 void Client::ApplyDamageModifiers(Damage &d, SystemEntity *target) {
 	

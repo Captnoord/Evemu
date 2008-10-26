@@ -16,13 +16,14 @@
 */
 
 
+#include "EvemuPCH.h"
 
-#include "InventoryDB.h"
+/*#include "InventoryDB.h"
 #include "../common/dbcore.h"
 #include "../common/logsys.h"
 #include "../common/EVEDBUtils.h"
 #include "../inventory/InventoryItem.h"
-#include "../inventory/ItemFactory.h"
+#include "../inventory/ItemFactory.h"*/
 
 
 std::map<uint32, InventoryDB::AttrCacheEntry *> InventoryDB::m_attrCache;

@@ -25,7 +25,8 @@
 #include "../common/EVEMarshal.h"
 #include "../common/EVEUnmarshal.h"
 #include "../common/timer.h"
-#include "../common/Mutex.h"
+//#include "../common/Mutex.h"
+#include "Mutex.h"
 #include "../common/PyRep.h"
 #include "../common/Base64.h"
 #include "../common/DirWalker.h"
@@ -51,8 +52,6 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #endif
-
-
 
 void CatchSignal(int sig_num);
 

@@ -15,8 +15,15 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#include "EvemuPCH.h"
+#include <errmsg.h>
+#include <mysqld_error.h>
+#include <limits.h>
+#include <string.h>
+#include <stdarg.h>
 
-#include "../common/common.h"
+
+/*#include "../common/common.h"
 
 #include "dbcore.h"
 
@@ -27,7 +34,7 @@
 #include <stdarg.h>
 #include "logsys.h"
 #include "MiscFunctions.h"
-#include "misc.h"
+#include "misc.h"*/
 
 #define COLUMN_BOUNDS_CHECKING
 
@@ -267,7 +274,7 @@ int32 DBcore::DoEscapeString(char* tobuf, const char* frombuf, int32 fromlen) {
 }
 
 void DBcore::DoEscapeString(std::string &to, const std::string &from) {
-	uint32 len = from.length();
+	uint32 len = (uint32)from.length();
 	char *buf = new char[len*2 + 1];
 	len = mysql_real_escape_string(&mysql, buf, from.c_str(), len);
 	to.assign(buf, len);

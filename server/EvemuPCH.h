@@ -21,11 +21,17 @@
 // common files first
 #include "../common/common.h"
 
+#include "ascent.h"
+
+#include "ByteBuffer.h"
+
+
+
 // commented because why would we do this?....
 //#define IMPLEMENT_SIGEXCEPT
 //#include "../common/sigexcept/sigexcept.h"
 
-#include "../common/dbcore.h"
+//#include "../common/dbcore.h"
 #include "../common/logsys.h"
 
 #include "../common/PyRep.h"
@@ -97,7 +103,7 @@
 #include "../common/logtypes.h"
 #include "../common/misc.h"
 #include "../common/MiscFunctions.h"
-#include "../common/Mutex.h"
+//#include "../common/Mutex.h"
 
 #include "../common/DestinyBinDump.h"
 #include "../common/DestinyStructs.h"
@@ -271,5 +277,13 @@
 // client stuff
 #include "../server/Client.h"
 #include "../server/PyServiceCD.h"
+
+
+
+/* Ascent new stuff */
+
+#include "../../common/Space.h"
+#include "../../common/EveClientSocket.h"
+
 
 #endif//__EVEPCH_H

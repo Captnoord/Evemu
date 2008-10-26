@@ -15,8 +15,9 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#include "EvemuPCH.h"
 
-#include "../common/common.h"
+/*#include "../common/common.h"
 
 #include <iostream>
 using namespace std;
@@ -29,7 +30,7 @@ using namespace std;
 #include "../common/timer.h"
 #include "../common/packet_dump.h"
 #include "../common/logsys.h"
-#include "../common/MiscFunctions.h"
+#include "../common/MiscFunctions.h"*/
 
 #ifdef FREEBSD //Timothy Whitman - January 7, 2003
 	#define MSG_NOSIGNAL 0
@@ -160,7 +161,8 @@ bool TCPConnection::GetSockName(char *host, uint16 *port)
 
 void TCPConnection::Free() {
 	if (ConnectionType == Outgoing) {
-		cout << "TCPConnection::Free() called on an Outgoing connection" << endl;
+		//cout << "TCPConnection::Free() called on an Outgoing connection" << endl;
+		printf("TCPConnection::Free() called on an Outgoing connection\n");
 		return;
 	}
 #if TCPN_DEBUG_Memory >= 5
@@ -407,7 +409,8 @@ void TCPConnection::AsyncConnect(int32 irIP, int16 irPort) {
 	if (ConnectionType != Outgoing) {
 		// If this code runs, we got serious problems
 		// Crash and burn.
-		cout << "TCPConnection::AsyncConnect() call on a Incomming connection object!" << endl;
+		//cout << "TCPConnection::AsyncConnect() call on a Incomming connection object!" << endl;
+		printf("TCPConnection::AsyncConnect() call on a Incomming connection object!\n");
 		return;
 	}
 	if(!ConnectReady()) {
@@ -468,7 +471,8 @@ bool TCPConnection::ConnectIP(int32 in_ip, int16 in_port, char* errbuf) {
 	if (ConnectionType != Outgoing) {
 		// If this code runs, we got serious problems
 		// Crash and burn.
-		cout << "TCPConnection::Connect() call on a Incomming connection object!" << endl;
+		//cout << "TCPConnection::Connect() call on a Incomming connection object!" << endl;
+		printf("TCPConnection::Connect() call on a Incomming connection object!\n");
 		return false;
 	}
 	MState.lock();
@@ -643,7 +647,8 @@ bool TCPConnection::Process() {
 	if (!SendData(sent_something, errbuf)) {
 	    struct in_addr	in;
 		in.s_addr = GetrIP();
-		cout << inet_ntoa(in) << ":" << GetrPort() << ": " << errbuf << endl;
+		//cout << inet_ntoa(in) << ":" << GetrPort() << ": " << errbuf << endl;
+		printf("%s:%u:%s", inet_ntoa(in), GetrPort(), errbuf );
 		return false;
 	}
 	
@@ -880,6 +885,10 @@ bool TCPConnection::SendData(bool &sent_something, char* errbuf) {
 	int status = 0;
 	if (ServerSendQueuePop(&data, &size)) {
 #ifdef WIN32
+		ByteBuffer xdata;
+		xdata.append(data, size);
+		printf("\nSend:\n");
+		xdata.hexlike();
 		status = send(connection_socket, (const char *) data, size, 0);
 #else
 		status = send(connection_socket, data, size, MSG_NOSIGNAL);
@@ -915,7 +924,9 @@ bool TCPConnection::SendData(bool &sent_something, char* errbuf) {
 				ServerSendQueuePushFront(&data[status], size - status);
 			}
 			else if (status > (signed)size) {
-				cout << "TCPConnection::SendData(): WTF! status > size" << endl;
+				//cout << "TCPConnection::SendData(): WTF! status > size" << endl;
+				printf("TCPConnection::SendData(): WTF! status > size\n");
+
 				Disconnect();
 				return false;
 			}
@@ -959,7 +970,8 @@ ThreadReturnType TCPConnection::TCPConnectionLoop(void* tmp) {
 	SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL);
 #endif
 	if (tmp == 0) {
-		cout << "TCPConnectionLoop(): tmp = 0!" << endl;
+		//cout << "TCPConnectionLoop(): tmp = 0!" << endl;
+		printf("TCPConnectionLoop(): tmp = 0!\n");
 		THREAD_RETURN(NULL);
 	}
 	TCPConnection* tcpc = (TCPConnection*) tmp;
@@ -977,7 +989,7 @@ ThreadReturnType TCPConnection::TCPConnectionLoop(void* tmp) {
 				tcpc->ClearBuffers();
 				tcpc->Disconnect();
 			}
-			Sleep(1);
+			//Sleep(1);
 		}
 		else if (tcpc->GetAsyncConnect()) {
 			//_CP(TCPConnectionLoop);
@@ -987,8 +999,8 @@ ThreadReturnType TCPConnection::TCPConnectionLoop(void* tmp) {
 				tcpc->ConnectIP(tcpc->GetrIP(), tcpc->GetrPort());
 			tcpc->SetAsyncConnect(false);
 		}
-		else
-			Sleep(10);	//nothing to do.
+		//else
+		//	Sleep(10);	//nothing to do.
 	}
 	tcpc->MLoopRunning.unlock();
 	

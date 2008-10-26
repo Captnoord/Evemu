@@ -26,6 +26,10 @@
 static void CatchSignal(int sig_num);
 static bool InitSignalHandlers();
 
+#ifndef EVEMU_REVISION
+#define EVEMU_REVISION "henk 1"
+#endif//EVEMU_REVISION
+
 static volatile bool RunLoops = true;
 
 int main(int argc, char *argv[]) {
@@ -35,7 +39,7 @@ int main(int argc, char *argv[]) {
 	_log(SERVER__INIT, " Supported Client: %s, Version %.2f, Build %d, MachoNet %d",
 		EVEProjectVersion, EVEVersionNumber, EVEBuildVersion, MachoNetVersion);
 
-	//ThreadPool.Startup();
+	ThreadPool.Startup();
 
 	//it is important to do this before doing much of anything, in case they use it.
 	Timer::SetCurrentTime();
@@ -82,6 +86,57 @@ int main(int argc, char *argv[]) {
 			return(1);
 		}
 	}
+
+	/* new socket stuff */
+
+#define enable_ascent
+#ifdef enable_ascent
+	new SocketMgr;
+	new SocketGarbageCollector;
+	sSocketMgr.SpawnWorkerThreads();
+
+	static volatile bool m_stopEvent;
+
+	uint32 wsport = 26000;
+	std::string host = "127.0.0.1";
+
+#ifdef WIN32
+	HANDLE hThread = GetCurrentThread();
+#endif
+
+	uint32 loopcounter = 0;
+
+	// Create listener
+	ListenSocket<EveClientSocket> * ls = new ListenSocket<EveClientSocket>(host.c_str(), wsport);
+	bool listnersockcreate = ls->IsOpen();
+#ifdef WIN32
+	if( listnersockcreate )
+		ThreadPool.ExecuteTask(ls);
+#endif
+	while( !m_stopEvent && listnersockcreate )
+	{
+
+		if(! ((++loopcounter) % 10000) )		// 5mins
+		{
+			ThreadPool.ShowStats();
+			ThreadPool.IntegrityCheck();
+		}
+
+		// check for garbage sockets
+		sSocketGarbageCollector.Update();
+
+		// do the stuff for thread sleeping
+#ifdef WIN32
+		//WaitForSingleObject( hThread, 50 - etime );
+		WaitForSingleObject( hThread, 50 );
+#else
+		//Sleep( 50 - etime );
+		Sleep( 50 );
+#endif
+	}
+
+#endif//enable_ascent
+
 
 	
 	//Start up the TCP server
