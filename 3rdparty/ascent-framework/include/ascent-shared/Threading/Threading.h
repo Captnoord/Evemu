@@ -26,17 +26,17 @@
 // Platform Specific Lock Implementation
 #include "Mutex.h"
 
-// Platform Independant Guard
+// Platform Independent Guard
 #include "Guard.h"
 
 // Platform Specific Thread Starter
 #include "ThreadStarter.h"
 
-// Platform independant locked queue
+// Platform independent locked queue
 #include "LockedQueue.h"
 
 // Thread Pool
 #include "ThreadPool.h"
 
-#endif
+#endif//_THREADING_H
 

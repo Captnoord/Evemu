@@ -6,7 +6,6 @@
  *
  */
 
-
 #ifndef SOCKET_OPS_H
 #define SOCKET_OPS_H
 
@@ -40,5 +39,5 @@ namespace SocketOps
 	void ReuseAddr(SOCKET fd);
 };
 
-#endif
+#endif//SOCKET_OPS_H
 

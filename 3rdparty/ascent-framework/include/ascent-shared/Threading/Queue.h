@@ -142,9 +142,8 @@ private:
 	
 	Mutex lock;
 	Condition cond;
-
 };
 
-#endif 
+#endif//FQUEUE_H
 
 

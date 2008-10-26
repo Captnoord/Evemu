@@ -40,5 +40,5 @@ protected:
 	bool m_threadRunning;
 };
 
-#endif
+#endif//_THREADING_STARTER_H
 

@@ -266,4 +266,4 @@ public:
 
 #define sSocketGarbageCollector SocketGarbageCollector::getSingleton()
 
-#endif
+#endif//SOCKET_H

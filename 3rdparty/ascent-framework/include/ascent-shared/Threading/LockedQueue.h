@@ -82,4 +82,4 @@ protected:
 	Mutex mutex;
 };
 
-#endif
+#endif//_THREADING_LOCKED_QUEUE_H

@@ -49,4 +49,4 @@ void Socket::WriteCallback()
 		RemoveWriteBufferBytes(bytes_written, false);
 }
 
-#endif
+#endif//CONFIG_USE_SELECT

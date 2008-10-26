@@ -65,5 +65,5 @@ static OperationHandler ophandlers[NUM_SOCKET_IO_EVENTS] = {
 	&HandleWriteComplete,
 	&HandleShutdown };
 
-#endif
-#endif
+#endif//CONFIG_USE_IOCP
+#endif//SOCKETMGR_H_WIN32

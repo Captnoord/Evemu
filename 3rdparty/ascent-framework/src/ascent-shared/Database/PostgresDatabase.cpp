@@ -21,7 +21,7 @@
 #include "../CrashHandler.h"
 #include "../NGLog.h"
 
-#if defined(ENABLE_DATABASE_POSTGRES)
+#if defined(ENABLE_DATABASE_POSTGRES) && !defined(NO_DBLAYER_SQL)
 
 #include "PostgresDatabase.h"
 #pragma comment(lib, "libpq.lib")

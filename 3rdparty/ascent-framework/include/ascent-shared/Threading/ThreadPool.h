@@ -144,9 +144,9 @@ public:
 	ASCENT_INLINE uint32 GetId() { return (uint32)thread_id; }
 };
 
-#endif
+#endif//HAVE_DARWIN
 
-#endif
+#endif//WIN32
 
 struct SERVER_DECL Thread
 {
@@ -212,4 +212,4 @@ public:
 
 extern SERVER_DECL ThreadContextPool ThreadPool;
 
-#endif
+#endif//__THREADPOOL_H

@@ -406,18 +406,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\ascent-shared\Network\ListenSocketFreeBSD.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\ascent-shared\Network\ListenSocketLinux.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\ascent-shared\Network\ListenSocketPoll.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\include\ascent-shared\Network\ListenSocketSelect.h"
 				>
 			</File>
@@ -442,38 +430,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\ascent-shared\Network\SocketFreeBSD.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\ascent-shared\Network\SocketLinux.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\ascent-shared\Network\SocketMgrFreeBSD.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\ascent-shared\Network\SocketMgrFreeBSD.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\ascent-shared\Network\SocketMgrLinux.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\ascent-shared\Network\SocketMgrLinux.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\ascent-shared\Network\SocketMgrPoll.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\ascent-shared\Network\SocketMgrPoll.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\ascent-shared\Network\SocketMgrSelect.cpp"
 				>
 			</File>
@@ -494,27 +450,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\ascent-shared\Network\SocketOpsFreeBSD.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\ascent-shared\Network\SocketOpsLinux.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\ascent-shared\Network\SocketOpsPoll.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\ascent-shared\Network\SocketOpsSelect.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\ascent-shared\Network\SocketOpsWin32.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\ascent-shared\Network\SocketPoll.cpp"
 				>
 			</File>
 			<File

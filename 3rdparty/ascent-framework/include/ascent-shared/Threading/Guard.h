@@ -50,5 +50,5 @@ protected:
 	Mutex& target;
 };
 
-#endif
+#endif//_THREADING_GUARD_H
 

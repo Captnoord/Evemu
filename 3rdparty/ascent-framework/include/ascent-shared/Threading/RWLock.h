@@ -253,6 +253,6 @@ public:
 	}
 };
 
-#endif
+#endif//WIN32
 
-#endif
+#endif//RWLOCK_H

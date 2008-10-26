@@ -20,18 +20,10 @@
 #ifndef _THREADING_MUTEX_H
 #define _THREADING_MUTEX_H
 #ifdef __DragonFly__
-#include <pthread.h>
-#endif
+#  include <pthread.h>
+#endif//__DragonFly__
 
-//#ifndef SERVER_DECL
-//#define SERVER_DECL
-//#endif//SERVER_DECL
-
-//#ifndef ASCENT_INLINE
-//#define ASCENT_INLINE inline
-//#endif//ASCENT_INLINE
-
-#ifdef WIN32
+/*#ifdef WIN32
 	#ifdef _DEBUG
 		#define ASCENT_INLINE 
 		#define ASCENT_FORCEINLINE __forceinline
@@ -55,8 +47,7 @@
 #else
 	#define SERVER_DECL 
 	#define SCRIPT_DECL 
-#endif
-
+#endif*/
              
 class SERVER_DECL Mutex
 {
@@ -79,7 +70,7 @@ public:
 		pthread_mutex_lock(&mutex);
 #else
 		EnterCriticalSection(&cs);
-#endif
+#endif//WIN32
 	}
 
 	/** Releases this mutex. No error checking performed
@@ -90,7 +81,7 @@ public:
 		pthread_mutex_unlock(&mutex);
 #else
 		LeaveCriticalSection(&cs);
-#endif
+#endif//WIN32
 	}
 
 	/** Attempts to acquire this mutex. If it cannot be acquired (held by another thread)
@@ -103,7 +94,7 @@ public:
 		return (pthread_mutex_trylock(&mutex) == 0);
 #else
 		return (TryEnterCriticalSection(&cs) == TRUE ? true : false);
-#endif
+#endif//WIN32
 	}
 
 	void lock()
@@ -121,8 +112,6 @@ public:
 		return AttemptAcquire();
 	}
 
-
-
 protected:
 #ifdef WIN32
 	/** Critical section used for system calls
@@ -138,7 +127,7 @@ protected:
 	/** pthread struct used in system calls
 	 */
 	pthread_mutex_t mutex;
-#endif
+#endif//WIN32
 };
 
 class LockMutex {
@@ -217,7 +206,7 @@ public:
 
 #define FastMutex Mutex
 
-#endif
+#endif//WIN32
 
-#endif
+#endif//_THREADING_MUTEX_H
 

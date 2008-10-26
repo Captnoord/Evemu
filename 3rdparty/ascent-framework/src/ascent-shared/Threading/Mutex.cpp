@@ -19,9 +19,10 @@
 
 #include "../Common.h"
 #include "Mutex.h"
+
 #ifdef __DragonFly__                                                            
-#include <pthread.h>                                                            
-#endif
+#  include <pthread.h>                                                            
+#endif//__DragonFly__
 
 LockMutex::LockMutex(Mutex* in_mut, bool iLock) {
 	mut = in_mut;
@@ -59,9 +60,9 @@ Mutex::~Mutex() { DeleteCriticalSection(&cs); }
 
 /* this is done slightly differently on bsd-variants */
 #if defined(__FreeBSD__) ||  defined(__APPLE_CC__) || defined(__OpenBSD__) || defined(__DragonFly__)
-#define recursive_mutex_flag PTHREAD_MUTEX_RECURSIVE
+#  define recursive_mutex_flag PTHREAD_MUTEX_RECURSIVE
 #else
-#define recursive_mutex_flag PTHREAD_MUTEX_RECURSIVE_NP
+#  define recursive_mutex_flag PTHREAD_MUTEX_RECURSIVE_NP
 #endif
 
 /* Linux mutex implementation */
@@ -82,4 +83,4 @@ Mutex::Mutex()
 
 Mutex::~Mutex() { pthread_mutex_destroy(&mutex); }
 
-#endif
+#endif//WIN32

@@ -31,7 +31,7 @@
  * Enable/disable database backends.
  * Currently supported, MySQL, (under development): PostgreSQL, SQLite
  */
-//#define NO_DBLAYER_SQL
+#define NO_DBLAYER_SQL
 #if !defined(NO_DBLAYER_SQL)
 	#define ENABLE_DATABASE_MYSQL 1
 	#define ENABLE_DATABASE_POSTGRES 1
@@ -59,7 +59,6 @@
 #define ENABLE_CONSOLE_LOG 1
 
 // log is multi threaded
-
 #define LOG_USE_MUTEX 1
 
 #endif		// __ASCENTCONFIG_H

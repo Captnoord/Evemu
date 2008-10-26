@@ -39,7 +39,7 @@
 		return i;
 	}
 
-#endif
+#endif//WIN32
 
 #define THREAD_RESERVE 5
 SERVER_DECL ThreadContextPool ThreadPool;
@@ -373,4 +373,4 @@ Thread * ThreadContextPool::StartThread(ThreadContext * ExecutionTarget)
 	return t;
 }
 
-#endif
+#endif//WIN32

@@ -89,5 +89,5 @@ private:
     T * dsocket;
 };
 
-#endif
-#endif
+#endif//CONFIG_USE_SELECT
+#endif//_LISTENSOCKET_H

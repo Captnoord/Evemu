@@ -519,11 +519,7 @@ public:
 private:
 	pthread_cond_t cond;
 	Mutex *mut;
-
 };
 
-#endif
-
-#endif
-
-	
+#endif//WIN32
+#endif//CONDITION_H

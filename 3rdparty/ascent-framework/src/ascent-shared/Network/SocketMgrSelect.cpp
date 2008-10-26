@@ -159,4 +159,4 @@ void SocketMgr::ShutdownThreads()
 
 }
 
-#endif
+#endif//CONFIG_USE_SELECT

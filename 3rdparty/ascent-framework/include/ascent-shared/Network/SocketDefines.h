@@ -14,7 +14,7 @@ using namespace std;
 
 /* Implementation Selection */
 #ifdef WIN32		// Easy
-#define CONFIG_USE_IOCP
+#  define CONFIG_USE_IOCP
 //#define CONFIG_USE_SELECT
 #else
 
@@ -25,24 +25,24 @@ using namespace std;
 #if UNIX_FLAVOUR == UNIX_FLAVOUR_LINUX
 
 // select: epoll
-#include <sys/epoll.h>
-#define CONFIG_USE_EPOLL
+#  include <sys/epoll.h>
+#  define CONFIG_USE_EPOLL
 
 #elif UNIX_FLAVOUR == UNIX_FLAVOUR_BSD
 
 // select: kqueue
-#include <sys/event.h>
-#define CONFIG_USE_KQUEUE
+#  include <sys/event.h>
+#  define CONFIG_USE_KQUEUE
 
 #elif UNIX_FLAVOUR == UNIX_FLAVOUR_OSX
 // select: kqueue
-#include <sys/event.h>
-#define CONFIG_USE_KQUEUE
+#  include <sys/event.h>
+#  define CONFIG_USE_KQUEUE
 
 
 #endif
 
-#endif
+#endif//IF WIN32
 
 /* IOCP Defines */
 
@@ -92,6 +92,6 @@ public:
 	}
 };
 
-#endif
+#endif//CONFIG_USE_IOCP
 
-#endif
+#endif//SOCKET_DEFINES_H

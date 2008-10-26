@@ -21,7 +21,7 @@
 #include "../CrashHandler.h"
 #include "../NGLog.h"
 
-#if defined(ENABLE_DATABASE_SQLITE) 
+#if defined(ENABLE_DATABASE_SQLITE) && !defined(NO_DBLAYER_SQL)
 
 #include "SQLiteDatabase.h"
 #pragma comment(lib, "sqlite3.lib")

@@ -114,4 +114,4 @@ void Socket::BurstPush()
 		WriteCallback();
 }
 
-#endif
+#endif//CONFIG_USE_IOCP

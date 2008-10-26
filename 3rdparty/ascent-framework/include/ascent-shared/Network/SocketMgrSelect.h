@@ -71,5 +71,5 @@ public:
 	void run();
 };
 
-#endif
-#endif
+#endif//CONFIG_USE_SELECT
+#endif//SOCKETMGR_H_SELECT

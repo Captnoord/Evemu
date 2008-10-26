@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef LISTEN_SOCKET_WIN32_H
-#define LISTEN_SOCKET_WIN32_H
+#ifndef _LISTEN_SOCKET_WIN32_H
+#define _LISTEN_SOCKET_WIN32_H
 
 #ifdef CONFIG_USE_IOCP
 
@@ -107,5 +107,5 @@ private:
 	HANDLE m_cp;
 };
 
-#endif
-#endif
+#endif//CONFIG_USE_IOCP
+#endif//_LISTEN_SOCKET_WIN32_H

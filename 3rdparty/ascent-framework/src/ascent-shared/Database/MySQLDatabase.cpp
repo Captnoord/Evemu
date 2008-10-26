@@ -21,7 +21,7 @@
 #include "../CrashHandler.h"
 #include "../NGLog.h"
 
-#if defined(ENABLE_DATABASE_MYSQL)
+#if defined(ENABLE_DATABASE_MYSQL) && !defined(NO_DBLAYER_SQL)
 
 #include "MySQLDatabase.h"
 

@@ -18,7 +18,6 @@ SocketMgr::SocketMgr()
 	WSADATA wsaData;
 	WSAStartup(MAKEWORD(2,0), &wsaData);
 	m_completionPort = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, (ULONG_PTR)0, 0);
-
 }
 
 SocketMgr::~SocketMgr()
@@ -82,6 +81,12 @@ void SocketMgr::OnRehash()
 	}
 }
 
+#ifndef _WIN64
+#  define IOCP_SOCKET_PTR LPDWORD
+#else
+#  define IOCP_SOCKET_PTR PULONG_PTR
+#endif//_WIN64
+
 bool SocketWorkerThread::run()
 {
 	HANDLE cp = sSocketMgr.GetCompletionPort();
@@ -92,11 +97,7 @@ bool SocketWorkerThread::run()
 
 	while(true)
 	{
-#ifndef _WIN64
-		if(!GetQueuedCompletionStatus(cp, &len, (LPDWORD)&s, &ol_ptr, 10000))
-#else
-		if(!GetQueuedCompletionStatus(cp, &len, (PULONG_PTR)&s, &ol_ptr, 10000))
-#endif
+		if(!GetQueuedCompletionStatus(cp, &len, (IOCP_SOCKET_PTR)&s, &ol_ptr, 10000))
 			continue;
 
 		ov = CONTAINING_RECORD(ol_ptr, OverlappedStruct, m_overlap);
@@ -181,5 +182,4 @@ void SocketMgr::ShutdownThreads()
 	}
 }
 
-#endif
-
+#endif//CONFIG_USE_IOCP

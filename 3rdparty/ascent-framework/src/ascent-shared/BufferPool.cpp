@@ -29,9 +29,9 @@ size_t BufferPool::BufferBucket::buffer_sizes[BUFFER_BUCKET_COUNT] = {
 	100,		// 100 bytes
 	200,		// 200 bytes
 	500,		// 500 bytes
-	1000,		// 1 kbyte
-	5000,		// 5 kbyte
-	10000,		// 10 kbyte (shouldn't be used much)
+	1024,		// 1 kbyte
+	5120,		// 5 kbyte
+	10240,		// 10 kbyte (shouldn't be used much)
 };
 
 BufferPool g_bufferPool;
