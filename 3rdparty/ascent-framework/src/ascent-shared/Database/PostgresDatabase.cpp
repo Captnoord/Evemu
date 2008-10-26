@@ -36,12 +36,12 @@ PostgresDatabase::PostgresDatabase() : Database()
 {
 }
 
-void PostgresDatabase::_BeginTransaction(DatabaseConnection * conn)
+void PostgresDatabase::_BeginTransaction(DatabaseConnection* conn)
 {
 	_SendQuery( conn, "BEGIN TRANSACTION", false );
 }
 
-void PostgresDatabase::_EndTransaction(DatabaseConnection * conn)
+void PostgresDatabase::_EndTransaction(DatabaseConnection* conn)
 {
 	_SendQuery( conn, "COMMIT TRANSACTION", false );
 }
@@ -114,7 +114,7 @@ string PostgresDatabase::EscapeString(string& Escape)
 	return string(ret);
 }
 
-void PostgresDatabase::EscapeLongString(const char * str, uint32 len, stringstream& out)
+void PostgresDatabase::EscapeLongString(const char* str, uint32 len, stringstream& out)
 {
 	char a2[DATABASE_QUERY_LONG_BUFFER_SIZE] = {0};
 
@@ -130,7 +130,7 @@ void PostgresDatabase::EscapeLongString(const char * str, uint32 len, stringstre
 	con->Busy.Release();
 }
 
-string PostgresDatabase::EscapeString(const char * esc, DatabaseConnection * con)
+string PostgresDatabase::EscapeString(const char* esc, DatabaseConnection * con)
 {
 	char a2[DATABASE_QUERY_BUFFER_SIZE] = {0};
 	const char * ret;
@@ -165,7 +165,7 @@ void PostgresDatabase::Shutdown()
 	Log.Success("PostgresDatabase", "Shutdown complete", i);
 }
 
-bool PostgresDatabase::_SendQuery(DatabaseConnection *con, const char* Sql, bool Self)
+bool PostgresDatabase::_SendQuery(DatabaseConnection* con, const char* Sql, bool Self)
 {
 	PGresult * res = PQexec( static_cast<PostgresDatabaseConnection*>(con)->PgSql, Sql );
 	if( res == NULL )
@@ -187,7 +187,7 @@ bool PostgresDatabase::_SendQuery(DatabaseConnection *con, const char* Sql, bool
 	return true;
 }
 
-bool PostgresDatabase::_HandleError(PostgresDatabaseConnection * con, uint32 ErrorNumber)
+bool PostgresDatabase::_HandleError(PostgresDatabaseConnection* con, uint32 ErrorNumber)
 {
 	// Handle errors that should cause a reconnect to the Database.
 	/*switch(ErrorNumber)
@@ -240,7 +240,7 @@ bool PostgresQueryResult::NextRow()
 	return true;
 }
 
-QueryResult * PostgresDatabase::_StoreQueryResult(DatabaseConnection * con)
+QueryResult * PostgresDatabase::_StoreQueryResult(DatabaseConnection* con)
 {
 	PostgresQueryResult * res;
 	PostgresDatabaseConnection * db = static_cast<PostgresDatabaseConnection*>(con);

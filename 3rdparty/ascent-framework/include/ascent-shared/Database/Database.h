@@ -92,8 +92,8 @@ public:
 
 	virtual QueryResult* Query(const char* QueryString, ...);
 	virtual QueryResult* QueryNA(const char* QueryString);
-	virtual QueryResult * FQuery(const char * QueryString, DatabaseConnection * con);
-	virtual void FWaitExecute(const char * QueryString, DatabaseConnection * con);
+	virtual QueryResult* FQuery(const char* QueryString, DatabaseConnection* con);
+	virtual void FWaitExecute(const char* QueryString, DatabaseConnection* con);
 	virtual bool WaitExecute(const char* QueryString, ...);//Wait For Request Completion
 	virtual bool WaitExecuteNA(const char* QueryString);//Wait For Request Completion
 	virtual bool Execute(const char* QueryString, ...);
@@ -105,20 +105,20 @@ public:
 	ASCENT_INLINE const string& GetDatabaseName() { return mDatabaseName; }
 	ASCENT_INLINE const uint32 GetQueueSize() { return queries_queue.get_size(); }
 
-	virtual string EscapeString(string Escape) = 0;
-	virtual void EscapeLongString(const char * str, uint32 len, stringstream& out) = 0;
-	virtual string EscapeString(const char * esc, DatabaseConnection * con) = 0;
+	virtual string EscapeString(string& Escape) = 0;
+	virtual void EscapeLongString(const char* str, uint32 len, stringstream& out) = 0;
+	virtual string EscapeString(const char* esc, DatabaseConnection* con) = 0;
 	
-	void QueueAsyncQuery(AsyncQuery * query);
+	void QueueAsyncQuery(AsyncQuery* query);
 	void EndThreads();
 	
 	void thread_proc_query();
-	void FreeQueryResult(QueryResult * p);
+	void FreeQueryResult(QueryResult* p);
 
 	DatabaseConnection * GetFreeConnection();
 
-	void PerformQueryBuffer(QueryBuffer * b, DatabaseConnection * ccon);
-	void AddQueryBuffer(QueryBuffer * b);
+	void PerformQueryBuffer(QueryBuffer* b, DatabaseConnection* ccon);
+	void AddQueryBuffer(QueryBuffer* b);
 
 	static Database * CreateDatabaseInterface(uint32 uType);
 
@@ -130,12 +130,12 @@ protected:
 	// spawn threads and shizzle
 	void _Initialize();
 
-	virtual void _BeginTransaction(DatabaseConnection * conn) = 0;
-	virtual void _EndTransaction(DatabaseConnection * conn) = 0;
+	virtual void _BeginTransaction(DatabaseConnection* conn) = 0;
+	virtual void _EndTransaction(DatabaseConnection* conn) = 0;
 
 	// actual query function
-	virtual bool _SendQuery(DatabaseConnection *con, const char* Sql, bool Self) = 0;
-	virtual QueryResult * _StoreQueryResult(DatabaseConnection * con) = 0;
+	virtual bool _SendQuery(DatabaseConnection* con, const char* Sql, bool Self) = 0;
+	virtual QueryResult * _StoreQueryResult(DatabaseConnection* con) = 0;
 
 	////////////////////////////////
 	FQueue<QueryBuffer*> query_buffer;

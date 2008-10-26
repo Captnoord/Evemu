@@ -41,23 +41,23 @@ public:
 
 	void Shutdown();
 
-	string EscapeString(string Escape);
-	void EscapeLongString(const char * str, uint32 len, stringstream& out);
-	string EscapeString(const char * esc, DatabaseConnection * con);
+	string EscapeString(string& Escape);
+	void EscapeLongString(const char* str, uint32 len, stringstream& out);
+	string EscapeString(const char* esc, DatabaseConnection* con);
 
 	bool SupportsReplaceInto() { return true; }
 	bool SupportsTableLocking() { return true; }
 	
 protected:
 
-	bool _HandleError(MySQLDatabaseConnection*, uint32 ErrorNumber);
-	bool _SendQuery(DatabaseConnection *con, const char* Sql, bool Self = false);
+	bool _HandleError(MySQLDatabaseConnection* con, uint32 ErrorNumber);
+	bool _SendQuery(DatabaseConnection* con, const char* Sql, bool Self = false);
 
-	void _BeginTransaction(DatabaseConnection * conn);
-	void _EndTransaction(DatabaseConnection * conn);
-	bool _Reconnect(MySQLDatabaseConnection * conn);
+	void _BeginTransaction(DatabaseConnection* conn);
+	void _EndTransaction(DatabaseConnection* conn);
+	bool _Reconnect(MySQLDatabaseConnection* conn);
 
-	QueryResult * _StoreQueryResult(DatabaseConnection * con);
+	QueryResult * _StoreQueryResult(DatabaseConnection* con);
 };
 
 class SERVER_DECL MySQLQueryResult : public QueryResult

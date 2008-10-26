@@ -21,7 +21,6 @@
 #include "../CrashHandler.h"
 #include "../NGLog.h"
 
-#define ENABLE_DATABASE_SQLITE
 #if defined(ENABLE_DATABASE_SQLITE) 
 
 #include "SQLiteDatabase.h"
@@ -82,14 +81,14 @@ string SQLiteDatabase::EscapeString(string& Escape)
 	return string(a2);
 }
 
-void SQLiteDatabase::EscapeLongString(const char * str, uint32 len, stringstream& out)
+void SQLiteDatabase::EscapeLongString(const char* str, uint32 len, stringstream& out)
 {
 	char a2[DATABASE_QUERY_LONG_BUFFER_SIZE] = {0};
 	sqlite3_snprintf( DATABASE_QUERY_LONG_BUFFER_SIZE, a2, str );
 	out.write(a2, (std::streamsize)strlen(a2));
 }
 
-string SQLiteDatabase::EscapeString(const char * esc, DatabaseConnection * con)
+string SQLiteDatabase::EscapeString(const char* esc, DatabaseConnection * con)
 {
 	char a2[DATABASE_QUERY_BUFFER_SIZE] = {0};
 	sqlite3_snprintf( DATABASE_QUERY_BUFFER_SIZE, a2, esc );
@@ -101,7 +100,7 @@ void SQLiteDatabase::Shutdown()
 	sqlite3_close( static_cast<SQLiteDatabaseConnection*>(*mConnections)->handle );
 }
 
-bool SQLiteDatabase::_SendQuery(DatabaseConnection *con, const char* Sql, bool Self)
+bool SQLiteDatabase::_SendQuery(DatabaseConnection* con, const char* Sql, bool Self)
 {
 	SQLiteDatabaseConnection * db = static_cast<SQLiteDatabaseConnection*>( con );
 
@@ -117,7 +116,7 @@ bool SQLiteDatabase::_SendQuery(DatabaseConnection *con, const char* Sql, bool S
 	return true;
 }
 
-QueryResult * SQLiteDatabase::_StoreQueryResult(DatabaseConnection * con)
+QueryResult * SQLiteDatabase::_StoreQueryResult(DatabaseConnection* con)
 {
 	SQLiteQueryResult * res;
 	SQLiteDatabaseConnection * db = static_cast<SQLiteDatabaseConnection*>(con);
@@ -154,13 +153,13 @@ bool SQLiteDatabase::SupportsTableLocking()
 }
 
 // TODO implement this..
-bool SQLiteDatabase::_HandleError(DatabaseConnection *conn, uint32 ErrorNumber)
+bool SQLiteDatabase::_HandleError(DatabaseConnection* conn, uint32 ErrorNumber)
 {
 	return true;
 }
 
 // there isn't such thing as reconnect on sqlite
-bool SQLiteDatabase::_Reconnect(DatabaseConnection *conn)
+bool SQLiteDatabase::_Reconnect(DatabaseConnection* conn)
 {
 	return true;
 }

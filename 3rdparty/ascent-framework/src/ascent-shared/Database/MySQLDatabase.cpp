@@ -38,12 +38,12 @@ MySQLDatabase::MySQLDatabase() : Database()
 
 }
 
-void MySQLDatabase::_BeginTransaction(DatabaseConnection * conn)
+void MySQLDatabase::_BeginTransaction(DatabaseConnection* conn)
 {
 	_SendQuery( conn, "START TRANSACTION", false );
 }
 
-void MySQLDatabase::_EndTransaction(DatabaseConnection * conn)
+void MySQLDatabase::_EndTransaction(DatabaseConnection* conn)
 {
 	_SendQuery( conn, "COMMIT", false );
 }
@@ -89,7 +89,7 @@ bool MySQLDatabase::Initialize(const char* Hostname, unsigned int port, const ch
 	return true;
 }
 
-string MySQLDatabase::EscapeString(string Escape)
+string MySQLDatabase::EscapeString(string& Escape)
 {
 	char a2[16384] = {0};
 
