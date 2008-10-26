@@ -17,14 +17,18 @@
  *
  */
 
-#ifndef WOWSERVER_COMMON_H
-#define WOWSERVER_COMMON_H
+#ifndef SERVER_FRAMEWORK_COMMON_H
+#define SERVER_FRAMEWORK_COMMON_H
 
 #ifdef WIN32
-#pragma warning(disable:4996)
-#define _CRT_SECURE_NO_DEPRECATE 1
-#define _CRT_SECURE_COPP_OVERLOAD_STANDARD_NAMES 1
-#pragma warning(disable:4251)		// dll-interface bullshit
+//#  pragma warning(disable:4996)
+#  pragma warning(disable:4251)		// dll-interface warning, related to objects that doesn't have a declspec defenition
+
+// VC9 related 'CRT' warnings
+// TODO check if these warnings can be fixed in a cross platform way
+#  define _CRT_SECURE_NO_WARNINGS 1
+#  define _CRT_SECURE_NO_DEPRECATE 1
+#  define _CRT_SECURE_COPP_OVERLOAD_STANDARD_NAMES 1
 #endif
 
 enum TimeVariables
@@ -46,20 +50,20 @@ enum MsTimeVariables
 };
 
 #ifdef WIN32
-#ifdef _DEBUG
-#define ASCENT_INLINE 
-#define ASCENT_FORCEINLINE __forceinline
+#  ifdef _DEBUG
+#    define ASCENT_INLINE
+#    define ASCENT_FORCEINLINE __forceinline
+#  else
+#    define ASCENT_INLINE __forceinline
+#    define ASCENT_FORCEINLINE __forceinline
+#  endif
 #else
-#define ASCENT_INLINE __forceinline
-#define ASCENT_FORCEINLINE __forceinline
-#endif
-#else
-#define ASCENT_INLINE inline
-#define ASCENT_FORCEINLINE inline
+#  define ASCENT_INLINE inline
+#  define ASCENT_FORCEINLINE inline
 #endif
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+#  include <config.h>
 #endif
 
 #include "AscentConfig.h"
@@ -84,31 +88,31 @@ enum MsTimeVariables
 #endif
 
 #ifdef min
-#undef min
+#  undef min
 #endif
 
 #ifdef max
-#undef max
+#  undef max
 #endif
 
 #ifdef CONFIG_USE_SELECT
-#undef FD_SETSIZE
-#define FD_SETSIZE 2048 
+#  undef  FD_SETSIZE
+#  define FD_SETSIZE 2048 
 #endif
 
 #if defined( __WIN32__ ) || defined( WIN32 ) || defined( _WIN32 )
-#include <winsock2.h>
-#include <ws2tcpip.h>
+#  include <winsock2.h>
+#  include <ws2tcpip.h>
 #else
-#include <sys/time.h>
-#include <sys/types.h>
-#include <sys/ioctl.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <signal.h>
-#include <netdb.h>
+#  include <sys/time.h>
+#  include <sys/types.h>
+#  include <sys/ioctl.h>
+#  include <sys/socket.h>
+#  include <netinet/in.h>
+#  include <arpa/inet.h>
+#  include <unistd.h>
+#  include <signal.h>
+#  include <netdb.h>
 #endif
 
 // current platform and compiler
@@ -144,49 +148,49 @@ enum MsTimeVariables
 #endif
 
 #if PLATFORM == PLATFORM_UNIX || PLATFORM == PLATFORM_APPLE
-#ifdef HAVE_DARWIN
-#define PLATFORM_TEXT "MacOSX"
-#define UNIX_FLAVOUR UNIX_FLAVOUR_OSX
-#else
-#ifdef USE_KQUEUE
-#define PLATFORM_TEXT "FreeBSD"
-#define UNIX_FLAVOUR UNIX_FLAVOUR_BSD
-#else
-#ifdef USE_KQUEUE_DFLY
-#define PLATFORM_TEXT "DragonFlyBSD"
-#define UNIX_FLAVOUR UNIX_FLAVOUR_BSD
-#else
-#define PLATFORM_TEXT "Linux"
-#define UNIX_FLAVOUR UNIX_FLAVOUR_LINUX
-#endif
-#endif
-#endif
+#  ifdef HAVE_DARWIN
+#    define PLATFORM_TEXT "MacOSX"
+#    define UNIX_FLAVOUR UNIX_FLAVOUR_OSX
+#  else
+#    ifdef USE_KQUEUE
+#      define PLATFORM_TEXT "FreeBSD"
+#      define UNIX_FLAVOUR UNIX_FLAVOUR_BSD
+#    else
+#      ifdef USE_KQUEUE_DFLY
+#        define PLATFORM_TEXT "DragonFlyBSD"
+#        define UNIX_FLAVOUR UNIX_FLAVOUR_BSD
+#      else
+#        define PLATFORM_TEXT "Linux"
+#        define UNIX_FLAVOUR UNIX_FLAVOUR_LINUX
+#      endif
+#    endif
+#  endif
 #endif
 
 #if PLATFORM == PLATFORM_WIN32
-#define PLATFORM_TEXT "Win32"
+#  define PLATFORM_TEXT "Win32"
 #endif
 
 #ifdef _DEBUG
-#define CONFIG "Debug"
+#  define CONFIG "Debug"
 #else
-#define CONFIG "Release"
+#  define CONFIG "Release"
 #endif
 
 #ifdef X64
-#define ARCH "X64"
+#  define ARCH "X64"
 #else
-#define ARCH "X86"
+#  define ARCH "X86"
 #endif
 
 #if PLATFORM == PLATFORM_WIN32
-#ifdef X64
-#define PLATFORM_AND_ARCH_TEXT "Win64"
+#  ifdef X64
+#    define PLATFORM_AND_ARCH_TEXT "Win64"
+#  else
+#    define PLATFORM_AND_ARCH_TEXT "Win32"
+#  endif
 #else
-#define PLATFORM_AND_ARCH_TEXT "Win32"
-#endif
-#else
-#define PLATFORM_AND_ARCH_TEXT PLATFORM_TEXT"/"ARCH
+#  define PLATFORM_AND_ARCH_TEXT PLATFORM_TEXT"/"ARCH
 #endif
 
 /*#if COMPILER == COMPILER_MICROSOFT
@@ -198,37 +202,41 @@ enum MsTimeVariables
 #endif*/
 
 #if PLATFORM == PLATFORM_WIN32
-#define STRCASECMP stricmp
+#  define STRCASECMP stricmp
 #else
-#define STRCASECMP strcasecmp
+#  define STRCASECMP strcasecmp
 #endif
 
 #if PLATFORM == PLATFORM_WIN32
-	#define ASYNC_NET
+#  define ASYNC_NET
 #endif
 
 #ifdef USE_EPOLL
-	#define CONFIG_USE_EPOLL
+#  define CONFIG_USE_EPOLL
 #endif
+
 #ifdef USE_KQUEUE
-	#define CONFIG_USE_KQUEUE
+#  define CONFIG_USE_KQUEUE
 #endif
+
 #ifdef USE_KQUEUE_DFLY
-	#define CONFIG_USE_KQUEUE_DFLY
+#  define CONFIG_USE_KQUEUE_DFLY
 #endif
+
 #ifdef USE_SELECT
-	#define CONFIG_USE_SELECT
+#  define CONFIG_USE_SELECT
 #endif
+
 #ifdef USE_POLL
-	#define CONFIG_USE_POLL
+#  define CONFIG_USE_POLL
 #endif
 
 #ifdef min
-#undef min
+#  undef min
 #endif
 
 #ifdef max
-#undef max
+#  undef max
 #endif
 
 #include <set>
@@ -238,7 +246,6 @@ enum MsTimeVariables
 #include <queue>
 #include <sstream>
 #include <algorithm>
-//#include <iostream>
 
 #if defined (__GNUC__)
 #  define GCC_VERSION (__GNUC__ * 10000 \
@@ -246,60 +253,56 @@ enum MsTimeVariables
 					   + __GNUC_PATCHLEVEL__)
 #endif
 
-
 #ifndef WIN32
-#ifndef X64
-#  if defined (__GNUC__)
-#	if GCC_VERSION >= 30400
-#         ifdef HAVE_DARWIN
-#	      define __fastcall
-#         else
-#    	      define __fastcall __attribute__((__fastcall__))
-#         endif
-#	else
-#	  define __fastcall __attribute__((__regparm__(3)))
-#	endif
+#  ifndef X64
+#    if defined (__GNUC__)
+#	   if GCC_VERSION >= 30400
+#        ifdef HAVE_DARWIN
+#	       define __fastcall
+#        else
+#    	   define __fastcall __attribute__((__fastcall__))
+#        endif
+#	   else
+#	     define __fastcall __attribute__((__regparm__(3)))
+#	   endif
+#    else
+#	   define __fastcall __attribute__((__fastcall__))
+#    endif
 #  else
-#	define __fastcall __attribute__((__fastcall__))
+#    define __fastcall  
 #  endif
-#else
-#define __fastcall  
-#endif
 #endif
 
 #if COMPILER == COMPILER_GNU && __GNUC__ >= 3
-#include <ext/hash_map>
-#include <ext/hash_set>
+#  include <ext/hash_map>
+#  include <ext/hash_set>
 #else
-#include <hash_map>
-#include <hash_set>
+#  include <hash_map>
+#  include <hash_set>
 #endif
 
-
-
 #ifdef _STLPORT_VERSION
-#define HM_NAMESPACE std
-using std::hash_map;
-using std::hash_set;
+#  define HM_NAMESPACE std
+   using std::hash_map;
+   using std::hash_set;
 #elif COMPILER == COMPILER_MICROSOFT && _MSC_VER >= 1300
-#define HM_NAMESPACE stdext
-using stdext::hash_map;
-using stdext::hash_set;
-#define ENABLE_SHITTY_STL_HACKS 1
+#  define HM_NAMESPACE stdext
+   using stdext::hash_map;
+   using stdext::hash_set;
+#  define ENABLE_SHITTY_STL_HACKS 1
 
-// hacky stuff for vc++
-#define snprintf _snprintf
-#define vsnprintf _vsnprintf
-#define strtok_r strtok_s
-
+   // hacky stuff for vc++
+#  define snprintf _snprintf
+#  define vsnprintf _vsnprintf
+#  define strtok_r strtok_s
 #elif COMPILER == COMPILER_INTEL
-#define HM_NAMESPACE std
-using std::hash_map;
-using std::hash_set;
+#  define HM_NAMESPACE std
+   using std::hash_map;
+   using std::hash_set;
 #elif COMPILER == COMPILER_GNU && __GNUC__ >= 3
-#define HM_NAMESPACE __gnu_cxx
-using __gnu_cxx::hash_map;
-using __gnu_cxx::hash_set;
+#  define HM_NAMESPACE __gnu_cxx
+   using __gnu_cxx::hash_map;
+   using __gnu_cxx::hash_set;
 
 namespace __gnu_cxx
 {
@@ -311,37 +314,33 @@ namespace __gnu_cxx
 	{
 		size_t operator()(T * const &__x) const { return (size_t)__x; }
 	};
-
 };
 
 #else
-#define HM_NAMESPACE std
-using std::hash_map;
+#  define HM_NAMESPACE std
+   using std::hash_map;
 #endif
 
 /* Use correct types for x64 platforms, too */
 #if COMPILER != COMPILER_GNU
-typedef signed __int64 int64;
-typedef signed __int32 int32;
-typedef signed __int16 int16;
-typedef signed __int8 int8;
-
-typedef unsigned __int64 uint64;
-typedef unsigned __int32 uint32;
-typedef unsigned __int16 uint16;
-typedef unsigned __int8 uint8;
+  typedef signed __int64 int64;
+  typedef signed __int32 int32;
+  typedef signed __int16 int16;
+  typedef signed __int8 int8;
+  typedef unsigned __int64 uint64;
+  typedef unsigned __int32 uint32;
+  typedef unsigned __int16 uint16;
+  typedef unsigned __int8 uint8;
 #else
-
-typedef int64_t int64;
-typedef int32_t int32;
-typedef int16_t int16;
-typedef int8_t int8;
-typedef uint64_t uint64;
-typedef uint32_t uint32;
-typedef uint16_t uint16;
-typedef uint8_t uint8;
-typedef uint32_t DWORD;
-
+  typedef int64_t int64;
+  typedef int32_t int32;
+  typedef int16_t int16;
+  typedef int8_t int8;
+  typedef uint64_t uint64;
+  typedef uint32_t uint32;
+  typedef uint16_t uint16;
+  typedef uint8_t uint8;
+  typedef uint32_t DWORD;
 #endif
 
 /* 
@@ -349,55 +348,49 @@ Scripting system exports/imports
 */
 
 #ifdef WIN32
-	#ifndef SCRIPTLIB
-		#define SERVER_DECL __declspec(dllexport)
-		#define SCRIPT_DECL __declspec(dllimport)
-	#else
-		#define SERVER_DECL __declspec(dllimport)
-		#define SCRIPT_DECL __declspec(dllexport)
-	#endif
+#  ifndef SCRIPTLIB
+#    define SERVER_DECL __declspec(dllexport)
+#    define SCRIPT_DECL __declspec(dllimport)
+#  else
+#    define SERVER_DECL __declspec(dllimport)
+#    define SCRIPT_DECL __declspec(dllexport)
+#  endif
 #else
-	#define SERVER_DECL 
-	#define SCRIPT_DECL 
+#  define SERVER_DECL 
+#  define SCRIPT_DECL 
 #endif
 
 // Include all threading files
 #include <assert.h>
+
+// threading
 #include "Threading/Threading.h"
 
+// random number generator
 #include "MersenneTwister.h"
 
+// utilities
+#include "Util.h"
+
 #if COMPILER == COMPILER_MICROSOFT
+#  define I64FMT "%016I64X"
+#  define I64FMTD "%I64u"
+#  define SI64FMTD "%I64d"
+#  define snprintf _snprintf
+#  define atoll __atoi64
 
-#define I64FMT "%016I64X"
-#define I64FMTD "%I64u"
-#define SI64FMTD "%I64d"
-#define snprintf _snprintf
-#define atoll __atoi64
-
-#else
-
-#define stricmp strcasecmp
-#define strnicmp strncasecmp
-#define I64FMT "%016llX"
-#define I64FMTD "%llu"
-#define SI64FMTD "%lld"
-
+// ISO C++ related macros
+#if _MSC_VER >= 1400
+#  define strdup _strdup
+#  define strnicmp _strnicmp
 #endif
 
-#ifndef WIN32
-#ifdef USING_BIG_ENDIAN
-//#define GUID_HIPART(x) (*((uint32*)&(x)))
-//#define GUID_LOPART(x) (*(((uint32*)&(x))+1))
-#define GUID_LOPART(x) ( ( x >> 32 ) )
-#define GUID_HIPART(x) ( ( x & 0x00000000ffffffff ) )
 #else
-#define GUID_HIPART(x) ( ( x >> 32 ) )
-#define GUID_LOPART(x) ( ( x & 0x00000000ffffffff ) )
-#endif
-#else
-#define GUID_HIPART(x) (*(((uint32*)&(x))+1))
-#define GUID_LOPART(x) (*((uint32*)&(x)))
+#  define stricmp strcasecmp
+#  define strnicmp strncasecmp
+#  define I64FMT "%016llX"
+#  define I64FMTD "%llu"
+#  define SI64FMTD "%lld"
 #endif
 
 #define atol(a) strtoul( a, NULL, 10)
@@ -408,24 +401,24 @@ Scripting system exports/imports
 #define for if(true) for
 
 #if COMPILER == COMPILER_MICROSOFT && _MSC_VER >= 1400
-#pragma float_control(push)
-#pragma float_control(precise, on)
+#  pragma float_control(push)
+#  pragma float_control(precise, on)
 #endif
 
 // fast int abs
-static inline int int32abs( const int value )
+static ASCENT_FORCEINLINE int int32abs( const int value )
 {
 	return (value ^ (value >> 31)) - (value >> 31);
 }
 
 // fast int abs and recast to unsigned
-static inline uint32 int32abs2uint32( const int value )
+static ASCENT_FORCEINLINE uint32 int32abs2uint32( const int value )
 {
 	return (uint32)(value ^ (value >> 31)) - (value >> 31);
 }
 
 /// Fastest Method of float2int32
-static inline int float2int32(const float value)
+static ASCENT_FORCEINLINE int float2int32(const float value)
 {
 #if !defined(X64) && COMPILER == COMPILER_MICROSOFT 
 	int i;
@@ -444,7 +437,7 @@ static inline int float2int32(const float value)
 }
 
 /// Fastest Method of long2int32
-static inline int long2int32(const double value)
+static ASCENT_FORCEINLINE int long2int32(const double value)
 {
 #if !defined(X64) && COMPILER == COMPILER_MICROSOFT
 	int i;
@@ -462,11 +455,11 @@ static inline int long2int32(const double value)
 }
 
 #if COMPILER == COMPILER_MICROSOFT && _MSC_VER >= 1400
-#pragma float_control(pop)
+#  pragma float_control(pop)
 #endif
 
 #ifndef WIN32
-#include <sys/timeb.h>
+#  include <sys/timeb.h>
 #endif
 
 ASCENT_FORCEINLINE uint32 now()
@@ -481,72 +474,32 @@ ASCENT_FORCEINLINE uint32 now()
 }
 
 #ifndef WIN32
-#define FALSE   0
-#define TRUE	1
+#  define FALSE 0
+#  define TRUE 1
 #endif
 
 #ifndef WIN32
-#define Sleep(ms) usleep(1000*ms)
+#  define Sleep(ms) usleep(1000*ms)
 #endif
 
 /*#ifdef WIN32
-#ifndef __SHOW_STUPID_WARNINGS__
-#pragma warning(disable:4018)
-#pragma warning(disable:4244)
-#pragma warning(disable:4305) 
-#pragma warning(disable:4748)
-#pragma warning(disable:4800) 
-#pragma warning(disable:4996)
-#pragma warning(disable:4251)
-#endif	  
+#  ifndef __SHOW_STUPID_WARNINGS__
+#    pragma warning(disable:4018)
+#    pragma warning(disable:4244)
+#    pragma warning(disable:4305) 
+#    pragma warning(disable:4748)
+#    pragma warning(disable:4800) 
+#    pragma warning(disable:4996)
+#    pragma warning(disable:4251)
+#  endif	  
 #endif
 
 #undef INTEL_COMPILER
 #ifdef INTEL_COMPILER
-#pragma warning(disable:279)
-#pragma warning(disable:1744)
-#pragma warning(disable:1740)
+#  pragma warning(disable:279)
+#  pragma warning(disable:1744)
+#  pragma warning(disable:1740)
 #endif*/
-
-#include "Util.h"
-struct WayPoint
-{
-	WayPoint()
-	{
-		o = 0.0f;
-	}
-	uint32 id;
-	float x;
-	float y;
-	float z;
-	float o;
-	uint32 waittime; //ms
-	uint32 flags;
-	bool forwardemoteoneshot;
-	uint32 forwardemoteid;
-	bool backwardemoteoneshot;
-	uint32 backwardemoteid;
-	uint32 forwardskinid;
-	uint32 backwardskinid;
-
-};
-
-ASCENT_FORCEINLINE void reverse_array(uint8 * pointer, size_t count)
-{
-	size_t x;
-	uint8 * temp = (uint8*)malloc(count);
-	memcpy(temp, pointer, count);
-	for(x = 0; x < count; ++x)
-		pointer[x] = temp[count-x-1];
-	free(temp);
-}
-
-typedef std::vector<WayPoint*> WayPointMap;
-
-int32 GetTimePeriodFromString(const char * str);
-std::string ConvertTimeStampToString(uint32 timestamp);
-std::string ConvertTimeStampToStringNC(uint32 timestamp);
-std::string ConvertTimeStampToDataTime(uint32 timestamp);
 
 ASCENT_FORCEINLINE void ASCENT_TOLOWER(std::string& str)
 {
@@ -559,9 +512,5 @@ ASCENT_FORCEINLINE void ASCENT_TOUPPER(std::string& str)
 	for(size_t i = 0; i < str.length(); ++i)
 		str[i] = (char)toupper(str[i]);
 };
-
-// returns true if the ip hits the mask, otherwise false
-bool ParseCIDRBan(unsigned int IP, unsigned int Mask, unsigned int MaskBits);
-unsigned int MakeIP(const char * str);
 
 #endif

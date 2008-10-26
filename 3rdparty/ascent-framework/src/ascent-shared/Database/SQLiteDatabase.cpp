@@ -1,6 +1,6 @@
 /*
  * Ascent MMORPG Server
- * Copyright (C) 2005-2008 Ascent Team <http://www.ascentemu.com/>
+ * Copyright (C) 2005-2007 Ascent Team <http://www.ascentemu.com/>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,7 +21,7 @@
 #include "../CrashHandler.h"
 #include "../NGLog.h"
 
-//#define ENABLE_DATABASE_SQLITE
+#define ENABLE_DATABASE_SQLITE
 #if defined(ENABLE_DATABASE_SQLITE) 
 
 #include "SQLiteDatabase.h"
@@ -29,7 +29,7 @@
 
 SQLiteDatabase::~SQLiteDatabase()
 {
-	delete m_connections[0];
+	delete mConnections[0];
 }
 
 SQLiteDatabase::SQLiteDatabase() : Database()
@@ -60,10 +60,10 @@ bool SQLiteDatabase::Initialize(const char* filename, unsigned int port, const c
 	mPassword = "";			//mPassword = string(Password);
 
 	Log.Notice("SQLiteDatabase", "Opening `%s`...", mHostname.c_str());
-	m_connections = new DatabaseConnection*[mConnectionCount];
-	m_connections[0] = new SQLiteDatabaseConnection;
+	mConnections = new DatabaseConnection*[mConnectionCount];
+	mConnections[0] = new SQLiteDatabaseConnection;
 
-	con = static_cast<SQLiteDatabaseConnection*>(m_connections[0]);
+	con = static_cast<SQLiteDatabaseConnection*>(mConnections[0]);
 	
 	result = sqlite3_open( mHostname.c_str(), &con->handle );
 	if( con->handle == NULL || result != SQLITE_OK )
@@ -98,7 +98,7 @@ string SQLiteDatabase::EscapeString(const char * esc, DatabaseConnection * con)
 
 void SQLiteDatabase::Shutdown()
 {
-	sqlite3_close( static_cast<SQLiteDatabaseConnection*>(*m_connections)->handle );
+	sqlite3_close( static_cast<SQLiteDatabaseConnection*>(*mConnections)->handle );
 }
 
 bool SQLiteDatabase::_SendQuery(DatabaseConnection *con, const char* Sql, bool Self)
@@ -126,7 +126,7 @@ QueryResult * SQLiteDatabase::_StoreQueryResult(DatabaseConnection * con)
 	if( db == NULL )
 		return NULL;
 
-	// check if we actualy have a result
+	// check if we actually have a result
 	if ( db->cols == 0 || db->rows == 0 )
 	{
 		if ( db->tabledata != NULL )
@@ -137,7 +137,7 @@ QueryResult * SQLiteDatabase::_StoreQueryResult(DatabaseConnection * con)
 	res = new SQLiteQueryResult( db->tabledata, db->cols, db->rows );
 	res->NextRow();
 
-	// crap thingy.. to make sure we don't do this again...
+	// dirty hack.. to make sure we don't do this again...
 	db->tabledata = NULL;
 
 	return res;
@@ -196,7 +196,4 @@ bool SQLiteQueryResult::NextRow()
 	return true;
 }
 
-
-
 #endif
-

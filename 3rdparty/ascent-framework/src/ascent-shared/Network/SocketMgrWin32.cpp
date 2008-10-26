@@ -146,7 +146,7 @@ void HandleWriteComplete(Socket * s, uint32 len)
 	}
 }
 
-void HandleShutdown(Socket * s, uint32 len)
+void HandleShutdown(Socket * /*s*/, uint32 /*len*/)
 {
 
 }

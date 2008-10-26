@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef WOWSERVER_WORLDPACKET_H
-#define WOWSERVER_WORLDPACKET_H
+#ifndef SERVER_FRAMEWORK_WORLDPACKET_H
+#define SERVER_FRAMEWORK_WORLDPACKET_H
 
 #include "Common.h"
 #include "ByteBuffer.h"

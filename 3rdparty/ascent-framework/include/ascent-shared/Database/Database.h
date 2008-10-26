@@ -24,15 +24,15 @@
 #include "../Threading/Queue.h"
 #include "../CallBack.h"
 
-#define DATABASE_QUERY_BUFFER_SIZE 16384
-#define DATABASE_QUERY_LONG_BUFFER_SIZE 65536*3
-
 using namespace std;
-class SERVER_DECL QueryResult;
-class SERVER_DECL QueryThread;
-class SERVER_DECL Database;
+class QueryResult;
+class QueryThread;
+class Database;
 
-struct SERVER_DECL DatabaseConnection
+#define DATABASE_QUERY_BUFFER_SIZE 16384
+#define DATABASE_QUERY_LONG_BUFFER_SIZE 16384*3
+
+struct DatabaseConnection
 {
 	FastMutex Busy;
 };
@@ -80,7 +80,6 @@ public:
 	/* Thread Stuff                                                         */
 	/************************************************************************/
 	bool run();
-	bool ThreadRunning;
 
 	/************************************************************************/
 	/* Virtual Functions                                                    */
@@ -93,20 +92,22 @@ public:
 
 	virtual QueryResult* Query(const char* QueryString, ...);
 	virtual QueryResult* QueryNA(const char* QueryString);
-	virtual QueryResult * FQuery(const char * QueryString, DatabaseConnection *con);
-	virtual void FWaitExecute(const char * QueryString, DatabaseConnection *con);
+	virtual QueryResult * FQuery(const char * QueryString, DatabaseConnection * con);
+	virtual void FWaitExecute(const char * QueryString, DatabaseConnection * con);
 	virtual bool WaitExecute(const char* QueryString, ...);//Wait For Request Completion
 	virtual bool WaitExecuteNA(const char* QueryString);//Wait For Request Completion
 	virtual bool Execute(const char* QueryString, ...);
 	virtual bool ExecuteNA(const char* QueryString);
 
+	bool ThreadRunning;
+
 	ASCENT_INLINE const string& GetHostName() { return mHostname; }
 	ASCENT_INLINE const string& GetDatabaseName() { return mDatabaseName; }
 	ASCENT_INLINE const uint32 GetQueueSize() { return queries_queue.get_size(); }
 
-	virtual string EscapeString(string& Escape) = 0;
+	virtual string EscapeString(string Escape) = 0;
 	virtual void EscapeLongString(const char * str, uint32 len, stringstream& out) = 0;
-	virtual string EscapeString(const char * esc, DatabaseConnection *con) = 0;
+	virtual string EscapeString(const char * esc, DatabaseConnection * con) = 0;
 	
 	void QueueAsyncQuery(AsyncQuery * query);
 	void EndThreads();
@@ -114,9 +115,9 @@ public:
 	void thread_proc_query();
 	void FreeQueryResult(QueryResult * p);
 
-	DatabaseConnection *GetFreeConnection();
+	DatabaseConnection * GetFreeConnection();
 
-	void PerformQueryBuffer(QueryBuffer * b, DatabaseConnection *ccon);
+	void PerformQueryBuffer(QueryBuffer * b, DatabaseConnection * ccon);
 	void AddQueryBuffer(QueryBuffer * b);
 
 	static Database * CreateDatabaseInterface(uint32 uType);
@@ -124,10 +125,8 @@ public:
 	virtual bool SupportsReplaceInto() = 0;
 	virtual bool SupportsTableLocking() = 0;
 
-	/* database is killed off manually. */
-	void OnShutdown() {}
-
 protected:
+
 	// spawn threads and shizzle
 	void _Initialize();
 
@@ -137,17 +136,13 @@ protected:
 	// actual query function
 	virtual bool _SendQuery(DatabaseConnection *con, const char* Sql, bool Self) = 0;
 	virtual QueryResult * _StoreQueryResult(DatabaseConnection * con) = 0;
-	virtual bool _HandleError(DatabaseConnection *conn, uint32 ErrorNumber) = 0;
-	virtual bool _Reconnect(DatabaseConnection *conn) = 0;
 
 	////////////////////////////////
 	FQueue<QueryBuffer*> query_buffer;
 
 	////////////////////////////////
 	FQueue<char*> queries_queue;
-	DatabaseConnection **m_connections;
-	
-	uint32 _counter;
+	DatabaseConnection ** mConnections;
 	///////////////////////////////
 
 	int32 mConnectionCount;
@@ -168,7 +163,7 @@ public:
 	QueryResult(uint32 fields, uint32 rows) : mFieldCount(fields), mRowCount(rows), mCurrentRow(NULL) {}
 	virtual ~QueryResult() {}
 
-	virtual bool NextRow() = NULL;
+	virtual bool NextRow() = 0;
 	void Delete() { delete this; }
 
 	ASCENT_INLINE Field* Fetch() { return mCurrentRow; }
@@ -178,7 +173,7 @@ public:
 protected:
 	uint32 mFieldCount;
 	uint32 mRowCount;
-    Field *mCurrentRow;
+        Field *mCurrentRow;
 };
 
 class SERVER_DECL QueryThread : public ThreadContext

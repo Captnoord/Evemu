@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef WOWSERVER_SINGLETON_H
-#define WOWSERVER_SINGLETON_H
+#ifndef SERVER_FRAMEWORK_SINGLETON_H
+#define SERVER_FRAMEWORK_SINGLETON_H
 
 #include "Errors.h"
 

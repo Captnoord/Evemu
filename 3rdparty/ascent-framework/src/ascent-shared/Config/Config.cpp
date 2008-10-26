@@ -107,7 +107,9 @@ uint32 ahash(const char * str)
 	register uint32 ret = 0;
 	register size_t i = 0;
 	for(; i < len; ++i)
+	{
 		ret += 5 * ret + (tolower(str[i]));
+	}
 
 	/*printf("%s : %u\n", str, ret);*/
 	return ret;
@@ -118,7 +120,7 @@ uint32 ahash(string& str)
 	return ahash(str.c_str());
 }
 
-bool ConfigFile::SetSource(const char *file, bool ignorecase)
+bool ConfigFile::SetSource(const char *file, bool /*ignorecase*/)
 {
 	/* wipe any existing settings. */
 	m_settings.clear();

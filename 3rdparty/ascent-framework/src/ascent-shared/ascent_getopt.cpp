@@ -22,7 +22,7 @@
 
 int arg_counter = 1;
 char ascent_optarg[514];
-int ascent_getopt_long_only(int ___argc, char *const *___argv, const char *__shortopts, const struct ascent_option *__longopts, int *__longind)
+int ascent_getopt_long_only(int ___argc, char *const *___argv, const char * /*__shortopts*/, const struct ascent_option *__longopts, int * /*__longind*/)
 {
 	// burlex todo: handle the shortops, at the moment it only works with longopts.
 

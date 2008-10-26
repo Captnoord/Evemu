@@ -437,7 +437,9 @@ bool ParseCIDRBan(unsigned int IP, unsigned int Mask, unsigned int MaskBits)
 
 	// sanity checks for the data first
 	if( MaskBits > 32 )
+	{
 		return false;
+	}
 
 	// this is the table for comparing leftover bits
 	static const unsigned char leftover_bits_compare[9] = {
@@ -456,7 +458,9 @@ bool ParseCIDRBan(unsigned int IP, unsigned int Mask, unsigned int MaskBits)
 	if( full_bytes > 0 )
 	{
 		if( memcmp( source_ip, mask, full_bytes ) != 0 )
+		{
 			return false;
+		}
 	}
 
 	// compare the left over bits
@@ -479,7 +483,9 @@ unsigned int MakeIP(const char * str)
 	unsigned int bytes[4];
 	unsigned int res;
 	if( sscanf(str, "%u.%u.%u.%u", &bytes[0], &bytes[1], &bytes[2], &bytes[3]) != 4 )
+	{
 		return 0;
+	}
 
 	res = bytes[0] | (bytes[1] << 8) | (bytes[2] << 16) | (bytes[3] << 24);
 	return res;
@@ -602,61 +608,3 @@ SERVER_DECL bool CheckIPs(const char* szIPList)
 	free(ip_string);
 	return true;
 }
-
-int32 ConvertGoldString(const char *szGoldString)
-{
-	int32 amount = 0;
-	bool neg = false;
-	const char *p = szGoldString;
-	char c;
-	char tmp_buf[1000];
-	int bp = 0;
-
-	while( *p != '\0' )
-	{
-		c = *p;
-
-		if( c == '-' )
-		{
-			neg = true;
-		}
-		else if( c == 'g' || c == 'G' )			// multipliers
-		{
-			tmp_buf[bp] = 0;
-			amount += (atoi(tmp_buf) * 10000);
-			bp = 0;
-		}
-		else if( c == 's' || c == 'S' )			// silver
-		{
-			tmp_buf[bp] = 0;
-			amount += (atoi(tmp_buf) * 100);
-			bp = 0;
-		}
-		else if( c == 'c' || c == 'C' )			// copper
-		{
-			tmp_buf[bp] = 0;
-			amount += atoi(tmp_buf);
-			bp = 0;
-		}
-		else if( c >= '0' && c <= '9' )			// is a number
-		{
-			// add character
-			tmp_buf[bp++] = c;
-		}
-
-		++p;
-	}
-
-	// add any leftover without a multiplier
-	if( bp != 0 )
-	{
-		tmp_buf[bp] = 0;
-		amount += atoi(tmp_buf);
-	}
-
-	if( neg )
-		return -amount;
-	else
-		return amount;
-}
-

@@ -199,7 +199,7 @@ void oLog::outColor(uint32 colorcode, const char * str, ...)
 	va_list ap;
 	va_start(ap, str);
 #ifdef WIN32
-	SetConsoleTextAttribute(stdout_handle, colorcode);
+	SetConsoleTextAttribute(stdout_handle, WORD(colorcode));
 #else
 	printf(colorstrings[colorcode]);
 #endif

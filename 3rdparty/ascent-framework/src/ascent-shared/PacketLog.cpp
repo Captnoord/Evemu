@@ -45,16 +45,14 @@ PacketLog::~PacketLog()
 {
 }
 
-
 char PacketLog::makehexchar(int i) {
-    return (i<=9) ? '0'+i : 'A'+(i-10);
+    return (i<=9) ? char('0'+i) : char('A'+(i-10));
 }
 
 int PacketLog::hextoint(char c) {
-    c = toupper(c);
+    c = (char)toupper(c);
     return (c > '9' ? c - 'A' + 10 : c - '0');
 }
-
 
 void PacketLog::HexDump(const unsigned char* data, size_t length, const char* file) 
 {

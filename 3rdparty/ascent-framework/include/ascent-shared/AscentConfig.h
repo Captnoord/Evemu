@@ -34,7 +34,7 @@
 //#define NO_DBLAYER_SQL
 
 #if !defined(NO_DBLAYER_SQL)
-	//#define ENABLE_DATABASE_MYSQL 1
+	#define ENABLE_DATABASE_MYSQL 1
 	//#define ENABLE_DATABASE_POSTGRES 1
 	//#define ENABLE_DATABASE_SQLITE 1
 #endif

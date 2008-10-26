@@ -1,6 +1,6 @@
 /*
  * Ascent MMORPG Server
- * Copyright (C) 2005-2008 Ascent Team <http://www.ascentemu.com/>
+ * Copyright (C) 2005-2007 Ascent Team <http://www.ascentemu.com/>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -28,8 +28,8 @@
 
 PostgresDatabase::~PostgresDatabase()
 {
-	//if ( Connections )
-	//	delete [] Connections;
+	//if ( mConnections )
+	//	delete [] mConnections;
 }
 
 PostgresDatabase::PostgresDatabase() : Database()
@@ -73,11 +73,11 @@ bool PostgresDatabase::Initialize(const char* Hostname, unsigned int port, const
 	mConnectString = ss.str();
 
 	Log.Notice("PostgresDatabase", "Connecting to `%s`, database: `%s`...", Hostname, DatabaseName);
-	Connections = new DatabaseConnection*[ConnectionCount];
+	mConnections = new DatabaseConnection*[ConnectionCount];
 	for( i = 0; i < ConnectionCount; ++i )
 	{
-		Connections[i] = new PostgresDatabaseConnection;
-		con = static_cast<PostgresDatabaseConnection*>( Connections[i] );
+		mConnections[i] = new PostgresDatabaseConnection;
+		con = static_cast<PostgresDatabaseConnection*>( mConnections[i] );
 		con->PgSql = PQconnectdb( mConnectString.c_str() );
 		con->Result = NULL;
 		if( con->PgSql == NULL )
@@ -152,16 +152,16 @@ void PostgresDatabase::Shutdown()
 	for( i = 0; i < mConnectionCount; ++i )
 	{
 		Log.Notice("PostgresDatabase", "Shutdown connection:%u", i);
-		con = static_cast<PostgresDatabaseConnection*>( Connections[i] );
-		// disconnect the Postgre connection
+		con = static_cast<PostgresDatabaseConnection*>( mConnections[i] );
+		// disconnect the 'Postgre' connection
 		PQfinish( con->PgSql );
 
 		// delete the internal connection
-		delete Connections[i];
-		Connections[i] = NULL;
+		delete mConnections[i];
+		mConnections[i] = NULL;
 	}
-	delete [] Connections;
-	Connections = NULL;
+	delete [] mConnections;
+	mConnections = NULL;
 	Log.Success("PostgresDatabase", "Shutdown complete", i);
 }
 

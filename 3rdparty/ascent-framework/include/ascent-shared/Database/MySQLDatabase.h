@@ -1,6 +1,6 @@
 /*
  * Ascent MMORPG Server
- * Copyright (C) 2005-2008 Ascent Team <http://www.ascentemu.com/>
+ * Copyright (C) 2005-2007 Ascent Team <http://www.ascentemu.com/>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -24,13 +24,13 @@
 
 struct MySQLDatabaseConnection : public DatabaseConnection
 {
+	MYSQL * MySql;
 };
 
 class SERVER_DECL MySQLDatabase : public Database
 {
 	friend class QueryThread;
 	friend class AsyncQuery;
-
 public:
 	MySQLDatabase();
 	~MySQLDatabase();
@@ -41,7 +41,7 @@ public:
 
 	void Shutdown();
 
-	string EscapeString(string& Escape);
+	string EscapeString(string Escape);
 	void EscapeLongString(const char * str, uint32 len, stringstream& out);
 	string EscapeString(const char * esc, DatabaseConnection * con);
 
@@ -50,12 +50,14 @@ public:
 	
 protected:
 
-
-
+	bool _HandleError(MySQLDatabaseConnection*, uint32 ErrorNumber);
+	bool _SendQuery(DatabaseConnection *con, const char* Sql, bool Self = false);
 
 	void _BeginTransaction(DatabaseConnection * conn);
 	void _EndTransaction(DatabaseConnection * conn);
-	
+	bool _Reconnect(MySQLDatabaseConnection * conn);
+
+	QueryResult * _StoreQueryResult(DatabaseConnection * con);
 };
 
 class SERVER_DECL MySQLQueryResult : public QueryResult
@@ -67,7 +69,7 @@ public:
 	bool NextRow();
 
 protected:
-	
+	MYSQL_RES* mResult;
 };
 
 #endif		// __MYSQLDATABASE_H

@@ -158,7 +158,7 @@ struct SERVER_DECL Thread
 
 typedef std::set<Thread*> ThreadSet;
 
-class SERVER_DECL CThreadPool
+class SERVER_DECL ThreadContextPool
 {
 	int GetNumCpus();
 
@@ -173,7 +173,7 @@ class SERVER_DECL CThreadPool
 	ThreadSet m_freeThreads;
 
 public:
-	CThreadPool();
+	ThreadContextPool();
 
 	// call every 2 minutes or so.
 	void IntegrityCheck();
@@ -210,6 +210,6 @@ public:
 	ASCENT_INLINE uint32 GetFreeThreadCount() { return (uint32)m_freeThreads.size(); }
 };
 
-extern SERVER_DECL CThreadPool ThreadPool;
+extern SERVER_DECL ThreadContextPool ThreadPool;
 
 #endif

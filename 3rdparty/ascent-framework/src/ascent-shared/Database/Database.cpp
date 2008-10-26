@@ -17,6 +17,7 @@
  *
  */
 
+
 #include "DatabaseEnv.h"
 #include "../CrashHandler.h"
 #include "../NGLog.h"
@@ -28,14 +29,14 @@ SQLCallbackBase::~SQLCallbackBase()
 
 Database::Database() : ThreadContext()
 {
-	_counter=0;
-	m_connections = NULL;
+	mConnections = NULL;
 	mConnectionCount = -1;   // Not connected.
 	ThreadRunning = true;
 }
 
 Database::~Database()
 {
+	
 }
 
 void Database::_Initialize()
@@ -53,25 +54,22 @@ DatabaseConnection * Database::GetFreeConnection()
 	uint32 i = 0;
 	for(;;)
 	{
-		DatabaseConnection * con = m_connections[ ((i++) % mConnectionCount) ];
+		DatabaseConnection * con = mConnections[ ((i++) % mConnectionCount) ];
 		if(con->Busy.AttemptAcquire())
 			return con;
-
-		// sleep every 20 iterations, otherwise this can cause 100% cpu if the db link goes dead
-		if( !(i % 20) )
-			Sleep(10);
 	}
 
 	// shouldn't be reached
 	return NULL;
 }
 
+
 QueryResult * Database::Query(const char* QueryString, ...)
 {	
-	char sql[DATABASE_QUERY_BUFFER_SIZE];
+	char sql[16384];
 	va_list vlist;
 	va_start(vlist, QueryString);
-	vsnprintf(sql, DATABASE_QUERY_BUFFER_SIZE, QueryString, vlist);
+	vsnprintf(sql, 16384, QueryString, vlist);
 	va_end(vlist);
 
 	// Send the query
@@ -116,10 +114,10 @@ void Database::FWaitExecute(const char * QueryString, DatabaseConnection * con)
 
 void QueryBuffer::AddQuery(const char * format, ...)
 {
-	char query[DATABASE_QUERY_BUFFER_SIZE];
+	char query[16384];
 	va_list vlist;
 	va_start(vlist, format);
-	vsnprintf(query, DATABASE_QUERY_BUFFER_SIZE, format, vlist);
+	vsnprintf(query, 16384, format, vlist);
 	va_end(vlist);
 
 	size_t len = strlen(query);
@@ -155,10 +153,9 @@ void Database::PerformQueryBuffer(QueryBuffer * b, DatabaseConnection * ccon)
     DatabaseConnection * con = ccon;
 	if( ccon == NULL )
 		con = GetFreeConnection();
-
-	// unknown if we need to use this... I guess so
-	//BeginTransaction(con);
 	
+	_BeginTransaction(con);
+
 	for(vector<char*>::iterator itr = b->queries.begin(); itr != b->queries.end(); ++itr)
 	{
 		_SendQuery(con, *itr, false);
@@ -173,11 +170,11 @@ void Database::PerformQueryBuffer(QueryBuffer * b, DatabaseConnection * ccon)
 
 bool Database::Execute(const char* QueryString, ...)
 {
-	char query[DATABASE_QUERY_BUFFER_SIZE];
+	char query[16384];
 
 	va_list vlist;
 	va_start(vlist, QueryString);
-	vsnprintf(query, DATABASE_QUERY_BUFFER_SIZE, QueryString, vlist);
+	vsnprintf(query, 16384, QueryString, vlist);
 	va_end(vlist);
 
 	if(!ThreadRunning)
@@ -207,10 +204,10 @@ bool Database::ExecuteNA(const char* QueryString)
 //this will wait for completion
 bool Database::WaitExecute(const char* QueryString, ...)
 {
-	char sql[DATABASE_QUERY_BUFFER_SIZE];
+	char sql[16384];
 	va_list vlist;
 	va_start(vlist, QueryString);
-	vsnprintf(sql, DATABASE_QUERY_BUFFER_SIZE, QueryString, vlist);
+	vsnprintf(sql, 16384, QueryString, vlist);
 	va_end(vlist);
 
 	DatabaseConnection * con = GetFreeConnection();
@@ -237,7 +234,7 @@ bool Database::run()
 	{
 		_SendQuery( con, query, false );
 		delete[] query;
-		if(!m_threadRunning)
+		if(m_threadRunning == true)
 			break;
 
 		query = queries_queue.pop();

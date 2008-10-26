@@ -359,7 +359,7 @@ public:
 	{
 		unsigned int line = 1;
 		unsigned int countpos = 0;
-		uint16 lenght = size();
+		size_t lenght = size();
 		unsigned int count = 0;
 
 		//fprintf(m_file, "{%s} Packet: (0x%04X) %s PacketSize = %u\n", (direction ? "SERVER" : "CLIENT"), opcode,

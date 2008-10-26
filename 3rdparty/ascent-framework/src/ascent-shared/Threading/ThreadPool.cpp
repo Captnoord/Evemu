@@ -42,9 +42,9 @@
 #endif
 
 #define THREAD_RESERVE 5
-SERVER_DECL CThreadPool ThreadPool;
+SERVER_DECL ThreadContextPool ThreadPool;
 
-CThreadPool::CThreadPool()
+ThreadContextPool::ThreadContextPool()
 {
 	_threadsExitedSinceLastCheck = 0;
 	_threadsRequestedSinceLastCheck = 0;
@@ -52,7 +52,7 @@ CThreadPool::CThreadPool()
 	_threadsFreedSinceLastCheck = 0;
 }
 
-bool CThreadPool::ThreadExit(Thread * t)
+bool ThreadContextPool::ThreadExit(Thread * t)
 {
 	_mutex.Acquire();
 	
@@ -89,7 +89,7 @@ bool CThreadPool::ThreadExit(Thread * t)
 	return true;
 }
 
-void CThreadPool::ExecuteTask(ThreadContext * ExecutionTarget)
+void ThreadContextPool::ExecuteTask(ThreadContext * ExecutionTarget)
 {
 	Thread * t;
 	_mutex.Acquire();
@@ -126,7 +126,7 @@ void CThreadPool::ExecuteTask(ThreadContext * ExecutionTarget)
 	_mutex.Release();
 }
 
-void CThreadPool::Startup()
+void ThreadContextPool::Startup()
 {
 	int i;
 	int tcount = THREAD_RESERVE;
@@ -137,7 +137,7 @@ void CThreadPool::Startup()
 	Log.Debug("ThreadPool", "Startup, launched %u threads.", tcount);
 }
 
-void CThreadPool::ShowStats()
+void ThreadContextPool::ShowStats()
 {
 	_mutex.Acquire();
 	Log.Debug("ThreadPool", "============ ThreadPool Status =============");
@@ -149,7 +149,7 @@ void CThreadPool::ShowStats()
 	_mutex.Release();
 }
 
-void CThreadPool::IntegrityCheck()
+void ThreadContextPool::IntegrityCheck()
 {
 	_mutex.Acquire();
 	int32 gobbled = _threadsEaten;
@@ -205,7 +205,7 @@ void CThreadPool::IntegrityCheck()
 	_mutex.Release();
 }
 
-void CThreadPool::KillFreeThreads(uint32 count)
+void ThreadContextPool::KillFreeThreads(uint32 count)
 {
 	//Log.Debug("ThreadPool", "Killing %u excess threads.", count);
 	_mutex.Acquire();
@@ -223,7 +223,7 @@ void CThreadPool::KillFreeThreads(uint32 count)
 	_mutex.Release();
 }
 
-void CThreadPool::Shutdown()
+void ThreadContextPool::Shutdown()
 {
 	_mutex.Acquire();
 	size_t tcount = m_activeThreads.size() + m_freeThreads.size();		// exit all
@@ -271,8 +271,8 @@ static unsigned long WINAPI thread_proc(void* param)
 {
 	Thread * t = (Thread*)param;
 	t->SetupMutex.Acquire();
-	uint32 tid = t->ControlInterface.GetId();
-	bool ht = (t->ExecutionTarget != NULL);
+//	uint32 tid = t->ControlInterface.GetId();
+//	bool ht = (t->ExecutionTarget != NULL);
 	t->SetupMutex.Release();
 	//Log.Debug("ThreadPool", "Thread %u started.", t->ControlInterface.GetId());
 
@@ -295,7 +295,7 @@ static unsigned long WINAPI thread_proc(void* param)
 		{
 			/*if(ht)
 				Log.Debug("ThreadPool", "Thread %u waiting for a new task.", tid);*/
-			// enter "suspended" state. when we return, the threadpool will either tell us to fuk off, or to execute a new task.
+			// enter "suspended" state. when we return, the thread pool will either tell us to bugger off, or to execute a new task.
 			t->ControlInterface.Suspend();
 			// after resuming, this is where we will end up. start the loop again, check for tasks, then go back to the threadpool.
 		}
@@ -308,7 +308,7 @@ static unsigned long WINAPI thread_proc(void* param)
 	return 0;
 }
 
-Thread * CThreadPool::StartThread(ThreadContext * ExecutionTarget)
+Thread * ThreadContextPool::StartThread(ThreadContext * ExecutionTarget)
 {
 	HANDLE h;
 	Thread * t = new Thread;
@@ -356,7 +356,7 @@ static void * thread_proc(void * param)
 	pthread_exit(0);
 }
 
-Thread * CThreadPool::StartThread(ThreadContext * ExecutionTarget)
+Thread * ThreadContextPool::StartThread(ThreadContext * ExecutionTarget)
 {
 	pthread_t target;
 	Thread * t = new Thread;
