@@ -54,7 +54,7 @@ bool CharacterDB::ValidateCharName(const char *name) {
 		return(false);
 	}
 	
-	//TODO: should reserve the name, but I dont wanna insert a fake char in order to do it.
+	//TODO: should reserve the name, but I don't wanna insert a fake char in order to do it.
 	
 	DBQueryResult res;
 	if(!m_db->RunQuery(res, 

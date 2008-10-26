@@ -74,6 +74,7 @@ m_db(db)
 	PyCallable_REG_CALL(LookupService, LookupCorporationTickers)
 	PyCallable_REG_CALL(LookupService, LookupStations)
 	PyCallable_REG_CALL(LookupService, LookupLocationsByGroup)
+	PyCallable_REG_CALL(LookupService, LookupAlliances)
 	//PyCallable_REG_CALL(LookupService, )
 }
 
@@ -157,25 +158,9 @@ PyResult LookupService::Handle_LookupLocationsByGroup(PyCallArgs &call) {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// handles lookup of Alliance people & places
+PyResult LookupService::Handle_LookupAlliances(PyCallArgs &call) 
+{
+	// hmm not implemented yet...
+	return(new PyRepInteger(0));
+}

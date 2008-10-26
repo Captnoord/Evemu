@@ -17,7 +17,8 @@
 
 #include "EvemuPCH.h"
 
-static const uint32 PING_INTERVAL_US = 60000;
+//static const uint32 PING_INTERVAL_US = 60000;
+static const uint32 PING_INTERVAL_US = 6000;
 
 CharacterAppearance::CharacterAppearance() {
 	//NULL all dynamic fields
@@ -151,6 +152,8 @@ Client::Client(PyServiceMgr *services, EVETCPConnection **con)
 	m_char.Perception = 8;
 	m_char.Memory = 9;
 	m_char.Willpower = 10;
+
+	m_char.balance = 10000; // start money
 
 	//initialize connection
 	m_net.SendHandshake(m_services->entity_list->GetClientCount());
@@ -624,7 +627,7 @@ void Client::MoveToLocation(uint32 location, const GPoint &pt) {
 	} else if(IsSolarSystem(location)) {
 		// Entering a solarsystem
 		// source is GetLocation()
-		// destinaion is location
+		// destination is location
 
 		m_char.stationID = 0;
 		m_char.solarSystemID = location;
@@ -1440,24 +1443,3 @@ FunctorTimerQueue::Entry::~Entry() {
 	delete func;
 }
 */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
