@@ -17,11 +17,11 @@
  *
  */
 
-#include "ThreadPool.h"
-#include "../NGLog.h"
+#include "Threading/ThreadPool.h"
+#include "NGLog.h"
 
 // not so good... it needs to be somewhere else
-#include "../CrashHandler.h"
+#include "CrashHandler.h"
 
 #ifdef WIN32
 	#include <process.h>

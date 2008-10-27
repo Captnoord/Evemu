@@ -21,11 +21,8 @@
 // common files first
 #include "../common/common.h"
 
-#include "ascent.h"
-
-#include "ByteBuffer.h"
-
-
+#include "ascent-shared/ascent.h"
+#include "ascent-shared/ByteBuffer.h"
 
 // commented because why would we do this?....
 //#define IMPLEMENT_SIGEXCEPT
@@ -282,8 +279,8 @@
 
 /* Ascent new stuff */
 
-#include "../../common/Space.h"
-#include "../../common/EveClientSocket.h"
+#include "../common/Space.h"
+#include "../common/EveClientSocket.h"
 
 
 #endif//__EVEPCH_H

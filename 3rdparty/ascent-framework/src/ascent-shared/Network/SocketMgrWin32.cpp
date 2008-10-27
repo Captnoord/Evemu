@@ -6,11 +6,11 @@
  *
  */
 
-#include "Network.h"
+#include "Network/Network.h"
 #ifdef CONFIG_USE_IOCP
 
-#include "../Config/ConfigEnv.h"
-#include "../CrashHandler.h"
+#include "Config/ConfigEnv.h"
+#include "CrashHandler.h"
 
 initialiseSingleton(SocketMgr);
 SocketMgr::SocketMgr()

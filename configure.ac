@@ -32,6 +32,7 @@ AH_TEMPLATE([USING_LITTLE_ENDIAN], Define this if you are on a non-big-endian sy
 AH_TEMPLATE([X64], Define this if you are under an X64-based operating system.)
 AH_TEMPLATE([X86], Define this if you are under an X86-based 32bit operating system.)
 AH_TEMPLATE([EVEMU_REVISION], The revision of the latest checkout)
+AH_TEMPLATE([enable_ascent], Enables the experimental Ascent framework)
 
 # Checks for libraries.
 
@@ -65,6 +66,19 @@ esac
 
 # Check for BigEndian
 AC_C_BIGENDIAN([AC_DEFINE(USING_BIG_ENDIAN)],[AC_DEFINE(USING_LITTLE_ENDIAN)],[])
+
+# enable Ascent
+AC_ARG_ENABLE(ascent, AC_HELP_STRING([--enable-ascent],[enable the experimental ascent framework]),
+[case "${enableval}" in
+  yes) ascent=true ;;
+  no)  ascent=false ;;
+  *) AC_MSG_ERROR(bad value ${enableval} for --enable-ascent) ;;
+esac],[anvil=false])
+AM_CONDITIONAL(ASCENT, test x$ascent = xtrue)
+
+if test x$ascent = xtrue; then
+	AC_DEFINE(enable_ascent)
+fi
 
 # Custom part
 AC_ARG_ENABLE(collector, AC_HELP_STRING([--enable-collector],[enable the eve collector]),
@@ -133,6 +147,9 @@ AC_CONFIG_FILES([
 	Makefile
 	3rdparty/Makefile
 	3rdparty/tinyxml/Makefile
+	3rdparty/ascent-framework/Makefile
+	3rdparty/ascent-framework/src/Makefile
+	3rdparty/ascent-framework/src/ascent-shared/Makefile
 	common/Makefile
 	xmlpktgen/Makefile
 	packets/Makefile

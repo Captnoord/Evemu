@@ -17,8 +17,8 @@
  *
  */
 
-#include "../Common.h"
-#include "Mutex.h"
+#include "Common.h"
+#include "Threading/Mutex.h"
 
 #ifdef __DragonFly__                                                            
 #  include <pthread.h>                                                            

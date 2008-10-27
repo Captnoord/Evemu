@@ -7,7 +7,7 @@
  */
 
 
-#include "Network.h"
+#include "Network/Network.h"
 #ifdef CONFIG_USE_KQUEUE
 
 namespace SocketOps

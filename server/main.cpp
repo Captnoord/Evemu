@@ -88,8 +88,9 @@ int main(int argc, char *argv[]) {
 	}
 
 	/* new socket stuff */
-
+#ifndef enable_ascent
 #define enable_ascent
+#endif
 #ifdef enable_ascent
 	new SocketMgr;
 	new SocketGarbageCollector;

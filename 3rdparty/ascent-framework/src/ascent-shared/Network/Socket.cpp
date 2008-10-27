@@ -6,7 +6,7 @@
  *
  */
 
-#include "Network.h"
+#include "Network/Network.h"
 
 initialiseSingleton(SocketGarbageCollector);
 bool g_setOSBufferSize = false;

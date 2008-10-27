@@ -17,10 +17,10 @@
  *
  */
 
-#include "DatabaseEnv.h"
+#include "Database/DatabaseEnv.h"
 #include "Common.h"
-#include "../CrashHandler.h"
-#include "../NGLog.h"
+#include "CrashHandler.h"
+#include "NGLog.h"
 
 #if defined(ENABLE_DATABASE_MYSQL)
 #  pragma message("[DATABASE LAYER] MySql")

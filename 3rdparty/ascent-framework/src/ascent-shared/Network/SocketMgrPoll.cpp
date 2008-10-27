@@ -6,7 +6,7 @@
  *
  */
 
-#include "Network.h"
+#include "Network/Network.h"
 #ifdef CONFIG_USE_POLL
 
 initialiseSingleton(SocketMgr);

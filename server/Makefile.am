@@ -1,5 +1,7 @@
 INCLUDES += -I$(srcdir)/../3rdparty/
-INCLUDES+= -I$(srcdir)/../common/
+INCLUDES += -I$(srcdir)/../3rdparty/ascent-framework/include
+INCLUDES += -I$(srcdir)/../common/
+
 
 noinst_LIBRARIES = \
 	libaccount.a \
@@ -301,6 +303,7 @@ server_SOURCES = \
 	ServiceDB.h
 
 server_LDADD = \
+  -lascent \
   -laccount \
   -ladmin \
   -lcache \
@@ -332,6 +335,7 @@ server_LDADD = \
 
 server_LDFLAGS = \
 	-L$(srcdir)/../3rdparty/tinyxml \
+	-L$(srcdir)/../3rdparty/ascent-framework/src/ascent-shared \
 	-L$(srcdir)/../server/ \
 	-L$(srcdir)/../common/ \
 	-L$(srcdir)/../packets/ \

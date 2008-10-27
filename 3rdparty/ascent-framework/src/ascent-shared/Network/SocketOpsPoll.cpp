@@ -7,7 +7,7 @@
  */
 
 
-#include "Network.h"
+#include "Network/Network.h"
 #include <fcntl.h>
 #ifdef CONFIG_USE_POLL
 

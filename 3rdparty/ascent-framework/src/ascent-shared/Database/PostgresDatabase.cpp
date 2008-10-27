@@ -17,9 +17,9 @@
  *
  */
 
-#include "DatabaseEnv.h"
-#include "../CrashHandler.h"
-#include "../NGLog.h"
+#include "Database/DatabaseEnv.h"
+#include "CrashHandler.h"
+#include "NGLog.h"
 
 #if defined(ENABLE_DATABASE_POSTGRES) && !defined(NO_DBLAYER_SQL)
 

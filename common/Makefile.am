@@ -1,4 +1,5 @@
 INCLUDES += -I$(srcdir)/../3rdparty/ -I$(srcdir)/../server/
+INCLUDES += -I$(srcdir)/../3rdparty/ascent-framework/include
 
 noinst_LIBRARIES = \
 	libcommon.a
@@ -96,5 +97,7 @@ libcommon_a_SOURCES = \
 	unix.cpp \
 	unix.h \
 	XMLParser.cpp \
-	XMLParser.h
+	XMLParser.h \
+	EveClientSocket.cpp \
+	EveClientSocket.h
 

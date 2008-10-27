@@ -25,7 +25,7 @@
 
 #include "EvemuPCH.h"
 
-#include "ByteBuffer.h"
+#include "ascent-shared/ByteBuffer.h"
 
 #define GetConnectedAddress GetRemoteIP
 

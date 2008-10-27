@@ -21,8 +21,8 @@
  *
  */
 
-#include "../Common.h"
-#include "CircularBuffer.h"
+#include "Common.h"
+#include "Network/CircularBuffer.h"
 
 /** Constructor
  */
