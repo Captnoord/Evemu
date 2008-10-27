@@ -19,6 +19,7 @@
 
 #include <signal.h>
 
+
 //#define USE_RUNTIME_EXCEPTIONS 1
 //#define IMPLEMENT_SIGEXCEPT 1
 //#include "../common/sigexcept/sigexcept.h"
@@ -94,6 +95,7 @@ int main(int argc, char *argv[]) {
 #ifdef enable_ascent
 	new SocketMgr;
 	new SocketGarbageCollector;
+	new Space;
 	sSocketMgr.SpawnWorkerThreads();
 
 	static volatile bool m_stopEvent;

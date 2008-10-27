@@ -45,3 +45,4 @@ public:
 };
 
 #define sSpace Space::getSingleton()
+

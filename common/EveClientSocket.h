@@ -118,3 +118,4 @@ private:
 	bool m_nagleEanbled;
 //	string * m_fullAccountName;
 };
+

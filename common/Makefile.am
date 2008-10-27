@@ -99,5 +99,7 @@ libcommon_a_SOURCES = \
 	XMLParser.cpp \
 	XMLParser.h \
 	EveClientSocket.cpp \
-	EveClientSocket.h
+	EveClientSocket.h \
+	Space.cpp \
+	Space.h 
 
