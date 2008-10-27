@@ -27,6 +27,8 @@
 #include "Log.h"
 #include "NGLog.h"
 
+#include "FastQueue.h"
+
 //#include "Threading/Mutex.h"
 #include "Threading/Threading.h"
 

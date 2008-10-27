@@ -768,7 +768,7 @@ void PyRepPackedRow::Dump(FILE *into, const char *pfx) const {
 	if(!m_buffer.empty()) {
 		string p(pfx);
 		p += "  ";
-		pfxPreviewHexDump(p.c_str(), into, &m_buffer[0], m_buffer.size());
+		pfxPreviewHexDump(p.c_str(), into, &m_buffer[0], uint32(m_buffer.size()));
 	}
 	if(!m_reps.empty()) {
 		std::string n(pfx);
@@ -786,7 +786,7 @@ void PyRepPackedRow::Dump(LogType ltype, const char *pfx) const {
 	if(!m_buffer.empty()) {
 		string p(pfx);
 		p += "  ";
-		pfxPreviewHexDump(p.c_str(), ltype, &m_buffer[0], m_buffer.size());
+		pfxPreviewHexDump(p.c_str(), ltype, &m_buffer[0], (uint32)m_buffer.size());
 	}
 	if(!m_reps.empty()) {
 		std::string n(pfx);

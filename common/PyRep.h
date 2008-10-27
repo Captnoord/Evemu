@@ -80,7 +80,7 @@ public:
 	virtual void visit(PyVisitor *v) const;
 	
 	PyRepInteger *TypedClone() const;
-	
+
 	uint64 value;
 };
 

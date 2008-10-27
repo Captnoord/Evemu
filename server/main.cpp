@@ -19,26 +19,22 @@
 
 #include <signal.h>
 
-
-//#define USE_RUNTIME_EXCEPTIONS 1
-//#define IMPLEMENT_SIGEXCEPT 1
-//#include "../common/sigexcept/sigexcept.h"
-
 static void CatchSignal(int sig_num);
 static bool InitSignalHandlers();
 
-#ifndef EVEMU_REVISION
-#define EVEMU_REVISION "henk 1"
-#endif//EVEMU_REVISION
-
 static volatile bool RunLoops = true;
 
-int main(int argc, char *argv[]) {
-	//INIT_SIGEXCEPT();
+int main(int argc, char *argv[]) 
+{
+	printf("\nCopyright (C) 2006-2008 EVEmu Team. http://evemu.mmoforge.org\n");
+	printf("\nThis program is free software; you can redistribute it and/or modify");
+	printf("it under the terms of the GNU General Public License as published by");
+	printf("the Free Software Foundation; version 2 of the License.");
+	printf("For a copy of this license, see the COPYING file provided with this distribution.\n");
+	Log.Line();
 	
-	_log(SERVER__INIT, "EVEmu %s", EVEMU_REVISION);
-	_log(SERVER__INIT, " Supported Client: %s, Version %.2f, Build %d, MachoNet %d",
-		EVEProjectVersion, EVEVersionNumber, EVEBuildVersion, MachoNetVersion);
+	sLog.outString("Revision: %s", EVEMU_REVISION);
+	sLog.outString("Supported Client: %s, Version %.2f, Build %d, MachoNet %d", EVEProjectVersion, EVEVersionNumber, EVEBuildVersion, MachoNetVersion);
 
 	ThreadPool.Startup();
 
@@ -46,29 +42,34 @@ int main(int argc, char *argv[]) {
 	Timer::SetCurrentTime();
 	
 	// Load server configuration
-	_log(SERVER__INIT, "Loading server configuration..");
-	if (!EVEmuServerConfig::LoadConfig()) {
-		_log(SERVER__INIT_ERR, "Loading server configuration failed.");
+	sLog.outString("Loading server configuration..");
+	if (!EVEmuServerConfig::LoadConfig()) 
+	{
+		sLog.outError("EVEmu", "Loading server configuration failed.");
 		return(1);
 	}
 	const EVEmuServerConfig *Config=EVEmuServerConfig::get();
 
 	if(!load_log_settings(Config->LogSettingsFile.c_str()))
-		_log(SERVER__INIT, "Warning: Unable to read %s (this file is optional)", Config->LogSettingsFile.c_str());
+	{
+		sLog.outString("Warning: Unable to read %s (this file is optional)", Config->LogSettingsFile.c_str());
+	}
 	else
-		_log(SERVER__INIT, "Log settings loaded from %s", Config->LogSettingsFile.c_str());
+	{
+		sLog.outString("Log settings loaded from %s", Config->LogSettingsFile.c_str());
+	}
 
 	//open up the log file if specified.
 	if(!Config->LogFile.empty()) {
 		if(log_open_logfile(Config->LogFile.c_str())) {
-			_log(SERVER__INIT, "Opened log file %s", Config->LogFile.c_str());
+			sLog.outString("Opened log file %s", Config->LogFile.c_str());
 		} else {
-			_log(SERVER__INIT_ERR, "Unable to open log file '%s', only logging to the screen now.", Config->LogFile.c_str());
+			sLog.outString("Unable to open log file '%s', only logging to the screen now.", Config->LogFile.c_str());
 		}
 	}
 	
 	if(!PyRepString::LoadStringFile(Config->StringsFile.c_str())) {
-		_log(SERVER__INIT_ERR, "Unable to open %s, i need it to decode string table elements!", Config->StringsFile.c_str());
+		sLog.outString("Unable to open %s, i need it to decode string table elements!", Config->StringsFile.c_str());
 		return(1);
 	}
 
@@ -83,7 +84,7 @@ int main(int argc, char *argv[]) {
 			Config->DatabaseDB.c_str(),
 			Config->DatabasePort)
 		) {
-			_log(SERVER__INIT_ERR, "Unable to connect to the database: %s", err.c_str());
+			sLog.outError("Unable to connect to the database: %s", err.c_str());
 			return(1);
 		}
 	}
@@ -159,8 +160,8 @@ int main(int argc, char *argv[]) {
 	PyServiceMgr services(888444, &db, &entity_list, &item_factory, Config->CacheDirectory);
 
 	//setup the command dispatcher
-	CommandDispatcher command_dispatcher(new CommandDB(&db), &services);
-	RegisterAllCommands(&command_dispatcher);
+	//CommandDispatcher command_dispatcher(new CommandDB(&db), &services);
+	//RegisterAllCommands(&command_dispatcher);
 
 	/*                                                                              
      * Service creation and registration.
@@ -184,7 +185,7 @@ int main(int argc, char *argv[]) {
 	services.RegisterService(new CorpRegistryService(&services, &db));
 	services.RegisterService(new DogmaIMService(&services, &db));
 	services.RegisterService(new InvBrokerService(&services, &db));
-	services.RegisterService(services.lsc_service = new LSCService(&services, &db, &command_dispatcher));
+	//services.RegisterService(services.lsc_service = new LSCService(&services, &db, &command_dispatcher));
 	services.RegisterService(new LookupService(&services, &db));
 	services.RegisterService(new VoiceMgrService(&services));
 	services.RegisterService(new ShipService(&services, &db));
@@ -203,7 +204,7 @@ int main(int argc, char *argv[]) {
 	services.RegisterService(new SkillMgrService(&services, &db));
 	services.RegisterService(new TutorialService(&services, &db));
 	services.RegisterService(new PetitionerService(&services));
-	services.RegisterService(new SlashService(&services, &command_dispatcher));
+	//services.RegisterService(new SlashService(&services, &command_dispatcher));
 	services.RegisterService(new MarketProxyService(&services, &db));
 	services.RegisterService(new ContractMgrService(&services));
 	services.RegisterService(new ReprocessingService(&services, &db));

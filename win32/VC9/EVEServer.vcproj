@@ -48,7 +48,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/MP"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;..\..\3rdparty\ascent-framework\include\ascent-shared/Threading&quot;;&quot;..\..\3rdparty\ascent-framework\include\ascent-shared&quot;;..\..\3rdparty\mysql\include;..\..\3rdparty\zlib;..\..\common;..\..\server;..\"
+				AdditionalIncludeDirectories="..\..\3rdparty\;&quot;..\..\3rdparty\ascent-framework\include\ascent-shared/Threading&quot;;&quot;..\..\3rdparty\ascent-framework\include\&quot;;&quot;..\..\3rdparty\ascent-framework\include\ascent-shared&quot;;..\..\3rdparty\mysql\include;..\..\3rdparty\zlib;..\..\common;..\..\server;..\"
 				PreprocessorDefinitions="WIN32;_DEBUG;USE_RUNTIME_EXCEPTIONS;_CRT_SECURE_NO_WARNINGS"
 				MinimalRebuild="false"
 				ExceptionHandling="2"
@@ -1288,6 +1288,14 @@
 		<Filter
 			Name="NewStuff"
 			>
+			<File
+				RelativePath="..\..\common\EveClientSession.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\EveClientSession.h"
+				>
+			</File>
 			<File
 				RelativePath="..\..\common\EveClientSocket.cpp"
 				>

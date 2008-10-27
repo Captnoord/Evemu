@@ -410,7 +410,7 @@ void RamProxyService::_VerifyInstallJob_Call(const Call_InstallJob &args, const 
 
 	if(args.activityID == ramActivityManufacturing) {
 		uint32 jobCount = m_db.CountManufacturingJobs(c->GetCharacterID());
-		if(c->Item()->manufactureSlotLimit() <= jobCount) {
+		if(c->Item()->manufactureSlotLimit() <= int(jobCount)) {
 			std::map<std::string, PyRep *> exceptArgs;
 			exceptArgs["current"] = new PyRepInteger(jobCount);
 			exceptArgs["max"] = new PyRepInteger(c->Item()->manufactureSlotLimit());
@@ -418,7 +418,7 @@ void RamProxyService::_VerifyInstallJob_Call(const Call_InstallJob &args, const 
 		}
 	} else {
 		uint32 jobCount = m_db.CountResearchJobs(c->GetCharacterID());
-		if(c->Item()->maxLaborotorySlots() <= jobCount) {
+		if(c->Item()->maxLaborotorySlots() <= int(jobCount)) {
 			std::map<std::string, PyRep *> exceptArgs;
 			exceptArgs["current"] = new PyRepInteger(jobCount);
 			exceptArgs["max"] = new PyRepInteger(c->Item()->maxLaborotorySlots());
@@ -681,7 +681,7 @@ void RamProxyService::_VerifyInstallJob_Install(const Rsp_InstallJob &rsp, const
 	for(; cur != end; cur++) {
 		// check skill (quantity is required level)
 		if(cur->isSkill) {
-			if(GetSkillLevel(skills, cur->typeID) < cur->quantity) {
+			if(GetSkillLevel(skills, cur->typeID) < int(cur->quantity)) {
 				std::map<std::string, PyRep *> args;
 				args["item"] = new PyRepString(m_db.GetTypeName(cur->typeID));
 				args["skillLevel"] = new PyRepInteger(cur->quantity);

@@ -152,7 +152,10 @@ bool log_open_logfile(const char *fname) {
 		return(false);
 	return(true);
 }
-
+bool load_log_settings(const std::string & filename)
+{
+	return load_log_settings(filename.c_str());
+}
 
 bool load_log_settings(const char *filename) {
 	//this is a terrible algorithm, but im lazy today

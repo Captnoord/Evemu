@@ -21,31 +21,34 @@ EntityList::EntityList(DBcore *db) : m_services(NULL), m_db(db)
 {
 }
 
-EntityList::~EntityList() {
-	client_list::iterator ccur, cend;
-	ccur = m_clients.begin();
-	cend = m_clients.end();
-	for(; ccur != cend; ccur++) {
+EntityList::~EntityList()
+{
+	client_list::iterator ccur = m_clients.begin();
+	for(; ccur != m_clients.end(); ccur++) 
+	{
 		delete *ccur;
 	}
 
-	system_list::iterator scur, send;
-	scur = m_systems.begin();
-	send = m_systems.end();
-	for(; scur != send; scur++) {
+	system_list::iterator scur = m_systems.begin();
+	for(; scur != m_systems.end(); scur++) 
+	{
 		delete scur->second;
 	}
 }
 
-void EntityList::Add(Client **client) {
+void EntityList::Add(Client **client)
+{
 	if(client == NULL || *client == NULL)
+	{
 		return;
+	}
 	
 	m_clients.push_back(*client);
 	*client = NULL;
 }
 
-void EntityList::Process() {
+void EntityList::Process() 
+{
 	{
 		Client *active_client = NULL;
 		client_list::iterator cur, end;
@@ -155,8 +158,8 @@ Client *EntityList::FindAccount(uint32 account_id) const {
 }
 
 void EntityList::Broadcast(const char *notifyType, const char *idType, PyRepTuple **payload) const {
-	//build a little notification out of it.
-	EVENotificationStream notify;
+	//build a little MACHONETMSG_NOTIFICATION out of it.
+	EVEMACHONETMSG_NOTIFICATIONStream notify;
 	notify.remoteObject = 1;
 	notify.args = *payload;
 	*payload = NULL;	//consumed
@@ -169,16 +172,16 @@ void EntityList::Broadcast(const char *notifyType, const char *idType, PyRepTupl
 	Broadcast(dest, &notify);
 }
 
-void EntityList::Broadcast(const PyAddress &dest, EVENotificationStream *noti) const {
+void EntityList::Broadcast(const PyAddress &dest, EVEMACHONETMSG_NOTIFICATIONStream *noti) const {
 	client_list::const_iterator cur, end;
 	cur = m_clients.begin();
 	end = m_clients.end();
 	for(; cur != end; cur++) {
-		(*cur)->SendNotification(dest, noti);
+		(*cur)->SendMACHONETMSG_NOTIFICATION(dest, noti);
 	}
 }
 
-void EntityList::Multicast(const character_set &cset, const PyAddress &dest, EVENotificationStream *noti) const {
+void EntityList::Multicast(const character_set &cset, const PyAddress &dest, EVEMACHONETMSG_NOTIFICATIONStream *noti) const {
 	//this could likely be done better
 
 	std::vector<Client *> result;
@@ -188,13 +191,13 @@ void EntityList::Multicast(const character_set &cset, const PyAddress &dest, EVE
 	cur = result.begin();
 	end = result.end();
 	for(; cur != end; cur++) {
-		(*cur)->SendNotification(dest, noti);
+		(*cur)->SendMACHONETMSG_NOTIFICATION(dest, noti);
 	}
 }
 
 //in theory this could be written in therms of the more generic
 //MulticastTarget function, but this is much more efficient.
-void EntityList::Multicast(const char *notifyType, const char *idType, PyRepTuple **payload, NotificationDestination target, uint32 target_id, bool seq) {
+void EntityList::Multicast(const char *notifyType, const char *idType, PyRepTuple **payload, MACHONETMSG_NOTIFICATIONDestination target, uint32 target_id, bool seq) {
 	std::list<Client *>::const_iterator cur, end;
 	cur = m_clients.begin();
 	end = m_clients.end();
@@ -211,7 +214,7 @@ void EntityList::Multicast(const char *notifyType, const char *idType, PyRepTupl
 			break;
 		}
 		temp = (PyRepTuple*)(*payload)->Clone();
-		(*cur)->SendNotification(notifyType, idType, &temp, seq);
+		(*cur)->SendMACHONETMSG_NOTIFICATION(notifyType, idType, &temp, seq);
 	}
 	delete (*payload);
 	*payload = NULL;
@@ -246,7 +249,7 @@ void EntityList::Multicast(const char *notifyType, const char *idType, PyRepTupl
 			continue;
 		}
 		temp = (PyRepTuple*)(*payload)->Clone();
-		(*cur)->SendNotification(notifyType, idType, &temp, seq);
+		(*cur)->SendMACHONETMSG_NOTIFICATION(notifyType, idType, &temp, seq);
 	}
 	delete (*payload);
 	*payload = NULL;
@@ -274,7 +277,7 @@ void EntityList::Multicast(const character_set &cset, const char *notifyType, co
 				payload = (PyRepTuple *) (*in_payload)->Clone();
 		}
 		
-		(*cur)->SendNotification(notifyType, idType, &payload, seq);
+		(*cur)->SendMACHONETMSG_NOTIFICATION(notifyType, idType, &payload, seq);
 	}
 }
 

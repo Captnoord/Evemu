@@ -78,6 +78,7 @@ public:
 
 	CLog();
 
+	void Line();
 	void Color(unsigned int color);
 	void Notice(const char * source, const char * format, ...);
 	void Warning(const char * source, const char * format, ...);
@@ -89,7 +90,6 @@ public:
 
 protected:
 	ASCENT_INLINE void Time();
-	ASCENT_INLINE void Line();
 
 #ifdef WIN32
 	HANDLE stdout_handle, stderr_handle;

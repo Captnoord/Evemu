@@ -163,6 +163,7 @@ extern bool log_open_logfile(const char *file);
 #define is_log_enabled( type ) \
 	log_type_info[ type ].enabled
 
+extern bool load_log_settings(const std::string & filename);
 extern bool load_log_settings(const char *filename);
 
 

@@ -35,7 +35,7 @@ CommandDispatcher::~CommandDispatcher() {
 }
 
 PyResult CommandDispatcher::Execute(Client *from, const char *msg) const {
-	//might want to check for # or / at the begining of this crap.
+	//might want to check for # or / at the beginning of this crap.
 	Seperator sep(msg+1);
 
 	if(sep.argnum == 0) {

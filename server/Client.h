@@ -42,13 +42,8 @@ Static Bodies:
 	- shape
 	- position
 
-
 detect clients moving into agro radius
-
 */
-
-
-
 
 #ifndef EVE_CLIENT_H
 #define EVE_CLIENT_H
@@ -248,9 +243,6 @@ protected:
 	TimerID m_nextID;
 	std::vector<Entry *> m_queue;	//not ordered or anything useful.
 };
-
-
-
 
 //DO NOT INHERIT THIS OBJECT!
 class Client : public DynamicSystemEntity {

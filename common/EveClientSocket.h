@@ -3,7 +3,7 @@
 	LICENSE:
 	------------------------------------------------------------------------------------
 	This file is part of EVEmu: EVE Online Server Emulator
-	Copyright 2007 - 2008 The EVEmu Team
+	Copyright 2006 - 2008 The EVEmu Team
 	For the latest information visit http://evemu.mmoforge.org
 	------------------------------------------------------------------------------------
 	This program is free software; you can redistribute it and/or modify it under
@@ -47,6 +47,7 @@ enum EVE_AUTH_STATE
 	EVE_AUTH_STATE_DONE,				// old AcceptingPackets						| finished authorization
 };
 
+class EveClientSession;
 class EveClientSocket : public Socket
 {
 public:
@@ -66,6 +67,11 @@ public:
 	void OnDisconnect();
 
 	bool m_Authed;
+
+	void SetSession(EveClientSession* session)
+	{
+		mSession = session;
+	}
 
 protected:
 	// Internal functions
@@ -93,13 +99,24 @@ protected:
 	void _authStateHandshakeSend(PyRep& packet);
 	void _authStateDone(PyRep& packet);
 
-	
 	stateProc m_currentStateMachine;
 
-private:
 
+
+private:
 	uint32 mRemaining;
 	CryptoChallengePacket *mRequest;
+
+	// this is more a session...
+	//Client * mClient;
+
+	EveClientSession* mSession;
+
+	// is this connection queued
+	bool mQueued;
+
+	std::string userName;
+	uint32 userid;
 
 	/*uint32 mOpcode;
 	
@@ -109,9 +126,7 @@ private:
 	uint32 mClientBuild;
 	uint32 mRequestID;*/
 
-	//WorldSession *mSession;
-	//WorldPacket * pAuthenticationPacket;
-	//FastQueue<WorldPacket*, DummyLock> _queue;
+	//FastQueue<WorldPacket*, DummyLock> _queue; // send packet queue not used atm
 	Mutex queueLock;
 
 //	uint32 _latency;
