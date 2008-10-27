@@ -17,30 +17,23 @@
 
 #include "EvemuPCH.h"
 
-
-EntityList::EntityList(DBcore *db)
-: m_services(NULL),
-  m_db(db)
+EntityList::EntityList(DBcore *db) : m_services(NULL), m_db(db)
 {
 }
 
 EntityList::~EntityList() {
-	{
-	client_list::iterator cur, end;
-	cur = m_clients.begin();
-	end = m_clients.end();
-	for(; cur != end; cur++) {
-		delete *cur;
-	}
+	client_list::iterator ccur, cend;
+	ccur = m_clients.begin();
+	cend = m_clients.end();
+	for(; ccur != cend; ccur++) {
+		delete *ccur;
 	}
 
-	{
-	system_list::iterator cur, end;
-	cur = m_systems.begin();
-	end = m_systems.end();
-	for(; cur != end; cur++) {
-		delete cur->second;
-	}
+	system_list::iterator scur, send;
+	scur = m_systems.begin();
+	send = m_systems.end();
+	for(; scur != send; scur++) {
+		delete scur->second;
 	}
 }
 
@@ -176,7 +169,6 @@ void EntityList::Broadcast(const char *notifyType, const char *idType, PyRepTupl
 	Broadcast(dest, &notify);
 }
 
-
 void EntityList::Broadcast(const PyAddress &dest, EVENotificationStream *noti) const {
 	client_list::const_iterator cur, end;
 	cur = m_clients.begin();
@@ -185,7 +177,6 @@ void EntityList::Broadcast(const PyAddress &dest, EVENotificationStream *noti) c
 		(*cur)->SendNotification(dest, noti);
 	}
 }
-
 
 void EntityList::Multicast(const character_set &cset, const PyAddress &dest, EVENotificationStream *noti) const {
 	//this could likely be done better
@@ -294,8 +285,6 @@ void EntityList::Unicast(uint32 charID, const char *notifyType, const char *idTy
 	Multicast(cset, notifyType, idType, payload, seq);
 }
 
-
-
 void EntityList::GetClients(const character_set &cset, std::vector<Client *> &result) const {
 	//this could likely be done better
 
@@ -332,9 +321,3 @@ SystemManager *EntityList::FindOrBootSystem(uint32 systemID) {
 	m_systems[systemID] = mgr;
 	return(mgr);
 }
-
-
-
-
-
-

@@ -123,7 +123,7 @@ typedef enum {
 	SESSIONINITIALSTATENOTIFICATION = 18,
 	PING_REQ = 20,
 	PING_RSP = 21,
-	_MACHONETMSG_TYPE_next
+	_MACHONETMSG_TYPE_MAX
 } MACHONETMSG_TYPE;
 
 typedef enum {
@@ -132,7 +132,7 @@ typedef enum {
 	WRAPPEDEXCEPTION = 2
 } MACHONETERR_TYPE;
 //see PyPacket.cpp
-extern const char *MACHONETMSG_TYPE_str[_MACHONETMSG_TYPE_next];
+extern const char *MACHONETMSG_TYPE_str[_MACHONETMSG_TYPE_MAX];
 
 //item types which we need to know about:
 enum EVEItemType {

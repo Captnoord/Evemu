@@ -68,13 +68,17 @@ public:
 	ItemFactory *const item_factory;	//here for anybody to use. we do not own this.
 	EntityList *const entity_list;	//here for anybody to use. we do not own this.
 	
-	//Area to access services by name. This isnt ideal, but it avoids casting.
+	//Area to access services by name. This isn't ideal, but it avoids casting.
 	//these may be NULL during service init, but should never be after that.
 	//we do not own these pointers (we do in their PyService * form though)
 	LSCService *lsc_service; 
 	
 protected:
-	std::set<PyService *> m_services;	//we own these pointers.
+
+	typedef std::set<PyService *>	PyServiceSet;
+	typedef PyServiceSet::iterator	PyServiceSetItr;
+
+	PyServiceSet m_services;	//we own these pointers.
 
 	ObjCacheService *const m_cache;
 	
@@ -87,7 +91,12 @@ protected:
 		Client *client;	//we do not own this.
 		PyBoundObject *destination;	//we own this. PyServiceMgr deletes it
 	};
-	std::map<std::string, BoundObject> m_boundObjects;
+	
+	typedef std::map<std::string, BoundObject>	PyServObjMap;
+	typedef PyServObjMap::iterator				PyServObjMapItr;
+
+	PyServObjMap m_boundObjects;
+
 	class BoundCaller;
 	BoundCaller *m_BoundCallDispatcher;
 

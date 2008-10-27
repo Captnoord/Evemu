@@ -15,7 +15,6 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
 #include "common.h"
 #include "PyPacket.h"
 #include "PyRep.h"
@@ -25,8 +24,7 @@
 #include "PyDumpVisitor.h"
 #include <string>
 
-const char *MACHONETMSG_TYPE_str[_MACHONETMSG_TYPE_next]
-= {
+const char* MACHONETMSG_TYPE_str[_MACHONETMSG_TYPE_MAX] = {
 	"AUTHENTICATION_REQ",
 	"AUTHENTICATION_RSP",
 	"IDENTIFICATION_REQ",
@@ -51,13 +49,10 @@ const char *MACHONETMSG_TYPE_str[_MACHONETMSG_TYPE_next]
 	"PING_RSP"
 };
 
-PyPacket::PyPacket()
-: type_string("none"),
-  type(__Fake_Invalid_Type),
-  userid(0),
-  payload(NULL),
-  named_payload(NULL)
-{
+PyPacket::PyPacket() : type_string("none"), type(__Fake_Invalid_Type), userid(0), payload(NULL), named_payload(NULL) {
+}
+
+PyPacket::PyPacket(MACHONETMSG_TYPE _type, std::string _typestring) : type(_type), type_string(_typestring) {
 }
 
 PyPacket::~PyPacket() {

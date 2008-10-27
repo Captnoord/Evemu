@@ -85,6 +85,8 @@ protected:
 class PyPacket {
 public:
 	PyPacket();
+	PyPacket(MACHONETMSG_TYPE _type, std::string _typestring);
+
 	~PyPacket();
 	
 	void Dump(LogType type, PyVisitor *dumper);
@@ -177,6 +179,4 @@ public:
 	PyRepTuple *args;
 };
 
-
 #endif
-

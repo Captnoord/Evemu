@@ -15,8 +15,6 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
-
 #include "EvemuPCH.h"
 
 /*                                                                              
@@ -24,9 +22,8 @@
  * their destination, assumes they are calls on bound objects, and tries to find
  * that bound object to execute the call.
  *
-*/
-class PyServiceMgr::BoundCaller
-: public PyService
+ */
+class PyServiceMgr::BoundCaller : public PyService
 {
 public:
 	BoundCaller(PyServiceMgr *mgr)
@@ -49,20 +46,8 @@ public:
 };
 
 
-PyServiceMgr::PyServiceMgr(
-	uint32 nodeID, 
-	DBcore *db, 
-	EntityList *elist, 
-	ItemFactory *ifactory, 
-	const std::string &CacheDirectory
-)
-: item_factory(ifactory),
-  entity_list(elist),
-  lsc_service(NULL),
-  m_cache(new ObjCacheService(this, db, CacheDirectory)),
-  m_nodeID(nodeID),
-  m_nextBindID(100),
-  m_svcDB(new ServiceDB(db))
+PyServiceMgr::PyServiceMgr(uint32 nodeID, DBcore *db, EntityList *elist, ItemFactory *ifactory, const std::string &CacheDirectory) :
+item_factory(ifactory), entity_list(elist), lsc_service(NULL), m_cache(new ObjCacheService(this, db, CacheDirectory)), m_nodeID(nodeID), m_nextBindID(100), m_svcDB(new ServiceDB(db))
 {
 	entity_list->UseServices(this);
 	//cannot call this on the init list since it needs us to be fully constructed.
@@ -70,23 +55,18 @@ PyServiceMgr::PyServiceMgr(
 	RegisterService(m_cache);
 }
 
-PyServiceMgr::~PyServiceMgr() {
+PyServiceMgr::~PyServiceMgr() 
+{
+	PyServiceSetItr ServItr = m_services.begin();
+	for(; ServItr != m_services.end(); ServItr++) 
 	{
-		std::set<PyService *>::iterator cur, end;
-		cur = m_services.begin();
-		end = m_services.end();
-		for(; cur != end; cur++) {
-			delete *cur;
-		}
+		delete *ServItr;
 	}
 
+	PyServObjMapItr BoundObjItr = m_boundObjects.begin();
+	for(; BoundObjItr != m_boundObjects.end(); BoundObjItr++)
 	{
-		std::map<std::string, BoundObject>::iterator cur, end;
-		cur = m_boundObjects.begin();
-		end = m_boundObjects.end();
-		for(; cur != end; cur++) {
-			delete cur->second.destination;
-		}
+		delete BoundObjItr->second.destination;
 	}
 
 	delete m_BoundCallDispatcher;
@@ -160,15 +140,14 @@ PyRepSubStruct *PyServiceMgr::BindObject(Client *c, PyBoundObject *cb, PyRepDict
 }
 
 void PyServiceMgr::ClearBoundObjects(Client *who) {
-	std::map<std::string, BoundObject>::iterator cur, end, tmp;
-	cur = m_boundObjects.begin();
-	end = m_boundObjects.end();
+	PyServObjMapItr cur = m_boundObjects.begin();
+	PyServObjMapItr end = m_boundObjects.end();
+	
 	while(cur != end) {
 		if(cur->second.client == who) {
 			_log(SERVICE__MESSAGE, "Clearing bound object %s", cur->first.c_str());
 			PyBoundObject *bo = cur->second.destination;
-			tmp = cur++;
-			m_boundObjects.erase(tmp);
+			m_boundObjects.erase(cur++);
 			bo->Release();
 		} else {
 			cur++;
@@ -177,8 +156,7 @@ void PyServiceMgr::ClearBoundObjects(Client *who) {
 }
 
 PyBoundObject *PyServiceMgr::FindBoundObject(const char *bindID) {
-	std::map<std::string, BoundObject>::iterator res;
-	res = m_boundObjects.find(bindID);
+	PyServObjMapItr res = m_boundObjects.find(bindID);
 	if(res == m_boundObjects.end())
 		return(NULL);
 	return(res->second.destination);
@@ -186,7 +164,7 @@ PyBoundObject *PyServiceMgr::FindBoundObject(const char *bindID) {
 
 void PyServiceMgr::ClearBoundObject(const char *bindID) {
 	
-	std::map<std::string, BoundObject>::iterator res;
+	PyServObjMapItr res;
 	res = m_boundObjects.find(bindID);
 	if(res == m_boundObjects.end()) {
 		_log(SERVICE__ERROR, "Unable to find bound object '%s' to release.", bindID);
@@ -198,19 +176,3 @@ void PyServiceMgr::ClearBoundObject(const char *bindID) {
 	m_boundObjects.erase(res);
 	bo->Release();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

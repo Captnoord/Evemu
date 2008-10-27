@@ -443,10 +443,7 @@ void Client::Login(CryptoChallengePacket *pack) {
 }
 
 void Client::_SendPingRequest() {
-	PyPacket *ping_req = new PyPacket();
-	
-	ping_req->type = PING_REQ;
-	ping_req->type_string = "macho.PingReq";
+	PyPacket *ping_req = new PyPacket(PING_REQ, "macho.PingReq");
 	
 	ping_req->source.type = PyAddress::Node;
 	ping_req->source.typeID = m_services->GetNodeID();
@@ -483,9 +480,7 @@ void Client::_CheckSessionChange() {
 	scn.nodesOfInterest.push_back(m_services->GetNodeID());
 
 	//build the packet:
-	PyPacket *p = new PyPacket();
-	p->type_string = "macho.SessionChangeNotification";
-	p->type = SESSIONCHANGENOTIFICATION;
+	PyPacket *p = new PyPacket(SESSIONCHANGENOTIFICATION, "macho.SessionChangeNotification");
 	
 	p->source.type = PyAddress::Node;
 	p->source.typeID = m_services->GetNodeID();
@@ -822,9 +817,7 @@ void Client::_ProcessNotification(PyPacket *packet) {
 void Client::_SendCallReturn(PyPacket *req, PyRep **return_value, const char *channel) {
 	
 	//build the packet:
-	PyPacket *p = new PyPacket();
-	p->type_string = "macho.CallRsp";
-	p->type = CALL_RSP;
+	PyPacket *p = new PyPacket(CALL_RSP, "macho.CallRsp");
 	
 	p->source = req->dest;
 
@@ -848,10 +841,8 @@ void Client::_SendCallReturn(PyPacket *req, PyRep **return_value, const char *ch
 
 void Client::_SendException(PyPacket *req, MACHONETERR_TYPE type, PyRep **payload) {
 	//build the packet:
-	PyPacket *p = new PyPacket();
-	p->type_string = "macho.ErrorResponse";
-	p->type = ERRORRESPONSE;
-	
+	PyPacket *p = new PyPacket(ERRORRESPONSE, "macho.ErrorResponse");
+
 	p->source = req->dest;
 
 	p->dest.type = PyAddress::Client;
@@ -948,9 +939,7 @@ void Client::SendNotification(const char *notifyType, const char *idType, PyRepT
 void Client::SendNotification(const PyAddress &dest, EVENotificationStream *noti, bool seq) {
 
 	//build the packet:
-	PyPacket *p = new PyPacket();
-	p->type_string = "macho.Notification";
-	p->type = NOTIFICATION;
+	PyPacket *p = new PyPacket(NOTIFICATION, "macho.Notification");
 
 	p->source.type = PyAddress::Node;
 	p->source.typeID = m_services->GetNodeID();
