@@ -259,7 +259,7 @@ public:
 		// The reason why this code is correct is that our thread is placed
 		// in the wait set *before* the lock is released. Therefore, if
 		// we get preempted right here and another thread notifies us, then
-		// that MACHONETMSG_NOTIFICATION will *not* be missed: the wait operation below
+		// that notification will *not* be missed: the wait operation below
 		// will find the event signalled.
 
 		// Wait for the event to become signalled.
@@ -326,7 +326,7 @@ public:
 		// The reason why this code is correct is that our thread is placed
 		// in the wait set *before* the lock is released. Therefore, if
 		// we get preempted right here and another thread notifies us, then
-		// that MACHONETMSG_NOTIFICATION will *not* be missed: the wait operation below
+		// that notification will *not* be missed: the wait operation below
 		// will find the event signalled.
 
 		// Wait for the event to become signalled.

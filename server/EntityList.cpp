@@ -158,8 +158,8 @@ Client *EntityList::FindAccount(uint32 account_id) const {
 }
 
 void EntityList::Broadcast(const char *notifyType, const char *idType, PyRepTuple **payload) const {
-	//build a little MACHONETMSG_NOTIFICATION out of it.
-	EVEMACHONETMSG_NOTIFICATIONStream notify;
+	//build a little notification out of it.
+	EVENotificationStream notify;
 	notify.remoteObject = 1;
 	notify.args = *payload;
 	*payload = NULL;	//consumed
@@ -172,16 +172,16 @@ void EntityList::Broadcast(const char *notifyType, const char *idType, PyRepTupl
 	Broadcast(dest, &notify);
 }
 
-void EntityList::Broadcast(const PyAddress &dest, EVEMACHONETMSG_NOTIFICATIONStream *noti) const {
+void EntityList::Broadcast(const PyAddress &dest, EVENotificationStream *noti) const {
 	client_list::const_iterator cur, end;
 	cur = m_clients.begin();
 	end = m_clients.end();
 	for(; cur != end; cur++) {
-		(*cur)->SendMACHONETMSG_NOTIFICATION(dest, noti);
+		(*cur)->SendNotification(dest, noti);
 	}
 }
 
-void EntityList::Multicast(const character_set &cset, const PyAddress &dest, EVEMACHONETMSG_NOTIFICATIONStream *noti) const {
+void EntityList::Multicast(const character_set &cset, const PyAddress &dest, EVENotificationStream *noti) const {
 	//this could likely be done better
 
 	std::vector<Client *> result;
@@ -191,13 +191,13 @@ void EntityList::Multicast(const character_set &cset, const PyAddress &dest, EVE
 	cur = result.begin();
 	end = result.end();
 	for(; cur != end; cur++) {
-		(*cur)->SendMACHONETMSG_NOTIFICATION(dest, noti);
+		(*cur)->SendNotification(dest, noti);
 	}
 }
 
 //in theory this could be written in therms of the more generic
 //MulticastTarget function, but this is much more efficient.
-void EntityList::Multicast(const char *notifyType, const char *idType, PyRepTuple **payload, MACHONETMSG_NOTIFICATIONDestination target, uint32 target_id, bool seq) {
+void EntityList::Multicast(const char *notifyType, const char *idType, PyRepTuple **payload, NotificationDestination target, uint32 target_id, bool seq) {
 	std::list<Client *>::const_iterator cur, end;
 	cur = m_clients.begin();
 	end = m_clients.end();
@@ -214,7 +214,7 @@ void EntityList::Multicast(const char *notifyType, const char *idType, PyRepTupl
 			break;
 		}
 		temp = (PyRepTuple*)(*payload)->Clone();
-		(*cur)->SendMACHONETMSG_NOTIFICATION(notifyType, idType, &temp, seq);
+		(*cur)->SendNotification(notifyType, idType, &temp, seq);
 	}
 	delete (*payload);
 	*payload = NULL;
@@ -225,7 +225,7 @@ void EntityList::Multicast(const char *notifyType, const char *idType, PyRepTupl
 	cur = m_clients.begin();
 	end = m_clients.end();
 	PyRepTuple * temp;
-	
+
 	//cache all these locally to avoid calling empty all the time.
 	const bool chars_empty = mcset.characters.empty();
 	const bool locs_empty = mcset.locations.empty();
@@ -233,23 +233,23 @@ void EntityList::Multicast(const char *notifyType, const char *idType, PyRepTupl
 	if(chars_empty && locs_empty && corps_empty) {
 		return;
 	}
-	
+
 	for(; cur != end; cur++) {
 		if(	  !chars_empty
-		   && mcset.characters.find((*cur)->GetCharacterID()) != mcset.characters.end()) {
-			//found, carry on...
+			&& mcset.characters.find((*cur)->GetCharacterID()) != mcset.characters.end()) {
+				//found, carry on...
 		} else if(   !locs_empty
-				  && mcset.locations.find((*cur)->GetLocationID()) != mcset.locations.end()) {
-			//found, carry on...
+			&& mcset.locations.find((*cur)->GetLocationID()) != mcset.locations.end()) {
+				//found, carry on...
 		} else if(   !corps_empty
-				  && mcset.corporations.find((*cur)->GetCorporationID()) != mcset.corporations.end()) {
-			//found, carry on...
+			&& mcset.corporations.find((*cur)->GetCorporationID()) != mcset.corporations.end()) {
+				//found, carry on...
 		} else {
 			//not found in any of the above sets.
 			continue;
 		}
 		temp = (PyRepTuple*)(*payload)->Clone();
-		(*cur)->SendMACHONETMSG_NOTIFICATION(notifyType, idType, &temp, seq);
+		(*cur)->SendNotification(notifyType, idType, &temp, seq);
 	}
 	delete (*payload);
 	*payload = NULL;
@@ -260,7 +260,7 @@ void EntityList::Multicast(const character_set &cset, const char *notifyType, co
 	GetClients(cset, result);
 
 	int num_remaining = result.size();
-	
+
 	std::vector<Client *>::iterator cur, end;
 	cur = result.begin();
 	end = result.end();
@@ -276,8 +276,8 @@ void EntityList::Multicast(const character_set &cset, const char *notifyType, co
 			else
 				payload = (PyRepTuple *) (*in_payload)->Clone();
 		}
-		
-		(*cur)->SendMACHONETMSG_NOTIFICATION(notifyType, idType, &payload, seq);
+
+		(*cur)->SendNotification(notifyType, idType, &payload, seq);
 	}
 }
 
