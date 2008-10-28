@@ -42,39 +42,40 @@ EveClientSession::~EveClientSession()
 
 void EveClientSession::Update()
 {
-	/*if(!m_net.Connected())
-		return(false);
-
-	if(m_pingTimer.Check()) {
-		_log(CLIENT__TRACE, "%s: Sending ping request.", GetName());
-		_SendPingRequest();
-	}*/
-
 	PyPacket *packet;
 	while (packet = _recvQueue.Pop())
 	{
 		ASSERT(packet);
 
-		switch(p->type) {
-			case MACHONETMSG_TYPE_CALL_REQ:
-				//_ProcessCallRequest(p);
-				break;
-			case NOTIFICATION:
-				//_ProcessNotification(p);
-				break;
-			case PING_REQ:
-				_log(CLIENT__TRACE, "%s: Unhandled ping request.", GetName());
-				break;
-			case PING_RSP:
-				_log(CLIENT__TRACE, "%s: Received ping response.", GetName());
-				break;
-			default:
-				_log(CLIENT__ERROR, "%s: Unhandled message type %d", GetName(), p->type);
+		if ( packet->type < MACHONETMSG_TYPE_MAX )
+		{
+			(this->*Handlers[packet->type])(*packet);
 		}
-
-		delete p;
-		p = NULL;
+		delete packet;
 	}
+}
 
-	//return(true);
+void EveClientSession::_ProcessNone(PyPacket& packet)
+{
+	Log.Debug("SessionPacketDispatcher", "'Unhandled' packet received");
+}
+
+void EveClientSession::_ProcessCallRequest(PyPacket& packet)
+{
+	
+}
+
+void EveClientSession::_ProcessNotification(PyPacket& packet)
+{
+
+}
+
+void EveClientSession::_ProcessPingRequest(PyPacket& packet)
+{
+	Log.Debug("SessionPacketDispatcher", /*"%s:*/ "'Unhandled' ping request.");//, GetName());
+}
+
+void EveClientSession::_ProcessPingResponce(PyPacket& packet)
+{
+	Log.Debug("SessionPacketDispatcher", /*"%s:*/ "Received ping response.");//, GetName());
 }

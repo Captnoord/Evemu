@@ -259,10 +259,10 @@ void EveClientSocket::OnRead()
 		printf("\nRecv:\n");
 		packet->LogPacket();
 
-		PyRep *r = InflateAndUnmarshal(packet->contents(), packet->size());
+		PyRep *recvPyPacket = InflateAndUnmarshal(packet->contents(), packet->size());
 
-		// whoo state machine magic
-		(this->*m_currentStateMachine)(*r);
+		// the state machine magic
+		(this->*m_currentStateMachine)(*recvPyPacket);
 
 		// this is the end of the road
 		if ( packet != NULL)

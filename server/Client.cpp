@@ -217,16 +217,16 @@ bool Client::ProcessNet() {
 			}
 	
 			switch(p->type) {
-			case CALL_REQ:
+			case MACHONETMSG_TYPE_CALL_REQ:
 				_ProcessCallRequest(p);
 				break;
-			case NOTIFICATION:
+			case MACHONETMSG_TYPE_NOTIFICATION:
 				_ProcessNotification(p);
 				break;
-			case PING_REQ:
+			case MACHONETMSG_TYPE_PING_REQ:
 				_log(CLIENT__TRACE, "%s: Unhandled ping request.", GetName());
 				break;
-			case PING_RSP:
+			case MACHONETMSG_TYPE_PING_RSP:
 				_log(CLIENT__TRACE, "%s: Received ping response.", GetName());
 				break;
 			default:
@@ -443,7 +443,7 @@ void Client::Login(CryptoChallengePacket *pack) {
 }
 
 void Client::_SendPingRequest() {
-	PyPacket *ping_req = new PyPacket(PING_REQ, "macho.PingReq");
+	PyPacket *ping_req = new PyPacket(MACHONETMSG_TYPE_PING_REQ, "macho.PingReq");
 	
 	ping_req->source.type = PyAddress::Node;
 	ping_req->source.typeID = m_services->GetNodeID();
@@ -480,7 +480,7 @@ void Client::_CheckSessionChange() {
 	scn.nodesOfInterest.push_back(m_services->GetNodeID());
 
 	//build the packet:
-	PyPacket *p = new PyPacket(SESSIONCHANGENOTIFICATION, "macho.SessionChangeNotification");
+	PyPacket *p = new PyPacket(MACHONETMSG_TYPE_SESSIONCHANGENOTIFICATION, "macho.SessionChangeNotification");
 	
 	p->source.type = PyAddress::Node;
 	p->source.typeID = m_services->GetNodeID();
@@ -817,7 +817,7 @@ void Client::_ProcessNotification(PyPacket *packet) {
 void Client::_SendCallReturn(PyPacket *req, PyRep **return_value, const char *channel) {
 	
 	//build the packet:
-	PyPacket *p = new PyPacket(CALL_RSP, "macho.CallRsp");
+	PyPacket *p = new PyPacket(MACHONETMSG_TYPE_CALL_RSP, "macho.CallRsp");
 	
 	p->source = req->dest;
 
@@ -841,7 +841,7 @@ void Client::_SendCallReturn(PyPacket *req, PyRep **return_value, const char *ch
 
 void Client::_SendException(PyPacket *req, MACHONETERR_TYPE type, PyRep **payload) {
 	//build the packet:
-	PyPacket *p = new PyPacket(ERRORRESPONSE, "macho.ErrorResponse");
+	PyPacket *p = new PyPacket(MACHONETMSG_TYPE_ERRORRESPONSE, "macho.ErrorResponse");
 
 	p->source = req->dest;
 
@@ -939,7 +939,7 @@ void Client::SendNotification(const char *notifyType, const char *idType, PyRepT
 void Client::SendNotification(const PyAddress &dest, EVENotificationStream *noti, bool seq) {
 
 	//build the packet:
-	PyPacket *p = new PyPacket(NOTIFICATION, "macho.Notification");
+	PyPacket *p = new PyPacket(MACHONETMSG_TYPE_NOTIFICATION, "macho.Notification");
 
 	p->source.type = PyAddress::Node;
 	p->source.typeID = m_services->GetNodeID();

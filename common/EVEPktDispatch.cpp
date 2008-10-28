@@ -33,10 +33,10 @@ void EVEPacketDispatcher::DispatchPacket(PyPacket **in_p) {
 	*in_p = NULL;
 	
 	switch(packet->type) {
-	case AUTHENTICATION_REQ: {
+	case MACHONETMSG_TYPE_AUTHENTICATION_REQ: {
 		//check the string part, just for good measure
 		if(packet->type_string != "macho.AuthenticationReq") {
-			_log(NET__DISPATCH_ERROR, "Received AUTHENTICATION_RSP with invalid type string '%s'", packet->type_string.c_str());
+			_log(NET__DISPATCH_ERROR, "Received MACHONETMSG_TYPE_AUTHENTICATION_RSP with invalid type string '%s'", packet->type_string.c_str());
 			break;
 		}
 		
@@ -50,10 +50,10 @@ void EVEPacketDispatcher::DispatchPacket(PyPacket **in_p) {
 		delete obj;	//in case they didnt
 	} break;
 	
-	case AUTHENTICATION_RSP: {
+	case MACHONETMSG_TYPE_AUTHENTICATION_RSP: {
 		//check the string part, just for good measure
 		if(packet->type_string != "macho.AuthenticationRsp") {
-			_log(NET__DISPATCH_ERROR, "Received AUTHENTICATION_RSP with invalid type string '%s'", packet->type_string.c_str());
+			_log(NET__DISPATCH_ERROR, "Received MACHONETMSG_TYPE_AUTHENTICATION_RSP with invalid type string '%s'", packet->type_string.c_str());
 			break;
 		}
 		
@@ -67,10 +67,10 @@ void EVEPacketDispatcher::DispatchPacket(PyPacket **in_p) {
 		delete obj;	//in case they didnt
 	} break;
 
-	case CALL_REQ: {
+	case MACHONETMSG_TYPE_CALL_REQ: {
 		//check the string part, just for good measure
 		if(packet->type_string != "macho.CallReq") {
-			_log(NET__DISPATCH_ERROR, "Received CALL_REQ with invalid type string '%s'", packet->type_string.c_str());
+			_log(NET__DISPATCH_ERROR, "Received MACHONETMSG_TYPE_CALL_REQ with invalid type string '%s'", packet->type_string.c_str());
 			break;
 		}
 		
@@ -84,20 +84,20 @@ void EVEPacketDispatcher::DispatchPacket(PyPacket **in_p) {
 		delete call;	//in case they didnt
 	} break;
 	
-	case CALL_RSP: {
+	case MACHONETMSG_TYPE_CALL_RSP: {
 		//check the string part, just for good measure
 		if(packet->type_string != "macho.CallRsp") {
-			_log(NET__DISPATCH_ERROR, "Received CALL_RSP with invalid type string '%s'", packet->type_string.c_str());
+			_log(NET__DISPATCH_ERROR, "Received MACHONETMSG_TYPE_CALL_RSP with invalid type string '%s'", packet->type_string.c_str());
 			break;
 		}
 		
 		Handle_CallRsp(packet, &packet->payload);
 	} break;
 	
-	case NOTIFICATION: {
+	case MACHONETMSG_TYPE_NOTIFICATION: {
 		//check the string part, just for good measure
 		if(packet->type_string != "macho.Notification") {
-			_log(NET__DISPATCH_ERROR, "Received CALL_RSP with invalid type string '%s'", packet->type_string.c_str());
+			_log(NET__DISPATCH_ERROR, "Received MACHONETMSG_TYPE_CALL_RSP with invalid type string '%s'", packet->type_string.c_str());
 			break;
 		}
 		
@@ -117,10 +117,10 @@ void EVEPacketDispatcher::DispatchPacket(PyPacket **in_p) {
 		delete obj;	//in case they didnt
 	} break;
 	
-	case ERRORRESPONSE: {
+	case MACHONETMSG_TYPE_ERRORRESPONSE: {
 		//check the string part, just for good measure
 		if(packet->type_string != "macho.ErrorResponse") {
-			_log(NET__DISPATCH_ERROR, "Received ERRORRESPONSE with invalid type string '%s'", packet->type_string.c_str());
+			_log(NET__DISPATCH_ERROR, "Received MACHONETMSG_TYPE_ERRORRESPONSE with invalid type string '%s'", packet->type_string.c_str());
 			break;
 		}
 		
@@ -134,10 +134,10 @@ void EVEPacketDispatcher::DispatchPacket(PyPacket **in_p) {
 		delete obj;	//in case they didnt
 	} break;
 	
-	case SESSIONCHANGENOTIFICATION: {
+	case MACHONETMSG_TYPE_SESSIONCHANGENOTIFICATION: {
 		//check the string part, just for good measure
 		if(packet->type_string != "macho.SessionChangeNotification") {
-			_log(NET__DISPATCH_ERROR, "Received SESSIONCHANGENOTIFICATION with invalid type string '%s'", packet->type_string.c_str());
+			_log(NET__DISPATCH_ERROR, "Received MACHONETMSG_TYPE_SESSIONCHANGENOTIFICATION with invalid type string '%s'", packet->type_string.c_str());
 			break;
 		}
 		

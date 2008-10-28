@@ -26,10 +26,10 @@
 #ifndef __EVECLIENTSESSION_H
 #define __EVECLIENTSESSION_H
 
-typedef void (EveClientSession::*packetHandler)(PyPacket&t);
+typedef void (EveClientSession::*packetHandler)(PyPacket&);
 
-static packetHandler Handlers[MACHONETMSG_TYPE_MAX] = {
-	&AuthSocket::HandleChallenge,			// 0
+/*static packetHandler Handlers[MACHONETMSG_TYPE_MAX] = {
+	/&AuthSocket::HandleChallenge,			// 0
 	&AuthSocket::HandleProof,				// 1
 	&AuthSocket::HandleReconnectChallenge,	// 2
 	&AuthSocket::HandleReconnectProof,		// 3
@@ -82,7 +82,7 @@ static packetHandler Handlers[MACHONETMSG_TYPE_MAX] = {
 	&AuthSocket::HandleTransferAccept,		// 50
 	&AuthSocket::HandleTransferResume,		// 51
 	&AuthSocket::HandleTransferCancel,		// 52
-};
+};*/
 
 class SERVER_DECL EveClientSession
 {
@@ -111,7 +111,14 @@ public:
 			_socket->Disconnect();
 	}
 
-	int Update();
+	//int Update();
+	void Update();
+
+	void _ProcessNone(PyPacket& packet);
+	void _ProcessCallRequest(PyPacket& packet);
+	void _ProcessNotification(PyPacket& packet);
+	void _ProcessPingRequest(PyPacket& packet);
+	void _ProcessPingResponce(PyPacket& packet);
 
 private:
 	EveClientSocket *_socket;
@@ -121,6 +128,31 @@ private:
 	std::string _accountName;
 
 	FastQueue<PyPacket*, Mutex> _recvQueue;
+};
+
+static packetHandler Handlers[MACHONETMSG_TYPE_MAX] = {
+	&EveClientSession::_ProcessNone, //0
+	&EveClientSession::_ProcessNone, //1
+	&EveClientSession::_ProcessNone, //2
+	&EveClientSession::_ProcessNone, //3
+	&EveClientSession::_ProcessNone, //4
+	&EveClientSession::_ProcessNone, //5
+	&EveClientSession::_ProcessCallRequest, //6
+	&EveClientSession::_ProcessNone, //7
+	&EveClientSession::_ProcessNone, //8
+	&EveClientSession::_ProcessNone, //9
+	&EveClientSession::_ProcessNone, //10
+	&EveClientSession::_ProcessNone, //11
+	&EveClientSession::_ProcessNotification, //12
+	&EveClientSession::_ProcessNone, //13
+	&EveClientSession::_ProcessNone, //14
+	&EveClientSession::_ProcessNone, //15
+	&EveClientSession::_ProcessNone, //16
+	&EveClientSession::_ProcessNone, //17
+	&EveClientSession::_ProcessNone, //18
+	&EveClientSession::_ProcessNone, //19
+	&EveClientSession::_ProcessPingRequest, //20
+	&EveClientSession::_ProcessPingResponce, //21
 };
 
 #endif//__EVECLIENTSESSION_H
