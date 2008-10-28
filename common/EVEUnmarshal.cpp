@@ -172,6 +172,11 @@ static uint32 UnmarshalData(UnmarshalState *state, const byte *packet, uint32 le
 			_log(NET__UNMARSHAL_ERROR, "Not enough data for string length (missing length and data)\n");
 			break;
 		}
+
+		/* new unmarshal stuff */
+		int something = (raw_opcode >> 6) & 1;
+		// related to if the string is pickled or not
+
 		byte str_len = *packet;
 		packet++;
 		len--;
@@ -218,7 +223,7 @@ static uint32 UnmarshalData(UnmarshalState *state, const byte *packet, uint32 le
 	
 	case Op_PyLong: {
 	
-		if(len < sizeof(uint32)) {
+		if(len < sizeof(int32)) {
 			_log(NET__UNMARSHAL_ERROR, "Not enough data for long arg\n");
 			break;
 		}
@@ -236,7 +241,7 @@ static uint32 UnmarshalData(UnmarshalState *state, const byte *packet, uint32 le
 	
 	case Op_PySignedShort: {
 	
-		if(len < sizeof(uint16)) {
+		if(len < sizeof(int16)) {
 			_log(NET__UNMARSHAL_ERROR, "Not enough data for short arg\n");
 			break;
 		}
@@ -479,6 +484,7 @@ static uint32 UnmarshalData(UnmarshalState *state, const byte *packet, uint32 le
 		
 		break; }
 	
+ // related to shared object field
 	case 0x13:
 		{ _log(NET__UNMARSHAL_ERROR, "Unhandled field type 0x%x\n", opcode);
 			phex(NET__UNMARSHAL_ERROR, packet, len>32?32:len);
@@ -739,7 +745,8 @@ static uint32 UnmarshalData(UnmarshalState *state, const byte *packet, uint32 le
 		res = new PyRepObject(typestr, arguments);
 		break; }
 	
-	case 0x18:
+	// seems to be something with shared object
+	case 0x18: //24
 		{ _log(NET__UNMARSHAL_ERROR, "Unhandled field type 0x%x\n", opcode);
 			phex(NET__UNMARSHAL_ERROR, packet, len>32?32:len);
 	/*
@@ -931,6 +938,7 @@ static uint32 UnmarshalData(UnmarshalState *state, const byte *packet, uint32 le
 			break;
 		}
 		uint32 lval = *((const uint32 *) packet);
+		// use adler32 to calculate this
 		
 		packet += sizeof(uint32);
 		len -= sizeof(uint32);
@@ -1301,6 +1309,12 @@ static uint32 UnmarshalData(UnmarshalState *state, const byte *packet, uint32 le
 		PyRepTuple *tuple = new PyRepTuple(1);
 		tuple->items[0] = i;
 		res = tuple;
+
+
+		// new stuff
+		if ((raw_opcode & 0x40) == 0)
+		{
+		}
 		
 		break; }
 	

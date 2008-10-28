@@ -52,16 +52,16 @@ typedef enum {	//PyRepOpcodes
 	//unknown 0x1E (unused)
 	Op_PyTrue = 0x1F,
 	Op_PyFalse = 0x20,				//  
-	//unknown 0x21					// !
+	//unknown 0x21  "load"			// !
 	Op_PackedObject1 = 0x22,		// "
-	Op_PackedObject2 = 0x23,		// # still not 100% comleted
+	Op_PackedObject2 = 0x23,		// # still not 100% completed
 	Op_PyEmptyTuple = 0x24,			// $
 	Op_PyOneTuple = 0x25,			// %
 	Op_PyEmptyList = 0x26,			// &
 	Op_PyOneList = 0x27,			// '
 	Op_PyEmptyUnicodeString = 0x28,	// (
 	Op_PyUnicodeCharString = 0x29,	// )  a single character string
-	Op_PyPackedRow = 0x2A,				// *  still working on this one...
+	Op_PyPackedRow = 0x2A,			// *  still working on this one...
 	Op_PySubStream = 0x2B,			// +
 	Op_PyTwoTuple = 0x2C,			// ,
 	Op_PackedTerminator = 0x2D,		// -

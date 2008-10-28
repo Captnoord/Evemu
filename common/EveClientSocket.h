@@ -23,6 +23,9 @@
 	Author:		Captnoord
 */
 
+#ifndef __EVECLIENTSOCKET_H
+#define __EVECLIENTSOCKET_H
+
 // some lame buffer size stuff
 #define CLIENTSOCKET_SENDBUF_SIZE 131078
 #define CLIENTOCKET_RECVBUF_SIZE 16384
@@ -134,3 +137,4 @@ private:
 //	string * m_fullAccountName;
 };
 
+#endif//__EVECLIENTSOCKET_H

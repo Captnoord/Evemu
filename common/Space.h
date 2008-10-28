@@ -23,8 +23,18 @@
 	Author:		Captnoord
 */
 
-// keep track of the space info stuff related to this server blaa blaa
-// for the moment keep only track of the amount of authorized connections
+#ifndef __SPACE_H
+#define __SPACE_H
+
+typedef std::list<EveClientSession*>	SessionList;
+typedef SessionList::iterator			SessionListItr;
+typedef SessionList::const_iterator		SessionListConstItr;
+
+typedef std::set<EveClientSession*>		SessionSet;
+typedef SessionSet::iterator			SessionSetItr;
+typedef SessionSet::const_iterator		SessionSetConstItr;
+
+// keep track of the space info stuff related to this server
 class SERVER_DECL Space : public Singleton<Space>
 {
 public:
@@ -40,9 +50,23 @@ public:
 		return mAuthorizedConnections;
 	}
 
+	EveClientSession* FindSession(uint32 userid);
+	EveClientSession* FindSessionByName(const char *);
+
+	void AddSession(EveClientSession *);
+	void RemoveSession(uint32 userid);
+
+	void AddGlobalSession(EveClientSession *session);
+	void RemoveGlobalSession(EveClientSession *session);
+	void DeleteSession(EveClientSession *session);
+
+	ASCENT_INLINE size_t GetSessionCount() const { return m_sessions.size(); }
+
 	size_t mAcceptedConnections;
 	size_t mAuthorizedConnections;
 };
+
+#endif//__SPACE_H
 
 #define sSpace Space::getSingleton()
 

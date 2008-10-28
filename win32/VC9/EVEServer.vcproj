@@ -1312,6 +1312,14 @@
 				RelativePath="..\..\common\Space.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\common\SpaceRunnable.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\SpaceRunnable.h"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

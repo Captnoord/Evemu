@@ -28,62 +28,6 @@
 
 typedef void (EveClientSession::*packetHandler)(PyPacket&);
 
-/*static packetHandler Handlers[MACHONETMSG_TYPE_MAX] = {
-	/&AuthSocket::HandleChallenge,			// 0
-	&AuthSocket::HandleProof,				// 1
-	&AuthSocket::HandleReconnectChallenge,	// 2
-	&AuthSocket::HandleReconnectProof,		// 3
-	NULL,									// 4
-	NULL,									// 5
-	NULL,									// 6
-	NULL,									// 7
-	NULL,									// 8
-	NULL,									// 9
-	NULL,									// 10
-	NULL,									// 11
-	NULL,									// 12
-	NULL,									// 13
-	NULL,									// 14
-	NULL,									// 15
-	&AuthSocket::HandleRealmlist,			// 16
-	NULL,									// 17
-	NULL,									// 18
-	NULL,									// 19
-	NULL,									// 20
-	NULL,									// 21
-	NULL,									// 22
-	NULL,									// 23
-	NULL,									// 24
-	NULL,									// 25
-	NULL,									// 26
-	NULL,									// 27
-	NULL,									// 28
-	NULL,									// 29
-	NULL,									// 30
-	NULL,									// 31
-	NULL,									// 32
-	NULL,									// 33
-	NULL,									// 34
-	NULL,									// 35
-	NULL,									// 36
-	NULL,									// 37
-	NULL,									// 38
-	NULL,									// 39
-	NULL,									// 40
-	NULL,									// 41
-	NULL,									// 42
-	NULL,									// 43
-	NULL,									// 44
-	NULL,									// 45
-	NULL,									// 46
-	NULL,									// 47
-	NULL,									// 48
-	NULL,									// 49
-	&AuthSocket::HandleTransferAccept,		// 50
-	&AuthSocket::HandleTransferResume,		// 51
-	&AuthSocket::HandleTransferCancel,		// 52
-};*/
-
 class SERVER_DECL EveClientSession
 {
 	friend class EveClientSocket;

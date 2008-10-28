@@ -264,7 +264,7 @@ void EveClientSocket::OnRead()
 		// the state machine magic
 		(this->*m_currentStateMachine)(*recvPyPacket);
 
-		// this is the end of the road
+		// this is the end of the road for the used read buffer
 		if ( packet != NULL)
 		{
 			delete packet;
