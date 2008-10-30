@@ -94,6 +94,11 @@ int main(int argc, char *argv[])
 #define enable_ascent
 #endif
 #ifdef enable_ascent
+
+	// runnable thread to update server systems and sessions
+	SpaceRunnable * sr = new SpaceRunnable();
+	ThreadPool.ExecuteTask(sr);
+
 	new SocketMgr;
 	new SocketGarbageCollector;
 	new Space;

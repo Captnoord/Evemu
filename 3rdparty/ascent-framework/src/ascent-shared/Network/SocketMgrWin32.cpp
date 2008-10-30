@@ -39,7 +39,11 @@ void SocketMgr::SpawnWorkerThreads()
 
 	printf("IOCP: Spawning %u worker threads.\n", threadcount);
 	for(long x = 0; x < threadcount; ++x)
-		ThreadPool.ExecuteTask(new SocketWorkerThread());
+	{
+		SocketWorkerThread* workerThread = new SocketWorkerThread();
+		SetThreadName("Ascent IOCP workerthread:%d", x);
+		ThreadPool.ExecuteTask(workerThread);		
+	}
 }
 
 void SocketMgr::OnRehash()

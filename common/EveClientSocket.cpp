@@ -117,7 +117,6 @@ void EveClientSocket::_sendHandShake()
 	version.project_version = EVEProjectVersion;
 
 	sLog.outDebug("%s: Sending Low Level Version Exchange:", GetConnectedAddress().c_str());
-	//version.Dump(NET__PRES_REP_OUT, "    ");
 
 	PyRep *rep = version.Encode();
 	OutPacket(rep);
@@ -564,7 +563,12 @@ void EveClientSocket::_authStateHandshakeSend(PyRep& packet)
 
 	/* assumed that authorization is completed */
 	if (mSession == NULL)
+	{
 		mSession = new EveClientSession(userid, userName, this);
+	}
+
+	sSpace.AddSession(mSession);
+	sSpace.AddGlobalSession(mSession);
 
 	Log.Debug("AuthStateMachine","State changed into StateDone");
 	m_currentStateMachine = &EveClientSocket::_authStateDone;
@@ -573,7 +577,7 @@ void EveClientSocket::_authStateHandshakeSend(PyRep& packet)
 
 void EveClientSocket::_authStateDone(PyRep& packet)
 {
-	Log.Debug("ClientSocket","received packet whooo we passed authorization");
+	Log.Debug("ClientSocket","received packet 'whooo' we passed authorization");
 
 	mSession->QueuePacket((PyPacket*)&packet);
 }

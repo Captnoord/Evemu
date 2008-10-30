@@ -637,10 +637,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\EvemuPCH.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\server\EVEmuServerConfig.h"
 				>
 			</File>
@@ -1302,6 +1298,10 @@
 			</File>
 			<File
 				RelativePath="..\..\common\EveClientSocket.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\server\EvemuPCH.h"
 				>
 			</File>
 			<File

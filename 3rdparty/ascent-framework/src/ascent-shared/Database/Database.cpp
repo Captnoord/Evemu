@@ -43,6 +43,7 @@ void Database::_Initialize()
 {
 	// Spawn Database thread
 	ThreadPool.ExecuteTask(this);
+	SetThreadName("Ascent Database Thread");
 
 	// launch the query thread
 	qt = new QueryThread(this);

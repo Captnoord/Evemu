@@ -37,25 +37,17 @@ public:
 
 	ASCENT_INLINE void QueuePacket(PyPacket* packet)
 	{
-		printf("client session queue packet\n");
+		//printf("client session queue packet\n");
 		//m_lastPing = (uint32)UNIXTIME;
 		_recvQueue.Push(packet);
 	}
 
 	ASCENT_INLINE EveClientSocket* GetSocket() { return _socket; }
 
-	void SetSocket(EveClientSocket* sock)
-	{
-		_socket = sock;
-	}
+	void SetSocket(EveClientSocket* sock) { _socket = sock;}
 
-	void Disconnect()
-	{
-		if(_socket && _socket->IsConnected())
-			_socket->Disconnect();
-	}
+	void Disconnect() { if(_socket && _socket->IsConnected()) _socket->Disconnect();}
 
-	//int Update();
 	void Update();
 
 	void _ProcessNone(PyPacket& packet);
@@ -63,6 +55,8 @@ public:
 	void _ProcessNotification(PyPacket& packet);
 	void _ProcessPingRequest(PyPacket& packet);
 	void _ProcessPingResponce(PyPacket& packet);
+
+	uint32 GetUserId() { return _userId;}
 
 private:
 	EveClientSocket *_socket;

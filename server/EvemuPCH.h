@@ -276,8 +276,9 @@
 #include "../server/PyServiceCD.h"
 
 /* Ascent new stuff */
-#include "../common/Space.h"
 #include "../common/EveClientSocket.h"
 #include "../common/EveClientSession.h"
+#include "../common/Space.h"
+#include "../common/SpaceRunnable.h"
 
 #endif//__EVEPCH_H

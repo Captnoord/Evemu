@@ -26,13 +26,17 @@
 #ifndef __SPACE_H
 #define __SPACE_H
 
-typedef std::list<EveClientSession*>	SessionList;
-typedef SessionList::iterator			SessionListItr;
-typedef SessionList::const_iterator		SessionListConstItr;
+typedef std::list<EveClientSession*>						SessionList;
+typedef SessionList::iterator								SessionListItr;
+typedef SessionList::const_iterator							SessionListConstItr;
 
-typedef std::set<EveClientSession*>		SessionSet;
-typedef SessionSet::iterator			SessionSetItr;
-typedef SessionSet::const_iterator		SessionSetConstItr;
+typedef std::set<EveClientSession*>							SessionSet;
+typedef SessionSet::iterator								SessionSetItr;
+typedef SessionSet::const_iterator							SessionSetConstItr;
+
+typedef HM_NAMESPACE::hash_map<uint32, EveClientSession*>	SessionMap;
+typedef SessionMap::iterator								SessionMapItr;
+typedef SessionMap::const_iterator							SessionMapConstItr;
 
 // keep track of the space info stuff related to this server
 class SERVER_DECL Space : public Singleton<Space>
@@ -40,15 +44,15 @@ class SERVER_DECL Space : public Singleton<Space>
 public:
 	Space();
 
-	size_t GetConnectionCount()
-	{
-		return mAcceptedConnections;
-	}
+	size_t GetConnectionCount() { return mAcceptedConnections; }
+	size_t GetAuthorizedCount() { return mAuthorizedConnections; }
 
-	size_t GetAuthorizedCount()
-	{
-		return mAuthorizedConnections;
-	}
+	/* update server stuff not related to sessions */
+	void Update(time_t diff);
+
+	/* update sessions and dispatch the queued packets */
+	void UpdateSessions(time_t diff);
+
 
 	EveClientSession* FindSession(uint32 userid);
 	EveClientSession* FindSessionByName(const char *);
@@ -62,8 +66,34 @@ public:
 
 	ASCENT_INLINE size_t GetSessionCount() const { return m_sessions.size(); }
 
+	//void SetMotd(const char *motd) { m_motd = motd; }
+	//ASCENT_INLINE const char* GetMotd() const { return m_motd.c_str(); }
+
+	ASCENT_INLINE time_t GetGameTime() const { return m_gameTime; }
+
+	ASCENT_INLINE void SetStartTime(uint32 val) { mStartTime = val; }
+	ASCENT_INLINE uint32 GetUptime(void) { return (uint32)UNIXTIME - mStartTime; }
+	ASCENT_INLINE uint32 GetStartTime(void) { return mStartTime; }
+	std::string GetUptimeString();
+
 	size_t mAcceptedConnections;
 	size_t mAuthorizedConnections;
+
+private:
+	
+	SessionMap m_sessions;
+	RWLock m_sessionlock;
+
+protected:
+	Mutex SessionsMutex;//FOR GLOBAL !
+	SessionSet Sessions;
+
+	time_t m_gameTime;
+	time_t m_lastTick;
+	uint32 TimeOut;
+
+	uint32 mStartTime;
+	uint32 m_queueUpdateTimer;
 };
 
 #endif//__SPACE_H

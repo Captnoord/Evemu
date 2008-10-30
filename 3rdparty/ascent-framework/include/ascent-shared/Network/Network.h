@@ -12,6 +12,7 @@
 
 #include "../Log.h"
 #include "../NGLog.h"
+#include "../Util.h"
 #include "CircularBuffer.h"
 #include "SocketDefines.h"
 #include "SocketOps.h"

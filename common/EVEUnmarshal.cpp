@@ -45,13 +45,13 @@ public:
 static uint32 UnmarshalData(UnmarshalState *state, const byte *packet, uint32 len, PyRep *&res, const char *indent);
 //static byte *UnpackZeroCompressedDup(const byte *in_buf, uint32 in_length, uint32 *unpacked_length);	//retuns ownership of bytes
 
-
 //returns ownership
 PyRep *InflateAndUnmarshal(const byte *body, uint32 body_len) {
 	const byte *const orig_body = body;
 	const uint32 orig_body_len = body_len;
 	
-	if(*body != SubStreamHeaderByte) {
+	if(*body != SubStreamHeaderByte)
+	{
 		if(body_len > sizeof(uint32) && *((const uint32 *) body) == 0) {
 			//winging it here...
 			body_len -= 12;
@@ -65,7 +65,9 @@ PyRep *InflateAndUnmarshal(const byte *body, uint32 body_len) {
 				body = buf;
 				_log(NET__UNMARSHAL_ERROR, "Special Inflated packet of len %d to length %d\n", orig_body_len, body_len);
 			}
-		} else {
+		} 
+		else 
+		{
 			byte *buf = InflatePacket(body, body_len);
 			if(buf == NULL) {
 				_log(NET__PRES_ERROR, "Failed to inflate packet!");
@@ -1467,7 +1469,7 @@ static uint32 UnmarshalData(UnmarshalState *state, const byte *packet, uint32 le
 		len_used += data_len;
 		
 		_log(NET__UNMARSHAL_TRACE, "%s  Unpacked Contents: len=%lu", pfx, unpacked.size());
-		phex(NET__UNMARSHAL_TRACE, &unpacked[0], unpacked.size());
+		phex(NET__UNMARSHAL_TRACE, &unpacked[0], (uint32)unpacked.size());
 		
 #ifdef PACKED_ROW_HEADER_HACK
 		//do something...

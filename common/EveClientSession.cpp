@@ -32,6 +32,10 @@ EveClientSession::EveClientSession(uint32 userId, std::string name, EveClientSoc
 
 EveClientSession::~EveClientSession()
 {
+	// dono if this is correct but will do for now....
+	sSpace.RemoveSession(this->GetUserId());
+	sSpace.RemoveGlobalSession(this);
+
 	PyPacket *packet;
 	while((packet = _recvQueue.Pop()))
 		delete packet;
@@ -45,13 +49,13 @@ void EveClientSession::Update()
 	PyPacket *packet;
 	while (packet = _recvQueue.Pop())
 	{
-		ASSERT(packet);
+		ASSERT(packet && "EveClientSession packet dispatcher crash");
 
 		if ( packet->type < MACHONETMSG_TYPE_MAX )
 		{
 			(this->*Handlers[packet->type])(*packet);
 		}
-		delete packet;
+		//delete packet;
 	}
 }
 
@@ -62,12 +66,12 @@ void EveClientSession::_ProcessNone(PyPacket& packet)
 
 void EveClientSession::_ProcessCallRequest(PyPacket& packet)
 {
-	
+	Log.Debug("SessionPacketDispatcher", "ProcessCallRequest");
 }
 
 void EveClientSession::_ProcessNotification(PyPacket& packet)
 {
-
+	Log.Debug("SessionPacketDispatcher", "ProcessNotification");
 }
 
 void EveClientSession::_ProcessPingRequest(PyPacket& packet)

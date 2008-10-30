@@ -26,7 +26,7 @@
 #include "EvemuPCH.h"
 #define SPACE_UPDATE_DELAY 50
 
-SpaceRunnable::SpaceRunnable() : CThread()
+SpaceRunnable::SpaceRunnable() : ThreadContext()
 {
 
 }
@@ -34,6 +34,9 @@ SpaceRunnable::SpaceRunnable() : CThread()
 bool SpaceRunnable::run()
 {
 	SetThreadName("SpaceRunnable updater");
+
+	Log.Notice("SpaceRunnable","Booting...");
+
 	uint32 LastSpaceUpdate = getMSTime();
 	uint32 LastSessionsUpdate = getMSTime();
 
@@ -63,7 +66,7 @@ bool SpaceRunnable::run()
 		if( now < LastSpaceUpdate)//overrun
 			diff = SPACE_UPDATE_DELAY;
 		else
-			diff = now-LastSpaceUpdate;
+			diff = now - LastSpaceUpdate;
 		
 		LastSpaceUpdate = now;
 		sSpace.Update( diff );
@@ -71,9 +74,9 @@ bool SpaceRunnable::run()
 		now = getMSTime();
 		
 		if( now < LastSessionsUpdate)//overrun
-			diff=SPACE_UPDATE_DELAY;
+			diff = SPACE_UPDATE_DELAY;
 		else
-			diff=now-LastSessionsUpdate;
+			diff = now-LastSessionsUpdate;
 		
 		LastSessionsUpdate = now;
 		sSpace.UpdateSessions( diff );
@@ -82,13 +85,13 @@ bool SpaceRunnable::run()
 		//we have to wait now 
 		
 		if(execution_start > now)//overrun
-			diff=SPACE_UPDATE_DELAY-now;
+			diff = SPACE_UPDATE_DELAY - now;
 		else
-			diff=now-execution_start;//time used for updating 
+			diff = now - execution_start;//time used for updating 
 		//if(ThreadState == THREADSTATE_TERMINATE)
 		//	break;
 
-		ThreadState = THREADSTATE_SLEEPING;
+		//ThreadState = THREADSTATE_SLEEPING;
 
 		/*This is execution time compensating system
 			if execution took more than default delay 
