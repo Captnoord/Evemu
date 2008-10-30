@@ -52,38 +52,61 @@ typedef enum {
 EveClientSession::~EveClientSession()
 {
 	deleteMutex.Acquire();
-	// dono if this is correct but will do for now....
-	//sSpace.RemoveSession(this->GetUserId());
-	//sSpace.RemoveGlobalSession(this);
 
 	PyRep *packet;
 	while((packet = _recvQueue.Pop()))
 	{
-		PyRep * pack = packet;
-
 		/* HACKED SOLLUTION TO FIX PACKET DELETION */
-		switch (pack->GetType())
+		switch (packet->GetType())
 		{
 		case PyInteger:
+			delete ((PyRepInteger*)packet);
+			break;
 		case PyReal:
+			delete ((PyRepReal*)packet);
+			break;
 		case PyBoolean:
+			delete ((PyRepBoolean*)packet);
+			break;
 		case PyBuffer:
+			delete ((PyRepBuffer*)packet);
+			break;
 		case PyString:
+			delete ((PyRepString*)packet);
+			break;
 		case PyTuple:
+			delete ((PyRepTuple*)packet);
+			break;
 		case PyList:
+			delete ((PyRepList*)packet);
+			break;
 		case PyDict:
+			delete ((PyRepDict*)packet);
+			break;
 		case PyNone:
+			delete ((PyRepNone*)packet);
+			break;
 		case PySubStruct:
+			delete ((PyRepSubStruct*)packet);
+			break;
 		case PySubStream:
+			delete ((PyRepSubStream*)packet);
+			break;
 		case PyChecksumedStream:
+			delete ((PyRepChecksumedStream*)packet);
+			break;
 		case PyObject:
+			delete ((PyRepObject*)packet);
+			break;
 		case PyPackedRow:
+			delete ((PyRepPackedRow*)packet);
+			break;
 		case PyPackedObject1:
+			delete ((PyRepPackedObject1*)packet);
+			break;
 		case PyPackedObject2:
-			{
-				delete packet;
-
-			}break;
+			delete ((PyRepPackedObject2*)packet);
+			break;
 		}
 	}
 

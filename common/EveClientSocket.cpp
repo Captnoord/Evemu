@@ -567,7 +567,7 @@ void EveClientSocket::_authStateDone(PyRep* packet)
 	Log.Debug("ClientSocket","received packet 'whooo' we passed authorization");
 
 	// and of course is this not the correct way 'todo' this
-	if ( packet->CheckType(PyRep::PackedObject1) == true )
+	/*if ( packet->CheckType(PyRep::PackedObject1) == true )
 	{
 		Log.Debug("AuthStateMachine","Exception debug string:%s", ((PyRepPackedObject1*)packet)->type.c_str());
 		
@@ -580,7 +580,7 @@ void EveClientSocket::_authStateDone(PyRep* packet)
 		//mCurrentStateMachine(packet);
 		_authStateException(packet);
 		return;		
-	}
+	}*/
 
 	mSession->QueuePacket(packet);
 }
