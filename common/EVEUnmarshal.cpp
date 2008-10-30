@@ -51,7 +51,7 @@ PyRep *InflateAndUnmarshal(const byte *body, uint32 body_len)
 	const byte *const orig_body = body;
 	const uint32 orig_body_len = body_len;
 	
-	if(body[0] != SubStreamHeaderByte)
+	if(*body != SubStreamHeaderByte)
 	{
 		if(body_len > sizeof(uint32) && *((const uint32 *) body) == 0)
 		{

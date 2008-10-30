@@ -26,11 +26,11 @@
 #ifndef __EVECLIENTSOCKET_H
 #define __EVECLIENTSOCKET_H
 
-// some lame buffer size stuff
+/* some lame buffer size stuff, these values aren't based on anything. */
 #define CLIENTSOCKET_SENDBUF_SIZE 131078
 #define CLIENTOCKET_RECVBUF_SIZE 16384
 
-// 'outpacket' queue system, part of a reliable packet sending system
+/* outPacket queue system, part of a reliable packet sending system */
 enum OUTPACKET_RESULT
 {
 	OUTPACKET_RESULT_SUCCESS				= 1,
@@ -39,7 +39,9 @@ enum OUTPACKET_RESULT
 	OUTPACKET_RESULT_SOCKET_ERROR			= 4,
 };
 
-//authorize state machine
+/* Authorization 'statemachine', based on the old one
+ * Currently not used.
+ */
 enum EVE_AUTH_STATE
 {
 	EVE_AUTH_STATE_HANDSHAKE,			// old VersionNotReceived					| version handshake
@@ -60,25 +62,18 @@ public:
 	EveClientSocket(SOCKET fd);
 	~EveClientSocket();
 
-	ASCENT_INLINE void HandleHandShake();
-
-	// basic PyRep send function
-	ASCENT_INLINE void OutPacket(PyRep * packet );
-
+	/* socket event handlers */
 	void OnRead();
 	void OnConnect();
 	void OnDisconnect();
 
-	bool mAuthed;
+	/* Basic PyRep send function */
+	ASCENT_INLINE void OutPacket(PyRep * packet );
 
-	void SetSession(EveClientSession* session)
-	{
-		mSession = session;
-	}
+	/* set the sessions socket */
+	void SetSession(EveClientSession* session) { mSession = session; }
 
 protected:
-	// Internal functions
-
 	/************************************************************************/
 	/* Python packet send wrapper functions make the code readable          */
 	/************************************************************************/
@@ -103,27 +98,40 @@ protected:
 	void _authStateDone(PyRep* packet);
 	void _authStateException(PyRep* packet);
 
+	// current state function pointer
 	stateProc mCurrentStateMachine;
 
 private:
-
+	/* Crypt challenge cache */
 	CryptoChallengePacket* mRequest;
+
+	/* Session of this socket */
 	EveClientSession* mSession;
 
-
-	uint32 mRemaining;
-
-	// is this connection queued
+	/* connection/login is queued */
 	bool mQueued;
 
+	/* connection is authorized */
+	bool mAuthed;
+
+	/* 'TCP nagle' enabled? */
+	bool mNagleEanbled;
+
+	/* User name cache */
 	std::string mUserName;
+
+	/* User id cache */
 	uint32 mUserid;
 
-	/* send queue */
+	/* OnRead remaining size */
+	uint32 mRemaining;
+
+	/* send queue
+	 * currently not used
+	 * TODO implement this, would be easy
+	 */
 	//FastQueue<WorldPacket*, DummyLock> _queue; // send packet queue not used atm
 	//Mutex queueLock;
-
-	bool mNagleEanbled;
 };
 
 #endif//__EVECLIENTSOCKET_H
