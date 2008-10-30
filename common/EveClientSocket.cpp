@@ -65,16 +65,9 @@ EveClientSocket::~EveClientSocket()
 	if (mRequest != NULL)
 		delete mRequest;
 
-	//if(mSession)
-	//{
-	//	mSession->SetSocket(NULL);
-	//	mSession=NULL;
-	//}
-
 	if (mSession)
 	{
 		mSession->SetSocket(NULL);
-		//delete mSession;
 		mSession = NULL;
 	}
 
@@ -89,14 +82,14 @@ void EveClientSocket::OnDisconnect()
 {
 	Log.Debug("EVE network","OnDisconnect");
 	sSpace.mAcceptedConnections--;
-	/*if(mSession)
+	if(mSession)
 	{
 		mSession->SetSocket(0);
 		mSession=NULL;
 	}
 
 	// related to queued connections
-	if(mRequestID != 0)
+	/*if(mRequestID != 0)
 	{
 		sLogonCommHandler.UnauthedSocketClose(mRequestID);
 		mRequestID = 0;
@@ -261,7 +254,7 @@ void EveClientSocket::OnRead()
 		PyRep *recvPyPacket = InflateAndUnmarshal(packet->contents(), packet->size());
 
 		// the state machine magic
-		(this->*m_currentStateMachine)(*recvPyPacket);
+		(this->*m_currentStateMachine)(recvPyPacket);
 
 		// this is the end of the road for the used read buffer
 		if ( packet != NULL)
@@ -273,11 +266,11 @@ void EveClientSocket::OnRead()
 
 // the client sends back its server info...
 // we should compare this with our own to make sure we can block unsupported clients
-void EveClientSocket::_authStateHandshake(PyRep& packet)
+void EveClientSocket::_authStateHandshake(PyRep* packet)
 {
 	VersionExchange ve;
 
-	PyRep *fp = &packet;
+	PyRep *fp = packet;
 	if(!ve.Decode(&fp)) {
 		//_log(NET__PRES_ERROR, "%s: Received invalid version exchange!", GetConnectedAddress().c_str());
 		Disconnect();
@@ -311,7 +304,7 @@ void EveClientSocket::_authStateHandshake(PyRep& packet)
 	m_currentStateMachine = &EveClientSocket::_authStateQueueCommand;
 }
 
-void EveClientSocket::_authStateQueueCommand(PyRep& packet)
+void EveClientSocket::_authStateQueueCommand(PyRep* packet)
 {
 	//check if it actually is tuple
 	if(!packet.CheckType(PyRep::Tuple)) {
@@ -319,7 +312,7 @@ void EveClientSocket::_authStateQueueCommand(PyRep& packet)
 		Disconnect();
 		return;
 	}
-	PyRepTuple *t = (PyRepTuple *)&packet;
+	PyRepTuple *t = (PyRepTuple *)packet;
 	
 	//decode
 	if(t->items.size() == 2)
@@ -382,11 +375,11 @@ void EveClientSocket::_authStateQueueCommand(PyRep& packet)
 	}
 }
 
-void EveClientSocket::_authStateNoCrypto(PyRep& packet)
+void EveClientSocket::_authStateNoCrypto(PyRep* packet)
 {
 	CryptoRequestPacket cr;
 
-	PyRep * data = &packet;
+	PyRep * data = packet;
 
 	if(!cr.Decode(&data)) {
 		sLog.outDebug("%S: Received invalid crypto request!", GetConnectedAddress().c_str());
@@ -418,14 +411,14 @@ void EveClientSocket::_authStateNoCrypto(PyRep& packet)
 	}
 }
 
-void EveClientSocket::_authStateCryptoChallenge(PyRep& packet)
+void EveClientSocket::_authStateCryptoChallenge(PyRep* packet)
 {
 	//just to be sure
 	if(mRequest != NULL)
 		delete mRequest;
 	mRequest = new CryptoChallengePacket;
 
-	PyRep* data = &packet;
+	PyRep* data = packet;
 
 	if(!mRequest->Decode(&data)) {
 		sLog.outDebug("%s: Received invalid crypto challenge!", GetConnectedAddress().c_str());
@@ -471,10 +464,10 @@ void EveClientSocket::_authStateCryptoChallenge(PyRep& packet)
 	m_currentStateMachine = &EveClientSocket::_authStateHandshakeSend;
 }
 
-void EveClientSocket::_authStateHandshakeSend(PyRep& packet)
+void EveClientSocket::_authStateHandshakeSend(PyRep* packet)
 {
 	CryptoHandshakeResult hr;
-	PyRep * data = &packet;
+	PyRep * data = packet;
 	if(!hr.Decode(&data)) {
 		sLog.outDebug("%s: Received invalid crypto handshake result!", GetConnectedAddress().c_str());
 		Disconnect();
@@ -575,9 +568,9 @@ void EveClientSocket::_authStateHandshakeSend(PyRep& packet)
 	m_Authed = true;
 }
 
-void EveClientSocket::_authStateDone(PyRep& packet)
+void EveClientSocket::_authStateDone(PyRep* packet)
 {
 	Log.Debug("ClientSocket","received packet 'whooo' we passed authorization");
 
-	mSession->QueuePacket((PyPacket*)&packet);
+	mSession->QueuePacket((PyPacket*)packet);
 }

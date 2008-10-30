@@ -48,7 +48,9 @@ public:
 
 	void Disconnect() { if(_socket && _socket->IsConnected()) _socket->Disconnect();}
 
-	void Update();
+	void Delete();
+
+	int Update();
 
 	void _ProcessNone(PyPacket& packet);
 	void _ProcessCallRequest(PyPacket& packet);
@@ -64,6 +66,11 @@ private:
 	uint32 _userId;
 	//uint32 _accountFlags;
 	std::string _accountName;
+	Mutex deleteMutex;
+
+	bool bDeleted;
+
+
 
 	FastQueue<PyPacket*, Mutex> _recvQueue;
 };

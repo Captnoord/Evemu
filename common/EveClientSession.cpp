@@ -32,9 +32,10 @@ EveClientSession::EveClientSession(uint32 userId, std::string name, EveClientSoc
 
 EveClientSession::~EveClientSession()
 {
+	deleteMutex.Acquire();
 	// dono if this is correct but will do for now....
-	sSpace.RemoveSession(this->GetUserId());
-	sSpace.RemoveGlobalSession(this);
+	//sSpace.RemoveSession(this->GetUserId());
+	//sSpace.RemoveGlobalSession(this);
 
 	PyPacket *packet;
 	while((packet = _recvQueue.Pop()))
@@ -42,21 +43,35 @@ EveClientSession::~EveClientSession()
 
 	if(_socket)
 		_socket->SetSession(NULL);
+	deleteMutex.Release();
 }
 
-void EveClientSession::Update()
+void EveClientSession::Delete()
 {
+	deleteMutex.Acquire();
+	delete this;
+}
+
+int EveClientSession::Update()
+{
+	if( _socket == NULL )
+	{
+		bDeleted = true;
+		return 1;
+	}
+
 	PyPacket *packet;
 	while (packet = _recvQueue.Pop())
 	{
 		ASSERT(packet && "EveClientSession packet dispatcher crash");
 
-		if ( packet->type < MACHONETMSG_TYPE_MAX )
+		if ( packet&& packet->type < MACHONETMSG_TYPE_MAX )
 		{
 			(this->*Handlers[packet->type])(*packet);
 		}
 		//delete packet;
 	}
+	return 0;
 }
 
 void EveClientSession::_ProcessNone(PyPacket& packet)

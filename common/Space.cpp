@@ -93,6 +93,18 @@ void Space::RemoveGlobalSession(EveClientSession *session)
 	SessionsMutex.Release();
 }
 
+void Space::DeleteSession(EveClientSession *session)
+{
+	m_sessionlock.AcquireWriteLock();
+	// remove from big map
+	m_sessions.erase(session->GetUserId());
+
+	m_sessionlock.ReleaseWriteLock();
+
+	// delete us
+	session->Delete();
+}
+
 void Space::Update(time_t diff)
 {
 
@@ -100,17 +112,19 @@ void Space::Update(time_t diff)
 
 void Space::UpdateSessions(time_t diff)
 {
-	
 	if (Sessions.empty() == true)
 		return;
 
-	SessionSet::iterator itr = Sessions.begin();//, it2;
+	SessionSet::iterator itr = Sessions.begin();
+	SessionSet::iterator it2;
 	EveClientSession *session;
-	//int result;
+	int result;
 	for(; itr != Sessions.end();)
 	{
 		session = (*itr);
+		it2 = itr;
 		++itr;
+
 		/*it2 = itr;
 		++itr;
 		if(!session || session->GetInstance() != 0)
@@ -119,7 +133,17 @@ void Space::UpdateSessions(time_t diff)
 			continue;
 		}*/
 
-		session->Update();
+		//session->Update();
+
+		if((result = session->Update()))
+		{
+			if(result == 1)
+			{
+				// complete deletion
+				DeleteSession(session);
+			}
+			Sessions.erase(it2);
+		}
 
 		/*if((result = session->Update()))
 		{

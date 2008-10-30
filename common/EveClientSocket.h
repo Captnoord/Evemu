@@ -55,7 +55,7 @@ class EveClientSocket : public Socket
 {
 public:
 	// state machine function pointer typedef
-	typedef void (EveClientSocket::*stateProc)(PyRep&);
+	typedef void (EveClientSocket::*stateProc)(PyRep*);
 
 	EveClientSocket(SOCKET fd);
 	~EveClientSocket();
@@ -90,21 +90,19 @@ protected:
 	/************************************************************************/
 	/* raw Python packet send function                                      */
 	/************************************************************************/
-	ASCENT_INLINE OUTPACKET_RESULT _outPacket(EVENetPacket * packet);
+	ASCENT_INLINE OUTPACKET_RESULT _outPacket(EVENetPacket* packet);
 
 	/************************************************************************/
 	/* Authorization state machine                                          */
 	/************************************************************************/
-	void _authStateHandshake(PyRep& packet);
-	void _authStateQueueCommand(PyRep& packet);
-	void _authStateNoCrypto(PyRep& packet);
-	void _authStateCryptoChallenge(PyRep& packet);
-	void _authStateHandshakeSend(PyRep& packet);
-	void _authStateDone(PyRep& packet);
+	void _authStateHandshake(PyRep* packet);
+	void _authStateQueueCommand(PyRep* packet);
+	void _authStateNoCrypto(PyRep* packet);
+	void _authStateCryptoChallenge(PyRep* packet);
+	void _authStateHandshakeSend(PyRep* packet);
+	void _authStateDone(PyRep* packet);
 
 	stateProc m_currentStateMachine;
-
-
 
 private:
 	uint32 mRemaining;
