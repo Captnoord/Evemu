@@ -101,6 +101,7 @@ protected:
 	void _authStateCryptoChallenge(PyRep* packet);
 	void _authStateHandshakeSend(PyRep* packet);
 	void _authStateDone(PyRep* packet);
+	void _authStateException(PyRep* packet);
 
 	stateProc m_currentStateMachine;
 

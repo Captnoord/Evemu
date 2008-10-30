@@ -248,10 +248,12 @@ void EveClientSocket::OnRead()
 		// packet log
 		//sWorldLog.LogPacket(mSize, mOpcode, mSize ? Packet->contents() : NULL, 0);
 
-		printf("\nRecv:\n");
-		packet->LogPacket();
-
 		PyRep *recvPyPacket = InflateAndUnmarshal(packet->contents(), packet->size());
+
+		
+
+		printf("\nrecv packet with opcode:%d and Type:%s and size:%d\n", ((PyPacket*)recvPyPacket)->type, recvPyPacket->TypeString(), packet->size());
+		packet->LogPacket();
 
 		// the state machine magic
 		(this->*m_currentStateMachine)(recvPyPacket);
@@ -307,7 +309,7 @@ void EveClientSocket::_authStateHandshake(PyRep* packet)
 void EveClientSocket::_authStateQueueCommand(PyRep* packet)
 {
 	//check if it actually is tuple
-	if(!packet.CheckType(PyRep::Tuple)) {
+	if(!packet->CheckType(PyRep::Tuple)) {
 		sLog.outDebug("%s: Invalid packet during waiting for command (tuple expected).", GetConnectedAddress().c_str());
 		Disconnect();
 		return;
@@ -572,5 +574,25 @@ void EveClientSocket::_authStateDone(PyRep* packet)
 {
 	Log.Debug("ClientSocket","received packet 'whooo' we passed authorization");
 
+	if ( packet->CheckType(PyRep::PackedObject1) == true )
+	{
+		//Log.Debug("AuthStateMachine","State changed into StateException");
+		//m_currentStateMachine = &EveClientSocket::_authStateException;
+		//(this->*m_currentStateMachine)(recvPyPacket);
+
+		Log.Debug("AuthStateMachine","Exception catched");
+		//m_currentStateMachine(packet);
+		_authStateException(packet);
+		return;		
+	}
+
 	mSession->QueuePacket((PyPacket*)packet);
+}
+
+void EveClientSocket::_authStateException(PyRep* packet)
+{
+	Log.Debug("AuthStateMachine","Processing Exception");
+
+	// whoo delete if for now
+	delete packet;
 }

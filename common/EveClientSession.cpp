@@ -59,6 +59,8 @@ int EveClientSession::Update()
 		bDeleted = true;
 		return 1;
 	}
+	if (_recvQueue.GetSize() == 0)
+		return 0;
 
 	PyPacket *packet;
 	while (packet = _recvQueue.Pop())
@@ -68,7 +70,9 @@ int EveClientSession::Update()
 		if ( packet&& packet->type < MACHONETMSG_TYPE_MAX )
 		{
 			(this->*Handlers[packet->type])(*packet);
+			packet = NULL;
 		}
+		
 		//delete packet;
 	}
 	return 0;
@@ -76,7 +80,8 @@ int EveClientSession::Update()
 
 void EveClientSession::_ProcessNone(PyPacket& packet)
 {
-	Log.Debug("SessionPacketDispatcher", "'Unhandled' packet received");
+	
+	Log.Debug("SessionPacketDispatcher", "'Unhandled' packet received, opcode:%d", packet.type);
 }
 
 void EveClientSession::_ProcessCallRequest(PyPacket& packet)
