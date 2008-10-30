@@ -62,7 +62,7 @@ PyPacket *EVEPresentation::PopPacket() {
 	PyRep *r = InflateAndUnmarshal(netp->data, netp->length);
 	delete netp;
 	if(r == NULL)
-		return NULL;	//failed to inflate or unmarshal the packet
+		return NULL;	//failed to inflate or 'unmarshal' the packet
 
 	if(is_log_enabled(NET__PRES_REP)) {
 		_log(NET__PRES_REP, "%s: Raw Rep Dump:", GetConnectedAddress().c_str());
@@ -371,11 +371,3 @@ std::string EVEPresentation::GetConnectedAddress() const {
 	return(buf);
 	//return net->GetrIP();
 }
-
-
-
-
-
-
-
-

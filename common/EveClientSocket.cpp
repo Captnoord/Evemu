@@ -228,6 +228,9 @@ void EveClientSocket::OnRead()
 		// packet log
 		//sWorldLog.LogPacket(mSize, mOpcode, mSize ? Packet->contents() : NULL, 0);
 
+		/* IMPORTANT TODO, InflateAndUnmarshal should not be in the socket, as when receiving big packets this could block the
+		 * network core. So move it somehow to the session class, also as its recursive it can run forever.
+		 */
 		PyRep *recvPyPacket = InflateAndUnmarshal(packet->contents(), packet->size());
 
 		printf("\nrecv packet with opcode:%d and Type:%s and size:%d\n", ((PyPacket*)recvPyPacket)->type, recvPyPacket->TypeString(), packet->size());
@@ -252,31 +255,40 @@ void EveClientSocket::_authStateHandshake(PyRep* packet)
 
 	PyRep *fp = packet;
 	if(!ve.Decode(&fp)) {
-		//_log(NET__PRES_ERROR, "%s: Received invalid version exchange!", GetRemoteIP().c_str());
+		//Log.Debug("%s: Received invalid version exchange!", GetRemoteIP().c_str());
 		Disconnect();
 		return;
 	}
 
 	Log.Debug("ClientSocket","%s: Received Low Level Version Exchange:\n", GetRemoteIP().c_str());
 
-	if(ve.birthday != EVEBirthday) {
-		sLog.outDebug("%s: Client's birthday does not match ours!", GetRemoteIP().c_str());
+	if(ve.birthday != EVEBirthday)
+	{
+		//sLog.outDebug("%s: Client's birthday does not match ours!", GetRemoteIP().c_str());
 		Disconnect();
 	}
-	if(ve.macho_version != MachoNetVersion) {
-		sLog.outDebug("%s: Client's macho_version not match ours!", GetRemoteIP().c_str());
+
+	if(ve.macho_version != MachoNetVersion)
+	{
+		//sLog.outDebug("%s: Client's macho_version not match ours!", GetRemoteIP().c_str());
 		Disconnect();
 	}
-	if(ve.version_number != EVEVersionNumber) {
-		sLog.outDebug("%s: Client's version_number not match ours!", GetRemoteIP().c_str());
+
+	if(ve.version_number != EVEVersionNumber)
+	{
+		//sLog.outDebug("%s: Client's version_number not match ours!", GetRemoteIP().c_str());
 		Disconnect();
 	}
-	if(ve.build_version != EVEBuildVersion) {
-		sLog.outDebug("%s: Client's build_version not match ours!", GetRemoteIP().c_str());
+
+	if(ve.build_version != EVEBuildVersion)
+	{
+		//sLog.outDebug("%s: Client's build_version not match ours!", GetRemoteIP().c_str());
 		Disconnect();
 	}
-	if(ve.project_version != EVEProjectVersion) {
-		sLog.outDebug("%s: Client's project_version not match ours!", GetRemoteIP().c_str());
+
+	if(ve.project_version != EVEProjectVersion)
+	{
+		//sLog.outDebug("%s: Client's project_version not match ours!", GetRemoteIP().c_str());
 		Disconnect();
 	}
 
@@ -287,8 +299,9 @@ void EveClientSocket::_authStateHandshake(PyRep* packet)
 void EveClientSocket::_authStateQueueCommand(PyRep* packet)
 {
 	//check if it actually is tuple
-	if(!packet->CheckType(PyRep::Tuple)) {
-		sLog.outDebug("%s: Invalid packet during waiting for command (tuple expected).", GetRemoteIP().c_str());
+	if(!packet->CheckType(PyRep::Tuple))
+	{
+		//sLog.outDebug("%s: Invalid packet during waiting for command (tuple expected).", GetRemoteIP().c_str());
 		Disconnect();
 		return;
 	}
@@ -301,22 +314,26 @@ void EveClientSocket::_authStateQueueCommand(PyRep* packet)
 
 		//QC = Queue Check
 		NetCommand_QC cmd;
-		if(!cmd.Decode(&t)) {
-			sLog.outDebug("%s: Failed to decode 2-arg command.", GetRemoteIP().c_str());
+		if(!cmd.Decode(&t))
+		{
+			//sLog.outDebug("%s: Failed to decode 2-arg command.", GetRemoteIP().c_str());
 			Disconnect();
 			return;//break;
 		}
-		if(cmd.command != "QC") {
-			sLog.outDebug("%s: Unknown 2-arg command '%s'.", GetRemoteIP().c_str(), cmd.command.c_str());
+
+		if(cmd.command != "QC")
+		{
+			//sLog.outDebug("%s: Unknown 2-arg command '%s'.", GetRemoteIP().c_str(), cmd.command.c_str());
 			Disconnect();
 			return;//break;
 		}
 		sLog.outDebug("%s: Got Queue Check command.", GetRemoteIP().c_str());
 		
 
-		//return position in queue, which is 1 for now until we implemented a real login queue
+		/* Send the position 1 or 0  the queue, which is 1 for now until we implemented a real login queue
+		 * Send 100 and the client tells you that the queue is 100
+		 */
 		_sendQueuePos(1);
-		//_sendQueuePos(100);
 
 		//now act like client just connected
 		//send out handshake again
@@ -327,20 +344,22 @@ void EveClientSocket::_authStateQueueCommand(PyRep* packet)
 		mCurrentStateMachine = &EveClientSocket::_authStateHandshake;
 		return;
 	} 
-	else if(t->items.size() == 3) 
+	else if(t->items.size() == 3)
 	{
 		//this is sent when client is logging in
 		NetCommand_VK cmd;
-		if(!cmd.Decode(&t)) {
-			sLog.outDebug("%s: Failed to decode 3-arg command.", GetRemoteIP().c_str());
+		if(!cmd.Decode(&t))
+		{
+			//sLog.outDebug("%s: Failed to decode 3-arg command.", GetRemoteIP().c_str());
 			Disconnect();
-			return;//break;
+			return;
 		}
 		// VK == VIP mode
-		if(cmd.command != "VK") {
-			sLog.outDebug("%s: Unknown 3-arg command '%s'.", GetRemoteIP().c_str(), cmd.command.c_str());
+		if(cmd.command != "VK")
+		{
+			//sLog.outDebug("%s: Unknown 3-arg command '%s'.", GetRemoteIP().c_str(), cmd.command.c_str());
 			Disconnect();
-			return;//break;
+			return;
 		}
 		sLog.outDebug("%s: Got VK command, vipKey=%s.", GetRemoteIP().c_str(), cmd.vipKey.c_str());
 		Log.Debug("AuthStateMachine","State changed into StateStateNoCrypto");
@@ -349,10 +368,14 @@ void EveClientSocket::_authStateQueueCommand(PyRep* packet)
 	}
 	else 
 	{
-		Log.Debug("EVE Socket","StateQueueCommand received a invalid packet");
+		//Log.Debug("EVE Socket","StateQueueCommand received a invalid packet");
 		sLog.outDebug("%s: Received invalid command packet:", GetRemoteIP().c_str());
 		Disconnect();
 	}
+
+	/* If we get here.... it means that the authorization failed in some way, also we didn't handle the exceptions yet.
+	 *
+	 */
 }
 
 void EveClientSocket::_authStateNoCrypto(PyRep* packet)
@@ -361,15 +384,16 @@ void EveClientSocket::_authStateNoCrypto(PyRep* packet)
 
 	PyRep * data = packet;
 
-	if(!cr.Decode(&data)) {
-		sLog.outDebug("%S: Received invalid crypto request!", GetRemoteIP().c_str());
+	if(cr.Decode(&data) == false)
+	{
+		//sLog.outDebug("%S: Received invalid 'crypto' request!", GetRemoteIP().c_str());
 		Disconnect();
-		return;//break;
+		return;
 	}
 
 	if(cr.keyVersion == "placebo")
 	{
-		sLog.outDebug("%s: Received Placebo crypto request, accepting.", GetRemoteIP().c_str());
+		sLog.outDebug("%s: Received Placebo 'crypto' request, accepting.", GetRemoteIP().c_str());
 		Log.Debug("AuthStateMachine","State changed into StateCryptoChallenge");
 		mCurrentStateMachine = &EveClientSocket::_authStateCryptoChallenge;
 
@@ -380,7 +404,8 @@ void EveClientSocket::_authStateNoCrypto(PyRep* packet)
 		//i'm sure cr.keyVersion can specify either CryptoAPI or PyCrypto, but its all binary so im not sure how.
 		PyRep *params = cr.keyParams.Clone();
 		CryptoAPIRequestParams car;
-		if(!car.Decode(&params)) {
+		if(!car.Decode(&params))
+		{
 			sLog.outDebug("%s: Received invalid CryptoAPI request!", GetRemoteIP().c_str());
 			Disconnect();
 			return;
@@ -565,7 +590,7 @@ void EveClientSocket::_authStateDone(PyRep* packet)
 		return;		
 	}
 
-	mSession->QueuePacket((PyPacket*)packet);
+	mSession->QueuePacket(packet);
 }
 
 void EveClientSocket::_authStateException(PyRep* packet)

@@ -43,7 +43,7 @@ public:
 
 	PyPacket *PopPacket();
 
-	std::string GetRemoteIP() const;
+	std::string GetConnectedAddress() const;
 
 	//hack for now:
 	void SendHandshake(uint32 user_count) { m_userCount = user_count; _SendHandshake(); }

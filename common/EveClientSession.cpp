@@ -30,6 +30,25 @@ EveClientSession::EveClientSession(uint32 userId, std::string name, EveClientSoc
 
 }
 
+typedef enum {
+	PyInteger,
+	PyReal,
+	PyBoolean,
+	PyBuffer,
+	PyString,
+	PyTuple,
+	PyList,
+	PyDict,
+	PyNone,
+	PySubStruct,
+	PySubStream,
+	PyChecksumedStream,
+	PyObject,
+	PyPackedRow,
+	PyPackedObject1,
+	PyPackedObject2
+} Type;
+
 EveClientSession::~EveClientSession()
 {
 	deleteMutex.Acquire();
@@ -37,34 +56,35 @@ EveClientSession::~EveClientSession()
 	//sSpace.RemoveSession(this->GetUserId());
 	//sSpace.RemoveGlobalSession(this);
 
-	PyPacket *packet;
+	PyRep *packet;
 	while((packet = _recvQueue.Pop()))
 	{
 		PyRep * pack = packet;
 
+		/* HACKED SOLLUTION TO FIX PACKET DELETION */
 		switch (pack->GetType())
 		{
-			case Integer
-			case Real
-			case Boolean
-			case Buffer
-			case String
-			case Tuple
-			case List
-			case Dict
-			case None
-			case SubStruct
-			case SubStream
-			case ChecksumedStream
-			case Object
-			case PackedRow
-			case PackedObject1
-			case PackedObject2
+		case PyInteger:
+		case PyReal:
+		case PyBoolean:
+		case PyBuffer:
+		case PyString:
+		case PyTuple:
+		case PyList:
+		case PyDict:
+		case PyNone:
+		case PySubStruct:
+		case PySubStream:
+		case PyChecksumedStream:
+		case PyObject:
+		case PyPackedRow:
+		case PyPackedObject1:
+		case PyPackedObject2:
+			{
+				delete packet;
 
-
+			}break;
 		}
-
-		delete packet;
 	}
 
 	if(_socket)
@@ -79,10 +99,28 @@ void EveClientSession::Delete()
 }
 
 /* enqueue a packet to be processed in the packet dispatcher */
-void EveClientSession::QueuePacket(PyPacket* packet)
+void EveClientSession::QueuePacket(PyRep* packet)
 {
 	//m_lastPing = (uint32)UNIXTIME;
 	_recvQueue.Push(packet);
+}
+
+/* returns the socket */
+EveClientSocket* EveClientSession::GetSocket()
+{
+	return _socket;
+}
+
+/* sets the sessions socket */
+void EveClientSession::SetSocket(EveClientSocket* sock)
+{
+	_socket = sock;
+}
+
+void EveClientSession::Disconnect()
+{
+	if(_socket && _socket->IsConnected())
+		_socket->Disconnect();
 }
 
 int EveClientSession::Update()
@@ -95,44 +133,44 @@ int EveClientSession::Update()
 	if (_recvQueue.GetSize() == 0)
 		return 0;
 
-	PyPacket *packet;
+	PyRep *packet;
 	while (packet = _recvQueue.Pop())
 	{
 		ASSERT(packet && "EveClientSession packet dispatcher crash");
 
-		if ( packet&& packet->type < MACHONETMSG_TYPE_MAX )
+		/*if ( packet&& packet->type < MACHONETMSG_TYPE_MAX )
 		{
 			(this->*Handlers[packet->type])(*packet);
 			packet = NULL;
-		}
+		}*/
 		
 		//delete packet;
 	}
 	return 0;
 }
 
-void EveClientSession::_ProcessNone(PyPacket& packet)
+void EveClientSession::_ProcessNone(PyRep& packet)
 {
 	
-	Log.Debug("SessionPacketDispatcher", "'Unhandled' packet received, opcode:%d", packet.type);
+	//Log.Debug("SessionPacketDispatcher", "'Unhandled' packet received, opcode:%d", packet.type);
 }
 
-void EveClientSession::_ProcessCallRequest(PyPacket& packet)
+void EveClientSession::_ProcessCallRequest(PyRep& packet)
 {
 	Log.Debug("SessionPacketDispatcher", "ProcessCallRequest");
 }
 
-void EveClientSession::_ProcessNotification(PyPacket& packet)
+void EveClientSession::_ProcessNotification(PyRep& packet)
 {
 	Log.Debug("SessionPacketDispatcher", "ProcessNotification");
 }
 
-void EveClientSession::_ProcessPingRequest(PyPacket& packet)
+void EveClientSession::_ProcessPingRequest(PyRep& packet)
 {
 	Log.Debug("SessionPacketDispatcher", /*"%s:*/ "'Unhandled' ping request.");//, GetName());
 }
 
-void EveClientSession::_ProcessPingResponce(PyPacket& packet)
+void EveClientSession::_ProcessPingResponce(PyRep& packet)
 {
 	Log.Debug("SessionPacketDispatcher", /*"%s:*/ "Received ping response.");//, GetName());
 }

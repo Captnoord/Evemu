@@ -972,7 +972,7 @@ ThreadReturnType TCPConnection::TCPConnectionLoop(void* tmp) {
 	if (tmp == 0) {
 		//cout << "TCPConnectionLoop(): tmp = 0!" << endl;
 		printf("TCPConnectionLoop(): tmp = 0!\n");
-		THREAD_return NULL;
+		THREAD_RETURN(NULL);
 	}
 	TCPConnection* tcpc = (TCPConnection*) tmp;
 #ifndef WIN32
@@ -1008,7 +1008,7 @@ ThreadReturnType TCPConnection::TCPConnectionLoop(void* tmp) {
 	_log(COMMON__THREADS, "Ending TCPConnectionLoop with thread ID %d", pthread_self());
 #endif
 	
-	THREAD_return NULL;
+	THREAD_RETURN(NULL);
 }
 
 bool TCPConnection::RunLoop() {

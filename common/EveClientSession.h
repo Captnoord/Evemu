@@ -35,17 +35,12 @@ public:
 	EveClientSession(uint32 userId, string name, EveClientSocket *sock );
 	~EveClientSession();
 
-	ASCENT_INLINE void QueuePacket(PyRep* packet)
-	{
-		//m_lastPing = (uint32)UNIXTIME;
-		_recvQueue.Push(packet);
-	}
+	ASCENT_INLINE void QueuePacket(PyRep* packet);
 
-	ASCENT_INLINE EveClientSocket* GetSocket() { return _socket; }
+	ASCENT_INLINE EveClientSocket* GetSocket();
+	void SetSocket(EveClientSocket* sock);
 
-	void SetSocket(EveClientSocket* sock) { _socket = sock;}
-
-	void Disconnect() { if(_socket && _socket->IsConnected()) _socket->Disconnect();}
+	void Disconnect();
 
 	void Delete();
 
