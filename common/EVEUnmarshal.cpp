@@ -46,22 +46,27 @@ static uint32 UnmarshalData(UnmarshalState *state, const byte *packet, uint32 le
 //static byte *UnpackZeroCompressedDup(const byte *in_buf, uint32 in_length, uint32 *unpacked_length);	//retuns ownership of bytes
 
 //returns ownership
-PyRep *InflateAndUnmarshal(const byte *body, uint32 body_len) {
+PyRep *InflateAndUnmarshal(const byte *body, uint32 body_len)
+{
 	const byte *const orig_body = body;
 	const uint32 orig_body_len = body_len;
 	
-	if(*body != SubStreamHeaderByte)
+	if(body[0] != SubStreamHeaderByte)
 	{
-		if(body_len > sizeof(uint32) && *((const uint32 *) body) == 0) {
+		if(body_len > sizeof(uint32) && *((const uint32 *) body) == 0)
+		{
 			//winging it here...
 			body_len -= 12;
 			byte *buf = InflatePacket(body+12, body_len);
-			if(buf == NULL) {
+			if(buf == NULL)
+			{
 				_log(NET__PRES_ERROR, "Failed to inflate special packet!");
 				_log(NET__PRES_DEBUG, "Raw Hex Dump:");
 				_hex(NET__PRES_DEBUG, body, body_len);
-				return(NULL);
-			} else {
+				return NULL;
+			}
+			else 
+			{
 				body = buf;
 				_log(NET__UNMARSHAL_ERROR, "Special Inflated packet of len %d to length %d\n", orig_body_len, body_len);
 			}
@@ -69,12 +74,14 @@ PyRep *InflateAndUnmarshal(const byte *body, uint32 body_len) {
 		else 
 		{
 			byte *buf = InflatePacket(body, body_len);
-			if(buf == NULL) {
+			if(buf == NULL)
+			{
 				_log(NET__PRES_ERROR, "Failed to inflate packet!");
 				_log(NET__PRES_DEBUG, "Raw Hex Dump:");
 				_hex(NET__PRES_DEBUG, body, body_len);
-				return(NULL);
-			} else {
+				return NULL;
+			}
+			else {
 				body = buf;
 				_log(NET__PRES_TRACE, "Inflated packet of len %d to length %d", orig_body_len, body_len);
 			}
@@ -99,22 +106,30 @@ PyRep *InflateAndUnmarshal(const byte *body, uint32 body_len) {
 	
 	PyRep *rep;
 	uint32 used_len = UnmarshalData(state, body, body_len, rep, "    ");
-	if(rep == NULL) {
+	if(rep == NULL)
+	{
 		_log(NET__PRES_ERROR, "Failed to unmarshal data!");
 		if(post_inflate_body != orig_body)
+		{
 			delete[] post_inflate_body;
+		}
 		delete state;
-		return(NULL);
+		return NULL;
 	}
 
 	//total shit:
-    if(state->count_packedobj > 0) {
+    if(state->count_packedobj > 0) 
+	{
 		uint32 index = 0;
 		uint32 rlen = body_len-used_len;
-		for(index = 0; index < state->count_packedobj; index++) {
-			if(rlen < sizeof(uint32)) {
+		for(index = 0; index < state->count_packedobj; index++) 
+		{
+			if(rlen < sizeof(uint32)) 
+			{
 				_log(NET__UNMARSHAL_TRACE, "Insufficient length for hack 0x2d trailer %d/%d", index+1, state->count_packedobj);
-			} else {
+			} 
+			else 
+			{
 				uint32 val = *((const uint32 *) (body+used_len));
 				
 				_log(NET__UNMARSHAL_TRACE, "Hack 0x23/Obj2 value[%d]: 0x%lx", index, val);
@@ -127,14 +142,18 @@ PyRep *InflateAndUnmarshal(const byte *body, uint32 body_len) {
 
 	delete state;
 	
-	if(used_len != body_len) {
+	if(used_len != body_len)
+	{
 		_log(NET__UNMARSHAL_TRACE, "Unmarshal did not consume entire data: %d/%d used", used_len, body_len);
 		_hex(NET__UNMARSHAL_TRACE, body+used_len, body_len-used_len);
 	}
 	
 	if(post_inflate_body != orig_body)
-		delete[] post_inflate_body;
-	return(rep);
+	{
+		delete [] post_inflate_body;
+	}
+
+	return rep;
 }
 
 

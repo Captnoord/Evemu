@@ -142,13 +142,13 @@ uint32 ServiceDB::GetCurrentShipID(uint32 characterID) {
 	))
 	{
 		_log(SERVICE__ERROR, "Error in GetCurrentShipID query: %s", res.error.c_str());
-		return(0);
+		return 0;
 	}
 	
 	DBResultRow row;
 	if(!res.GetRow(row)) {
 		_log(SERVICE__ERROR, "Error in GetCurrentShipID query: no ship for char id %d", characterID);
-		return(0);
+		return 0;
 	}
 
 	return(row.GetUInt(0));
@@ -179,7 +179,7 @@ PyRepObject *ServiceDB::GetInventory(uint32 containerID, EVEItemFlags flag) {
 			containerID, flag, flag))
 	{
 		codelog(SERVICE__ERROR, "Error in query for %d,%d: %s", containerID, flag, res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 	
 	return(DBResultToRowset(res));
@@ -204,13 +204,13 @@ PyRepObject *ServiceDB::GetSolRow(uint32 systemID) const {
 	))
 	{
 		_log(SERVICE__ERROR, "Error in GetSolRow query: %s", res.error.c_str());
-		return(0);
+		return 0;
 	}
 	
 	DBResultRow row;
 	if(!res.GetRow(row)) {
 		_log(SERVICE__ERROR, "Error in GetSolRow query: unable to find sol info for system %d", systemID);
-		return(0);
+		return 0;
 	}
 
 	return(DBRowToRow(row, "util.Row"));
@@ -231,7 +231,7 @@ PyRepObject *ServiceDB::GetSolDroneState(uint32 systemID) const {
 	))
 	{
 		_log(SERVICE__ERROR, "Error in GetSolDroneState query: %s", res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 	
 	return(DBResultToRowset(res));
@@ -426,13 +426,13 @@ DBQueryResult res;
 	))
 	{
 		codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
-		return(0);
+		return 0;
 	}
 	
 	DBResultRow row;
 	if(!res.GetRow(row)) {
 		codelog(SERVICE__ERROR, "Error in query: no data for %d, %d", fromSystem, toSystem);
-		return(0);
+		return 0;
 	}
 
 	return row.GetUInt(2);
@@ -761,13 +761,13 @@ uint32 ServiceDB::GetBlueprintProduct(const uint32 blueprintTypeID) {
 		blueprintTypeID))
 	{
 		_log(DATABASE__ERROR, "Failed to query product for blueprint type %lu: %s.", blueprintTypeID, res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 
 	DBResultRow row;
 	if(!res.GetRow(row)) {
 		_log(DATABASE__ERROR, "No data found for blueprint type %lu.", blueprintTypeID);
-		return(NULL);
+		return NULL;
 	}
 
 	return(row.GetUInt(0));

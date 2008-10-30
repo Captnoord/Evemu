@@ -53,6 +53,7 @@ public:
 	PyRep(Type t) : m_type(t) { }
 	virtual ~PyRep() {}
 
+	Type GetType() {return m_type;}
 	bool CheckType(Type t) const { return(m_type == t); }
 	bool CheckType(Type t, Type t2) const { return(m_type == t || m_type == t2); }
 	const char *TypeString() const;

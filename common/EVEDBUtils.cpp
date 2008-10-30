@@ -390,7 +390,7 @@ static uint8 GetTypeSizeIndex(DBTYPE t) {
 	case DBTYPE_UI8:
 	case DBTYPE_CY:
 	case DBTYPE_FILETIME:
-		return(0);
+		return 0;
 	case DBTYPE_I4:
 	case DBTYPE_UI4:
 	case DBTYPE_R4:
@@ -408,7 +408,7 @@ static uint8 GetTypeSizeIndex(DBTYPE t) {
 	case DBTYPE_WSTR:
 		return(4);
 	}
-	return(0);
+	return 0;
 }
 
 //returns "their" DBTYPE based on "our" column type

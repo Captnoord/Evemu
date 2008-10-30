@@ -64,21 +64,21 @@ ReprocessingService::~ReprocessingService() {
 PyBoundObject *ReprocessingService::_CreateBoundObject(Client *c, const PyRep *bind_args) {
 	if(!bind_args->CheckType(PyRep::Integer)) {
 		codelog(CLIENT__ERROR, "%s: Non-integer bind argument '%s'", c->GetName(), bind_args->TypeString());
-		return(NULL);
+		return NULL;
 	}
 
 	const PyRepInteger * stationID = (const PyRepInteger *) bind_args;
 
 	if(!IsStation(stationID->value)) {
 		codelog(CLIENT__ERROR, "%s: Expected stationID, but hasn't.", c->GetName());
-		return(NULL);
+		return NULL;
 	}
 
 	ReprocessingServiceBound *obj = new ReprocessingServiceBound(m_manager, &m_db, stationID->value);
 	if(!obj->Load()) {
 		_log(SERVICE__ERROR, "Failed to load static info for station %lu.", stationID->value);
 		delete obj;
-		return(NULL);
+		return NULL;
 	} else
 		return(obj);
 }
@@ -120,7 +120,7 @@ PyResult ReprocessingServiceBound::Handle_GetOptionsForItemTypes(PyCallArgs &cal
 	Call_GetOptionsForItemTypes call_args;
 	if(!call_args.Decode(&call.tuple)) {
 		_log(SERVICE__ERROR, "Unable to decode args.");
-		return(NULL);
+		return NULL;
 	}
 
 	Rsp_GetOptionsForItemTypes		rsp;
@@ -162,7 +162,7 @@ PyResult ReprocessingServiceBound::Handle_GetQuote(PyCallArgs &call) {
 	Call_SingleIntegerArg call_args;	// itemID
 	if(!call_args.Decode(&call.tuple)) {
 		_log(SERVICE__ERROR, "Unable to decode args.");
-		return(NULL);
+		return NULL;
 	}
 
 	return(_GetQuote(call_args.arg, call.client, true));
@@ -174,7 +174,7 @@ PyResult ReprocessingServiceBound::Handle_GetQuotes(PyCallArgs &call) {
 	Call_GetQuotes call_arg;
 	if(!call_arg.Decode(&call.tuple)) {
 		_log(SERVICE__ERROR, "Unable to decode args.");
-		return(NULL);
+		return NULL;
 	}
 
 	Rsp_GetQuotes rsp;
@@ -196,14 +196,14 @@ PyResult ReprocessingServiceBound::Handle_GetQuotes(PyCallArgs &call) {
 PyResult ReprocessingServiceBound::Handle_Reprocess(PyCallArgs &call) {
 	if(!IsStation(call.client->GetLocationID())) {
 		_log(SERVICE__MESSAGE, "Character %s tried to reprocess, but isn't is station.", call.client->GetName());
-		return(NULL);
+		return NULL;
 	}
 
 	Call_Reprocess call_args;
 
 	if(!call_args.Decode(&call.tuple)) {
 		_log(SERVICE__ERROR, "Failed to parse args.");
-		return(NULL);
+		return NULL;
 	}
 
 	std::vector<uint32>::iterator cur, end;
@@ -271,7 +271,7 @@ PyResult ReprocessingServiceBound::Handle_Reprocess(PyCallArgs &call) {
 		}
 	}
 
-	return(NULL);
+	return NULL;
 }
 
 double ReprocessingServiceBound::_CalcReprocessingEfficiency(const InventoryItem *const client, const InventoryItem *const item) const {
@@ -306,18 +306,18 @@ double ReprocessingServiceBound::_CalcReprocessingEfficiency(const InventoryItem
 PyRep *ReprocessingServiceBound::_GetQuote(const uint32 itemID, const Client *const c, bool throwException) const {
 	InventoryItem *item = m_manager->item_factory->Load(itemID, true);
 	if(item == NULL)
-		return(NULL);	// No action as GetQuote is also called for reprocessed items (prolly for check)
+		return NULL;	// No action as GetQuote is also called for reprocessed items (prolly for check)
 
 	if(item->ownerID() != c->GetCharacterID()) {
 		_log(SERVICE__ERROR, "Character %lu tried to reprocess item %lu of character %lu.", c->GetCharacterID(), item->itemID(), item->ownerID());
 		item->Release();
-		return(NULL);
+		return NULL;
 	}
 
 	uint32 portionSize = m_db->GetPortionSize(item->typeID());
 	if(portionSize == 0) {
 		item->Release();
-		return(NULL);
+		return NULL;
 	}
 	if(item->quantity() < portionSize && throwException) {
 		std::map<std::string, PyRep *> args;
@@ -337,7 +337,7 @@ PyRep *ReprocessingServiceBound::_GetQuote(const uint32 itemID, const Client *co
 		std::vector<Recoverable> recoverables;
 		if(!m_db->GetRecoverables(item->typeID(), recoverables)) {
 			item->Release();
-			return(NULL);
+			return NULL;
 		}
 
 		double efficiency = _CalcReprocessingEfficiency(c->Item(), item);

@@ -26,7 +26,7 @@
 #ifndef __EVECLIENTSESSION_H
 #define __EVECLIENTSESSION_H
 
-typedef void (EveClientSession::*packetHandler)(PyPacket&);
+typedef void (EveClientSession::*packetHandler)(PyRep&);
 
 class SERVER_DECL EveClientSession
 {
@@ -35,9 +35,8 @@ public:
 	EveClientSession(uint32 userId, string name, EveClientSocket *sock );
 	~EveClientSession();
 
-	ASCENT_INLINE void QueuePacket(PyPacket* packet)
+	ASCENT_INLINE void QueuePacket(PyRep* packet)
 	{
-		//printf("client session queue packet\n");
 		//m_lastPing = (uint32)UNIXTIME;
 		_recvQueue.Push(packet);
 	}
@@ -52,11 +51,11 @@ public:
 
 	int Update();
 
-	void _ProcessNone(PyPacket& packet);
-	void _ProcessCallRequest(PyPacket& packet);
-	void _ProcessNotification(PyPacket& packet);
-	void _ProcessPingRequest(PyPacket& packet);
-	void _ProcessPingResponce(PyPacket& packet);
+	void _ProcessNone(PyRep& packet);
+	void _ProcessCallRequest(PyRep& packet);
+	void _ProcessNotification(PyRep& packet);
+	void _ProcessPingRequest(PyRep& packet);
+	void _ProcessPingResponce(PyRep& packet);
 
 	uint32 GetUserId() { return _userId;}
 
@@ -64,15 +63,12 @@ private:
 	EveClientSocket *_socket;
 
 	uint32 _userId;
-	//uint32 _accountFlags;
 	std::string _accountName;
 	Mutex deleteMutex;
 
 	bool bDeleted;
 
-
-
-	FastQueue<PyPacket*, Mutex> _recvQueue;
+	FastQueue<PyRep*, Mutex> _recvQueue;
 };
 
 static packetHandler Handlers[MACHONETMSG_TYPE_MAX] = {

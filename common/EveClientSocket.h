@@ -69,7 +69,7 @@ public:
 	void OnConnect();
 	void OnDisconnect();
 
-	bool m_Authed;
+	bool mAuthed;
 
 	void SetSession(EveClientSession* session)
 	{
@@ -103,37 +103,27 @@ protected:
 	void _authStateDone(PyRep* packet);
 	void _authStateException(PyRep* packet);
 
-	stateProc m_currentStateMachine;
+	stateProc mCurrentStateMachine;
 
 private:
-	uint32 mRemaining;
-	CryptoChallengePacket *mRequest;
 
-	// this is more a session...
-	//Client * mClient;
-
+	CryptoChallengePacket* mRequest;
 	EveClientSession* mSession;
+
+
+	uint32 mRemaining;
 
 	// is this connection queued
 	bool mQueued;
 
-	std::string userName;
-	uint32 userid;
+	std::string mUserName;
+	uint32 mUserid;
 
-	/*uint32 mOpcode;
-	
-	uint32 mSize;
-	uint32 mSeed;
-	uint32 mClientSeed;
-	uint32 mClientBuild;
-	uint32 mRequestID;*/
-
+	/* send queue */
 	//FastQueue<WorldPacket*, DummyLock> _queue; // send packet queue not used atm
-	Mutex queueLock;
+	//Mutex queueLock;
 
-//	uint32 _latency;
-	bool m_nagleEanbled;
-//	string * m_fullAccountName;
+	bool mNagleEanbled;
 };
 
 #endif//__EVECLIENTSOCKET_H

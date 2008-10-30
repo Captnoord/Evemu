@@ -427,7 +427,7 @@ void Client::Login(CryptoChallengePacket *pack) {
 	ack.maxSessionTime = new PyRepNone;
 	ack.userType = 1;	//TODO: what is this??
 	ack.role = m_role;
-	ack.address = m_net.GetConnectedAddress();
+	ack.address = m_net.GetRemoteIP();
 	ack.inDetention = new PyRepNone;
 	ack.user_clientid = m_accountID;
 
@@ -435,7 +435,7 @@ void Client::Login(CryptoChallengePacket *pack) {
 
 	session.Set_userType(1);	//TODO: what is this??
 	session.Set_userid(m_accountID);
-	session.Set_address(m_net.GetConnectedAddress().c_str());
+	session.Set_address(m_net.GetRemoteIP().c_str());
 	session.Set_role(m_role);
 	session.Set_languageID(pack->user_languageid.c_str());
 
@@ -1082,25 +1082,25 @@ bool Client::Load(uint32 char_id) {
 
 uint32 Client::GetShipID() const {
 	if(m_ship == NULL)
-		return(0);
+		return 0;
 	return(m_ship->itemID());
 }
 
 double Client::GetMass() const {
 	if(m_ship == NULL)
-		return(0);
+		return 0;
 	return(m_ship->mass());
 }
 
 double Client::GetMaxVelocity() const {
 	if(m_ship == NULL)
-		return(0);
+		return 0;
 	return(m_ship->maxVelocity());
 }
 
 double Client::GetAgility() const {
 	if(m_ship == NULL)
-		return(0);
+		return 0;
 	return(m_ship->agility());
 }
 

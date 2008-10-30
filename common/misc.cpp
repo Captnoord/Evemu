@@ -40,7 +40,7 @@ using namespace std;
 int print_stacktrace()
 {
 	printf("Insert stack trace here...\n");
-	return(0);
+	return 0;
 }
 #else //!WIN32 && !FREEBSD == linux
 #include <execinfo.h>
@@ -60,7 +60,7 @@ int print_stacktrace()
           free (names);
         }
     }
-	return(0);
+	return 0;
 }
 #endif //!FREEBSD
 #endif //!WIN32
@@ -200,14 +200,14 @@ uint32 GetFileLength(const char *file) {
 #ifdef WIN32
 	HANDLE hFile = CreateFile(file, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 	if(hFile == INVALID_HANDLE_VALUE)
-		return(0);
+		return 0;
 	uint32 len = GetFileSize(hFile, NULL);
 	CloseHandle(hFile);
 	return(len);
 #else
 	struct stat s;
 	if(stat(file, &s) == -1)
-		return(0);
+		return 0;
 	return(s.st_size);
 #endif
 }
@@ -306,7 +306,7 @@ int64 strtoll(const char *str, const char **end, int8 base)
                 str++;
 
 		if(*str == '\0')
-			return(0);
+			return 0;
 
         if (*str == '+')
                 str++;
@@ -316,7 +316,7 @@ int64 strtoll(const char *str, const char **end, int8 base)
         }
 
 		if(*str == '\0')
-			return(0);
+			return 0;
 
 		if(base == 0) {
 			if(*str == '0') {
@@ -363,16 +363,16 @@ uint64 strtoull(const char *str, const char **end, int8 base)
                 str++;
 
 		if(*str == '\0')
-			return(0);
+			return 0;
 
         if (*str == '+')
                 str++;
         else if (*str == '-') {
-                return(0);
+                return 0;
         }
 
 		if(*str == '\0')
-			return(0);
+			return 0;
 
 		if(base == 0) {
 			if(*str == '0') {

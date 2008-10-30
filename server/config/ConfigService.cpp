@@ -135,7 +135,7 @@ PyResult ConfigService::Handle_GetMap(PyCallArgs &call) {
 	Call_SingleIntegerArg args;
 	if(!args.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "Failed to decode arguments");
-		return(NULL);
+		return NULL;
 	}
 		
 	PyRep *result = m_db.GetMap(args.arg);
@@ -158,7 +158,7 @@ PyResult ConfigService::Handle_GetMapObjects(PyCallArgs &call) {
 /*  Call_SingleIntegerArg args;
 	if(!args.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "Failed to decode arguments");
-		return(NULL);
+		return NULL;
     }*/
 
 	uint32 arg = 0;
@@ -178,7 +178,7 @@ PyResult ConfigService::Handle_GetMapObjects(PyCallArgs &call) {
 			_log(NET__PACKET_ERROR, "Decode Handle_GetMapObjects failed: arg 4 is not an int: %s", 
 				v->TypeString());
 			delete packet;
-			return(NULL);
+			return NULL;
 		}
 		PyRepInteger *iii = (PyRepInteger *) v;
 		wantStations = (iii->value==0)?false:true;
@@ -284,7 +284,7 @@ CREATE TABLE GetMapConnections (
 
 */
 
-	return(NULL);
+	return NULL;
 }
 PyResult ConfigService::Handle_GetStationSolarSystemsByOwner(PyCallArgs &call) {
 	Call_SingleIntegerArg arg;

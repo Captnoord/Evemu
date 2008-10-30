@@ -27,8 +27,6 @@
 
 #include "ascent-shared/ByteBuffer.h"
 
-#define GetConnectedAddress GetRemoteIP
-
 // Dummy authorization handshake function
 static const byte handshakeFunc[] = {
 	0x74, 0x04, 0x00, 0x00, 0x00, 0x4E, 0x6F, 0x6E, 0x65	//marshaled Python string "None"
@@ -36,64 +34,46 @@ static const byte handshakeFunc[] = {
 
 EveClientSocket::EveClientSocket(SOCKET fd) : Socket(fd, CLIENTSOCKET_SENDBUF_SIZE, CLIENTOCKET_RECVBUF_SIZE)
 {
-	m_Authed = false;
+	mAuthed = false;
+	mQueued = false;			// don't support authorization queue for now
+	mNagleEanbled = false;		// don't enable 'nagle' for now
+
 	mRemaining = 0;
+
 	mRequest = NULL;
-	//_latency = 0;
-
-	// don't support authorization queue for now
-	mQueued = false;
-	m_nagleEanbled = false;
-	//m_fullAccountName = NULL;
-
 	mSession = NULL;
 
-	mRequest = NULL;
-	//mClient = NULL;
-	m_currentStateMachine = &EveClientSocket::_authStateHandshake;
+	mCurrentStateMachine = &EveClientSocket::_authStateHandshake;
 }
 
 EveClientSocket::~EveClientSocket()
 {
+	/* delete the buffers in the send buffer queue */
+	// disabled for now as we don't have a send queue yet
 	//WorldPacket * pck;
 	//while((pck = _queue.Pop()))
 	//	delete pck;
 
-	//if(pAuthenticationPacket)
-	//	delete pAuthenticationPacket;
-
+	/* delete the 'auth' request packet if it still exists */
 	if (mRequest != NULL)
 		delete mRequest;
 
+	/* remove the link between the current socket and its client session */
 	if (mSession)
 	{
 		mSession->SetSocket(NULL);
 		mSession = NULL;
 	}
-
-	//if( m_fullAccountName != NULL )
-	//{
-	//	delete m_fullAccountName;
-	//	m_fullAccountName = NULL;
-	//}
 }
 
 void EveClientSocket::OnDisconnect()
 {
-	Log.Debug("EVE network","OnDisconnect");
 	sSpace.mAcceptedConnections--;
 	if(mSession)
 	{
 		mSession->SetSocket(0);
-		mSession=NULL;
+		mSession = NULL;
 	}
-
-	// related to queued connections
-	/*if(mRequestID != 0)
-	{
-		sLogonCommHandler.UnauthedSocketClose(mRequestID);
-		mRequestID = 0;
-	}*/
 }
 
 // sends initial handshake containing the version info
@@ -109,7 +89,7 @@ void EveClientSocket::_sendHandShake()
 	version.build_version = EVEBuildVersion;
 	version.project_version = EVEProjectVersion;
 
-	sLog.outDebug("%s: Sending Low Level Version Exchange:", GetConnectedAddress().c_str());
+	//sLog.outDebug("%s: Sending Low Level Version Exchange:", GetRemoteIP().c_str());
 
 	PyRep *rep = version.Encode();
 	OutPacket(rep);
@@ -125,27 +105,24 @@ void EveClientSocket::_sendQueuePos( int queuePos )
 
 // 'auth' commands
 //OK = Reading Client 'Crypto' Context OR Queue Check
-//OK CC = 'Crypto' Context complete
+//OK CC = 'Crypto' Context Complete
+//CC = 'Crypto' Context
 
-// send handshake accept
+/* send handshake accept */
 void EveClientSocket::_sendAccept()
 {
-	//CC = 'Crypto' Context
-	
-	//PyRepString packet("OK CC");
-	//PyRepString packet("OK");
-	//PyRepString packet("RS");
-	PyRepString packet("OK CC"); // doesn't seem to matter what we send.... lol
+	PyRepString packet("OK CC"); // doesn't seem to matter what we send... (at this point)
 	OutPacket(&packet);
 }
 
+/* send a python integer as a responce on the password type query */
 void EveClientSocket::_sendRequirePasswordType(int passwordType)
 {
-	// send a python integer back as a response on the password type query
 	PyRepInteger packet(passwordType);
 	OutPacket(&packet);
 }
 
+/* low level packet sending, uses burst */
 OUTPACKET_RESULT EveClientSocket::_outPacket(EVENetPacket * packet)
 {
 	uint32 len = packet->length;
@@ -153,11 +130,10 @@ OUTPACKET_RESULT EveClientSocket::_outPacket(EVENetPacket * packet)
 	ByteBuffer packetcheck;
 	packetcheck.append(packet->data, packet->length);
 
-	printf("\nsend:\n");
-	packetcheck.LogPacket();
+	//printf("\nsend:\n");
+	//packetcheck.LogPacket();
 
-	bool rv;
-	if(!IsConnected())
+	if(IsConnected() == false)
 		return OUTPACKET_RESULT_NOT_CONNECTED;
 
 	BurstBegin();
@@ -168,10 +144,10 @@ OUTPACKET_RESULT EveClientSocket::_outPacket(EVENetPacket * packet)
 	}
 
 	// Packet logger :)
-	//sWorldLog.LogPacket((uint32)len, opcode, (const uint8*)data, 1);
+	//sSpaceLog.LogPacket((uint32)len, opcode, (const uint8*)data, 1);
 
 	// Pass the size of the packet to our send buffer
-	rv = BurstSend((const uint8*)&len, 4);
+	bool rv = BurstSend((const uint8*)&len, 4);
 
 	// Pass the rest of the packet to our send buffer (if there is any)
 	if(len > 0 && rv == true)
@@ -188,6 +164,7 @@ OUTPACKET_RESULT EveClientSocket::_outPacket(EVENetPacket * packet)
 }
 
 // TODO loose the new packet and delete packet stuff..
+/*  */
 void EveClientSocket::OutPacket(PyRep * packet )
 {
 	EVENetPacket * netData = new EVENetPacket;
@@ -201,7 +178,7 @@ void EveClientSocket::OnConnect()
 	sSpace.mAcceptedConnections++;
 	//_latency = getMSTime();
 
-	Log.Debug("EVE network","OnConnect");
+	/* send initial 'auth' handshake */
 	_sendHandShake();
 }
 
@@ -209,7 +186,6 @@ void EveClientSocket::OnRead()
 {
 	for(;;)
 	{
-		uint32 packetSize = 0;
 		//Check for the header if we don't have any bytes to wait for.
 		if(mRemaining == 0)
 		{
@@ -220,7 +196,8 @@ void EveClientSocket::OnRead()
 			}
 
 			// copy the packet size from the buffer
-			GetReadBuffer().Read((uint8*)&packetSize, 4);
+			uint32 packetSize;
+			GetReadBuffer().Read((void*)&packetSize, 4);
 			mRemaining = packetSize;
 		}
 
@@ -235,6 +212,9 @@ void EveClientSocket::OnRead()
 
 		ByteBuffer * packet = NULL;
 
+		/* TODO we can skip this new ByteBuffer by feeding the circular buffer into the 'unmarshal' function
+		 * requires to redesign the 'unmarshal' function
+		 */
 		if(mRemaining > 0)
 		{
 			packet = new ByteBuffer;
@@ -250,13 +230,11 @@ void EveClientSocket::OnRead()
 
 		PyRep *recvPyPacket = InflateAndUnmarshal(packet->contents(), packet->size());
 
-		
-
 		printf("\nrecv packet with opcode:%d and Type:%s and size:%d\n", ((PyPacket*)recvPyPacket)->type, recvPyPacket->TypeString(), packet->size());
 		packet->LogPacket();
 
 		// the state machine magic
-		(this->*m_currentStateMachine)(recvPyPacket);
+		(this->*mCurrentStateMachine)(recvPyPacket);
 
 		// this is the end of the road for the used read buffer
 		if ( packet != NULL)
@@ -274,7 +252,7 @@ void EveClientSocket::_authStateHandshake(PyRep* packet)
 
 	PyRep *fp = packet;
 	if(!ve.Decode(&fp)) {
-		//_log(NET__PRES_ERROR, "%s: Received invalid version exchange!", GetConnectedAddress().c_str());
+		//_log(NET__PRES_ERROR, "%s: Received invalid version exchange!", GetRemoteIP().c_str());
 		Disconnect();
 		return;
 	}
@@ -282,35 +260,35 @@ void EveClientSocket::_authStateHandshake(PyRep* packet)
 	Log.Debug("ClientSocket","%s: Received Low Level Version Exchange:\n", GetRemoteIP().c_str());
 
 	if(ve.birthday != EVEBirthday) {
-		sLog.outDebug("%s: Client's birthday does not match ours!", GetConnectedAddress().c_str());
+		sLog.outDebug("%s: Client's birthday does not match ours!", GetRemoteIP().c_str());
 		Disconnect();
 	}
 	if(ve.macho_version != MachoNetVersion) {
-		sLog.outDebug("%s: Client's macho_version not match ours!", GetConnectedAddress().c_str());
+		sLog.outDebug("%s: Client's macho_version not match ours!", GetRemoteIP().c_str());
 		Disconnect();
 	}
 	if(ve.version_number != EVEVersionNumber) {
-		sLog.outDebug("%s: Client's version_number not match ours!", GetConnectedAddress().c_str());
+		sLog.outDebug("%s: Client's version_number not match ours!", GetRemoteIP().c_str());
 		Disconnect();
 	}
 	if(ve.build_version != EVEBuildVersion) {
-		sLog.outDebug("%s: Client's build_version not match ours!", GetConnectedAddress().c_str());
+		sLog.outDebug("%s: Client's build_version not match ours!", GetRemoteIP().c_str());
 		Disconnect();
 	}
 	if(ve.project_version != EVEProjectVersion) {
-		sLog.outDebug("%s: Client's project_version not match ours!", GetConnectedAddress().c_str());
+		sLog.outDebug("%s: Client's project_version not match ours!", GetRemoteIP().c_str());
 		Disconnect();
 	}
 
 	Log.Debug("AuthStateMachine","State changed into StateQueueCommand");
-	m_currentStateMachine = &EveClientSocket::_authStateQueueCommand;
+	mCurrentStateMachine = &EveClientSocket::_authStateQueueCommand;
 }
 
 void EveClientSocket::_authStateQueueCommand(PyRep* packet)
 {
 	//check if it actually is tuple
 	if(!packet->CheckType(PyRep::Tuple)) {
-		sLog.outDebug("%s: Invalid packet during waiting for command (tuple expected).", GetConnectedAddress().c_str());
+		sLog.outDebug("%s: Invalid packet during waiting for command (tuple expected).", GetRemoteIP().c_str());
 		Disconnect();
 		return;
 	}
@@ -324,16 +302,16 @@ void EveClientSocket::_authStateQueueCommand(PyRep* packet)
 		//QC = Queue Check
 		NetCommand_QC cmd;
 		if(!cmd.Decode(&t)) {
-			sLog.outDebug("%s: Failed to decode 2-arg command.", GetConnectedAddress().c_str());
+			sLog.outDebug("%s: Failed to decode 2-arg command.", GetRemoteIP().c_str());
 			Disconnect();
 			return;//break;
 		}
 		if(cmd.command != "QC") {
-			sLog.outDebug("%s: Unknown 2-arg command '%s'.", GetConnectedAddress().c_str(), cmd.command.c_str());
+			sLog.outDebug("%s: Unknown 2-arg command '%s'.", GetRemoteIP().c_str(), cmd.command.c_str());
 			Disconnect();
 			return;//break;
 		}
-		sLog.outDebug("%s: Got Queue Check command.", GetConnectedAddress().c_str());
+		sLog.outDebug("%s: Got Queue Check command.", GetRemoteIP().c_str());
 		
 
 		//return position in queue, which is 1 for now until we implemented a real login queue
@@ -346,7 +324,7 @@ void EveClientSocket::_authStateQueueCommand(PyRep* packet)
 
 		//and set proper state
 		Log.Debug("AuthStateMachine","State changed into StateHandshake");
-		m_currentStateMachine = &EveClientSocket::_authStateHandshake;
+		mCurrentStateMachine = &EveClientSocket::_authStateHandshake;
 		return;
 	} 
 	else if(t->items.size() == 3) 
@@ -354,25 +332,25 @@ void EveClientSocket::_authStateQueueCommand(PyRep* packet)
 		//this is sent when client is logging in
 		NetCommand_VK cmd;
 		if(!cmd.Decode(&t)) {
-			sLog.outDebug("%s: Failed to decode 3-arg command.", GetConnectedAddress().c_str());
+			sLog.outDebug("%s: Failed to decode 3-arg command.", GetRemoteIP().c_str());
 			Disconnect();
 			return;//break;
 		}
 		// VK == VIP mode
 		if(cmd.command != "VK") {
-			sLog.outDebug("%s: Unknown 3-arg command '%s'.", GetConnectedAddress().c_str(), cmd.command.c_str());
+			sLog.outDebug("%s: Unknown 3-arg command '%s'.", GetRemoteIP().c_str(), cmd.command.c_str());
 			Disconnect();
 			return;//break;
 		}
-		sLog.outDebug("%s: Got VK command, vipKey=%s.", GetConnectedAddress().c_str(), cmd.vipKey.c_str());
+		sLog.outDebug("%s: Got VK command, vipKey=%s.", GetRemoteIP().c_str(), cmd.vipKey.c_str());
 		Log.Debug("AuthStateMachine","State changed into StateStateNoCrypto");
-		m_currentStateMachine = &EveClientSocket::_authStateNoCrypto;
+		mCurrentStateMachine = &EveClientSocket::_authStateNoCrypto;
 		return;
 	}
 	else 
 	{
 		Log.Debug("EVE Socket","StateQueueCommand received a invalid packet");
-		sLog.outDebug("%s: Received invalid command packet:", GetConnectedAddress().c_str());
+		sLog.outDebug("%s: Received invalid command packet:", GetRemoteIP().c_str());
 		Disconnect();
 	}
 }
@@ -384,16 +362,16 @@ void EveClientSocket::_authStateNoCrypto(PyRep* packet)
 	PyRep * data = packet;
 
 	if(!cr.Decode(&data)) {
-		sLog.outDebug("%S: Received invalid crypto request!", GetConnectedAddress().c_str());
+		sLog.outDebug("%S: Received invalid crypto request!", GetRemoteIP().c_str());
 		Disconnect();
 		return;//break;
 	}
 
 	if(cr.keyVersion == "placebo")
 	{
-		sLog.outDebug("%s: Received Placebo crypto request, accepting.", GetConnectedAddress().c_str());
+		sLog.outDebug("%s: Received Placebo crypto request, accepting.", GetRemoteIP().c_str());
 		Log.Debug("AuthStateMachine","State changed into StateCryptoChallenge");
-		m_currentStateMachine = &EveClientSocket::_authStateCryptoChallenge;
+		mCurrentStateMachine = &EveClientSocket::_authStateCryptoChallenge;
 
 		_sendAccept();
 	}
@@ -403,13 +381,13 @@ void EveClientSocket::_authStateNoCrypto(PyRep* packet)
 		PyRep *params = cr.keyParams.Clone();
 		CryptoAPIRequestParams car;
 		if(!car.Decode(&params)) {
-			sLog.outDebug("%s: Received invalid CryptoAPI request!", GetConnectedAddress().c_str());
+			sLog.outDebug("%s: Received invalid CryptoAPI request!", GetRemoteIP().c_str());
 			Disconnect();
 			return;
 		}
 
-		sLog.outDebug("%s: Unhandled CryptoAPI request: hashmethod=%s sessionkeylength=%d provider=%s sessionkeymethod=%s", GetConnectedAddress().c_str(), car.hashmethod.c_str(), car.sessionkeylength, car.provider.c_str(), car.sessionkeymethod.c_str());
-		sLog.outDebug("%s: You must change your client to use Placebo crypto in common.ini to talk to this server!\n", GetConnectedAddress().c_str());
+		sLog.outDebug("%s: Unhandled CryptoAPI request: hashmethod=%s sessionkeylength=%d provider=%s sessionkeymethod=%s", GetRemoteIP().c_str(), car.hashmethod.c_str(), car.sessionkeylength, car.provider.c_str(), car.sessionkeymethod.c_str());
+		sLog.outDebug("%s: You must change your client to use Placebo crypto in common.ini to talk to this server!\n", GetRemoteIP().c_str());
 	}
 }
 
@@ -423,17 +401,17 @@ void EveClientSocket::_authStateCryptoChallenge(PyRep* packet)
 	PyRep* data = packet;
 
 	if(!mRequest->Decode(&data)) {
-		sLog.outDebug("%s: Received invalid crypto challenge!", GetConnectedAddress().c_str());
+		sLog.outDebug("%s: Received invalid crypto challenge!", GetRemoteIP().c_str());
 		Disconnect();
 		return;
 	}
 
-	sLog.outDebug("%s: Received Client Challenge.", GetConnectedAddress().c_str(), mRequest->user_name.c_str());
+	sLog.outDebug("%s: Received Client Challenge.", GetRemoteIP().c_str(), mRequest->user_name.c_str());
 
 	if(mRequest->user_password->CheckType(PyRep::None)) {
 		//this is little wrong because on live they send password version always, but only once,
 		//but we send password version when we get request with hashed password ...
-		sLog.outDebug("%s: Got hashed password, requesting plain.", GetConnectedAddress().c_str());
+		sLog.outDebug("%s: Got hashed password, requesting plain.", GetRemoteIP().c_str());
 		delete mRequest;
 		mRequest = NULL;
 
@@ -442,7 +420,7 @@ void EveClientSocket::_authStateCryptoChallenge(PyRep* packet)
 		return;
 	}
 
-	sLog.outDebug("%s:		username='%s'", GetConnectedAddress().c_str(), mRequest->user_name.c_str());
+	sLog.outDebug("%s:		username='%s'", GetRemoteIP().c_str(), mRequest->user_name.c_str());
 
 	//send our handshake
 	CryptoServerHandshake server_shake;
@@ -463,7 +441,7 @@ void EveClientSocket::_authStateCryptoChallenge(PyRep* packet)
 	delete data;
 	
 	Log.Debug("AuthStateMachine","State changed into HandservershakeSend");
-	m_currentStateMachine = &EveClientSocket::_authStateHandshakeSend;
+	mCurrentStateMachine = &EveClientSocket::_authStateHandshakeSend;
 }
 
 void EveClientSocket::_authStateHandshakeSend(PyRep* packet)
@@ -471,7 +449,7 @@ void EveClientSocket::_authStateHandshakeSend(PyRep* packet)
 	CryptoHandshakeResult hr;
 	PyRep * data = packet;
 	if(!hr.Decode(&data)) {
-		sLog.outDebug("%s: Received invalid crypto handshake result!", GetConnectedAddress().c_str());
+		sLog.outDebug("%s: Received invalid crypto handshake result!", GetRemoteIP().c_str());
 		Disconnect();
 		return;
 	}
@@ -514,15 +492,15 @@ void EveClientSocket::_authStateHandshakeSend(PyRep* packet)
 	//m_char.charid = 0;
 	//m_services->GetServiceDB()->SetAccountOnlineStatus(m_accountID, true);
 
-	userName =  mRequest->user_name;
-	userid = 42;
+	mUserName =  mRequest->user_name;
+	mUserid = 42;
 
 
 	//send this before session change
 	CryptoHandshakeAck ack;
 	ack.connectionLogID = 1;	//TODO: what is this??
 	ack.jit = mRequest->user_languageid;
-	ack.userid = userid;//m_accountID;
+	ack.userid = mUserid;//m_accountID;
 	ack.maxSessionTime = new PyRepNone;
 	ack.userType = 1;	//TODO: what is this??
 
@@ -533,7 +511,7 @@ void EveClientSocket::_authStateHandshakeSend(PyRep* packet)
 	*/
 
 	ack.role = 1;//m_role;
-	ack.address = GetConnectedAddress();//m_net.GetConnectedAddress();
+	ack.address = GetRemoteIP();
 	ack.inDetention = new PyRepNone;
 	ack.user_clientid = 42;//m_accountID;
 	
@@ -545,7 +523,7 @@ void EveClientSocket::_authStateHandshakeSend(PyRep* packet)
 
 	//session.Set_userType(1);	//TODO: what is this??
 	//session.Set_userid(m_accountID);
-	//session.Set_address(m_net.GetConnectedAddress().c_str());
+	//session.Set_address(m_net.GetRemoteIP().c_str());
 	//session.Set_role(m_role);
 	//session.Set_languageID(pack->user_languageid.c_str());
 
@@ -559,29 +537,30 @@ void EveClientSocket::_authStateHandshakeSend(PyRep* packet)
 	/* assumed that authorization is completed */
 	if (mSession == NULL)
 	{
-		mSession = new EveClientSession(userid, userName, this);
+		mSession = new EveClientSession(mUserid, mUserName, this);
 	}
 
 	sSpace.AddSession(mSession);
 	sSpace.AddGlobalSession(mSession);
 
 	Log.Debug("AuthStateMachine","State changed into StateDone");
-	m_currentStateMachine = &EveClientSocket::_authStateDone;
-	m_Authed = true;
+	mCurrentStateMachine = &EveClientSocket::_authStateDone;
+	mAuthed = true;
 }
 
 void EveClientSocket::_authStateDone(PyRep* packet)
 {
 	Log.Debug("ClientSocket","received packet 'whooo' we passed authorization");
 
+	// and of course is this not the correct way todo this
 	if ( packet->CheckType(PyRep::PackedObject1) == true )
 	{
 		//Log.Debug("AuthStateMachine","State changed into StateException");
-		//m_currentStateMachine = &EveClientSocket::_authStateException;
-		//(this->*m_currentStateMachine)(recvPyPacket);
+		//mCurrentStateMachine = &EveClientSocket::_authStateException;
+		//(this->*mCurrentStateMachine)(recvPyPacket);
 
-		Log.Debug("AuthStateMachine","Exception catched");
-		//m_currentStateMachine(packet);
+		Log.Debug("AuthStateMachine","Exception noticed");
+		//mCurrentStateMachine(packet);
 		_authStateException(packet);
 		return;		
 	}
@@ -592,6 +571,12 @@ void EveClientSocket::_authStateDone(PyRep* packet)
 void EveClientSocket::_authStateException(PyRep* packet)
 {
 	Log.Debug("AuthStateMachine","Processing Exception");
+
+	PyRepPackedObject1* obj = (PyRepPackedObject1*)packet;
+	//obj->
+
+	//ByteBuffer data;
+	//data.append(packet->)
 
 	// whoo delete if for now
 	delete packet;

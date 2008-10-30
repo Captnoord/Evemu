@@ -112,7 +112,7 @@ Client *EntityList::FindCharacter(uint32 char_id) const {
 		if((*cur)->GetCharacterID() == char_id)
 			return(*cur);
 	}
-	return(NULL);
+	return NULL;
 }
 
 Client *EntityList::FindCharacter(const char *name) const {
@@ -126,7 +126,7 @@ Client *EntityList::FindCharacter(const char *name) const {
 		if((*cur)->GetChar().name == name)
 			return(*cur);
 	}
-	return(NULL);
+	return NULL;
 }
 
 Client *EntityList::FindByShip(uint32 ship_id) const {
@@ -140,7 +140,7 @@ Client *EntityList::FindByShip(uint32 ship_id) const {
 		if((*cur)->GetShipID() == ship_id)
 			return(*cur);
 	}
-	return(NULL);
+	return NULL;
 }
 
 Client *EntityList::FindAccount(uint32 account_id) const {
@@ -154,7 +154,7 @@ Client *EntityList::FindAccount(uint32 account_id) const {
 		if((*cur)->GetAccountID() == account_id)
 			return(*cur);
 	}
-	return(NULL);
+	return NULL;
 }
 
 void EntityList::Broadcast(const char *notifyType, const char *idType, PyRepTuple **payload) const {
@@ -318,7 +318,7 @@ SystemManager *EntityList::FindOrBootSystem(uint32 systemID) {
 	SystemManager *mgr = new SystemManager(systemName, systemID, m_db, m_services);
 	if(!mgr->BootSystem()) {
 		delete mgr;
-		return(NULL);
+		return NULL;
 	}
 	
 	m_systems[systemID] = mgr;

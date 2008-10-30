@@ -68,7 +68,7 @@ PyRep *RamProxyDB::GetJobs2(const uint32 ownerID, const bool completed, const ui
 		ownerID, (completed ? "!=" : "="), fromDate, toDate))
 	{
 		_log(DATABASE__ERROR, "Failed to query jobs for owner %lu: %s", ownerID, res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 
 	return(DBResultToRowset(res));
@@ -92,7 +92,7 @@ PyRep *RamProxyDB::AssemblyLinesSelectPublic(const uint32 regionID) {
 		regionID))
 	{
 		_log(DATABASE__ERROR, "Failed to query public assembly lines for region %lu: %s.", regionID, res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 
 	return(DBResultToRowset(res));
@@ -115,7 +115,7 @@ PyRep *RamProxyDB::AssemblyLinesSelectPersonal(const uint32 charID) {
 		charID))
 	{
 		_log(DATABASE__ERROR, "Failed to query personal assembly lines for char %lu: %s.", charID, res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 
 	return(DBResultToRowset(res));
@@ -138,7 +138,7 @@ PyRep *RamProxyDB::AssemblyLinesSelectCorporation(const uint32 corporationID) {
 		corporationID))
 	{
 		_log(DATABASE__ERROR, "Failed to query corporation assembly lines for corp %lu: %s.", corporationID, res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 
 	return(DBResultToRowset(res));
@@ -162,7 +162,7 @@ PyRep *RamProxyDB::AssemblyLinesSelectAlliance(const uint32 allianceID) {
 		allianceID))
 	{
 		_log(DATABASE__ERROR, "Failed to query alliance assembly lines for alliance %lu: %s.", allianceID, res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 
 	return(DBResultToRowset(res));
@@ -191,7 +191,7 @@ PyRep *RamProxyDB::AssemblyLinesGet(const uint32 containerID) {
 		containerID))
 	{
 		_log(DATABASE__ERROR, "Failed to query assembly lines for container %lu: %s.", containerID, res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 
 	return(DBResultToRowset(res));
@@ -323,13 +323,13 @@ uint32 RamProxyDB::CountManufacturingJobs(const uint32 installerID) {
 		installerID))
 	{
 		_log(DATABASE__ERROR, "Failed to count manufacturing jobs for installer %lu.", installerID);
-		return(NULL);
+		return NULL;
 	}
 
 	DBResultRow row;
 	if(!res.GetRow(row)) {
 		_log(DATABASE__ERROR, "No rows returned while counting manufacturing jobs for installer %lu.", installerID);
-		return(NULL);
+		return NULL;
 	}
 
 	return(row.GetUInt(0));
@@ -348,13 +348,13 @@ uint32 RamProxyDB::CountResearchJobs(const uint32 installerID) {
 		installerID))
 	{
 		_log(DATABASE__ERROR, "Failed to count research jobs for installer %lu.", installerID);
-		return(NULL);
+		return NULL;
 	}
 
 	DBResultRow row;
 	if(!res.GetRow(row)) {
 		_log(DATABASE__ERROR, "No rows returned while counting research jobs for installer %lu.", installerID);
-		return(NULL);
+		return NULL;
 	}
 
 	return(row.GetUInt(0));
@@ -549,13 +549,13 @@ uint32 RamProxyDB::GetMaxProductionLimit(const uint32 blueprintTypeID) {
 		blueprintTypeID))
 	{
 		_log(DATABASE__ERROR, "Failed to query max production limit of type %lu: %s.", blueprintTypeID, res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 
 	DBResultRow row;
 	if(!res.GetRow(row)) {
 		_log(DATABASE__ERROR, "No max production limit found for type %lu.", blueprintTypeID);
-		return(NULL);
+		return NULL;
 	}
 
 	return(row.GetUInt(0));
@@ -571,13 +571,13 @@ uint32 RamProxyDB::GetGroup(const uint32 typeID) {
 				typeID))
 	{
 		_log(DATABASE__ERROR, "Unable to get group for type %lu: %s", typeID, res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 
 	DBResultRow row;
 	if(!res.GetRow(row)) {
 		_log(DATABASE__ERROR, "Type %lu not found.", typeID);
-		return(NULL);
+		return NULL;
 	}
 
 	return(row.GetUInt(0));
@@ -614,13 +614,13 @@ uint32 RamProxyDB::GetTech2Blueprint(const uint32 blueprintTypeID) {
 				blueprintTypeID))
 	{
 		_log(DATABASE__ERROR, "Unable to get T2 type for type ID %lu: %s", blueprintTypeID, res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 
 	DBResultRow row;
 	if(!res.GetRow(row)) {
 		// no error because it's normal
-		return(NULL);
+		return NULL;
 	}
 
 	return(row.GetUInt(0));
@@ -637,13 +637,13 @@ uint32 RamProxyDB::GetPortionSize(const uint32 typeID) {
 				))
 	{
 		_log(DATABASE__ERROR, "Unable to get portion size for type ID %lu: %s", typeID, res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 
 	DBResultRow row;
 	if(!res.GetRow(row)) {
 		_log(DATABASE__ERROR, "No portion size found for type ID %lu.", typeID);
-		return(NULL);
+		return NULL;
 	}
 
 	return(row.GetUInt(0));
@@ -660,13 +660,13 @@ uint64 RamProxyDB::GetNextFreeTime(const uint32 assemblyLineID) {
 		assemblyLineID))
 	{
 		_log(DATABASE__ERROR, "Failed to query next free time for assembly line %lu: %s.", assemblyLineID, res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 
 	DBResultRow row;
 	if(!res.GetRow(row)) {
 		_log(DATABASE__ERROR, "Assembly line %lu not found.", assemblyLineID);
-		return(NULL);
+		return NULL;
 	} else
 		return(row.GetUInt64(0));
 }
@@ -681,13 +681,13 @@ uint32 RamProxyDB::GetRegionOfContainer(const uint32 containerID) {
 				containerID))
 	{
 		_log(DATABASE__ERROR, "Unable to query region for container %lu: %s", containerID, res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 
 	DBResultRow row;
 	if(!res.GetRow(row)) {
 		_log(DATABASE__ERROR, "No region found for container %lu.", containerID);
-		return(NULL);
+		return NULL;
 	}
 
 	return(row.GetUInt(0));
@@ -709,13 +709,13 @@ uint32 RamProxyDB::GetBlueprintProductionTime(const uint32 blueprintTypeID, cons
 		blueprintTypeID))
 	{
 		_log(DATABASE__ERROR, "Failed to query production times for blueprint type %lu: %s.", blueprintTypeID, res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 
 	DBResultRow row;
 	if(!res.GetRow(row)) {
 		_log(DATABASE__ERROR, "No production times found for blueprint type %lu.", blueprintTypeID);
-		return(NULL);
+		return NULL;
 	}
 
 	switch(activity) {
@@ -724,7 +724,7 @@ uint32 RamProxyDB::GetBlueprintProductionTime(const uint32 blueprintTypeID, cons
 		case ramActivityResearchingMaterialProductivity:	return(row.GetUInt(2));
 		case ramActivityCopying:							return(row.GetUInt(3));
 		case ramActivityInvention:							return(row.GetUInt(4));
-		default:											return(NULL);
+		default:											return NULL;
 	}
 }
 

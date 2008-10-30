@@ -41,7 +41,7 @@ PyRepObject *CharacterDB::GetCharacterList(uint32 accountID) {
 		" WHERE accountID=%lu", accountID))
 	{
 		codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 	
 	return(DBResultToRowset(res));
@@ -87,7 +87,7 @@ PyRepObject *CharacterDB::GetCharSelectInfo(uint32 characterID) {
 		" WHERE characterID=%lu", characterID))
 	{
 		codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 	
 	return(DBResultToRowset(res));
@@ -120,13 +120,13 @@ InventoryItem *CharacterDB::CreateCharacter(uint32 acct, ItemFactory *fact, cons
 		data.bloodlineID))
 	{
 		codelog(SERVICE__ERROR, "Error in type ID query for bloodline %d: %s", data.bloodlineID, res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 
 	DBResultRow row;
 	if(!res.GetRow(row)) {
 	   _log(SERVICE__MESSAGE, "Unable to find typeID in bloodlineTypes for %lu", data.bloodlineID);
-	   return(NULL); 
+	   return NULL; 
 	}
 
 	uint32 typeID;
@@ -136,7 +136,7 @@ InventoryItem *CharacterDB::CreateCharacter(uint32 acct, ItemFactory *fact, cons
 	InventoryItem *char_item = fact->SpawnSingleton(typeID, 1, locationID, flagPilot, data.name.c_str());
 	if(char_item == NULL) {
 		codelog(SERVICE__ERROR, "Failed to create character entity!");
-		return(NULL);
+		return NULL;
 	}
 
 	//set some attributes to char_item
@@ -206,7 +206,7 @@ InventoryItem *CharacterDB::CreateCharacter(uint32 acct, ItemFactory *fact, cons
 	)) {
 		codelog(SERVICE__ERROR, "Failed to inser new char: %s", err.c_str());
 		char_item->Delete();
-		return(NULL);
+		return NULL;
 	}
 
 	// Hack in the first employment record
@@ -280,13 +280,13 @@ PyRepObject *CharacterDB::GetCharPublicInfo(uint32 characterID) {
 		" WHERE characterID=%lu", characterID))
 	{
 		codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 	
 	DBResultRow row;
 	if(!res.GetRow(row)) {
 		_log(SERVICE__ERROR, "Error in GetCharPublicInfo query: no data for char %d", characterID);
-		return(NULL);
+		return NULL;
 	}
 	return(DBRowToKeyVal(row));
 	
@@ -307,7 +307,7 @@ PyRepObject *CharacterDB::GetCharPublicInfo3(uint32 characterID) {
 		" WHERE characterID=%lu", characterID))
 	{
 		codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 	
 	return(DBResultToRowset(res));
@@ -398,7 +398,7 @@ PyRepObject *CharacterDB::GetCharDesc(uint32 characterID) {
 		" WHERE characterID=%lu", characterID))
 	{
 		codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 	
 
@@ -406,7 +406,7 @@ PyRepObject *CharacterDB::GetCharDesc(uint32 characterID) {
 	DBResultRow row;
 	if(!res.GetRow(row)) {
 		codelog(SERVICE__ERROR, "Error in query: no data for char %d", characterID);
-		return(NULL);
+		return NULL;
 	}
 
 	return(DBRowToRow(row));
@@ -559,7 +559,7 @@ PyRepObject *CharacterDB::GetCharacterAppearance(uint32 charID) {
 		" WHERE characterID=%lu", charID))
 	{
 		codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 
 	return(DBResultToRowset(res));
@@ -801,12 +801,12 @@ uint8 CharacterDB::GetRaceByBloodline(uint32 bloodlineID) {
 		)
 	{
 		codelog(SERVICE__ERROR, "Error on query: %s", res.error.c_str());
-		return(0);
+		return 0;
 	}
 	DBResultRow row;
 	
 	if(!res.GetRow(row))
-		return(0);
+		return 0;
 
 	return(row.GetUInt(0));
 }
@@ -825,11 +825,11 @@ PyRepString *CharacterDB::GetNote(uint32 ownerID, uint32 itemID) {
 		)
 	{
 		codelog(SERVICE__ERROR, "Error on query: %s", res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 	DBResultRow row;
 	if(!res.GetRow(row))
-		return(NULL);
+		return NULL;
 
 	return(new PyRepString(row.GetText(0)));
 }

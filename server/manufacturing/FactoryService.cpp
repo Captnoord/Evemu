@@ -41,13 +41,13 @@ PyResult FactoryService::Handle_GetBlueprintAttributes(PyCallArgs &call) {
 	Call_SingleIntegerArg args;
 	if(!args.Decode(&call.tuple)) {
 		_log(SERVICE__ERROR, "Failed to decode args.");
-		return(NULL);
+		return NULL;
 	}
 
 	Rsp_GetBlueprintAttributes rsp;
 
 	if(!m_db.GetBlueprintAttributes(args.arg, rsp))
-		return(NULL);
+		return NULL;
 
 	return(rsp.Encode());
 }
@@ -58,13 +58,13 @@ PyResult FactoryService::Handle_GetMaterialsForTypeWithActivity(PyCallArgs &call
 	Call_TwoIntegerArgs call_args;
 	if(!call_args.Decode(&call.tuple)) {
 		_log(SERVICE__MESSAGE, "Failed to decode args.");
-		return(NULL);
+		return NULL;
 	}
 
 	result = m_db.GetMaterialsForTypeWithActivity(call_args.arg1);
 
 	if(result == NULL)
-		return(NULL);
+		return NULL;
 
 	return(result);
 }
@@ -75,13 +75,13 @@ PyResult FactoryService::Handle_GetMaterialCompositionOfItemType(PyCallArgs &cal
 	Call_SingleIntegerArg call_args;
 	if(!call_args.Decode(&call.tuple)) {
 		_log(SERVICE__MESSAGE, "Failed to decode args.");
-		return(NULL);
+		return NULL;
 	}
 
 	result = m_db.GetMaterialCompositionOfItemType(call_args.arg);
 
 	if(result == NULL)
-		return(NULL);
+		return NULL;
 
 	return(result);
 }

@@ -37,7 +37,7 @@ PyRepObject *CorporationDB::ListCorpStations(uint32 corp_id) {
 	))
 	{
 		codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 	
 	return(DBResultToRowset(res));
@@ -56,7 +56,7 @@ PyRepObject *CorporationDB::ListStationOffices(uint32 station_id) {
 	))
 	{
 		codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 	
 	return(DBResultToRowset(res));
@@ -82,7 +82,7 @@ PyRepObject *CorporationDB::ListStationCorps(uint32 station_id) {
 	))
 	{
 		codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 	
 	return(DBResultToRowset(res));
@@ -102,7 +102,7 @@ PyRepObject *CorporationDB::ListStationOwners(uint32 station_id) {
 	))
 	{
 		codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 	
 	return(DBResultToRowset(res));
@@ -128,7 +128,7 @@ PyRepDict *CorporationDB::ListAllCorpInfo() {
 	))
 	{
 		codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 	
 	return(DBResultToIntRowDict(res, 1));
@@ -296,7 +296,7 @@ PyRepObject *CorporationDB::ListNPCDivisions() {
 	))
 	{
 		codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 	
 	return(DBResultToRowset(res));
@@ -315,7 +315,7 @@ PyRepObject *CorporationDB::GetEmploymentRecord(uint32 charID) {
 		))
 	{
 		codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 
 	return (DBResultToRowset(res));
@@ -725,7 +725,7 @@ PyRepObject *CorporationDB::GetEveOwners() {
 		" SELECT * FROM eveStaticOwners "))
 	{
 		codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 
 	return DBResultToRowset(res);
@@ -757,7 +757,7 @@ PyRepObject *CorporationDB::GetStations(uint32 corpID) {
 		))
 	{
 		codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 	return DBResultToRowset(res);
 }
@@ -773,7 +773,7 @@ uint32 CorporationDB::GetOffices(uint32 corpID) {
 		))
 	{
 		codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
-		return(0);
+		return 0;
 	}
 
 	DBResultRow row;
@@ -795,7 +795,7 @@ PyRep *CorporationDB::Fetch(uint32 corpID, uint32 from, uint32 count) {
 		))
 	{
 		codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 
 	res.GetRow(rr);
@@ -857,7 +857,7 @@ uint32 CorporationDB::ReserveOffice(const OfficeInfo & oInfo) {
 		" ); ", oInfo.corporationID, oInfo.stationID ))
 	{
 		codelog(SERVICE__ERROR, "Error in query at ReserveOffice: %s", err.c_str());
-		return(0);
+		return 0;
 	}
 
 	// inserts with the id gotten previously
@@ -870,7 +870,7 @@ uint32 CorporationDB::ReserveOffice(const OfficeInfo & oInfo) {
 	{
 		codelog(SERVICE__ERROR, "Error in query at ReserveOffice: %s", err.c_str());
 		// Ensure that officeID stays 0, whatever the RunQueryLID done...
-		return(0);
+		return 0;
 	}
 
 	// If insert is successful, oInfo.officeID now contains the rented office's ID

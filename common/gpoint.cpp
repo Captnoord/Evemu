@@ -91,7 +91,7 @@ GVector::GVector(double x, double y, double z) : GPoint(x, y, z) {
 double GVector::length() const {
 	double len2 = (pt[0] * pt[0]) + (pt[1] * pt[1]) + (pt[2] * pt[2]);
 	if(len2 == 0)
-		return(0);
+		return 0;
 	return(sqrt(len2));
 }
 

@@ -37,7 +37,7 @@ PyRep *MarketDB::GetStationAsks(uint32 stationID) {
 		" GROUP BY typeID", stationID, TransactionTypeSell))
 	{
 		codelog(MARKET__ERROR, "Error in query: %s", res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 
 	//NOTE: this SHOULD return a crazy dbutil.RowDict object which is
@@ -58,7 +58,7 @@ PyRep *MarketDB::GetSystemAsks(uint32 solarSystemID) {
 		" GROUP BY typeID", solarSystemID))
 	{
 		codelog(MARKET__ERROR, "Error in query: %s", res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 
 	//NOTE: this SHOULD return a crazy dbutil.RowDict object which is
@@ -79,7 +79,7 @@ PyRep *MarketDB::GetRegionBest(uint32 regionID) {
 		" GROUP BY typeID", regionID))
 	{
 		codelog(MARKET__ERROR, "Error in query: %s", res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 
 	//NOTE: this SHOULD return a crazy dbutil.RowDict object which is
@@ -139,7 +139,7 @@ PyRep *MarketDB::GetOrders(uint32 regionID, uint32 typeID) {
 		" WHERE regionID=%lu AND typeID=%lu AND bid=%d", regionID, typeID, TransactionTypeSell))
 	{
 		codelog(MARKET__ERROR, "Error in query: %s", res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 
 	PyRepTuple *tup = new PyRepTuple(2);
@@ -157,7 +157,7 @@ PyRep *MarketDB::GetOrders(uint32 regionID, uint32 typeID) {
 	{
 		delete tup;
 		codelog(MARKET__ERROR, "Error in query: %s", res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 	
 	//this is wrong.
@@ -180,7 +180,7 @@ PyRep *MarketDB::GetCharOrders(uint32 characterID) {
 		" WHERE charID=%lu", characterID))
 	{
 		codelog(MARKET__ERROR, "Error in query: %s", res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 	
 	return(DBResultToRowset(res));
@@ -198,13 +198,13 @@ PyRep *MarketDB::GetOrderRow(uint32 orderID) {
 		" WHERE orderID=%lu", orderID))
 	{
 		codelog(MARKET__ERROR, "Error in query: %s", res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 
 	DBResultRow row;
 	if(!res.GetRow(row)) {
 		codelog(MARKET__ERROR, "Order %lu not found.", orderID);
-		return(NULL);
+		return NULL;
 	}
 
 	return(DBRowToPackedRow(row));
@@ -238,7 +238,7 @@ PyRep *MarketDB::GetOldPriceHistory(uint32 regionID, uint32 typeID) {
 		" WHERE regionID=%lu AND typeID=%lu", regionID, typeID))
 	{
 		codelog(MARKET__ERROR, "Error in query: %s", res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 	
 	return(DBResultToPackedRowset(res));
@@ -283,7 +283,7 @@ PyRep *MarketDB::GetNewPriceHistory(uint32 regionID, uint32 typeID) {
 		Win32Time_Day, regionID, typeID, TransactionTypeBuy))
 	{
 		codelog(MARKET__ERROR, "Error in query: %s", res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 	
 	return(DBResultToPackedRowset(res));
@@ -426,7 +426,7 @@ PyRepObject *MarketDB::GetMarketGroups() {
 		" ORDER BY marketGroupID"))
 	{
 		codelog(MARKET__ERROR, "Error in query: %s", res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 	
 	DBResultRow row;
@@ -439,7 +439,7 @@ PyRepObject *MarketDB::GetMarketGroups() {
 		" FROM invMarketGroups"))
 	{
 		codelog(MARKET__ERROR, "Error in query: %s", res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 
 	std::map<int, int> parentChild;	//maps child -> parent
@@ -463,7 +463,7 @@ PyRepObject *MarketDB::GetMarketGroups() {
 		" FROM invMarketGroups"))
 	{
 		codelog(MARKET__ERROR, "Error in query: %s", res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 
 	//doing this the long (non XML) way to avoid the extra copies due to the huge volume of data here.
@@ -618,7 +618,7 @@ uint32 MarketDB::FindBuyOrder(
 	
 	DBResultRow row;
 	if(!res.GetRow(row))
-		return(0);	//no order found.
+		return 0;	//no order found.
 	
 	return(row.GetUInt(0));
 }
@@ -653,7 +653,7 @@ uint32 MarketDB::FindSellOrder(
 	
 	DBResultRow row;
 	if(!res.GetRow(row))
-		return(0);	//no order found.
+		return 0;	//no order found.
 	
 	return(row.GetUInt(0));
 }
@@ -790,7 +790,7 @@ uint32 MarketDB::_StoreOrder(
 	uint32 regionID;
 	if(!GetStationParents(stationID, solarSystemID, constellationID, regionID)) {
 		codelog(MARKET__ERROR, "Char %lu: Failed to find parents for station %lu", clientID, stationID);
-		return(0);
+		return 0;
 	}
 
 	//TODO: figure out what the orderState field means...
@@ -817,7 +817,7 @@ uint32 MarketDB::_StoreOrder(
 
 	{
 		codelog(MARKET__ERROR, "Error in query: %s", err.c_str());
-		return(0);
+		return 0;
 	}
 
 	return(orderID);

@@ -115,7 +115,7 @@ PyRep *MakeUserError(const char *exceptionType, const std::map<std::string, PyRe
 	res->args->items[1] = py_args;
 
 	res->keywords.add("msgkey", new PyRepString(exceptionType));
-	// here should be used PySavedStreamElement, but our marshaling doesnt support it yet
+	// here should be used PySavedStreamElement, but our marshaling doesn't support it yet
 	res->keywords.add("dict", py_args->Clone());
 
 	return(res);

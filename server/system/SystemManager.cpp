@@ -116,7 +116,7 @@ public:
 			if(i == NULL) {
 				//this should not happen... we just got this list from the DB...
 				codelog(SERVICE__ERROR, "Unable to load item for entity %lu", entity.itemID);
-				return(NULL);
+				return NULL;
 			}
 			return(new Asteroid(system, i));	//takes a ref.
 		} break;
@@ -129,7 +129,7 @@ public:
 			codelog(SERVICE__ERROR, "Unhandled dynamic entity category %d for item %lu of type %lu", entity.categoryID, entity.itemID, entity.typeID);
 			break;
 		}
-		return(NULL);
+		return NULL;
 	}
 };
 
@@ -282,7 +282,7 @@ SystemEntity *SystemManager::get(uint32 entityID) const {
 	std::map<uint32, SystemEntity *>::const_iterator res;
 	res = m_entities.find(entityID);
 	if(res == m_entities.end())
-		return(NULL);
+		return NULL;
 	return(res->second);
 }
 

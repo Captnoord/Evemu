@@ -50,14 +50,14 @@ InventoryItem *ItemFactory::Load(uint32 itemID, bool recurse) {
 	//item not cached, load it up. This calls back on our Create()
 	InventoryItem *i = m_db.LoadItem(itemID, this);
 	if(i == NULL)
-		return(NULL);
+		return NULL;
 	
 	//load up any additional features of this item from the DB
 	if(!i->Load(recurse)) {
 		_log(ITEM__DEBUG, "Failed to load details for item %lu", i->itemID());
 		i->Release();
 		//TODO: clear this item out from its container....
-		return(NULL);
+		return NULL;
 	}
 	
 	//we give the ref which we were given by m_db.LoadItem to our caller.
@@ -71,9 +71,9 @@ InventoryItem *ItemFactory::GetIfContentsLoaded(uint32 itemID) {
 		if(res->second->ContentsLoaded()) {
 			return(res->second->Ref());
 		}
-		return(NULL);
+		return NULL;
 	}
-	return(NULL);
+	return NULL;
 }
 	
 InventoryItem *ItemFactory::Create(
@@ -96,7 +96,7 @@ InventoryItem *ItemFactory::Create(
 	res = m_items.find(_itemID);
 	if(res != m_items.end()) {
 		codelog(SERVICE__ERROR, "Item ID %d already exixts, refusing to create it.", _itemID);
-		return(NULL);
+		return NULL;
 	}
 	
 	InventoryItem *i = new InventoryItem(
@@ -121,7 +121,7 @@ InventoryItem *ItemFactory::Create(
 	if(!i->LoadStatic()) {
 		_log(ITEM__ERROR, "Failed to load static data for item %lu of type %lu", i->itemID(), i->typeID());
 		i->Release();
-		return(NULL);
+		return NULL;
 	}
 	
 	_log(ITEM__TRACE, "Created object %p for item ID %lu of type %lu", i, i->itemID(), i->typeID());
@@ -252,12 +252,12 @@ InventoryItem *ItemFactory::SpawnSingleton(
 	//Create() above after loading it from the DB.
 	new_item = m_db.NewItemSingleton(this, typeID, ownerID, locationID, flag, name, pos);
 	if(new_item == NULL) {
-		return(NULL);
+		return NULL;
 	}
 	
 	if(!_SpawnCommon(new_item)) {
 		new_item->Release();
-		return(NULL);
+		return NULL;
 	}
 	
 	_log(ITEM__TRACE, "Spawned new singleton item of type %lu for owner %lu with item ID %lu", typeID, ownerID, new_item->itemID());
@@ -280,12 +280,12 @@ InventoryItem *ItemFactory::Spawn(
 	new_item = m_db.NewItem(this, typeID, quantity, ownerID, locationID, flag, pos);
 	if(new_item == NULL) {
 		codelog(ITEM__DEBUG, "Failed create new item of type %lu for owner %lu in the DB.", typeID, ownerID);
-		return(NULL);
+		return NULL;
 	}
 	
 	if(!_SpawnCommon(new_item)) {
 		new_item->Release();
-		return(NULL);
+		return NULL;
 	}
 	
 	_log(ITEM__TRACE, "Spawned new item of type %lu quantity %lu for owner %lu with item ID %lu", typeID, quantity, ownerID, new_item->itemID());

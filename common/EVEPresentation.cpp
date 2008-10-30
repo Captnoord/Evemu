@@ -50,19 +50,19 @@ void EVEPresentation::Disconnect() {
 PyPacket *EVEPresentation::PopPacket() {
 	EVENetPacket *netp = net->PopPacket();
 	if(netp == NULL)
-		return(NULL);	//nothing to get yet.
+		return NULL;	//nothing to get yet.
 
 	if(netp->length > EVESocketMaxNumberOfBytes) {
 		delete netp;
 		_log(NET__PRES_ERROR, "%s: Received invalid version exchange!", GetConnectedAddress().c_str());
-		return(NULL);
+		return NULL;
 	}
 	
 	//take the raw packet and turn it into a PyRep
 	PyRep *r = InflateAndUnmarshal(netp->data, netp->length);
 	delete netp;
 	if(r == NULL)
-		return(NULL);	//failed to inflate or unmarshal the packet
+		return NULL;	//failed to inflate or unmarshal the packet
 
 	if(is_log_enabled(NET__PRES_REP)) {
 		_log(NET__PRES_REP, "%s: Raw Rep Dump:", GetConnectedAddress().c_str());

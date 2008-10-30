@@ -491,7 +491,7 @@ void DBResultRow::SetData(DBQueryResult *res, MYSQL_ROW &row, const uint32 *leng
 
 uint32 DBResultRow::ColumnCount() const {
 	if(m_result == NULL)
-		return(0);
+		return 0;
 	return(m_result->ColumnCount());
 }
 
@@ -511,7 +511,7 @@ uint32 DBResultRow::GetColumnLength(uint32 column) const {
 #ifdef COLUMN_BOUNDS_CHECKING
 	if(column >= ColumnCount()) {
 		_log(DATABASE__ERROR, "GetColumnLength: Column index %d exceeds number of columns (%d) in row", column, ColumnCount());
-		return(0);		//nothing better to do...
+		return 0;		//nothing better to do...
 	}
 #endif
 	return(m_lengths[column]);
@@ -524,7 +524,7 @@ int32 DBResultRow::GetInt(uint32 column) const {
 #ifdef COLUMN_BOUNDS_CHECKING
 	if(column >= ColumnCount()) {
 		_log(DATABASE__ERROR, "GetInt: Column index %d exceeds number of columns (%d) in row", column, ColumnCount());
-		return(0);		//nothing better to do...
+		return 0;		//nothing better to do...
 	}
 #endif
 	//use base 0 on the obscure chance that this is a string column with an 0x hex number in it.
@@ -535,7 +535,7 @@ uint32 DBResultRow::GetUInt(uint32 column) const {
 #ifdef COLUMN_BOUNDS_CHECKING
 	if(column >= ColumnCount()) {
 		_log(DATABASE__ERROR, "GetUInt: Column index %d exceeds number of columns (%d) in row", column, ColumnCount());
-		return(0);		//nothing better to do...
+		return 0;		//nothing better to do...
 	}
 #endif
 	//use base 0 on the obscure chance that this is a string column with an 0x hex number in it.
@@ -546,7 +546,7 @@ int64 DBResultRow::GetInt64(uint32 column) const {
 #ifdef COLUMN_BOUNDS_CHECKING
 	if(column >= ColumnCount()) {
 		_log(DATABASE__ERROR, "GetInt: Column index %d exceeds number of columns (%d) in row", column, ColumnCount());
-		return(0);		//nothing better to do...
+		return 0;		//nothing better to do...
 	}
 #endif
 	//use base 0 on the obscure chance that this is a string column with an 0x hex number in it.
@@ -557,7 +557,7 @@ uint64 DBResultRow::GetUInt64(uint32 column) const {
 #ifdef COLUMN_BOUNDS_CHECKING
 	if(column >= ColumnCount()) {
 		_log(DATABASE__ERROR, "GetUInt: Column index %d exceeds number of columns (%d) in row", column, ColumnCount());
-		return(0);		//nothing better to do...
+		return 0;		//nothing better to do...
 	}
 #endif
 	//use base 0 on the obscure chance that this is a string column with an 0x hex number in it.
@@ -568,7 +568,7 @@ float DBResultRow::GetFloat(uint32 column) const {
 #ifdef COLUMN_BOUNDS_CHECKING
 	if(column >= ColumnCount()) {
 		_log(DATABASE__ERROR, "GetFloat: Column index %d exceeds number of columns (%d) in row", column, ColumnCount());
-		return(0);		//nothing better to do...
+		return 0;		//nothing better to do...
 	}
 #endif
 #ifdef WIN32
@@ -582,7 +582,7 @@ double DBResultRow::GetDouble(uint32 column) const {
 #ifdef COLUMN_BOUNDS_CHECKING
 	if(column >= ColumnCount()) {
 		_log(DATABASE__ERROR, "GetDouble: Column index %d exceeds number of columns (%d) in row", column, ColumnCount());
-		return(0);		//nothing better to do...
+		return 0;		//nothing better to do...
 	}
 #endif
 	return(strtod(m_row[column], NULL));
@@ -592,12 +592,12 @@ uint32 DBResultRow::GetBinary(uint32 column, byte *into, uint32 in_length) const
 #ifdef COLUMN_BOUNDS_CHECKING
 	if(column >= ColumnCount()) {
 		_log(DATABASE__ERROR, "GetBinary: Column index %d exceeds number of columns (%d) in row", column, ColumnCount());
-		return(0);		//nothing better to do...
+		return 0;		//nothing better to do...
 	}
 #endif
 	if(in_length < m_lengths[column]) {
 		_log(DATABASE__ERROR, "GetBinary: insufficient buffer space provided for column %d of length %d (%d provided)", column, m_lengths[column], in_length);
-		return(0);
+		return 0;
 	}
 	memcpy(into, m_row[column], m_lengths[column]);
 	return(m_lengths[column]);
@@ -682,7 +682,7 @@ uint32 DBSequence::NextValue() {
 	))
 	{
 		_log(DATABASE__ERROR, "Failed to query value for sequence '%s': %s", m_table.c_str(), err.c_str());
-		return(0);
+		return 0;
 	}
 	return(last_insert_id);
 }

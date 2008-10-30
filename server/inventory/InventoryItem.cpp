@@ -90,11 +90,11 @@ InventoryItem *InventoryItem::Ref() {
 	if(this == NULL) {
 		_log(ITEM__ERROR, "Trying to make a ref of a NULL inventory item!");
 		//TODO: log a stack.
-		return(NULL);
+		return NULL;
 	}
 	if(m_refCount < 1) {
 		_log(ITEM__ERROR, "Attempting to make a ref of inventory item (%p) which has no references at all!", this);
-		return(NULL);	//NULL is easier to debug than a bad pointer
+		return NULL;	//NULL is easier to debug than a bad pointer
 	}
 	m_refCount++;
 	return(this);
@@ -385,7 +385,7 @@ PyRepObject *InventoryItem::ItemGetInfo() const {
 	Rsp_ItemGetInfo result;
 
 	if(!Populate(result.entry))
-		return(NULL);	//print already done.
+		return NULL;	//print already done.
 	
 	return(result.FastEncode());
 }
@@ -395,7 +395,7 @@ PyRepObject *InventoryItem::ShipGetInfo() {
 	
 	if(!LoadContents(true)) {
 		codelog(ITEM__ERROR, "%s (%lu): Failed to load contents for ShipGetInfo", m_itemName.c_str(), m_itemID);
-		return(NULL);
+		return NULL;
 	}
 
 	Rsp_CommonGetInfo result;
@@ -403,7 +403,7 @@ PyRepObject *InventoryItem::ShipGetInfo() {
 
 	//first populate the ship.
 	if(!Populate(entry))
-		return(NULL);	//print already done.
+		return NULL;	//print already done.
 	
 //hackin:
 	//charge
@@ -440,7 +440,7 @@ PyRepObject *InventoryItem::CharGetInfo() {
 	
 	if(!LoadContents(true)) {
 		codelog(ITEM__ERROR, "%s (%lu): Failed to load contents for CharGetInfo", m_itemName.c_str(), m_itemID);
-		return(NULL);
+		return NULL;
 	}
 
 	Rsp_CommonGetInfo result;
@@ -448,7 +448,7 @@ PyRepObject *InventoryItem::CharGetInfo() {
 
 	//first encode self.
 	if(!Populate(entry))
-		return(NULL);	//print already done.
+		return NULL;	//print already done.
 	
 	result.items[m_itemID] = entry.FastEncode();
 	
@@ -486,7 +486,7 @@ InventoryItem *InventoryItem::FindFirstByFlag(EVEItemFlags _flag, bool newref) {
 			return(i);
 		}
 	}
-	return(NULL);
+	return NULL;
 }
 
 InventoryItem *InventoryItem::GetByID(uint32 id, bool newref) {
@@ -503,7 +503,7 @@ InventoryItem *InventoryItem::GetByID(uint32 id, bool newref) {
 				return(i);
 		}
 	}
-	return(NULL);
+	return NULL;
 }
 
 uint32 InventoryItem::FindByFlag(EVEItemFlags _flag, std::vector<InventoryItem *> &items, bool newref) {
@@ -764,11 +764,11 @@ bool InventoryItem::SetQuantity(uint32 qty_new, bool notify) {
 InventoryItem *InventoryItem::Split(int32 qty_to_take, bool notify) {
 	if(qty_to_take <= 0) {
 		_log(ITEM__ERROR, "%s (%lu): Asked to split into a chunk of %ld", itemName().c_str(), itemID(), qty_to_take);
-		return(NULL);
+		return NULL;
 	}
 	if(!AlterQuantity(-qty_to_take, notify)) {
 		_log(ITEM__ERROR, "%s (%lu): Failed to remove quantity %ld during split.", itemName().c_str(), itemID(), qty_to_take);
-		return(NULL);
+		return NULL;
 	}
 
 	InventoryItem *res = factory->Spawn(

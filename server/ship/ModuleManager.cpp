@@ -136,13 +136,13 @@ int ModuleManager::Activate(uint32 itemID, const std::string &effectName, uint32
 	res = m_moduleByID.find(itemID);
 	if(res == m_moduleByID.end()) {
 		_log(SHIP__ERROR, "%s: failed to activate module %lu. Not found.", m_pilot->GetName(), itemID);
-		return(0);
+		return 0;
 	}
 	ShipModule *mod = m_modules[res->second];
 	if(mod == NULL) {
 		//should never happen.
 		codelog(SHIP__ERROR, "%s: failed to activate module %lu. Internal data inconsistency.", m_pilot->GetName(), itemID);
-		return(0);
+		return 0;
 	}
 	return(mod->Activate(effectName, target, repeat));
 }
@@ -265,11 +265,11 @@ int ShipModule::Activate(const std::string &effectName, uint32 target, uint32 re
 			return(1);
 		} else {
 			_log(SHIP__MODULE_TRACE, "Module %s (%lu): Activation requested in state %d, ignoring.", m_item->itemName().c_str(), m_item->itemID(), m_state);
-			return(0);
+			return 0;
 		}
 	} else {
 		_log(SHIP__MODULE_TRACE, "Module %s (%lu): Activation requested in state %d with unknown effect '%s'", m_item->itemName().c_str(), m_item->itemID(), m_state, effectName.c_str());
-		return(0);
+		return 0;
 	}
 }
 
@@ -363,7 +363,7 @@ int ActivatableModule::Activate(const std::string &effectName, uint32 target, ui
 			return(1);
 		} else {
 			_log(SHIP__MODULE_TRACE, "Module %s (%lu): Activation requested with %s in state %d. Ignoring..", m_item->itemName().c_str(), m_item->itemID(), m_effectName, m_state);
-			return(0);
+			return 0;
 		}
 	} else {
 		return(ShipModule::Activate(effectName, target, repeat));

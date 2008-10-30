@@ -39,7 +39,7 @@ bool Agent::Load(MissionDB *from) {
 
 uint32 Agent::GetLoyaltyPoints(Client *who) {
 	codelog(AGENT__ERROR, "Unimplemented.");
-	return(0);
+	return 0;
 }
 
 /* It seems as though actionIDs are dynamically assigned at runtime, as they

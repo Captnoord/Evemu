@@ -83,7 +83,7 @@ bool DirWalker::GetFile() {
 //access to the current file.
 const char *DirWalker::CurrentFileName() {
 	if(!m_valid)
-		return(NULL);
+		return NULL;
 #ifdef WIN32
 	//may not work, it is really a WCHAR
 	return((const char *)m_data.cFileName);

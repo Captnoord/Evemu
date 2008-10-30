@@ -77,7 +77,7 @@ ThreadReturnType BaseTCPServer::TCPServerLoop(void* tmp) {
 #endif
 	if (tmp == 0) {
 //		ThrowError("BaseTCPServerLoop(): tmp = 0!");
-		THREAD_RETURN(NULL);
+		THREAD_return NULL;
 	}
 	BaseTCPServer* tcps = (BaseTCPServer*) tmp;
 	
@@ -97,7 +97,7 @@ ThreadReturnType BaseTCPServer::TCPServerLoop(void* tmp) {
 	_log(COMMON__THREADS, "Ending TCPServerLoop with thread ID %d", pthread_self());
 #endif
 	
-	THREAD_RETURN(NULL);
+	THREAD_return NULL;
 }
 
 void BaseTCPServer::Process() {

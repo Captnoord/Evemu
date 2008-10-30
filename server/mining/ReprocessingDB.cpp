@@ -103,14 +103,14 @@ uint32 ReprocessingDB::GetPortionSize(const uint32 typeID) {
 				))
 	{
 		_log(DATABASE__ERROR, "Unable to get portion size for type ID %lu: '%s'", typeID, res.error.c_str());
-		return(0);
+		return 0;
 	}
 
 	DBResultRow row;
 
 	if(!res.GetRow(row)) {
 		_log(DATABASE__ERROR, "No portion size found for type ID %lu.", typeID);
-		return(0);
+		return 0;
 	}
 
 	return(row.GetUInt(0));

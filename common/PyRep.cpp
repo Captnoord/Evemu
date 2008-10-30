@@ -207,7 +207,7 @@ PyRepSubStream *PyRepBuffer::CreateSubStream() const {
 		return(res);
 	}
 	//else, we don't think this is a substream, so don't become one.
-	return(NULL);
+	return NULL;
 }
 
 void PyRepString::Dump(FILE *into, const char *pfx) const {
@@ -1169,7 +1169,7 @@ uint8 EVEStringTable::LookupString(const std::string &str) const {
 
 const char *EVEStringTable::LookupIndex(uint8 index) const {
 	if(index == None || index >= m_forwardLookup.size())
-		return(NULL);
+		return NULL;
 	return(m_forwardLookup[index].c_str());
 }
 

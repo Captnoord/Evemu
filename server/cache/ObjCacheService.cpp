@@ -133,11 +133,11 @@ PyResult ObjCacheService::Handle_GetCachableObject(PyCallArgs &call) {
 	CallGetCachableObject args;
 	if(!args.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "%s: Unable to decode arguments", call.client->GetName());
-		return(NULL);
+		return NULL;
 	}
 	
 	if(!_LoadCachableObject(args.objectID))
-		return(NULL);	//print done already
+		return NULL;	//print done already
 	
 	//should we check their version? I am pretty sure they check it and only request what they want.
 	//well, we want to do something like this, but this dosent seem to be it. taken
@@ -220,12 +220,12 @@ PyRep *ObjCacheService::GetCacheHint(const char *objectID) {
 	PyRepString str(objectID);
 	
 	if(!_LoadCachableObject(&str))
-		return(NULL);	//print done already
+		return NULL;	//print done already
 
 	PyRepObject *cache_hint = m_cache.MakeCacheHint(&str);
 	if(cache_hint == NULL) {
 		_log(SERVICE__ERROR, "Unable to build cache hint for object ID '%s' (h), skipping.", objectID);
-		return(NULL);
+		return NULL;
 	}
 
 	return(cache_hint);
@@ -288,7 +288,7 @@ void ObjCacheService::GiveCache(const PyRep *objectID, PyRep **contents) {
 
 PyRepObject *ObjCacheService::MakeObjectCachedMethodCallResult(const PyRep *objectID, const char *versionCheck) {
 	if(!IsCacheLoaded(objectID))
-		return(NULL);
+		return NULL;
 	objectCaching_CachedMethodCallResult_object c;
 	c.versionCheck = versionCheck;
 	c.object = m_cache.MakeCacheHint(objectID);

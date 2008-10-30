@@ -280,7 +280,7 @@ int main(int argc, char *argv[])
 
 	//TODO: properly free physics driver
 
-	return(0);
+	return 0;
 }
 
 static bool InitSignalHandlers() {

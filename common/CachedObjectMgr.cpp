@@ -247,7 +247,7 @@ PyRepObject *CachedObjectMgr::MakeCacheHint(const PyRep *objectID) {
 	std::map<std::string, CacheRecord *>::iterator res;
 	res = m_cachedObjects.find(str);
 	if(res == m_cachedObjects.end())
-		return(NULL);
+		return NULL;
 	return(res->second->EncodeHint());
 }
 
@@ -262,7 +262,7 @@ PyRepObject *CachedObjectMgr::GetCachedObject(const PyRep *objectID) {
 	std::map<std::string, CacheRecord *>::iterator res;
 	res = m_cachedObjects.find(str);
 	if(res == m_cachedObjects.end())
-		return(NULL);
+		return NULL;
 	
 	PyCachedObject co;
 	co.timestamp = res->second->timestamp;
@@ -471,13 +471,13 @@ PyCachedObjectDecoder *CachedObjectMgr::LoadCachedFile(const char *filename, con
 	PyRepSubStream *into = new PyRepSubStream();
 	if(!LoadCachedFile(filename, oname, into)) {
 		delete into;
-		return(NULL);
+		return NULL;
 	}
 
 	PyCachedObjectDecoder *obj = new PyCachedObjectDecoder();
 	if(!obj->Decode(&into)) {	//into is consumed.
 		delete obj;
-		return(NULL);
+		return NULL;
 	}
 
 	return(obj);
@@ -487,13 +487,13 @@ PyCachedCall *CachedObjectMgr::LoadCachedCall(const char *filename, const char *
 	PyRepSubStream *into = new PyRepSubStream();
 	if(!LoadCachedFile(filename, oname, into)) {
 		delete into;
-		return(NULL);
+		return NULL;
 	}
 
 	PyCachedCall *obj = new PyCachedCall();
 	if(!obj->Decode(&into)) {	//into is consumed.
 		delete obj;
-		return(NULL);
+		return NULL;
 	}
 
 	return(obj);
@@ -532,7 +532,7 @@ PyRep *CachedObjectMgr::_MakeCacheHint(const char *oname) {
 	PyCachedObject *obj = LoadCachedObject(oname);
 	if(obj == NULL) {
 		_log(CLIENT__ERROR, "Unable to load cache file for '%s' in order to build hint", oname);
-		return(NULL);
+		return NULL;
 	}
 
 	PyRep *hint = obj->EncodeHint();

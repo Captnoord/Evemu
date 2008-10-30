@@ -59,7 +59,7 @@ byte *DeflatePacket(const byte *data, uint32 &length) {
     if(in_data == NULL && out_data == NULL && in_length == 0 && max_out_length == 0) {
     	//special delete state
     	deflateEnd(&zstream);
-    	return(0);
+    	return 0;
     }
     if(!inited) {
 		memset(&zstream, 0, sizeof(zstream));
@@ -93,7 +93,7 @@ byte *DeflatePacket(const byte *data, uint32 &length) {
 	}
 #else
 	if(data == NULL || length == 0)
-		return(0);
+		return 0;
 
 	z_stream zstream;
 	zstream.next_in   = const_cast<byte *>(data);
@@ -107,7 +107,7 @@ byte *DeflatePacket(const byte *data, uint32 &length) {
 		_log(COMMON__ERROR, "Error: DeflatePacket: deflateInit() returned %d (%s).",
 			zerror, (zstream.msg == NULL ? "No additional message" : zstream.msg));
 
-		return(0);
+		return 0;
 	}
 
 	length = deflateBound(&zstream, length);
@@ -136,7 +136,7 @@ byte *DeflatePacket(const byte *data, uint32 &length) {
 		length = 0;
 		delete out_data;
 
-		return(NULL);
+		return NULL;
 	}
 #endif
 }
@@ -151,7 +151,7 @@ byte *InflatePacket(const byte *data, uint32 &length, bool quiet) {
     if(indata == NULL && outdata == NULL && indatalen == 0 && outdatalen == 0) {
     	//special delete state
     	inflateEnd(&zstream);
-    	return(0);
+    	return 0;
     }
     if(!inited) {
 		zstream.zalloc    = e_alloc_func;
@@ -197,7 +197,7 @@ byte *InflatePacket(const byte *data, uint32 &length, bool quiet) {
 	}
 #else
 	if(data == NULL || length == 0)
-		return(0);
+		return NULL;
 
 	z_stream zstream;	
 	zstream.next_in   = const_cast<byte *>(data);
@@ -207,17 +207,20 @@ byte *InflatePacket(const byte *data, uint32 &length, bool quiet) {
 	zstream.opaque    = Z_NULL;
 
 	int zerror = inflateInit2(&zstream, 15);
-	if(zerror != Z_OK) {
+	if(zerror != Z_OK)
+	{
 		if(!quiet)
+		{
 			_log(COMMON__ERROR, "Error: InflatePacket: inflateInit2() returned %d (%s).",
 				zerror, (zstream.msg == NULL ? "No additional message" : zstream.msg));
-
-		return(0);
+		}
+		return 0;
 	}
 
 	byte *out_data = NULL;
 	zstream.total_out = 0;
-	do {
+	do 
+	{
 		length *= 2;	//increase buffer size
 		out_data = (byte *)realloc(out_data, length);	//(re)allocate output buffer twice as big as before
 
@@ -225,28 +228,34 @@ byte *InflatePacket(const byte *data, uint32 &length, bool quiet) {
 		zstream.avail_out = length - zstream.total_out;
 
 		zerror = inflate(&zstream, Z_FINISH);
-	} while(zerror == Z_BUF_ERROR);	//continue while we get "not enough room in buffer" error
+	}
+	while(zerror == Z_BUF_ERROR);	//continue while we get "not enough room in buffer" error
 
-	if(zerror == Z_STREAM_END) {
-		//inflation successfull
+	if(zerror == Z_STREAM_END)
+	{
+		//inflation successful
 		inflateEnd(&zstream);
 		//truncate output buffer to necessary size
 		length = zstream.total_out;
 		out_data = (byte *)realloc(out_data, length);
 
-		return(out_data);
-	} else {
-		//error occured
+		return out_data;
+	}
+	else
+	{
+		//error occurred
 		if(!quiet)
+		{
 			_log(COMMON__ERROR, "Error: InflatePacket: inflate() returned %d (%s).",
 				zerror, (zstream.msg == NULL ? "No additional message" : zstream.msg));
+		}
 
 		inflateEnd(&zstream);
 		//delete output buffer
 		length = 0;
 		delete out_data;
 
-		return(NULL);
+		return NULL;
 	}
 #endif
 }

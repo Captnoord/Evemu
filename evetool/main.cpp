@@ -146,7 +146,7 @@ int main(int argc, char *argv[]) {
 #ifndef NO_READLINE
 	rl_deprep_terminal();
 #endif
-	return(0);
+	return 0;
 }
 
 void TestCache() {
@@ -200,7 +200,7 @@ static ThreadReturnType UserInputThread(void *data) {
 	delete input_buffer;
 #endif
 	
-	THREAD_RETURN(0);
+	THREAD_return 0;
 }
 
 void CatchSignal(int sig_num) {

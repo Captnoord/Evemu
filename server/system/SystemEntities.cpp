@@ -288,7 +288,7 @@ PyRepDict *SystemDungeonEntranceEntity::MakeSlimItem() const {
 	
 	PyRepDict *slim = ItemSystemEntity::MakeSlimItem();
 	if(slim == NULL)
-		return(NULL);
+		return NULL;
 	
 	//slim->add("itemID", new PyRepInteger(2100000396));
 	//slim->add("typeID", new PyRepInteger(12273));

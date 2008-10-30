@@ -35,7 +35,7 @@ PyRep *ObjCacheDB::GetCachableObject(const std::string &type) {
 	res = m_generators.find(type);
 	if(res == m_generators.end()) {
 		_log(SERVICE__ERROR, "Unable to find cachable object generator for type '%s'", type.c_str());
-		return(NULL);
+		return NULL;
 	}
 
 	genFunc f = res->second;
@@ -62,10 +62,10 @@ PyRep *ObjCacheDB::Generate_##symbol() { \
 	DBQueryResult res; \
 	const char *q = query; \
 	if(q == NULL) /* handle NULL queries, meaning fall back to files */ \
-		return(NULL); \
+		return NULL; \
 	if(!m_db->RunQuery(res, q)) { \
 		codelog(SERVICE__ERROR, "Error in query for cached object '" name "': %s", res.error.c_str()); \
-		return(NULL); \
+		return NULL; \
 	} \
 	return(DBResultTo##type(res)); \
 }
@@ -74,10 +74,10 @@ PyRep *ObjCacheDB::Generate_##symbol() { \
 	DBQueryResult res; \
 	const char *q = query; \
 	if(q == NULL) /* handle NULL queries, meaning fall back to files */ \
-		return(NULL); \
+		return NULL; \
 	if(!m_db->RunQuery(res, q)) { \
 		codelog(SERVICE__ERROR, "Error in query for cached object '" name "': %s", res.error.c_str()); \
-		return(NULL); \
+		return NULL; \
 	} \
 	return(DBResultTo##type(key, res)); \
 }

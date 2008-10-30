@@ -61,7 +61,7 @@ uint32 DumpBall(LogType into, const byte *data, uint32 len) {
 
 	if(ballhead->mode > Destiny::MAX_DSTBALL) {
 		_log(into, "Error: Invalid ball mode %d for ball %d", ballhead->mode, ballhead->entityID);
-		return(0);
+		return 0;
 	}
 	
 	_log(into, "AddBall: entity=%d, mode=%s (%d) subtype=%d",
@@ -145,7 +145,7 @@ uint32 DumpBall(LogType into, const byte *data, uint32 len) {
 	} break;
 	case Destiny::DSTBALL_BOID: {
 		_log(into, "       NOT ALLOWED IN STREAM!");
-		return(0);
+		return 0;
 	} break;
 	case Destiny::DSTBALL_TROLL: {
 		const Destiny::DSTBALL_TROLL_Struct *b = (const Destiny::DSTBALL_TROLL_Struct *) data;
@@ -156,7 +156,7 @@ uint32 DumpBall(LogType into, const byte *data, uint32 len) {
 	} break;
 	case Destiny::DSTBALL_MINIBALL: {
 		_log(into, "       NOT ALLOWED IN STREAM!");
-		return(0);
+		return 0;
 	} break;
 	case Destiny::DSTBALL_FIELD: {
 		const Destiny::DSTBALL_FIELD_Struct *b = (const Destiny::DSTBALL_FIELD_Struct *) data;
@@ -180,7 +180,7 @@ uint32 DumpBall(LogType into, const byte *data, uint32 len) {
 	default:
 		_log(into, "Error: Unknown ball mode %d!", ballhead->mode);
 		_hex(into, data-sizeof(Destiny::BallHeader), (len>128)?128:(len+sizeof(Destiny::BallHeader)));
-		return(0);
+		return 0;
 	}
 
 	//not right:
@@ -306,7 +306,7 @@ uint32 DumpBall(LogType into, const byte *data, uint32 len) {
 		} else {
 			_log(into, "Unknown ship sub-ball type %d!", ball->sub_type);
 			_hex(into, data, (len>128)?128:len);
-			return(0);
+			return 0;
 			
 		}
 	} else if(head->type == Destiny::AddBallType_unmannedShip) {
@@ -453,7 +453,7 @@ uint32 DumpBall(LogType into, const byte *data, uint32 len) {
 		} else {
 			_log(into, "Unknown CC sub-ball type %d!", ball->sub_type);
 			_hex(into, data, (len>128)?128:len);
-			return(0);
+			return 0;
 		}
 		
 
@@ -462,7 +462,7 @@ uint32 DumpBall(LogType into, const byte *data, uint32 len) {
 	} else {
 		_log(into, "Unknown ball type %d!", head->type);
 		_hex(into, data, (len>128)?128:len);
-		return(0);
+		return 0;
 	}
 #endif
 	if(len > init_len) {

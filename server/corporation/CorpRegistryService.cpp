@@ -296,7 +296,7 @@ PyResult CorpRegistryBound::Handle_GetSuggestedTickerNames(PyCallArgs &call) {
 	Call_SingleStringArg arg;
 	if (!arg.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "%s: Bad arguments", call.client->GetName());
-		return(NULL);
+		return NULL;
 	}
 
 	PyRepList * result = new PyRepList;
@@ -331,7 +331,7 @@ PyResult CorpRegistryBound::Handle_GetOffices(PyCallArgs &call) {
 	bObj = new SparseCorpOfficeListBound(m_manager, m_db);
 	if(bObj == NULL) {
 		_log(SERVICE__ERROR, "%s Service: %s: Unable to create bound object for:", GetName(), call.client->GetName());
-		return(NULL);
+		return NULL;
 	}
 
 	CorpOfficeSparseRowset ret;
@@ -360,7 +360,7 @@ PyResult SparseCorpOfficeListBound::Handle_Fetch(PyCallArgs &call) {
 	Call_TwoIntegerArgs args;
 	if (!args.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "%s: Bad arguments", call.client->GetName());
-		return(NULL);
+		return NULL;
 	}
 
 	return m_db->Fetch(call.client->GetCorporationID(), args.arg1, args.arg2);
@@ -382,7 +382,7 @@ PyResult CorpRegistryBound::Handle_InsertApplication(PyCallArgs &call) {
 	Call_InsertApplication res;
 	if (!res.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "%s: Bad arguments", call.client->GetName());
-		return(NULL);
+		return NULL;
 	}	
 
 	/// Insert query into the db
@@ -522,7 +522,7 @@ PyResult CorpRegistryBound::Handle_UpdateApplicationOffer(PyCallArgs &call) {
 	Call_UpdateApplicationOffer args;
 	if (!args.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "%s: Bad arguments", call.client->GetName());
-		return(NULL);
+		return NULL;
 	}
 
 	// OnCorporationApplicationChanged event, prolly be good to make it two (or more) times, independently, depending on update type
@@ -723,7 +723,7 @@ PyResult CorpRegistryBound::Handle_UpdateApplication(PyCallArgs &call) {
 	Call_UpdateApplication args;
 	if (!args.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "%s: Bad arguments", call.client->GetName());
-		return(NULL);
+		return NULL;
 	}
 
 	ApplicationInfo oldInfo(true);
@@ -766,7 +766,7 @@ PyResult CorpRegistryBound::Handle_UpdateDivisionNames(PyCallArgs &call) {
 
 	if (!divs.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "%s: Bad arguments", call.client->GetName());
-		return(NULL);
+		return NULL;
 	}
 
 	Notify_IntRaw notif;
@@ -795,7 +795,7 @@ PyResult CorpRegistryBound::Handle_UpdateCorporation(PyCallArgs &call) {
 
 	if (!upd.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "%s: Bad arguments", call.client->GetName());
-		return(NULL);
+		return NULL;
 	}
 
 	Notify_IntRaw notif;
@@ -823,7 +823,7 @@ PyResult CorpRegistryBound::Handle_UpdateLogo(PyCallArgs &call) {
 
 	if (!upd.Decode(&call.tuple)) {
 		codelog(SERVICE__ERROR, "%s: Bad arguments", call.client->GetName());
-		return(NULL);
+		return NULL;
 	}
 
 	// Check if we have enough money

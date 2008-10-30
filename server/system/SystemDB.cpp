@@ -112,7 +112,7 @@ PyRepObject *SystemDB::ListFactions() {
 		" FROM chrFactions "))
 	{
 		codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 	
 	return(DBResultToRowset(res));
@@ -130,7 +130,7 @@ PyRepObject *SystemDB::ListJumps(uint32 stargateID) {
 		" WHERE stargateID=%lu", stargateID))
 	{
 		codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 	
 	return(DBResultToRowset(res));

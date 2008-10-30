@@ -39,7 +39,33 @@ EveClientSession::~EveClientSession()
 
 	PyPacket *packet;
 	while((packet = _recvQueue.Pop()))
+	{
+		PyRep * pack = packet;
+
+		switch (pack->GetType())
+		{
+			case Integer
+			case Real
+			case Boolean
+			case Buffer
+			case String
+			case Tuple
+			case List
+			case Dict
+			case None
+			case SubStruct
+			case SubStream
+			case ChecksumedStream
+			case Object
+			case PackedRow
+			case PackedObject1
+			case PackedObject2
+
+
+		}
+
 		delete packet;
+	}
 
 	if(_socket)
 		_socket->SetSession(NULL);
@@ -50,6 +76,13 @@ void EveClientSession::Delete()
 {
 	deleteMutex.Acquire();
 	delete this;
+}
+
+/* enqueue a packet to be processed in the packet dispatcher */
+void EveClientSession::QueuePacket(PyPacket* packet)
+{
+	//m_lastPing = (uint32)UNIXTIME;
+	_recvQueue.Push(packet);
 }
 
 int EveClientSession::Update()

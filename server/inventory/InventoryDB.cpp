@@ -120,7 +120,7 @@ InventoryItem *InventoryDB::LoadItem(uint32 itemID, ItemFactory *factory, bool r
 			itemID))
 	{
 		codelog(SERVICE__ERROR, "Error in query for item %lu: %s", itemID, res.error.c_str());
-		return(NULL);
+		return NULL;
 	}
 	
 	DBResultRow row;
@@ -163,7 +163,7 @@ InventoryItem *InventoryDB::_RowToItem(ItemFactory *factory, DBResultRow &row, b
 	int flag = row.GetUInt(5);
 	if(flag > 255) {
 		codelog(SERVICE__ERROR, "Invalid flag on item %s! Refusing to load.", row.GetText(0));
-		return(NULL);
+		return NULL;
 	}
 	//TODO: check for a few of the holes in the flag space.
 	//TODO: verify the category value.
@@ -189,13 +189,13 @@ InventoryItem *InventoryDB::_RowToItem(ItemFactory *factory, DBResultRow &row, b
 		);
 	if(result == NULL) {
 		codelog(SERVICE__ERROR, "Unable to create new instance of item %lu through factory.", row.GetUInt(0));
-		return(NULL);
+		return NULL;
 	}
 	
 	if(!result->Load(recurse)) {
 		codelog(SERVICE__ERROR, "Unable to finish load of item %lu", result->itemID());
 		result->Release();
-		return(NULL);
+		return NULL;
 	}
 
 	return(result);
@@ -354,11 +354,11 @@ bool InventoryDB::LoadItemAttributes(InventoryItem *item) {
 InventoryItem *InventoryDB::NewItemSingleton(ItemFactory *factory, uint32 typeID, uint32 ownerID, uint32 locationID, EVEItemFlags flag, const char *name, const GPoint &pos) {
 	uint32 id = NewDBItem(typeID, ownerID, locationID, flag, true, 1, name, pos);
 	if(id == 0)
-		return(NULL);
+		return NULL;
 	InventoryItem *i = LoadItem(id, factory, false);
 	if(i->categoryID() == EVEDB::invCategories::Blueprint && !_NewBlueprintEntry(i->itemID())) {
 		i->Delete();
-		return(NULL);
+		return NULL;
 	}
 	return(i);	//no need to recurse, we know its empty...
 }
@@ -366,11 +366,11 @@ InventoryItem *InventoryDB::NewItemSingleton(ItemFactory *factory, uint32 typeID
 InventoryItem *InventoryDB::NewItem(ItemFactory *factory, uint32 typeID, uint32 quantity, uint32 ownerID, uint32 locationID, EVEItemFlags flag, const GPoint &pos) {
 	uint32 id = NewDBItem(typeID, ownerID, locationID, flag, false, quantity, NULL, pos);
 	if(id == 0)
-		return(NULL);
+		return NULL;
 	InventoryItem *i = LoadItem(id, factory, false);
 	if(i->categoryID() == EVEDB::invCategories::Blueprint && !_NewBlueprintEntry(i->itemID())) {
 		i->Delete();
-		return(NULL);
+		return NULL;
 	}
 	return(i);	//no need to recurse, we know its empty...
 }
@@ -391,13 +391,13 @@ uint32 InventoryDB::NewDBItem(uint32 typeID, uint32 ownerID, uint32 locationID, 
 		" WHERE typeID=%lu", typeID))
 		{
 			codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
-			return(0);
+			return 0;
 		}
 		
 		DBResultRow row;
 		if(!res.GetRow(row)) {
 			codelog(SERVICE__ERROR, "Error in query: no data for type %d", typeID);
-			return(0);
+			return 0;
 		}
 		
 		m_db->DoEscapeString(nameEsc, row.GetText(0));
@@ -420,7 +420,7 @@ uint32 InventoryDB::NewDBItem(uint32 typeID, uint32 ownerID, uint32 locationID, 
 		)
 	) {
 		codelog(SERVICE__ERROR, "Failed to insert new entity: %s", err.c_str());
-		return(0);
+		return 0;
 	}
 
 	return(eid);
