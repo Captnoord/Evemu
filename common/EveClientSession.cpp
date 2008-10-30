@@ -56,7 +56,10 @@ EveClientSession::~EveClientSession()
 	PyRep *packet;
 	while((packet = _recvQueue.Pop()))
 	{
-		/* HACKED SOLLUTION TO FIX PACKET DELETION */
+		/* HACKED SOLLUTION TO FIX PACKET DELETION 
+		 * if we changed the unmarshaling of the packets from the socket to the packet dispatcher in the Update() function, we don't need todo this.
+		 * so the only good sollution for this hack is to change all this
+		 */
 		switch (packet->GetType())
 		{
 		case PyInteger:
