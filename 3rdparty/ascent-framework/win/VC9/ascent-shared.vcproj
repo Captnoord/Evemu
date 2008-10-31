@@ -106,13 +106,20 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/MP"
 				Optimization="2"
+				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
+				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="&quot;..\..\include\ascent-shared\Network&quot;;&quot;..\..\include\ascent-shared\Database&quot;;&quot;..\..\include\ascent-shared\Config&quot;;&quot;..\..\include\ascent-shared\Auth&quot;;&quot;..\..\include\ascent-shared\Threading&quot;;&quot;..\..\include\ascent-shared&quot;;..\..\dep\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_USRDLL;_WINDOWS"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
+				EnableEnhancedInstructionSet="2"
 				UsePrecompiledHeader="0"
+				AssemblerListingLocation="$(IntDir)\"
+				ObjectFile="$(IntDir)\"
+				ProgramDataBaseFileName="$(IntDir)\"
 				WarningLevel="3"
 				DebugInformationFormat="3"
 			/>
@@ -127,152 +134,6 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Leakfinder|Win32"
-			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="2"
-			CharacterSet="2"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/MP"
-				Optimization="0"
-				AdditionalIncludeDirectories="&quot;..\..\include\ascent-shared\Network-New&quot;;&quot;..\..\include\ascent-shared\Database&quot;;&quot;..\..\include\ascent-shared\Config&quot;;&quot;..\..\include\ascent-shared\Auth&quot;;&quot;..\..\include\ascent-shared\Threading&quot;;&quot;..\..\include\ascent-shared&quot;;..\..\dep\include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_USRDLL;_WINDOWS;_CRT_SECURE_NO_WARNINGS;LEAKFINDER"
-				MinimalRebuild="false"
-				ExceptionHandling="1"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
-				UsePrecompiledHeader="0"
-				WarningLevel="3"
-				DebugInformationFormat="3"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="User32.lib kernel32.lib Advapi32.lib ws2_32.lib winmm.lib odbc32.lib odbccp32.lib dbghelp.lib mswsock.lib libmysql.lib sqlite3.lib"
-				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\dep\lib32"
-				GenerateManifest="true"
-				GenerateDebugInformation="true"
-				SubSystem="1"
-				RandomizedBaseAddress="1"
-				FixedBaseAddress="0"
-				DataExecutionPrevention="0"
-				ImportLibrary=".\..\..\lib\$(ConfigurationName)\$(ProjectName)d.lib"
-				TargetMachine="1"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="DebugLib|Win32"
-			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="4"
-			CharacterSet="2"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/MP"
-				Optimization="0"
-				AdditionalIncludeDirectories="&quot;..\..\include\ascent-shared\Network-New&quot;;&quot;..\..\include\ascent-shared\Database&quot;;&quot;..\..\include\ascent-shared\Config&quot;;&quot;..\..\include\ascent-shared\Auth&quot;;&quot;..\..\include\ascent-shared\Threading&quot;;&quot;..\..\include\ascent-shared&quot;;..\..\dep\include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;"
-				MinimalRebuild="false"
-				ExceptionHandling="1"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
-				UsePrecompiledHeader="0"
-				WarningLevel="3"
-				DebugInformationFormat="3"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile=".\..\..\lib\$(ConfigurationName)\$(ProjectName)_l_d.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -514,6 +375,22 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="Netalloc"
+			>
+			<File
+				RelativePath="..\..\..\..\..\..\..\Ogre_trunk\OgreMain\src\nedmalloc\malloc.c.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\..\..\Ogre_trunk\OgreMain\src\nedmalloc\nedmalloc.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\..\..\Ogre_trunk\OgreMain\src\nedmalloc\nedmalloc.h"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath="..\..\include\ascent-shared\ascent.h"
 			>
@@ -609,14 +486,6 @@
 					Name="VCCLCompilerTool"
 				/>
 			</FileConfiguration>
-			<FileConfiguration
-				Name="DebugLib|Win32"
-				ExcludedFromBuild="true"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-				/>
-			</FileConfiguration>
 		</File>
 		<File
 			RelativePath="..\..\..\..\leakfinder\LeakFinder-RC5\LeakFinder.h"
@@ -631,14 +500,6 @@
 			</FileConfiguration>
 			<FileConfiguration
 				Name="Release|Win32"
-				ExcludedFromBuild="true"
-				>
-				<Tool
-					Name="VCCustomBuildTool"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="DebugLib|Win32"
 				ExcludedFromBuild="true"
 				>
 				<Tool

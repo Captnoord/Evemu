@@ -22,7 +22,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			IntermediateDirectory=".\evemu___Win32_$(ConfigurationName)"
 			ConfigurationType="1"
 			CharacterSet="2"
 			>
@@ -48,8 +48,8 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/MP"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\3rdparty\;&quot;..\..\3rdparty\ascent-framework\include\ascent-shared/Threading&quot;;&quot;..\..\3rdparty\ascent-framework\include\ascent-shared&quot;;&quot;..\..\3rdparty\ascent-framework\include\&quot;;..\..\3rdparty\mysql\include;..\..\3rdparty\zlib;..\..\common;..\..\server;..\"
-				PreprocessorDefinitions="WIN32;_DEBUG;USE_RUNTIME_EXCEPTIONS;_CRT_SECURE_NO_WARNINGS"
+				AdditionalIncludeDirectories="&quot;..\..\3rdparty\ascent-framework\include\ascent-shared/Threading&quot;;&quot;..\..\3rdparty\ascent-framework\include\ascent-shared&quot;;&quot;..\..\3rdparty\ascent-framework\include\&quot;;..\..\3rdparty\mysql\include;..\..\3rdparty\zlib;..\..\3rdparty\;..\..\common;..\..\server;..\"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="false"
 				ExceptionHandling="2"
 				BasicRuntimeChecks="3"
@@ -75,7 +75,7 @@
 				AdditionalDependencies="wsock32.lib zlib.lib mysqlclient.lib Advapi32.lib user32.lib ascent-sharedd.lib ws2_32.lib"
 				OutputFile=".\..\..\bin\$(ConfigurationName)\$(ProjectName).exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\3rdparty\mysql\lib\debug;&quot;..\..\3rdparty\ascent-framework\lib\$(ConfigurationName)\&quot;;..\..\lib;&quot;..\..\lib\$(ConfigurationName)\&quot;"
+				AdditionalLibraryDirectories="&quot;..\..\3rdparty\ascent-framework\lib\$(ConfigurationName)\&quot;;..\..\3rdparty\mysql\lib\debug;&quot;..\..\lib\$(ConfigurationName)\&quot;;..\..\lib"
 				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -133,15 +133,16 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\3rdparty\mysql\include;..\..\3rdparty\zlib;..\..\common;..\..\server;..\"
-				PreprocessorDefinitions="WIN32;_WIN32_WINNT=0x0400;_NDEBUG;USE_RUNTIME_EXCEPTIONS;_CRT_SECURE_NO_WARNINGS"
+				AdditionalOptions="/MP"
+				AdditionalIncludeDirectories="&quot;..\..\3rdparty\ascent-framework\include\ascent-shared/Threading&quot;;&quot;..\..\3rdparty\ascent-framework\include\ascent-shared&quot;;&quot;..\..\3rdparty\ascent-framework\include\&quot;;..\..\3rdparty\mysql\include;..\..\3rdparty\zlib;..\..\3rdparty\;..\..\common;..\..\server;..\"
+				PreprocessorDefinitions="WIN32;_NDEBUG;_CONSOLE"
 				ExceptionHandling="2"
 				RuntimeLibrary="0"
+				EnableEnhancedInstructionSet="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4355;4244"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -154,14 +155,15 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="wsock32.lib zlib.lib mysqlclient.lib Advapi32.lib user32.lib"
+				AdditionalDependencies="wsock32.lib zlib.lib mysqlclient.lib Advapi32.lib user32.lib ascent-shared.lib ws2_32.lib"
 				OutputFile=".\..\..\bin\$(ConfigurationName)\$(ProjectName).exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\3rdparty\mysql\lib\opt;..\..\lib"
+				AdditionalLibraryDirectories="&quot;..\..\3rdparty\ascent-framework\lib\$(ConfigurationName)\&quot;;..\..\3rdparty\mysql\lib\debug;&quot;..\..\lib\$(ConfigurationName)\&quot;;..\..\lib"
 				GenerateDebugInformation="false"
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				OptimizeForWindows98="1"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
 				TargetMachine="1"

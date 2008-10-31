@@ -102,7 +102,7 @@ int EveClientSession::Update()
 			Log.Error("SessionPacketDispatcher","'Unhandled' packet with wrong opcode received, opcode:%d", _type);
 		}
 
-		Log.Notice("SessionPacketDispatcher","packet processed, deleting the packet");
+		//Log.Notice("SessionPacketDispatcher","packet processed, deleting the packet");
 
 		SafeDelete(packet);
 	}
@@ -134,6 +134,7 @@ void EveClientSession::_ProcessPingResponce(PyPacket& packet)
 	Log.Debug("SessionPacketDispatcher", /*"%s:*/ "Received ping response.");//, GetName());
 }
 
+/* not working atm... */
 void EveClientSession::_sendLoginFailed()
 {
 	PyRepPackedObject1 *e = new PyRepPackedObject1("exceptions.GPSTransportClosed");

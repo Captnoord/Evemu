@@ -82,6 +82,7 @@ enum MsTimeVariables
 #if defined( __WIN32__ ) || defined( WIN32 ) || defined( _WIN32 )
 #  define WIN32_LEAN_AND_MEAN
 #  define VC_EXTRALEAN
+#  define STRICT
 #  ifndef _WIN32_WINNT
 #    define _WIN32_WINNT 0x0500
 #  endif
@@ -517,7 +518,6 @@ ASCENT_FORCEINLINE void ASCENT_TOUPPER(std::string& str)
 	for(size_t i = 0; i < str.length(); ++i)
 		str[i] = (char)toupper(str[i]);
 };
-
 
 #include "MacroUtil.h"
 
