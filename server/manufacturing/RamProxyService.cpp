@@ -33,7 +33,7 @@ RamProxyService::RamProxyService(PyServiceMgr *mgr, DBcore *db)
 }
 
 RamProxyService::~RamProxyService() {
-	SafeDelete(m_dispatch);
+	delete (m_dispatch);
 }
 
 PyResult RamProxyService::Handle_GetJobs2(PyCallArgs &call) {

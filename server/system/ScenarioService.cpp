@@ -66,7 +66,7 @@ m_db(db)
 }
 
 ScenarioService::~ScenarioService() {
-	SafeDelete(m_dispatch);
+	delete(m_dispatch);
 }
 
 

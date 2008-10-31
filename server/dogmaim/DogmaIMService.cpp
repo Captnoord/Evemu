@@ -82,7 +82,7 @@ DogmaIMService::DogmaIMService(PyServiceMgr *mgr, DBcore *dbc)
 }
 
 DogmaIMService::~DogmaIMService() {
-	SafeDelete(m_dispatch);
+	delete (m_dispatch);
 }
 
 

@@ -19,36 +19,11 @@
 
 #ifndef _THREADING_MUTEX_H
 #define _THREADING_MUTEX_H
+
 #ifdef __DragonFly__
 #  include <pthread.h>
 #endif//__DragonFly__
 
-/*#ifdef WIN32
-	#ifdef _DEBUG
-		#define ASCENT_INLINE 
-		#define ASCENT_FORCEINLINE __forceinline
-	#else
-		#define ASCENT_INLINE __forceinline
-		#define ASCENT_FORCEINLINE __forceinline
-	#endif
-#else
-	#define ASCENT_INLINE inline
-	#define ASCENT_FORCEINLINE inline
-#endif
-
-#ifdef WIN32
-	#ifndef SCRIPTLIB
-		#define SERVER_DECL __declspec(dllexport)
-		#define SCRIPT_DECL __declspec(dllimport)
-	#else
-		#define SERVER_DECL __declspec(dllimport)
-		#define SCRIPT_DECL __declspec(dllexport)
-	#endif
-#else
-	#define SERVER_DECL 
-	#define SCRIPT_DECL 
-#endif*/
-             
 class SERVER_DECL Mutex
 {
 public:

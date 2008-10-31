@@ -66,7 +66,7 @@ m_dispatch(new Dispatcher(this))
 }
 
 PetitionerService::~PetitionerService() {
-	SafeDelete(m_dispatch);
+	delete (m_dispatch);
 }
 
 

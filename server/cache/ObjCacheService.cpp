@@ -126,7 +126,7 @@ ObjCacheService::ObjCacheService(PyServiceMgr *mgr, DBcore *dbc, const std::stri
 }
 
 ObjCacheService::~ObjCacheService() {
-	SafeDelete(m_dispatch);
+	delete (m_dispatch);
 }
 
 PyResult ObjCacheService::Handle_GetCachableObject(PyCallArgs &call) {

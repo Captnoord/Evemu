@@ -42,7 +42,7 @@ public:
 		PyCallable_REG_CALL(SkillMgrBound, CharAddImplant)
 		PyCallable_REG_CALL(SkillMgrBound, RemoveImplantFromCharacter)
 	}
-	virtual ~SkillMgrBound() { SafeDelete(m_dispatch); }
+	virtual ~SkillMgrBound() { delete m_dispatch; }
 	virtual void Release() {
 		//I hate this statement
 		delete this;
@@ -70,7 +70,7 @@ m_db(db)
 }
 
 SkillMgrService::~SkillMgrService() {
-	SafeDelete(m_dispatch);
+	delete m_dispatch;
 }
 
 

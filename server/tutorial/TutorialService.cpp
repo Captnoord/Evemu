@@ -36,7 +36,7 @@ TutorialService::TutorialService(PyServiceMgr *mgr, DBcore *dbc)
 }
 
 TutorialService::~TutorialService() {
-	SafeDelete(m_dispatch);
+	delete m_dispatch;
 }
 
 PyResult TutorialService::Handle_GetTutorialInfo(PyCallArgs &call) {

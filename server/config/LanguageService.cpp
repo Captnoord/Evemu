@@ -66,7 +66,7 @@ LanguageService::LanguageService(PyServiceMgr *mgr, DBcore *db)
 }
 
 LanguageService::~LanguageService() {
-	SafeDelete(m_dispatch);
+	delete (m_dispatch);
 }
 
 

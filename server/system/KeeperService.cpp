@@ -41,7 +41,7 @@ public:
 //		PyCallable_REG_CALL(KeeperBound, Reset)
 //		PyCallable_REG_CALL(KeeperBound, GotoRoom) //(int room)
 	}
-	virtual ~KeeperBound() { SafeDelete(m_dispatch); }
+	virtual ~KeeperBound() { delete (m_dispatch); }
 	virtual void Release() {
 		//I hate this statement
 		delete this;
@@ -67,7 +67,7 @@ KeeperService::KeeperService(PyServiceMgr *mgr, DBcore *db)
 }
 
 KeeperService::~KeeperService() {
-	SafeDelete(m_dispatch);
+	delete (m_dispatch);
 }
 
 PyBoundObject *KeeperService::_CreateBoundObject(Client *c, const PyRep *bind_args) {

@@ -150,13 +150,13 @@ PyRepBuffer::PyRepBuffer(byte **buffer, uint32 length)
 }
 
 PyRepBuffer::~PyRepBuffer() {
-	SafeDeleteArray(m_value);
+	delete [] m_value;
 }
 
 void PyRepBuffer::Dump(FILE *into, const char *pfx) const {
 	fprintf(into, "%sData buffer of length %ld\n", pfx, m_length);
 
-	//kinda hackish:
+	//kinda 'hackish':
 	if(m_length > 2 && *m_value == GZipStreamHeaderByte) {
 		uint32 len = GetLength();
 		byte *buf = InflatePacket(GetBuffer(), len, true);

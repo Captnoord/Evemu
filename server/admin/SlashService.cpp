@@ -70,7 +70,7 @@ SlashService::SlashService(PyServiceMgr *mgr, CommandDispatcher *cd)
 }
 
 SlashService::~SlashService() {
-	SafeDelete(m_dispatch);
+	delete m_dispatch;
 }
 
 

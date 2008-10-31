@@ -17,7 +17,7 @@
 
 
 /*
- * this file really needs to die... it is a terrible class. But I havent
+ * this file really needs to die... it is a terrible class. But I haven't
  * had time to rewrite the TCP stuff to stop using it.
  *
  *
@@ -26,6 +26,8 @@
 
 #ifndef QUEUE_H
 #define QUEUE_H
+
+#include "MacroUtil.h"
 
 template<class T>
 class MyQueue;

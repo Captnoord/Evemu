@@ -30,7 +30,7 @@ m_dispatch(new Dispatcher(this))
 }
 
 BookmarkService::~BookmarkService() {
-	SafeDelete(m_dispatch);
+	delete m_dispatch;
 }
 
 

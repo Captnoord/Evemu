@@ -35,7 +35,7 @@ BillMgrService::BillMgrService(PyServiceMgr *mgr, DBcore *db)
 }
 
 BillMgrService::~BillMgrService() {
-	SafeDelete(m_dispatch);
+	delete m_dispatch;
 }
 
 

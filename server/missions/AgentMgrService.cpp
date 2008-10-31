@@ -48,7 +48,7 @@ public:
 		PyCallable_REG_CALL(AgentMgrBound, DoAction)
 		PyCallable_REG_CALL(AgentMgrBound, GetMyJournalDetails)
 	}
-	virtual ~AgentMgrBound() { SafeDelete(m_dispatch); }
+	virtual ~AgentMgrBound() { delete m_dispatch; }
 	virtual void Release() {
 		//I hate this statement
 		delete this;
@@ -76,7 +76,7 @@ AgentMgrService::AgentMgrService(PyServiceMgr *mgr, DBcore *db)
 }
 
 AgentMgrService::~AgentMgrService() {
-	SafeDelete(m_dispatch);
+	delete m_dispatch;
 	std::map<uint32, Agent *>::iterator cur, end;
 	cur = m_agents.begin();
 	end = m_agents.end();

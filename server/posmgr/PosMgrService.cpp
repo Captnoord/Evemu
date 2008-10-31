@@ -31,7 +31,7 @@ m_db(db)
 }
 
 PosMgrService::~PosMgrService() {
-	SafeDelete(m_dispatch);
+	delete (m_dispatch);
 }
 
 /*

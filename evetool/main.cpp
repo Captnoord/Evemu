@@ -18,6 +18,7 @@
 
 #define CACHE_DIR "../data/cache"
 
+#include "Common.h"
 
 #include "../common/common.h"
 
@@ -26,7 +27,7 @@
 #include "../common/EVEUnmarshal.h"
 #include "../common/timer.h"
 //#include "../common/Mutex.h"
-#include "Mutex.h"
+#include "threading/Mutex.h"
 #include "../common/PyRep.h"
 #include "../common/Base64.h"
 #include "../common/DirWalker.h"
@@ -39,6 +40,7 @@
 #include "../common/RowsetToSQL.h"
 #include "../common/packet_types.h"
 #include "../common/DestinyBinDump.h"
+#include "../common/types.h"
 #include "../packets/General.h"
 #include "TriFile.h"
 #include <queue>
@@ -200,7 +202,8 @@ static ThreadReturnType UserInputThread(void *data) {
 	delete input_buffer;
 #endif
 	
-	THREAD_return 0;
+	//THREAD_return 0;
+	return;
 }
 
 void CatchSignal(int sig_num) {

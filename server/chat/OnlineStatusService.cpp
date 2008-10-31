@@ -32,13 +32,13 @@ m_dispatch(new Dispatcher(this))
 }
 
 OnlineStatusService::~OnlineStatusService() {
-	SafeDelete(m_dispatch);
+	delete (m_dispatch);
 }
 
 
 PyResult OnlineStatusService::Handle_GetInitialState(PyCallArgs &call) {
 
-	//this is used to query the initial online state of all friends.
+	//this is used to query the initial 'online' state of all friends.
 
 	PyRep *result = NULL;
 

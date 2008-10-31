@@ -65,7 +65,7 @@ m_db(db)
 }
 
 MissionMgrService::~MissionMgrService() {
-	SafeDelete(m_dispatch);
+	delete (m_dispatch);
 }
 
 

@@ -31,7 +31,7 @@ CharMgrService::CharMgrService(PyServiceMgr *mgr, DBcore *dbc)
 }
 
 CharMgrService::~CharMgrService() {
-	SafeDelete(m_dispatch);
+	delete m_dispatch;
 }
 
 PyResult CharMgrService::Handle_GetPublicInfo(PyCallArgs &call) {

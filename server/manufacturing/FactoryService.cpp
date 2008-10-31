@@ -32,7 +32,7 @@ FactoryService::FactoryService(PyServiceMgr *mgr, DBcore *db)
 }
 
 FactoryService::~FactoryService() {
-	SafeDelete(m_dispatch);
+	delete (m_dispatch);
 }
 
 PyResult FactoryService::Handle_GetBlueprintAttributes(PyCallArgs &call) {

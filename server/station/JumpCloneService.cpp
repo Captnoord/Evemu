@@ -35,7 +35,7 @@ public:
 		PyCallable_REG_CALL(JumpCloneBound, GetCloneState)
 		PyCallable_REG_CALL(JumpCloneBound, InstallCloneInStation)
 	}
-	virtual ~JumpCloneBound() { SafeDelete(m_dispatch); }
+	virtual ~JumpCloneBound() { delete (m_dispatch); }
 	virtual void Release() {
 		//I hate this statement
 		delete this;
@@ -62,7 +62,7 @@ JumpCloneService::JumpCloneService(PyServiceMgr *mgr, DBcore *db)
 }
 
 JumpCloneService::~JumpCloneService() {
-	SafeDelete(m_dispatch);
+	delete (m_dispatch);
 }
 
 PyBoundObject *JumpCloneService::_CreateBoundObject(Client *c, const PyRep *bind_args) {

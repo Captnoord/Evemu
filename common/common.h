@@ -125,5 +125,7 @@ using namespace std;
 #include "./types.h"
 #include "./unix.h"
 #include "./queue.h"
+
+#include "MacroUtil.h"
 	
 #endif

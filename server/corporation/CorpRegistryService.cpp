@@ -130,7 +130,7 @@ m_db(db)
 }
 
 CorpRegistryService::~CorpRegistryService() {
-	SafeDelete(m_dispatch);
+	delete m_dispatch;
 }
 
 

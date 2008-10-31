@@ -74,7 +74,7 @@ MarketProxyService::MarketProxyService(PyServiceMgr *mgr, DBcore *db)
 }
 
 MarketProxyService::~MarketProxyService() {
-	SafeDelete(m_dispatch);
+	delete (m_dispatch);
 }
 
 

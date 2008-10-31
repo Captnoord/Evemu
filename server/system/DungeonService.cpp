@@ -68,7 +68,7 @@ m_db(db)
 }
 
 DungeonService::~DungeonService() {
-	SafeDelete(m_dispatch);
+	delete (m_dispatch);
 }
 
 

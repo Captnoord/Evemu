@@ -58,7 +58,7 @@ ReprocessingService::ReprocessingService(PyServiceMgr *mgr, DBcore *db)
 }
 
 ReprocessingService::~ReprocessingService() {
-	SafeDelete(m_dispatch);
+	delete (m_dispatch);
 }
 
 PyBoundObject *ReprocessingService::_CreateBoundObject(Client *c, const PyRep *bind_args) {
