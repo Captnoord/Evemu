@@ -31,7 +31,7 @@ StreamPacketizer::Packet::Packet(uint32 len) {
 		data = NULL;
 }
 StreamPacketizer::Packet::~Packet() {
-	delete[] data;
+	SafeDeleteArray(data);
 }
 
 StreamPacketizer::Packet *StreamPacketizer::Packet::Clone() const {
@@ -51,8 +51,7 @@ StreamPacketizer::~StreamPacketizer() {
 }
 
 void StreamPacketizer::ClearBuffers() {
-	delete[] m_partial;
-	m_partial = NULL;
+	SafeDeleteArray(m_partial);
 	
 	while(!m_packets.empty()) {
 		delete m_packets.front();
@@ -113,8 +112,7 @@ void StreamPacketizer::InputBytes(const byte *data, uint32 len) {
 				data += need_bytes;
 				
 				m_payloadLength = *((const uint32 *) m_partial);
-				delete[] m_partial;
-				m_partial = NULL;
+				SafeDeleteArray(m_partial);
 				m_partialLength = 0;
 				
 				//let the loop handle the data segment now.

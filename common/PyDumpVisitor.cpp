@@ -55,7 +55,7 @@ void PyLogsysDump::_print(const char *str, ...) {
 	char *buf = new char[len];
 	snprintf(buf, len, "%s%s", top(), str);
 	log_messageVA(m_type, buf, l);
-	delete[] buf;
+	SafeDeleteArray(buf);
 	va_end(l);
 }
 
@@ -81,7 +81,7 @@ void PyFileDump::_print(const char *str, ...) {
 	char *buf = new char[len];
 	snprintf(buf, len, "%s%s\n", top(), str);
 	vfprintf(m_into, buf, l);
-	delete[] buf;
+	SafeDeleteArray(buf);
 	va_end(l);
 }
 
@@ -141,7 +141,7 @@ void PyDumpVisitor::VisitBuffer(const PyRepBuffer *rep) {
 			p += "  ";
 			_print("  Data buffer contains gzipped data of length %lu", len);
 			_hexDump(buf, len);
-			delete[] buf;
+			SafeDeleteArray(buf);
 		}
 	} else if(rep->GetLength() > 0) {
 		_hexDump(rep->GetBuffer(), rep->GetLength());

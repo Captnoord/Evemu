@@ -130,7 +130,7 @@ PyRep *MakeCustomError(const char *fmt, ...) {
 
 	std::map<std::string, PyRep *> args;
 	args["error"] = new PyRepString(str);
-	delete[] str;
+	SafeDeleteArray(str);
 
 	return(MakeUserError("CustomError", args));
 }

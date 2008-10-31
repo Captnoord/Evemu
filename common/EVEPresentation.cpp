@@ -133,7 +133,7 @@ void EVEPresentation::_QueueRep(const PyRep *rep) {
 			//deflation successful
 			_log(NET__PRES_TRACE, "%s: Successfully deflated packet from length %lu to length %lu (%.02f).", GetConnectedAddress().c_str(), packet->length, deflen, double(deflen)/double(packet->length));
 
-			delete[] packet->data;
+			SafeDeleteArray(packet->data);
 			packet->length = deflen;
 			packet->data = deflated;
 		} else

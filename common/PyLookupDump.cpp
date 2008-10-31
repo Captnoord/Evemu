@@ -91,7 +91,7 @@ bool PyLookupResolver::LoadIntFile(const char *file) {
 			continue;
 		m_intRecords[v] = p;
 	}
-	delete[] buf;
+	SafeDeleteArray(buf);
 	fclose(f);
 	return(true);
 }
@@ -125,7 +125,7 @@ bool PyLookupResolver::LoadStringFile(const char *file) {
 		
 		m_strRecords[buf] = p;
 	}
-	delete[] buf;
+	SafeDeleteArray(buf);
 	fclose(f);
 	return(true);
 }

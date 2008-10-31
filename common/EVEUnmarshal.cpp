@@ -111,10 +111,9 @@ PyRep *InflateAndUnmarshal(const byte *body, uint32 body_len)
 		_log(NET__PRES_ERROR, "Failed to unmarshal data!");
 		if(post_inflate_body != orig_body)
 		{
-			delete[] post_inflate_body;
+			SafeDeleteArray(post_inflate_body);
 		}
-		delete state;
-		return NULL;
+		SafeDelete(state);
 	}
 
 	//total shit:

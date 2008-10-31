@@ -45,7 +45,7 @@ voidpf e_alloc_func(voidpf opaque, uInt items, uInt size) {
 }
 
 void e_free_func(voidpf opaque, voidpf address) {
-	delete[] (byte *)address;
+	SafeDeleteArray((byte *)address);
 }
 #endif
 

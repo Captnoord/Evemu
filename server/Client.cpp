@@ -291,7 +291,7 @@ void Client::SendErrorMsg(const char *fmt, ...) {
 	
 	SendNotification("OnRemoteMessage", "charid", &tmp);
 	
-	delete[] str;
+	SafeDeleteArray(str);
 }
 
 //this displays a modal info dialog on the client side.
@@ -314,7 +314,7 @@ void Client::SendInfoModalMsg(const char *fmt, ...) {
 	
 	SendNotification("OnRemoteMessage", "charid", &tmp);
 	
-	delete[] str;
+	SafeDeleteArray(str);
 }
 
 //this displays a little notice (like combat messages)
@@ -337,7 +337,7 @@ void Client::SendNotifyMsg(const char *fmt, ...) {
 	
 	SendNotification("OnRemoteMessage", "charid", &tmp);
 	
-	delete[] str;
+	SafeDeleteArray(str);
 }
 
 //there may be a less hackish way to do this.
@@ -350,7 +350,7 @@ void Client::SelfChatMessage(const char *fmt, ...) {
 
 	if(m_channels.empty()) {
 		_log(CLIENT__ERROR, "%s: Tried to send self chat, but we are not joined to any channels: %s", GetName(), str);
-		delete[] str;
+		SafeDeleteArray(str);
 		return;
 	}
 
@@ -378,7 +378,7 @@ void Client::SelfChatMessage(const char *fmt, ...) {
 		}
     }*/
 	
-	delete[] str;
+	SafeDeleteArray(str);
 }
 
 void Client::ChannelJoined(LSCChannel *chan) {

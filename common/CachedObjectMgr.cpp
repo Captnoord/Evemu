@@ -209,14 +209,13 @@ void CachedObjectMgr::_UpdateCache(const PyRep *objectID, byte **data, uint32 le
 	if(buf == NULL || deflen >= length) {
 		//failed to deflate or it did no good (client checks this)
 		//passes ownership of the encoded buffer to the new PyRepBuffer
-		delete[] buf;
+		SafeDeleteArray(buf);
 		buf = NULL;
 		r->cache = new PyRepBuffer(data, length);
 	} else {
 		//compression successful, use that.
 		r->cache = new PyRepBuffer(&buf, deflen);
-		delete[] *data;
-		*data = NULL;
+		SafeDeleteArray(*data);
 	}
 	
 	r->version = CRC32::Generate(r->cache->GetBuffer(), r->cache->GetLength());

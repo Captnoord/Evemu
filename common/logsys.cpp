@@ -115,7 +115,7 @@ void log_messageVA(LogType type, const char *fmt, va_list args) {
 	char * msg = new char[size + 1];
 	vsnprintf(msg, size + 1, fmt, args); msg[size] = '\0';
 	message += msg;
-	delete[] msg;
+	SafeDeleteArray(msg);
 
 	//print into the console
 	printf("%s\n", message.c_str());

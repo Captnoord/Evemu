@@ -70,7 +70,7 @@ bool DBcore::RunQuery(DBQueryResult &into, const char *query_fmt, ...) {
 	va_end(args);
 	
 	if(!DoQuery_locked(into.error, query, querylen)) {
-		delete[] query;
+		SafeDeleteArray(query);
 		return(false);
 	}
 
@@ -79,10 +79,10 @@ bool DBcore::RunQuery(DBQueryResult &into, const char *query_fmt, ...) {
 		into.error.SetError(0xFFFF, "DBcore::RunQuery: No Result");
 		_log(DATABASE__QUERIES, "Query failed due to no result");
 		_log(DATABASE__ALL_ERRORS, "DB Query '%s' did not return a result, but the caller requested them.", query);
-		delete[] query;
+		SafeDeleteArray(query);
 		return(false);
 	}
-	delete[] query;
+	SafeDeleteArray(query);
 
 	MYSQL_RES *result = mysql_store_result(&mysql);
 
@@ -148,11 +148,11 @@ bool DBcore::RunQuery(DBerror &err, const char *query_fmt, ...) {
 	va_end(args);
 
 	if(!DoQuery_locked(err, query, querylen)) {
-		delete[] query;
+		SafeDeleteArray(query);
 		return(false);
 	}
 	
-	delete[] query;
+	SafeDeleteArray(query);
 	return(true);
 }
 
@@ -167,10 +167,10 @@ bool DBcore::RunQuery(DBerror &err, uint32 &affected_rows, const char *query_fmt
 	va_end(args);
 
 	if(!DoQuery_locked(err, query, querylen)) {
-		delete[] query;
+		SafeDeleteArray(query);
 		return(false);
 	}
-	delete[] query;
+	SafeDeleteArray(query);
 	
 	affected_rows = mysql_affected_rows(&mysql);
 	
@@ -188,10 +188,10 @@ bool DBcore::RunQueryLID(DBerror &err, uint32 &last_insert_id, const char *query
 	va_end(args);
 	
 	if(!DoQuery_locked(err, query, querylen)) {
-		delete[] query;
+		SafeDeleteArray(query);
 		return(false);
 	}
-	delete[] query;
+	SafeDeleteArray(query);
 	
 	last_insert_id = mysql_insert_id(&mysql);
 	
@@ -278,7 +278,7 @@ void DBcore::DoEscapeString(std::string &to, const std::string &from) {
 	char *buf = new char[len*2 + 1];
 	len = mysql_real_escape_string(&mysql, buf, from.c_str(), len);
 	to.assign(buf, len);
-	delete[] buf;
+	SafeDeleteArray(buf);
 }
 
 //look for things in the string which might cause SQL problems
@@ -625,7 +625,7 @@ void ListToINString(const std::vector<uint32> &ints, std::string &into, const ch
 	}
 
 	into = inbuffer;
-	delete[] inbuffer;
+	SafeDeleteArray(inbuffer);
 }
 
 

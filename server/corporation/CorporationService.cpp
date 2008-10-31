@@ -95,8 +95,8 @@ PyResult CorporationService::Handle_GetFactionInfo(PyCallArgs &call) {
 	byte *data = ss->data;
 	ss->data = new byte[ss->length];
 	memcpy(ss->data, data + 79, ss->length);
-	delete[] data;
-	delete ss->decoded;
+	SafeDeleteArray(data);
+	SafeDelete(ss->decoded);
 	ss->decoded = NULL;
 	
 	_log(CLIENT__MESSAGE, "Sending cache reply for GetFactionInfo");
