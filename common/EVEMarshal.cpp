@@ -203,7 +203,7 @@ public:
 
 	virtual void VisitPackedObject1(const PyRepPackedObject1 *rep) {
 		PutByte(Op_PackedObject1);
-		//this is little hackish, but we dont have to clone whole contents
+		//this is little 'hackish', but we don't have to clone whole contents
 		if(rep->keywords.empty())
 			PutByte(Op_PyTwoTuple);
 		else {

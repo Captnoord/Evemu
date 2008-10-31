@@ -143,7 +143,7 @@ int vaMakeAnyLenString(char** ret, const char* format, va_list argptr) {
 	int buf_len = 256;
     int chars = -1;
 	while (chars == -1 || chars >= buf_len) {
-		safe_delete_array(*ret);
+		SafeDeleteArray(*ret);
 		if (chars == -1)
 			buf_len *= 2;
 		else
@@ -173,7 +173,7 @@ int32 AppendAnyLenString(char** ret, int32* bufsize, int32* strlen, const char* 
 		if (oldret) {
 			if (*strlen)
 				memcpy(*ret, oldret, *strlen);
-			safe_delete(oldret);
+			SafeDelete(oldret);
 		}
 		chars = vsnprintf(&(*ret)[*strlen], (*bufsize-*strlen), format, argptr);
 	}

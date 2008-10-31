@@ -45,7 +45,7 @@ BigNumber::BigNumber(uint32 val)
 BigNumber::~BigNumber()
 {
 	BN_free(_bn);
-	delete[] _array;
+	SafeDeleteArray(_array);
 }
 
 void BigNumber::SetDword(uint32 val)
@@ -165,10 +165,7 @@ uint32 BigNumber::AsDword()
 
 uint8 *BigNumber::AsByteArray()
 {
-	if (_array) {
-		delete[] _array;
-		_array = NULL;
-	}
+	SafeDeleteArray(_array);
 	_array = new uint8[GetNumBytes()];
 	BN_bn2bin(_bn, (unsigned char *)_array);
 

@@ -22,14 +22,14 @@
 
 #ifdef WIN32
 //#  pragma warning(disable:4996)
-#  pragma warning(disable:4251)		// dll-interface warning, related to objects that doesn't have a declspec defenition
+#  pragma warning(disable:4251)		// 'dll'-interface warning, related to objects that doesn't have a 'declspec' definition
 
 // VC9 related 'CRT' warnings
 // TODO check if these warnings can be fixed in a cross platform way
 #  define _CRT_SECURE_NO_WARNINGS 1
 #  define _CRT_SECURE_NO_DEPRECATE 1
 #  define _CRT_SECURE_COPP_OVERLOAD_STANDARD_NAMES 1
-#endif
+#endif//WIN32
 
 enum TimeVariables
 {
@@ -49,18 +49,22 @@ enum MsTimeVariables
 	MSTIME_DAY	= MSTIME_HOUR * 24,
 };
 
+/* 'inlined' functions can improve performance, the compiler will judge how this will be handled.
+ * '__forceinline' functions can improve performance but only under certain circumstances
+ * url: http://msdn.microsoft.com/en-us/library/z8y1yy88(VS.80).aspx
+ */
 #ifdef WIN32
 #  ifdef _DEBUG
-#    define ASCENT_INLINE
+#    define ASCENT_INLINE __inline
 #    define ASCENT_FORCEINLINE __forceinline
 #  else
 #    define ASCENT_INLINE __forceinline
 #    define ASCENT_FORCEINLINE __forceinline
-#  endif
+#  endif//_DEBUG
 #else
 #  define ASCENT_INLINE inline
 #  define ASCENT_FORCEINLINE inline
-#endif
+#endif//WIN32
 
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
@@ -77,6 +81,7 @@ enum MsTimeVariables
 
 #if defined( __WIN32__ ) || defined( WIN32 ) || defined( _WIN32 )
 #  define WIN32_LEAN_AND_MEAN
+#  define VC_EXTRALEAN
 #  ifndef _WIN32_WINNT
 #    define _WIN32_WINNT 0x0500
 #  endif
@@ -512,5 +517,24 @@ ASCENT_FORCEINLINE void ASCENT_TOUPPER(std::string& str)
 	for(size_t i = 0; i < str.length(); ++i)
 		str[i] = (char)toupper(str[i]);
 };
+
+/* Basic programming tips
+ * URL: http://nedprod.com/programs/index.html
+ * Note: always nullify pointers after deletion
+ */
+#define ASCENT_ENABLE_SAFE_DELETE
+#define ASCENT_ENABLE_EXTRA_SAFE_DELETE
+#ifndef ASCENT_ENABLE_SAFE_DELETE
+#  define SafeDelete(p) { delete p; }
+#  define SafeDeleteArray(p) { delete [] p; }
+#else
+#  ifndef ASCENT_ENABLE_EXTRA_SAFE_DELETE
+#    define SafeDelete(p) { delete p; p = NULL; }
+#    define SafeDeleteArray(p) { if (p != NULL) { delete [] p; p = NULL; } }
+#  else
+#    define SafeDelete(p) { delete p; p = NULL; }
+#    define SafeDeleteArray(p) { delete [] p; p = NULL; }
+#  endif//ASCENT_ENABLE_EXTRA_SAFE_DELETE
+#endif//ASCENT_ENABLE_SAFE_DELETE
 
 #endif

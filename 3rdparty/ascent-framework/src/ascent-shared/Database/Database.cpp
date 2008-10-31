@@ -160,7 +160,7 @@ void Database::PerformQueryBuffer(QueryBuffer * b, DatabaseConnection * ccon)
 	for(vector<char*>::iterator itr = b->queries.begin(); itr != b->queries.end(); ++itr)
 	{
 		_SendQuery(con, *itr, false);
-		delete[] (*itr);
+		SafeDeleteArray(*itr);
 	}
 
 	_EndTransaction(con);
@@ -234,7 +234,7 @@ bool Database::run()
 	while(query)
 	{
 		_SendQuery( con, query, false );
-		delete[] query;
+		SafeDeleteArray(query);
 		if(m_threadRunning == true)
 			break;
 
@@ -252,7 +252,7 @@ bool Database::run()
 			DatabaseConnection * con = GetFreeConnection();
 			_SendQuery( con, query, false );
 			con->Busy.Release();
-			delete[] query;
+			SafeDeleteArray(query);
 			query=queries_queue.pop_nowait();
 		}
 	}
@@ -296,10 +296,8 @@ AsyncQuery::~AsyncQuery()
 	delete func;
 	for(vector<AsyncQueryResult>::iterator itr = queries.begin(); itr != queries.end(); ++itr)
 	{
-		if(itr->result)
-			delete itr->result;
-
-		delete[] itr->query;
+		SafeDelete(itr->result);
+		SafeDeleteArray(itr->query);
 	}
 }
 

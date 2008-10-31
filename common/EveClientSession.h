@@ -35,6 +35,8 @@ public:
 	EveClientSession(uint32 userId, string name, EveClientSocket *sock );
 	~EveClientSession();
 
+	void OutPacket(PyRep* packet) {if(_socket) _socket->OutPacket(packet);}
+
 	ASCENT_INLINE void QueuePacket(PyPacket* packet);
 
 	ASCENT_INLINE EveClientSocket* GetSocket();
@@ -54,10 +56,13 @@ public:
 
 	uint32 GetUserId() { return _userId;}
 
-private:
+/************************************************************************/
+/* Packet Utility functions                                             */
+/************************************************************************/
 
-	/* hack fix for deleting packets */
-	bool _DeletePyPacket(PyPacket* packet);
+	void _sendLoginFailed();
+
+private:
 
 	EveClientSocket *_socket;
 

@@ -110,9 +110,9 @@ TCPConnection::~TCPConnection() {
 		cout << "Deconstructor on incomming TCP# " << GetID() << endl;
 	}
 #endif
-	safe_delete_array(recvbuf);
-	safe_delete_array(sendbuf);
-	safe_delete_array(charAsyncConnect);
+	SafeDeleteArray(recvbuf);
+	SafeDeleteArray(sendbuf);
+	SafeDeleteArray(charAsyncConnect);
 }
 
 void TCPConnection::SetState(State_t in_state) {
@@ -195,7 +195,7 @@ void TCPConnection::ServerSendQueuePushEnd(const uchar* head_data, int32 head_si
 		sendbuf_size += size + 1024;
 		uchar* tmp = new uchar[sendbuf_size];
 		memcpy(tmp, sendbuf, sendbuf_used);
-		safe_delete_array(sendbuf);
+		SafeDeleteArray(sendbuf);
 		sendbuf = tmp;
 	}
 	memcpy(&sendbuf[sendbuf_used], head_data, head_size);
@@ -220,7 +220,7 @@ void TCPConnection::ServerSendQueuePushEnd(const uchar* head_data, int32 head_si
 		sendbuf_size += size + 1024;
 		uchar* tmp = new uchar[sendbuf_size];
 		memcpy(tmp, sendbuf, sendbuf_used);
-		safe_delete_array(sendbuf);
+		SafeDeleteArray(sendbuf);
 		sendbuf = tmp;
 	}
 	memcpy(&sendbuf[sendbuf_used], head_data, head_size);
@@ -228,7 +228,7 @@ void TCPConnection::ServerSendQueuePushEnd(const uchar* head_data, int32 head_si
 	memcpy(&sendbuf[sendbuf_used], *data, data_size);
 	sendbuf_used += data_size;
 	MSendQueue.unlock();
-	safe_delete_array(*data);
+	SafeDeleteArray(*data);
 }
 
 void TCPConnection::ServerSendQueuePushEnd(const uchar* data, int32 size) {
@@ -242,7 +242,7 @@ void TCPConnection::ServerSendQueuePushEnd(const uchar* data, int32 size) {
 		sendbuf_size += size + 1024;
 		uchar* tmp = new uchar[sendbuf_size];
 		memcpy(tmp, sendbuf, sendbuf_used);
-		safe_delete_array(sendbuf);
+		SafeDeleteArray(sendbuf);
 		sendbuf = tmp;
 	}
 	memcpy(&sendbuf[sendbuf_used], data, size);
@@ -264,13 +264,13 @@ void TCPConnection::ServerSendQueuePushEnd(uchar** data, int32 size) {
 		sendbuf_size += size;
 		uchar* tmp = new uchar[sendbuf_size];
 		memcpy(tmp, sendbuf, sendbuf_used);
-		safe_delete_array(sendbuf);
+		SafeDeleteArray(sendbuf);
 		sendbuf = tmp;
 	}
 	memcpy(&sendbuf[sendbuf_used], *data, size);
 	sendbuf_used += size;
 	MSendQueue.unlock();
-	safe_delete_array(*data);
+	SafeDeleteArray(*data);
 }
 
 void TCPConnection::ServerSendQueuePushFront(uchar* data, int32 size) {
@@ -284,7 +284,7 @@ void TCPConnection::ServerSendQueuePushFront(uchar* data, int32 size) {
 		sendbuf_size += size;
 		uchar* tmp = new uchar[sendbuf_size];
 		memcpy(&tmp[size], sendbuf, sendbuf_used);
-		safe_delete_array(sendbuf);
+		SafeDeleteArray(sendbuf);
 		sendbuf = tmp;
 	}
 	memcpy(sendbuf, data, size);
@@ -399,7 +399,7 @@ bool TCPConnection::ConnectReady() const {
 }
 
 void TCPConnection::AsyncConnect(const char* irAddress, int16 irPort) {
-	safe_delete_array(charAsyncConnect);
+	SafeDeleteArray(charAsyncConnect);
 	charAsyncConnect = new char[strlen(irAddress) + 1];
 	strcpy(charAsyncConnect, irAddress);
 	AsyncConnect((int32) 0, irPort);
@@ -432,7 +432,7 @@ void TCPConnection::AsyncConnect(int32 irIP, int16 irPort) {
 #endif
 	pAsyncConnect = true;
 	if(irIP != 0)
-		safe_delete_array(charAsyncConnect);
+		SafeDeleteArray(charAsyncConnect);
 	rIP = irIP;
 	rPort = irPort;
 	MAsyncConnect.unlock();
@@ -562,12 +562,12 @@ void TCPConnection::ClearBuffers() {
 	LockMutex lock1(&MSendQueue);
 	LockMutex lock3(&MRunLoop);
 	LockMutex lock4(&MState);
-	safe_delete_array(recvbuf);
-	safe_delete_array(sendbuf);
+	SafeDeleteArray(recvbuf);
+	SafeDeleteArray(sendbuf);
 	
 	char* line = 0;
 	while ((line = LineOutQueue.pop()))
-		safe_delete_array(line);
+		SafeDeleteArray(line);
 }
 
 bool TCPConnection::CheckNetActive() {
@@ -617,7 +617,7 @@ bool TCPConnection::Process() {
 				break;
 			}
 			//else, send buffer is empty.
-			safe_delete_array(sendbuf);
+			SafeDeleteArray(sendbuf);
 		} //else, no send buffer, we are done.
 		MSendQueue.unlock();
 	}
@@ -673,7 +673,7 @@ bool TCPConnection::RecvData(char* errbuf) {
 		uchar* tmpbuf = new uchar[recvbuf_size + 5120];
 		memcpy(tmpbuf, recvbuf, recvbuf_used);
 		recvbuf_size += 5120;
-		safe_delete_array(recvbuf);
+		SafeDeleteArray(recvbuf);
 		recvbuf = tmpbuf;
 		if (recvbuf_size >= MaxTCPReceiveBufferSize) {
 			if (errbuf)
@@ -767,7 +767,7 @@ bool TCPConnection::ProcessReceivedData(char* errbuf)
 					i = -1;
 				} else {
 					if (i == recvbuf_used) {
-						safe_delete_array(recvbuf);
+						SafeDeleteArray(recvbuf);
 						i = -1;
 					}
 					else {
@@ -776,7 +776,7 @@ bool TCPConnection::ProcessReceivedData(char* errbuf)
 						memcpy(recvbuf, &tmpdel[i+1], recvbuf_used-i);
 						recvbuf_used -= i + 1;
 						recvbuf_echo -= i + 1;
-						safe_delete_array(tmpdel);
+						SafeDeleteArray(tmpdel);
 						i = -1;
 					}
 				}
@@ -832,7 +832,7 @@ bool TCPConnection::ProcessReceivedData(char* errbuf)
 					else
 						cout << "recbuf left: None" << endl;
 #endif
-					safe_delete_array(tmpdel);
+					SafeDeleteArray(tmpdel);
 					i = -1;
 					m_previousLineEnd = true;
 				}
@@ -861,7 +861,7 @@ bool TCPConnection::ProcessReceivedData(char* errbuf)
 					memcpy(&recvbuf[i-1], &tmpdel[i+1], recvbuf_used-i);
 					recvbuf_used -= 2;
 					recvbuf_echo -= 2;
-					safe_delete_array(tmpdel);
+					SafeDeleteArray(tmpdel);
 					i -= 2;
 				}
 				break;
@@ -872,7 +872,7 @@ bool TCPConnection::ProcessReceivedData(char* errbuf)
 		}
 	}
 	if (recvbuf_used < 0)
-		safe_delete_array(recvbuf);
+		SafeDeleteArray(recvbuf);
 	return true;
 }
 
@@ -936,7 +936,7 @@ bool TCPConnection::SendData(bool &sent_something, char* errbuf) {
 			ServerSendQueuePushFront(data, size);
 		}
 
-		safe_delete_array(data);
+		SafeDeleteArray(data);
 		if (status == SOCKET_ERROR) {
 #ifdef WIN32
 			if (WSAGetLastError() != WSAEWOULDBLOCK)

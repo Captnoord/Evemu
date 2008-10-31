@@ -146,7 +146,7 @@ bool ConfigFile::SetSource(const char *file, bool /*ignorecase*/)
 		fread(buf, length, 1, f);
 		buf[length] = '\0';
 		string buffer = string(buf);
-		delete [] buf;
+		SafeDeleteArray(buf);
 		
 		/* close the file, it is no longer needed */
 		fclose(f);

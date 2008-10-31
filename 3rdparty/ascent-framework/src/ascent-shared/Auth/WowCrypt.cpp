@@ -170,8 +170,7 @@ WowCrypt::~WowCrypt()
 {
 	if( _key != NULL )
 	{
-		delete [] _key;
-		//_key = NULL;
+		SafeDeleteArray(_key);
 	}
 }
 

@@ -91,12 +91,15 @@ public:
 				memcpy(arg[argnum], argplus[argnum], l);
 		}
 	}
-	~Seperator() {
+	~Seperator()
+	{
 		for (int i=0; i<=maxargnum; i++)
-			safe_delete_array(arg[i]);
-		safe_delete_array(arg);
-		safe_delete_array(argplus);
-		safe_delete_array(msg);
+		{
+			SafeDeleteArray(arg[i]);
+		}
+		SafeDeleteArray(arg);
+		SafeDeleteArray(argplus);
+		SafeDeleteArray(msg);
 	}
 	int16 argnum;
 	char** arg;

@@ -561,12 +561,19 @@ void EveClientSocket::_authStateHandshakeSend(PyRep* packet)
 	mAuthed = true;
 }
 
+/* 'ingame' packet dispatcher */
+
+/* Packet fact list
+   - in game packet aren't 'PackedObject1' as it seems ( assumption based on the old code )
+
+*/
 void EveClientSocket::_authStateDone(PyRep* packet)
 {
-	Log.Debug("ClientSocket","received packet 'whooo' we passed authorization");
+	//Log.Debug("ClientSocket","received packet 'whooo' we passed authorization");
 
+	// small hack to manage to handle the unexpected stuff..
 	// and of course is this not the correct way 'todo' this
-	/*if ( packet->CheckType(PyRep::PackedObject1) == true )
+	if ( packet->CheckType(PyRep::PackedObject1) == true )
 	{
 		Log.Debug("AuthStateMachine","Exception debug string:%s", ((PyRepPackedObject1*)packet)->type.c_str());
 		
@@ -575,11 +582,11 @@ void EveClientSocket::_authStateDone(PyRep* packet)
 		//mCurrentStateMachine = &EveClientSocket::_authStateException;
 		//(this->*mCurrentStateMachine)(recvPyPacket);
 
-		Log.Debug("AuthStateMachine","Exception noticed");
+		//Log.Debug("AuthStateMachine","Exception noticed");
 		//mCurrentStateMachine(packet);
 		_authStateException(packet);
 		return;		
-	}*/
+	}
 
 	//take the PyRep and turn it into a PyPacket
 	PyPacket *pyPacket = new PyPacket;
@@ -603,5 +610,7 @@ void EveClientSocket::_authStateException(PyRep* packet)
 	//data.append(packet->)
 
 	// whoo delete if for now
-	delete packet;
+	//delete packet;
+	delete obj;
+	obj = NULL;
 }

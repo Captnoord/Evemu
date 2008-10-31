@@ -113,8 +113,6 @@ typedef const char Const_char;	//for perl XS
 	#define THREAD_RETURN(x) return(x);
 #endif
 
-#define safe_delete(d) if(d) { delete d; d=0; }
-#define safe_delete_array(d) if(d) { delete[] d; d=0; }
 #define L32(i)	((int32) i)
 #define H32(i)	((int32) (i >> 32))
 #define L16(i)	((int16) i)

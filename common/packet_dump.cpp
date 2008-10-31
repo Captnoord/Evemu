@@ -87,7 +87,7 @@ void DumpPacketHex(const uchar* buf, int32 size, int32 cols, int32 skip) {
 		cout << "   ";
 	}
 	cout << " | " << ascii << endl;
-	safe_delete_array(ascii);
+	SafeDeleteArray(ascii);
 }
 
 void DumpPacket(const uchar* buf, int32 size)

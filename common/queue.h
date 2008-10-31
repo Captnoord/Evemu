@@ -81,7 +81,7 @@ public:
 
         T* data = head->data;
         MyQueueNode<T>* next_node = head->next;
-        delete head;
+        SafeDelete(head);
         head = next_node;
 
         return data;
@@ -111,7 +111,7 @@ public:
     {
 		T* d = 0;
         while((d = pop())) {
-			delete d;
+			SafeDelete(d);
 		}
         return;
     }
