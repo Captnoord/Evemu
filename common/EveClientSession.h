@@ -55,6 +55,10 @@ public:
 	uint32 GetUserId() { return _userId;}
 
 private:
+
+	/* hack fix for deleting packets */
+	bool _DeletePyPacket(PyRep* packet);
+
 	EveClientSocket *_socket;
 
 	uint32 _userId;
