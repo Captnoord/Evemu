@@ -236,7 +236,7 @@ public:
 	{
 		map<Socket*, time_t>::iterator i;
 		for(i=deletionQueue.begin();i!=deletionQueue.end();++i)
-			delete i->first;
+			SafeDelete(i->first);
 	}
 
 	void Update()

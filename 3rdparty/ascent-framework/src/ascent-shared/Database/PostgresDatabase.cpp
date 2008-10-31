@@ -28,8 +28,7 @@
 
 PostgresDatabase::~PostgresDatabase()
 {
-	//if ( mConnections )
-	//	delete [] mConnections;
+	//SafeDeleteArray(mConnections);
 }
 
 PostgresDatabase::PostgresDatabase() : Database()
@@ -157,11 +156,9 @@ void PostgresDatabase::Shutdown()
 		PQfinish( con->PgSql );
 
 		// delete the internal connection
-		delete mConnections[i];
-		mConnections[i] = NULL;
+		SafeDelete(mConnections[i]);
 	}
-	delete [] mConnections;
-	mConnections = NULL;
+	SafeDeleteArray(mConnections);
 	Log.Success("PostgresDatabase", "Shutdown complete", i);
 }
 
@@ -213,7 +210,7 @@ PostgresQueryResult::PostgresQueryResult(PGresult* res, uint32 FieldCount, uint3
 PostgresQueryResult::~PostgresQueryResult()
 {
 	PQclear(mResult);
-	delete [] mCurrentRow;
+	SafeDeleteArray(mCurrentRow);
 }
 
 bool PostgresQueryResult::NextRow()

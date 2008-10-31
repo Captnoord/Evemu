@@ -28,9 +28,9 @@
 MySQLDatabase::~MySQLDatabase()
 {
 	for(int32 i = 0; i < mConnectionCount; ++i)
-		delete mConnections[i];
+		SafeDelete(mConnections[i]);
 
-	delete [] mConnections;
+	SafeDeleteArray(mConnections);
 }
 
 MySQLDatabase::MySQLDatabase() : Database()
@@ -182,7 +182,7 @@ MySQLQueryResult::MySQLQueryResult(MYSQL_RES* res, uint32 FieldCount, uint32 Row
 MySQLQueryResult::~MySQLQueryResult()
 {
 	mysql_free_result(mResult);
-	delete [] mCurrentRow;
+	SafeDeleteArray(mCurrentRow);
 }
 
 bool MySQLQueryResult::NextRow()

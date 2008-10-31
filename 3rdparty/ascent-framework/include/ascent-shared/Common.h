@@ -530,10 +530,10 @@ ASCENT_FORCEINLINE void ASCENT_TOUPPER(std::string& str)
 #else
 #  ifndef ASCENT_ENABLE_EXTRA_SAFE_DELETE
 #    define SafeDelete(p) { delete p; p = NULL; }
-#    define SafeDeleteArray(p) { if (p != NULL) { delete [] p; p = NULL; } }
+#    define SafeDeleteArray(p) { delete [] p; p = NULL; }
 #  else
 #    define SafeDelete(p) { delete p; p = NULL; }
-#    define SafeDeleteArray(p) { delete [] p; p = NULL; }
+#    define SafeDeleteArray(p) { if (p != NULL) { delete [] p; p = NULL; } }
 #  endif//ASCENT_ENABLE_EXTRA_SAFE_DELETE
 #endif//ASCENT_ENABLE_SAFE_DELETE
 

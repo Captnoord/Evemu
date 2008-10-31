@@ -293,7 +293,7 @@ void AsyncQuery::Perform()
 
 AsyncQuery::~AsyncQuery()
 {
-	delete func;
+	SafeDelete(func);
 	for(vector<AsyncQueryResult>::iterator itr = queries.begin(); itr != queries.end(); ++itr)
 	{
 		SafeDelete(itr->result);
@@ -340,7 +340,7 @@ void Database::thread_proc_query()
 	while( q != NULL )
 	{
 		PerformQueryBuffer( q, con );
-		delete q;
+		SafeDelete(q);
 
 		if( !m_threadRunning )
 			break;
@@ -355,7 +355,7 @@ void Database::thread_proc_query()
 	while( q != NULL )
 	{
 		PerformQueryBuffer( q, NULL );
-		delete q;
+		SafeDelete(q);
 
 		q = query_buffer.pop_nowait( );
 	}
@@ -381,11 +381,11 @@ void Database::AddQueryBuffer(QueryBuffer * b)
 	else
 	{
 		PerformQueryBuffer( b, NULL );
-		delete b;
+		SafeDelete(b);
 	}
 }
 
 void Database::FreeQueryResult(QueryResult * p)
 {
-	delete p;
+	SafeDelete(p);
 }

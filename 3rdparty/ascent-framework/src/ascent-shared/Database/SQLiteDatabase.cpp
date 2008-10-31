@@ -28,7 +28,7 @@
 
 SQLiteDatabase::~SQLiteDatabase()
 {
-	delete mConnections[0];
+	SafeDelete(mConnections[0]);
 }
 
 SQLiteDatabase::SQLiteDatabase() : Database()
@@ -172,7 +172,7 @@ SQLiteQueryResult::SQLiteQueryResult(char** res, uint32 FieldCount, uint32 RowCo
 SQLiteQueryResult::~SQLiteQueryResult()
 {
 	sqlite3_free_table( mResult );
-	delete [] mCurrentRow;
+	SafeDeleteArray(mCurrentRow);
 }
 
 bool SQLiteQueryResult::NextRow()

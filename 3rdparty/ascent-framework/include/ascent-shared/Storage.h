@@ -56,7 +56,7 @@ public:
 
 	void Free()
 	{
-		delete [] _pool;
+		SafeDeleteArray(_pool);
 	}
 };
 #endif
@@ -141,7 +141,7 @@ public:
         T ** a = new T*[Max];
 		memset(a,0,sizeof(T*)*Max);
 		memcpy(a, _array, sizeof(T*) * _max);
-		delete [] _array;
+		SafeDeleteArray(_array);
 		_array = a;
 		_max = Max;
 	}
@@ -157,7 +157,7 @@ public:
 #else
 		_pool.Free();
 #endif
-		delete [] _array;
+		SafeDeleteArray(_array);
 	}
 
 	/** Allocates entry Entry in the array and sets the pointer, and returns
