@@ -239,7 +239,7 @@ void EveClientSocket::OnRead()
 		// this is the end of the road for the used read buffer
 		if ( packet != NULL)
 		{
-			delete packet;
+			SafeDelete(packet);
 		}
 	}
 }
@@ -460,7 +460,7 @@ void EveClientSocket::_authStateCryptoChallenge(PyRep* packet)
 	// whoo recycle the incomming pointer
 	packet = server_shake.Encode();
 	OutPacket(packet);
-	delete packet;
+	SafeDelete(packet);
 	
 	Log.Debug("AuthStateMachine","State changed into HandservershakeSend");
 	mCurrentStateMachine = &EveClientSocket::_authStateHandshakeSend;
@@ -610,7 +610,7 @@ void EveClientSocket::_authStateException(PyRep* packet)
 	//data.append(packet->)
 
 	// whoo delete if for now
-	//delete packet;
+	//SafeDelete(packet);
 	delete obj;
 	obj = NULL;
 }

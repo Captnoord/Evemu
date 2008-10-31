@@ -397,7 +397,7 @@ void SystemManager::RangecastDestinyUpdate(const GPoint &pt, double range, PyRep
 		delete dup;	//just in case. We know these are clients, so we can count on them normally consuming it, so we do not need to try to optimize the clone like we do with entities
 	}
 
-	delete payload;
+	SafeDelete(payload);
 }
 
 //NOTE: this could be optimized to eliminate one clone of the payload.
@@ -421,7 +421,7 @@ void SystemManager::RangecastDestinyEvent(const GPoint &pt, double range, PyRepT
 		delete dup;	//just in case. We know these are clients, so we can count on them normally consuming it, so we do not need to try to optimize the clone like we do with entities
 	}
 
-	delete payload;
+	SafeDelete(payload);
 }
 
 //NOTE: this could be optimized to eliminate one clone of the payload.

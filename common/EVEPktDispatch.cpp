@@ -156,7 +156,7 @@ void EVEPacketDispatcher::DispatchPacket(PyPacket **in_p) {
 	} break;
 	
 	}
-	delete packet;
+	SafeDelete(packet);
 }
 
 /* default handlers do nothing but print */

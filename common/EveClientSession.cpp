@@ -37,7 +37,7 @@ EveClientSession::~EveClientSession()
 	PyPacket *packet;
 	while((packet = _recvQueue.Pop()))
 	{
-		delete packet;
+		SafeDelete(packet);
 	}
 
 	if(_socket)
@@ -104,7 +104,7 @@ int EveClientSession::Update()
 
 		Log.Notice("SessionPacketDispatcher","packet processed, deleting the packet");
 
-		delete packet;
+		SafeDelete(packet);
 	}
 	return 0;
 }

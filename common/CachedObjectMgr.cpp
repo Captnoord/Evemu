@@ -631,13 +631,13 @@ bool PyCachedObjectDecoder::Decode(PyRepSubStream **in_ss) {
 	ss->DecodeData();
 	if(ss->decoded == NULL) {
 		_log(CLIENT__ERROR, "Unable to decode initial stream for PyCachedObject");
-		delete ss;
+		SafeDelete(ss);
 		return(false);
 	}
 	
 	if(!ss->decoded->CheckType(PyRep::Object)) {
 		_log(CLIENT__ERROR, "Cache substream does not contain an object: %s", ss->decoded->TypeString());
-		delete ss;
+		SafeDelete(ss);
 		return(false);
 	}
 	PyRepObject *po = (PyRepObject *) ss->decoded;
@@ -645,53 +645,53 @@ bool PyCachedObjectDecoder::Decode(PyRepSubStream **in_ss) {
 	
 	if(!po->arguments->CheckType(PyRep::Tuple)) {
 		_log(CLIENT__ERROR, "Cache object's args is not a tuple: %s", po->arguments->TypeString());
-		delete ss;
+		SafeDelete(ss);
 		return(false);
 	}
 	PyRepTuple *args = (PyRepTuple *) po->arguments;
 	
 	if(args->items.size() != 7) {
 		_log(CLIENT__ERROR, "Cache object's args tuple has %d elements instead of 7", args->items.size());
-		delete ss;
+		SafeDelete(ss);
 		return(false);
 	}
 
 	if(!args->items[0]->CheckType(PyRep::Tuple)) {
 		_log(CLIENT__ERROR, "Cache object's arg %d is not a Tuple: %s", 0, args->items[0]->TypeString());
-		delete ss;
+		SafeDelete(ss);
 		return(false);
 	}
 	//ignore unknown [1]
 	/*if(!args->items[1]->CheckType(PyRep::Integer)) {
 		_log(CLIENT__ERROR, "Cache object's arg %d is not a None: %s", 1, args->items[1]->TypeString());
-		delete ss;
+		SafeDelete(ss);
 		return(false);
 	}*/
 	if(!args->items[2]->CheckType(PyRep::Integer)) {
 		_log(CLIENT__ERROR, "Cache object's arg %d is not an Integer: %s", 2, args->items[2]->TypeString());
-		delete ss;
+		SafeDelete(ss);
 		return(false);
 	}
 	if(!args->items[3]->CheckType(PyRep::Integer)) {
 		_log(CLIENT__ERROR, "Cache object's arg %d is not an Integer: %s", 3, args->items[3]->TypeString());
-		delete ss;
+		SafeDelete(ss);
 		return(false);
 	}
 	if(!args->items[5]->CheckType(PyRep::Integer)) {
 		_log(CLIENT__ERROR, "Cache object's arg %d is not a : %s", 5, args->items[5]->TypeString());
-		delete ss;
+		SafeDelete(ss);
 		return(false);
 	}
 
 	PyRepTuple *objVt = (PyRepTuple *) args->items[0];
 	if(!objVt->items[0]->CheckType(PyRep::Integer)) {
 		_log(CLIENT__ERROR, "Cache object's version tuple %d is not an Integer: %s", 0, objVt->items[0]->TypeString());
-		delete ss;
+		SafeDelete(ss);
 		return(false);
 	}
 	if(!objVt->items[1]->CheckType(PyRep::Integer)) {
 		_log(CLIENT__ERROR, "Cache object's version tuple %d is not an Integer: %s", 1, objVt->items[1]->TypeString());
-		delete ss;
+		SafeDelete(ss);
 		return(false);
 	}
 	
@@ -720,7 +720,7 @@ bool PyCachedObjectDecoder::Decode(PyRepSubStream **in_ss) {
 		cache = buf->CreateSubStream();
 		if(cache == NULL) {
 			_log(CLIENT__ERROR, "Cache object's content buffer is not a substream!");
-			delete ss;
+			SafeDelete(ss);
 			return(false);
 		}
 	} else if(args->items[4]->CheckType(PyRep::String)) {
@@ -731,18 +731,18 @@ bool PyCachedObjectDecoder::Decode(PyRepSubStream **in_ss) {
 		cache = tmpbuf.CreateSubStream();
 		if(cache == NULL) {
 			_log(CLIENT__ERROR, "Cache object's content buffer is not a substream!");
-			delete ss;
+			SafeDelete(ss);
 			return(false);
 		}
 	} else {
 		_log(CLIENT__ERROR, "Cache object's arg %d is not a substream or buffer: %s", 4, args->items[4]->TypeString());
-		delete ss;
+		SafeDelete(ss);
 		return(false);
 	}
 
 	objectID = args->items[6]->Clone();
 
-	delete ss;
+	SafeDelete(ss);
 	return(true);
 }
 
@@ -854,13 +854,13 @@ bool PyCachedCall::Decode(PyRepSubStream **in_ss) {
 	ss->DecodeData();
 	if(ss->decoded == NULL) {
 		_log(CLIENT__ERROR, "Unable to decode initial stream for PyCachedCall");
-		delete ss;
+		SafeDelete(ss);
 		return(false);
 	}
 	
 	if(!ss->decoded->CheckType(PyRep::Dict)) {
 		_log(CLIENT__ERROR, "Cached call substream does not contain a dict: %s", ss->decoded->TypeString());
-		delete ss;
+		SafeDelete(ss);
 		return(false);
 	}
 	PyRepDict *po = (PyRepDict *) ss->decoded;
@@ -878,7 +878,7 @@ bool PyCachedCall::Decode(PyRepSubStream **in_ss) {
 		}
 	}
 
-	delete ss;
+	SafeDelete(ss);
 	return(result != NULL);
 }
 

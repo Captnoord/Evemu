@@ -78,7 +78,7 @@ PyPacket *EVEPresentation::PopPacket() {
 		//send it raw
 		PyRep *payload = e.ssException.hijack();
 		_QueueRep(payload);
-		delete payload;
+		SafeDelete(payload);
 		//do recurse
 		return(PopPacket());
 	}

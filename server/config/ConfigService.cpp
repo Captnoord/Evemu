@@ -177,7 +177,7 @@ PyResult ConfigService::Handle_GetMapObjects(PyCallArgs &call) {
 		if(!v->CheckType(PyRep::Integer)) {
 			_log(NET__PACKET_ERROR, "Decode Handle_GetMapObjects failed: arg 4 is not an int: %s", 
 				v->TypeString());
-			delete packet;
+			SafeDelete(packet);
 			return NULL;
 		}
 		PyRepInteger *iii = (PyRepInteger *) v;
@@ -188,7 +188,7 @@ PyResult ConfigService::Handle_GetMapObjects(PyCallArgs &call) {
 		if(!v->CheckType(PyRep::Integer)) {
 			_log(NET__PACKET_ERROR, "Decode Handle_GetMapObjects failed: arg 3 is not an int: %s", 
 				v->TypeString());
-			delete packet;
+			SafeDelete(packet);
 			return(false);
 		}
 		PyRepInteger *iii = (PyRepInteger *) v;
@@ -199,7 +199,7 @@ PyResult ConfigService::Handle_GetMapObjects(PyCallArgs &call) {
 		if(!v->CheckType(PyRep::Integer)) {
 			_log(NET__PACKET_ERROR, "Decode Handle_GetMapObjects failed: arg 2 is not an int: %s", 
 				v->TypeString());
-			delete packet;
+			SafeDelete(packet);
 			return(false);
 		}
 		PyRepInteger *iii = (PyRepInteger *) v;
@@ -210,7 +210,7 @@ PyResult ConfigService::Handle_GetMapObjects(PyCallArgs &call) {
 		if(!v->CheckType(PyRep::Integer)) {
 			_log(NET__PACKET_ERROR, "Decode Handle_GetMapObjects failed: arg 1 is not an int: %s", 
 				v->TypeString());
-			delete packet;
+			SafeDelete(packet);
 			return(false);
 		}
 		PyRepInteger *iii = (PyRepInteger *) v;
@@ -221,7 +221,7 @@ PyResult ConfigService::Handle_GetMapObjects(PyCallArgs &call) {
 		if(!v->CheckType(PyRep::Integer)) {
 			_log(NET__PACKET_ERROR, "Decode Handle_GetMapObjects failed: arg 0 is not an int: %s", 
 				v->TypeString());
-			delete packet;
+			SafeDelete(packet);
 			return(false);
 		}
 		PyRepInteger *iii = (PyRepInteger *) v;
@@ -229,11 +229,11 @@ PyResult ConfigService::Handle_GetMapObjects(PyCallArgs &call) {
 	}
 	if(packet->items.size() == 0 || packet->items.size() > 6) {
 		_log(NET__PACKET_ERROR, "Decode Handle_GetMapObjects failed: tuple0 is the wrong size: expected 1-6, but got %d", packet->items.size());
-		delete packet;
+		SafeDelete(packet);
 		return(false);
 	}
 
-	delete packet;
+	SafeDelete(packet);
 	
 	PyRep *result = m_db.GetMapObjects(arg,
 		wantRegions, wantConstellations, wantSystems, wantStations);
