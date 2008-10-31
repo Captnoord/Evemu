@@ -182,14 +182,6 @@
 				RelativePath="..\..\include\ascent-shared\Auth\Sha1.h"
 				>
 			</File>
-			<File
-				RelativePath="..\..\src\ascent-shared\Auth\WowCrypt.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\ascent-shared\Auth\WowCrypt.h"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Config"
@@ -605,10 +597,6 @@
 		</File>
 		<File
 			RelativePath="..\..\include\ascent-shared\WorldPacket.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\include\ascent-shared\WoWGuid.h"
 			>
 		</File>
 	</Files>

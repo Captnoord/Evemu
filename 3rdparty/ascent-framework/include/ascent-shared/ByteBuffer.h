@@ -17,11 +17,10 @@
  *
  */
 
-#ifndef _BYTEBUFFER_H
-#define _BYTEBUFFER_H
+#ifndef __BYTEBUFFER_H
+#define __BYTEBUFFER_H
 
 #include "Common.h"
-#include "WoWGuid.h"
 #include "LocationVector.h"
 
 class SERVER_DECL ByteBuffer {
@@ -112,11 +111,6 @@ public:
 		append((uint8)0);
 		return *this;
 	}
-	ByteBuffer &operator<<(const WoWGuid &value) {
-		append<uint8>(value.GetNewGuidMask());
-		append((uint8 *)value.GetNewGuid(), value.GetNewGuidLen());
-		return *this;
-	}
 
 	// stream like operators for reading data
 	ByteBuffer &operator>>(bool &value) {
@@ -191,17 +185,6 @@ public:
 		vec.y = read<float>();
 		vec.z = read<float>();
 		return * this;
-	}
-
-	ByteBuffer &operator>>(WoWGuid &value) {
-		uint8 field, mask = read<uint8>();
-		value.Init((uint8)mask);
-		for(int i = 0; i < BitCount8(mask); i++)
-		{
-			field = read<uint8>();
-			value.AppendField(field);
-		}
-		return *this;
 	}
 
 	uint8 operator[](size_t pos) {
@@ -299,71 +282,22 @@ public:
 	//  std::copy(src, src + cnt, inserter(_storage, _storage.begin() + pos));
 	//}
 
-	void hexlike()
+	ASCENT_INLINE void reverse()
 	{
-		uint32 j = 1, k = 1;
-		printf("STORAGE_SIZE: %u\n", (unsigned int)size() );
-		for(uint32 i = 0; i < size(); i++)
-		{
-			if ((i == (j*8)) && ((i != (k*16))))
-			{
-				if (read<uint8>(i) < 0x0F)
-				{
-					printf("| 0%X ", read<uint8>(i) );
-				}
-				else
-				{
-					printf("| %X ", read<uint8>(i) );
-				}
-
-				j++;
-			}
-			else if (i == (k*16))
-			{
-				rpos(rpos()-16);	// move read pointer 16 places back
-				printf(" | ");	  // write split char
-
-				for (int x = 0; x < 16; x++)
-				{
-					printf("%c", read<uint8>(i-16 + x) );
-				}
-
-				if (read<uint8>(i) < 0x0F)
-				{
-					printf("\n0%X ", read<uint8>(i) );
-				}
-				else
-				{
-					printf("\n%X ", read<uint8>(i) );
-				}
-
-				k++;
-				j++;
-			}
-			else
-			{
-				if (read<uint8>(i) < 0x0F)
-				{
-					printf("0%X ", read<uint8>(i) );
-				}
-				else
-				{
-					printf("%X ", read<uint8>(i) );
-				}
-			}
-		}
-		printf("\n");
+		std::reverse(_storage.begin(), _storage.end());
 	}
 
-	void LogPacket()
+
+	/* This function logs the raw data to the console
+	 * TODO add output handle
+	 */
+	void LogBuffer()
 	{
 		unsigned int line = 1;
 		unsigned int countpos = 0;
 		size_t lenght = size();
 		unsigned int count = 0;
 
-		//fprintf(m_file, "{%s} Packet: (0x%04X) %s PacketSize = %u\n", (direction ? "SERVER" : "CLIENT"), opcode,
-		//	LookupName(opcode, g_worldOpcodeNames), lenght);
 		printf("|------------------------------------------------|----------------|\n");
 		printf("|00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F |0123456789ABCDEF|\n");
 		printf("|------------------------------------------------|----------------|\n");
@@ -442,17 +376,12 @@ public:
 
 					printf("|\n");
 				}
-
 				countpos++;
 			}
 		}
 		printf("-------------------------------------------------------------------\n\n");
 	}
 
-	ASCENT_INLINE void reverse()
-	{
-		std::reverse(_storage.begin(), _storage.end());
-	}
 
 protected:
 	// read and write positions
@@ -531,4 +460,4 @@ template <typename K, typename V> ByteBuffer &operator>>(ByteBuffer &b, std::map
 	return b;
 }
 
-#endif
+#endif//__BYTEBUFFER_H

@@ -55,7 +55,7 @@ enum MsTimeVariables
  */
 #ifdef WIN32
 #  ifdef _DEBUG
-#    define ASCENT_INLINE __inline
+#    define ASCENT_INLINE
 #    define ASCENT_FORCEINLINE __forceinline
 #  else
 #    define ASCENT_INLINE __forceinline
@@ -207,6 +207,7 @@ enum MsTimeVariables
 #  pragma warning( disable : 4800 )
 #endif*/
 
+/* TODO check out why this here */
 #if PLATFORM == PLATFORM_WIN32
 #  define STRCASECMP stricmp
 #else
@@ -378,6 +379,9 @@ Scripting system exports/imports
 // utilities
 #include "Util.h"
 
+// specific macro utilities
+#include "MacroUtil.h"
+
 #if COMPILER == COMPILER_MICROSOFT
 #  define I64FMT "%016I64X"
 #  define I64FMTD "%I64u"
@@ -386,11 +390,10 @@ Scripting system exports/imports
 #  define atoll __atoi64
 
 // ISO C++ related macros
-#if _MSC_VER >= 1400
-#  define strdup _strdup
-#  define strnicmp _strnicmp
-#endif
-
+#  if _MSC_VER >= 1400
+#    define strdup _strdup
+#    define strnicmp _strnicmp
+#  endif
 #else
 #  define stricmp strcasecmp
 #  define strnicmp strncasecmp
@@ -403,13 +406,14 @@ Scripting system exports/imports
 
 #define STRINGIZE(a) #a
 
-// fix buggy MSVC's for variable scoping to be reliable =S
-#define for if(true) for
-
-#if COMPILER == COMPILER_MICROSOFT && _MSC_VER >= 1400
-#  pragma float_control(push)
-#  pragma float_control(precise, on)
-#endif
+#if COMPILER == COMPILER_MICROSOFT
+#  if _MSC_VER >= 1400
+#    pragma float_control(push)
+#    pragma float_control(precise, on)
+#  elif (_MSC_VER < 1300)   // MSVC 6 should be < 1300 | TODO if possible double check if only vc6 has this
+#    define for if(true)for // fix buggy MSVC's for variable scoping to be reliable =S
+#  endif//_MSC_VER
+#endif//COMPILER
 
 // fast int abs
 static ASCENT_FORCEINLINE int int32abs( const int value )
@@ -509,7 +513,8 @@ ASCENT_FORCEINLINE uint32 now()
 
 ASCENT_FORCEINLINE void ASCENT_TOLOWER(std::string& str)
 {
-	for(size_t i = 0; i < str.length(); ++i)
+	const size_t count = str.length();
+	for(size_t i = 0; i < count; ++i)
 		str[i] = (char)tolower(str[i]);
 };
 
@@ -519,6 +524,6 @@ ASCENT_FORCEINLINE void ASCENT_TOUPPER(std::string& str)
 		str[i] = (char)toupper(str[i]);
 };
 
-#include "MacroUtil.h"
+
 
 #endif

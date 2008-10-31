@@ -17,11 +17,10 @@
  *
  */
 
-#ifndef _STACKBUFFER_H
-#define _STACKBUFFER_H
+#ifndef __STACKBUFFER_H
+#define __STACKBUFFER_H
 
 #include "Common.h"
-#include "WoWGuid.h"
 #include "LocationVector.h"
 
 class SERVER_DECL StackBuffer
@@ -35,14 +34,13 @@ protected:
 	size_t m_space;
 
 public:
-
 	/** Constructor, sets buffer pointers and zeros write/read positions.
 	 */
 	StackBuffer(uint8* ptr, uint32 sz) : m_stackBuffer(ptr), m_readPos(0), m_writePos(0), m_bufferPointer(&m_stackBuffer[0]), m_heapBuffer(0), m_space(sz) {}
 
 	/** Destructor, frees heap buffer if it exists
 	 */
-	~StackBuffer() { if(m_heapBuffer) free(m_heapBuffer); }
+	~StackBuffer() { if(m_heapBuffer != NULL) free(m_heapBuffer); }
 
 	/** Re-allocates the buffer on the heap. This allows it to expand past the original specified size.
 	 * This is only a failsafe and should be avoided at all costs, as it is quite heavy. 
@@ -50,7 +48,7 @@ public:
 	void ReallocateOnHeap()
 	{
 		printf("!!!!!!! WARNING! STACK BUFFER OVERFLOW !!!!!!!!!!!!!\n");
-		if(m_heapBuffer)			// Reallocate with 200 bytes larger size
+		if(m_heapBuffer != NULL)			// Reallocate with 200 bytes larger size
 		{
 			m_heapBuffer = (uint8*)realloc(m_heapBuffer, 200 + m_space);
 			m_bufferPointer = m_heapBuffer;
@@ -189,32 +187,11 @@ public:
 		return *this;
 	}
 
-	/** WoWGuid read/write operators
-	 */
-	StackBuffer& operator << (const WoWGuid & value)
-	{
-		EnsureBufferSize(value.GetNewGuidLen() + 1);
-		Write<uint8>(value.GetNewGuidMask());
-		memcpy(&m_bufferPointer[m_writePos], value.GetNewGuid(), value.GetNewGuidLen());
-		m_writePos += value.GetNewGuidLen();
-		return *this;
-	}
-	
-	StackBuffer& operator >> (WoWGuid & value)
-	{
-		uint8 mask = Read<uint8>();
-		uint32 count = (uint32)BitCount8(mask);
-		value.Init(mask);
-		for(uint32 i = 0; i < count; ++i)
-			value.AppendField(Read<uint8>());
-		return *this;
-	}
-
 	/** LocationVector read/write operators
 	 */
 	StackBuffer& operator << (LocationVector & val)
 	{
-		// burlex: I would've done this as one memcpy.. but we don't know how the struct alignment is gonna come out :/
+		// burlex: I would have done this as one memcpy.. but we don't know how the struct alignment is gonna come out :/
 		Write<float>(val.x);
 		Write<float>(val.y);
 		Write<float>(val.z);
@@ -239,4 +216,4 @@ public:
 	size_t GetSize() { return m_writePos; }
 };
 
-#endif
+#endif//__STACKBUFFER_H

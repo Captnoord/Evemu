@@ -129,7 +129,7 @@ OUTPACKET_RESULT EveClientSocket::_outPacket(EVENetPacket * packet)
 	//packetcheck.append(packet->data, packet->length);
 
 	//printf("\nsend:\n");
-	//packetcheck.LogPacket();
+	//packetcheck.LogBuffer();
 
 	if(IsConnected() == false)
 		return OUTPACKET_RESULT_NOT_CONNECTED;
@@ -142,7 +142,7 @@ OUTPACKET_RESULT EveClientSocket::_outPacket(EVENetPacket * packet)
 	}
 
 	// Packet logger :)
-	//sSpaceLog.LogPacket((uint32)len, opcode, (const uint8*)data, 1);
+	//sSpaceLog.LogBuffer((uint32)len, opcode, (const uint8*)data, 1);
 
 	// Pass the size of the packet to our send buffer
 	bool rv = BurstSend((const uint8*)&len, 4);
@@ -223,7 +223,7 @@ void EveClientSocket::OnRead()
 		}
 
 		// packet log
-		//sWorldLog.LogPacket(mSize, mOpcode, mSize ? Packet->contents() : NULL, 0);
+		//sWorldLog.LogBuffer(mSize, mOpcode, mSize ? Packet->contents() : NULL, 0);
 
 		/* IMPORTANT TODO, InflateAndUnmarshal should not be in the socket, as when receiving big packets this could block the
 		 * network core. So move it somehow to the session class, also as its recursive it can run forever.
@@ -231,7 +231,7 @@ void EveClientSocket::OnRead()
 		PyRep *recvPyPacket = InflateAndUnmarshal(packet->contents(), packet->size());
 
 		printf("\nrecv packet with opcode:%d and Type:%s and size:%d\n", ((PyPacket*)recvPyPacket)->type, recvPyPacket->TypeString(), packet->size());
-		packet->LogPacket();
+		packet->LogBuffer();
 
 		// the state machine magic
 		(this->*mCurrentStateMachine)(recvPyPacket);

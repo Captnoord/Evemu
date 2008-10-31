@@ -125,7 +125,7 @@ void HandleReadComplete(Socket * s, uint32 len)
 	if(!s->IsDeleted())
 	{
 		s->m_readEvent.Unmark();
-		if(len)
+		if(len > 0)
 		{
 			s->GetReadBuffer().IncrementWritten(len);
 			s->OnRead();
