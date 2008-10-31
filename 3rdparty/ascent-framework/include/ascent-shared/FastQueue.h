@@ -97,7 +97,7 @@ public:
 		if(!first)
 			last = 0;
 
-		delete td;
+		SafeDelete(td);
 		--m_size;
 		m_lock.Release();
 		return ret;
@@ -131,7 +131,7 @@ public:
 		if(!first)
 			last = 0;
 
-		delete td;
+		SafeDelete(td);
 		--m_size;
 		m_lock.Release();
 	}

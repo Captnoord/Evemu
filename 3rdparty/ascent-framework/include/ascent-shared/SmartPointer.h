@@ -31,7 +31,7 @@ class PointerReference
         friend class SharedPointer<T>;
 private:
         PointerReference(T* pT) : Count(0), my_pT(pT) { ASSERT(pT != 0); }
-        ~PointerReference()         { ASSERT(Count == 0); delete my_pT; }
+        ~PointerReference()         { ASSERT(Count == 0); SafeDelete(my_pT); }
 
         unsigned GetRef()  { return ++Count; }
         unsigned FreeRef() {  ASSERT(Count!=0); return --Count; }
@@ -120,7 +120,7 @@ private:
         void UnBind()
         {
                 if (!Null() && m_Reference->FreeRef() == 0)       
-                        delete m_Reference;
+                        SafeDelete(m_Reference);
                 m_Reference = 0;
         }
         PointerReference<T>* m_Reference;

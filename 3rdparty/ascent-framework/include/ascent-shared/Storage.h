@@ -21,7 +21,7 @@
 #define STORAGE_H_
 
 #ifdef WIN32
-#pragma warning(disable:4312)
+#  pragma warning(disable:4312)
 #endif
 
 // pooled allocations
@@ -56,7 +56,7 @@ public:
 
 	void Free()
 	{
-		SafeDeleteArray(_pool);
+		delete [] _pool;
 	}
 };
 #endif
@@ -141,7 +141,7 @@ public:
         T ** a = new T*[Max];
 		memset(a,0,sizeof(T*)*Max);
 		memcpy(a, _array, sizeof(T*) * _max);
-		SafeDeleteArray(_array);
+		delete [] _array;
 		_array = a;
 		_max = Max;
 	}
@@ -157,7 +157,7 @@ public:
 #else
 		_pool.Free();
 #endif
-		SafeDeleteArray(_array);
+		delete [] _array;
 	}
 
 	/** Allocates entry Entry in the array and sets the pointer, and returns
@@ -808,4 +808,4 @@ public:
 	}
 };
 
-#endif
+#endif//STORAGE_H_

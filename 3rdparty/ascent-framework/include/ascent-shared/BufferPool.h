@@ -108,7 +108,7 @@ class BufferPool
 			if( m_packetBuffer.size() == m_packetBufferCount )
 			{
 				// don't keep them around..
-				//delete pData;
+				//SafeDelete(pData);
 				//return;
 
 				// or not
@@ -189,7 +189,7 @@ class BufferPool
 				// drop down to y buffers
 				cnt = (m_packetBufferCount > y) ? y : m_packetBufferCount;
 				for( x = m_packetBufferCount; x > cnt; --x )
-					delete m_packetBuffer[--m_packetBufferCount];
+					SafeDelete(m_packetBuffer[--m_packetBufferCount]);
 			}
 
 			m_allocCounter = 0;
@@ -204,7 +204,7 @@ class BufferPool
 
 		// ==============
 		BufferBucketNode(BufferBucket *bck) : m_bucket(bck) {}
-		~BufferBucketNode() { delete m_bucket; }
+		~BufferBucketNode() { SafeDelete(m_bucket); }
 	};
 
 protected:
@@ -244,7 +244,7 @@ public:
 	{
 		if( pck->m_bufferPool == -1 )
 		{
-			delete pck;
+			SafeDelete(pck);
 			return;
 		}
 
@@ -271,7 +271,7 @@ public:
 		DEBUG_LOG("BufferPool::Destroy()\n");
 		uint32 x;
 		for( x = 0; x < BUFFER_BUCKET_COUNT; ++x )
-			delete m_buckets[x];
+			SafeDelete(m_buckets[x]);
 	}
 
 	// ================================

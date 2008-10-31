@@ -108,7 +108,7 @@ bool SocketWorkerThread::run()
 
 		if(ov->m_event == SOCKET_IO_THREAD_SHUTDOWN)
 		{
-			delete ov;
+			SafeDelete(ov);
 			return true;
 		}
 

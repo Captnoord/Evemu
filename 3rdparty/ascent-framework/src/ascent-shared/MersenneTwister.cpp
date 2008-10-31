@@ -50,8 +50,8 @@ void InitRandomNumberGenerators()
 void CleanupRandomNumberGenerators()
 {	srand(getMSTime());
 	for(uint32 i = 0; i < NUMBER_OF_GENERATORS; ++i) {
-		delete m_generators[i];
-		delete m_locks[i];
+		SafeDelete(m_generators[i]);
+		SafeDelete(m_locks[i]);
 	}
 }
 

@@ -65,7 +65,7 @@ bool ThreadContextPool::ThreadExit(Thread * t)
 			m_freeThreads.erase(t);
 
 		_mutex.Release();
-		delete t;
+		SafeDelete(t);
 		return false;
 	}
 
@@ -277,7 +277,7 @@ static unsigned long WINAPI thread_proc(void* param)
 		if(t->ExecutionTarget != NULL)
 		{
 			if(RunThread( t->ExecutionTarget ) == true)
-				delete t->ExecutionTarget;
+				SafeDelete(t->ExecutionTarget);
 
 			t->ExecutionTarget = NULL;
 		}
@@ -334,7 +334,7 @@ static void * thread_proc(void * param)
 		if(t->ExecutionTarget != NULL)
 		{
 			if(t->ExecutionTarget->run()== true)
-				delete t->ExecutionTarget;
+				SafeDelete(t->ExecutionTarget);
 
 			t->ExecutionTarget = NULL;
 		}

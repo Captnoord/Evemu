@@ -92,7 +92,7 @@ public:
 		cond.EndSynchronized();
 
 		T returnVal = tmp->value;
-		delete tmp;
+		SafeDelete(tmp);
 
 		return returnVal;
 	}
@@ -123,7 +123,7 @@ public:
 		cond.EndSynchronized();
 
 		T returnVal = tmp->value;
-		delete tmp;
+		SafeDelete(tmp);
 		
 		return returnVal;
 	}	

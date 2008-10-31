@@ -249,7 +249,7 @@ public:
 			i2 = i++;
 			if(i2->second <= t)
 			{
-				delete i2->first;
+				SafeDelete(i2->first);
 				deletionQueue.erase(i2);
 			}
 		}
