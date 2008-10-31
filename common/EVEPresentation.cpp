@@ -69,9 +69,12 @@ PyPacket *EVEPresentation::PopPacket() {
 		r->Dump(NET__PRES_REP, "    ");
 	}
 
-	try {
+	try
+	{
 		return(_Dispatch(r));
-	} catch(PyException &e) {
+	} 
+	catch(PyException &e) 
+	{
 		//send it raw
 		PyRep *payload = e.ssException.hijack();
 		_QueueRep(payload);

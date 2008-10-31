@@ -53,13 +53,15 @@ EveClientSession::~EveClientSession()
 {
 	deleteMutex.Acquire();
 
-	PyRep *packet;
+	PyPacket *packet;
 	while((packet = _recvQueue.Pop()))
 	{
 		/* HACKED SOLLUTION TO FIX PACKET DELETION 
 		 * if we changed the 'unmarshaling' of the packets from the socket to the packet dispatcher in the Update() function, we don't need todo this.
 		 * so the only good solution for this hack is to change all this
 		 */
+		
+#if 0
 		if (_DeletePyPacket(packet) == false)
 		{
 			/* Even this would actually never happen, I do add these debug console messages.
@@ -80,6 +82,7 @@ EveClientSession::~EveClientSession()
 				Log.Error("~Session packet", "unable to delete a NULL pointer packet");
 			}
 		}
+#endif
 	}
 
 	if(_socket)
@@ -88,9 +91,9 @@ EveClientSession::~EveClientSession()
 }
 
 // wrapper function for hack fix the packet deleting, related to the above comments in the deconstructor
-bool EveClientSession::_DeletePyPacket(PyRep* packet)
+bool EveClientSession::_DeletePyPacket(PyPacket* packet)
 {
-	switch (packet->GetType())
+	/*switch (packet->GetType())
 	{
 	case PyInteger:
 		delete ((PyRepInteger*)packet);
@@ -145,7 +148,7 @@ bool EveClientSession::_DeletePyPacket(PyRep* packet)
 		// Note: this of course would never happen, but better safe than sorry
 		return false;
 		break;
-	}
+	}*/
 	// return true when we successfully deleted the Packet
 	return true;
 }
@@ -157,7 +160,7 @@ void EveClientSession::Delete()
 }
 
 /* enqueue a packet to be processed in the packet dispatcher */
-void EveClientSession::QueuePacket(PyRep* packet)
+void EveClientSession::QueuePacket(PyPacket* packet)
 {
 	//m_lastPing = (uint32)UNIXTIME;
 	_recvQueue.Push(packet);
@@ -191,12 +194,12 @@ int EveClientSession::Update()
 	if (_recvQueue.GetSize() == 0)
 		return 0;
 
-	PyRep *packet;
+	PyPacket *packet;
 	while (packet = _recvQueue.Pop())
 	{
 		ASSERT(packet && "EveClientSession packet dispatcher crash");
 
-		MACHONETMSG_TYPE _type = ((PyPacket*)packet)->type;
+		MACHONETMSG_TYPE _type = packet->type;
 		if ( _type < MACHONETMSG_TYPE_MAX )
 		{
 			(this->*Handlers[_type])(*packet);
@@ -210,6 +213,7 @@ int EveClientSession::Update()
 		Log.Notice("SessionPacketDispatcher","packet processed, deleting the packet");
 
 		/* same comments on line 59, in the deconstructor applies to this code */
+#if 0
 		if (_DeletePyPacket(packet) == false)
 		{
 			if (packet != NULL)
@@ -222,32 +226,39 @@ int EveClientSession::Update()
 				Log.Error("SessionPacketDispatcher", "unable to delete a NULL pointer packet");
 			}
 		}
+		else
+		{
+			Log.Notice("SessionPacketDispatcher", "packet deleting is a success");
+
+		}
+#else
+		delete packet;
+#endif
 	}
 	return 0;
 }
 
-void EveClientSession::_ProcessNone(PyRep& packet)
+void EveClientSession::_ProcessNone(PyPacket& packet)
 {
-	MACHONETMSG_TYPE _type = ((PyPacket*)&packet)->type;
-	Log.Debug("SessionPacketDispatcher", "'Unhandled' packet received, opcode:%d", _type);
+	Log.Debug("SessionPacketDispatcher", "'Unhandled' packet received, opcode:%d", packet.type);
 }
 
-void EveClientSession::_ProcessCallRequest(PyRep& packet)
+void EveClientSession::_ProcessCallRequest(PyPacket& packet)
 {
 	Log.Debug("SessionPacketDispatcher", "ProcessCallRequest");
 }
 
-void EveClientSession::_ProcessNotification(PyRep& packet)
+void EveClientSession::_ProcessNotification(PyPacket& packet)
 {
 	Log.Debug("SessionPacketDispatcher", "ProcessNotification");
 }
 
-void EveClientSession::_ProcessPingRequest(PyRep& packet)
+void EveClientSession::_ProcessPingRequest(PyPacket& packet)
 {
 	Log.Debug("SessionPacketDispatcher", /*"%s:*/ "'Unhandled' ping request.");//, GetName());
 }
 
-void EveClientSession::_ProcessPingResponce(PyRep& packet)
+void EveClientSession::_ProcessPingResponce(PyPacket& packet)
 {
 	Log.Debug("SessionPacketDispatcher", /*"%s:*/ "Received ping response.");//, GetName());
 }

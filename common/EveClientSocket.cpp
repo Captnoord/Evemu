@@ -419,9 +419,7 @@ void EveClientSocket::_authStateCryptoChallenge(PyRep* packet)
 
 	mRequest = new CryptoChallengePacket;
 
-	PyRep* data = packet;
-
-	if(mRequest->Decode(&data) == false)
+	if(mRequest->Decode(&packet) == false)
 	{
 		//sLog.outDebug("%s: Received invalid 'crypto' challenge!", GetRemoteIP().c_str());
 		Disconnect();
@@ -459,9 +457,10 @@ void EveClientSocket::_authStateCryptoChallenge(PyRep* packet)
 	server_shake.user_logonqueueposition = 1;
 	server_shake.challenge_responsehash = "654"; // binascii.crc_hqx of 64 zero bytes in a string, in a single element tuple, marshaled
 
-	data = server_shake.Encode();
-	OutPacket(data);
-	delete data;
+	// whoo recycle the incomming pointer
+	packet = server_shake.Encode();
+	OutPacket(packet);
+	delete packet;
 	
 	Log.Debug("AuthStateMachine","State changed into HandservershakeSend");
 	mCurrentStateMachine = &EveClientSocket::_authStateHandshakeSend;
@@ -582,7 +581,15 @@ void EveClientSocket::_authStateDone(PyRep* packet)
 		return;		
 	}*/
 
-	mSession->QueuePacket(packet);
+	//take the PyRep and turn it into a PyPacket
+	PyPacket *pyPacket = new PyPacket;
+	if(pyPacket->Decode(packet) == false) 	//packet is consumed here, as in deleted....hehehehe kinda inefficient.. but its ok for now
+	{
+		Log.Error("ClientSocket","%s: Failed to decode packet rep", GetRemoteIP().c_str());
+		return;
+	}
+
+	mSession->QueuePacket(pyPacket);
 }
 
 void EveClientSocket::_authStateException(PyRep* packet)

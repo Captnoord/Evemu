@@ -23,6 +23,12 @@
 	Author:		Captnoord
 */
 
+/* Small Todo and note space
+   - check http://nedprod.com/programs/portable/nedmalloc/index.html as the we allocate and deallocate very very often due to
+     the design
+
+*/
+
 #include "EvemuPCH.h"
 
 initialiseSingleton( Space );
