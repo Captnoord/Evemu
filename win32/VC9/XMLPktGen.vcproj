@@ -41,8 +41,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\3rdparty\zlib;..\..\common"
-				PreprocessorDefinitions="WIN32;_NDEBUG;_DEBUG;_CONSOLE"
+				AdditionalIncludeDirectories="&quot;..\..\3rdparty\ascent-framework\include\ascent-shared&quot;;..\..\3rdparty\mysql\include;..\..\3rdparty\zlib;..\..\common;..\..\server"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -64,9 +64,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="zlib.lib wsock32.lib"
+				AdditionalDependencies="zlib.lib wsock32.lib ascent-shared.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\lib;C:\mysql\lib\debug"
+				AdditionalLibraryDirectories="..\..\3rdparty\mysql\lib\debug;&quot;..\..\3rdparty\ascent-framework\lib\$(ConfigurationName)\&quot;;..\..\lib;&quot;..\..\lib\$(ConfigurationName)\&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				RandomizedBaseAddress="1"

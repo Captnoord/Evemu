@@ -518,23 +518,7 @@ ASCENT_FORCEINLINE void ASCENT_TOUPPER(std::string& str)
 		str[i] = (char)toupper(str[i]);
 };
 
-/* Basic programming tips
- * URL: http://nedprod.com/programs/index.html
- * Note: always nullify pointers after deletion
- */
-#define ASCENT_ENABLE_SAFE_DELETE
-#define ASCENT_ENABLE_EXTRA_SAFE_DELETE
-#ifndef ASCENT_ENABLE_SAFE_DELETE
-#  define SafeDelete(p) { delete p; }
-#  define SafeDeleteArray(p) { delete [] p; }
-#else
-#  ifndef ASCENT_ENABLE_EXTRA_SAFE_DELETE
-#    define SafeDelete(p) { delete p; p = NULL; }
-#    define SafeDeleteArray(p) { delete [] p; p = NULL; }
-#  else
-#    define SafeDelete(p) { delete p; p = NULL; }
-#    define SafeDeleteArray(p) { if (p != NULL) { delete [] p; p = NULL; } }
-#  endif//ASCENT_ENABLE_EXTRA_SAFE_DELETE
-#endif//ASCENT_ENABLE_SAFE_DELETE
+
+#include "MacroUtil.h"
 
 #endif

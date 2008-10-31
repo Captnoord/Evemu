@@ -659,6 +659,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\include\ascent-shared\MacroUtil.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\src\ascent-shared\MemoryLeaks.cpp"
 			>
 		</File>
