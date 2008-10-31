@@ -164,11 +164,12 @@ int EveClientSession::Update()
 	{
 		ASSERT(packet && "EveClientSession packet dispatcher crash");
 
-		/*if ( packet&& packet->type < MACHONETMSG_TYPE_MAX )
+		MACHONETMSG_TYPE _type = ((PyPacket*)packet)->type;
+		if ( _type < MACHONETMSG_TYPE_MAX )
 		{
-			(this->*Handlers[packet->type])(*packet);
+			(this->*Handlers[_type])(*packet);
 			packet = NULL;
-		}*/
+		}
 		
 		//delete packet;
 	}
