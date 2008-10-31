@@ -72,7 +72,7 @@ m_db(db)
 }
 
 StationSvcService::~StationSvcService() {
-	delete m_dispatch;
+	SafeDelete(m_dispatch);
 }
 
 

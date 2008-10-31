@@ -712,7 +712,7 @@ PyRepList *DBResultToPackedRowList(
 		//this is piece of crap due to header cloning
 		res->add(PackRow(row, columns, true, header->Clone()));
 
-	delete header;
+	SafeDelete(header);
 	return(res);
 }
 
@@ -736,7 +736,7 @@ PyRepTuple *DBResultToPackedRowListTuple(
 		//this is piece of crap due to header cloning
 		rowlist->add(PackRow(row, columns, true, header->Clone()));
 
-	delete header;
+	SafeDelete(header);
 	return(res);
 }
 
@@ -771,7 +771,7 @@ PyRepPackedObject2 *DBResultToPackedRowset(
 		//this is piece of crap due to header cloning
 		res->list_data.push_back(PackRow(row, columns, true, header->Clone()));
 
-	delete header;
+	SafeDelete(header);
 	return(res);
 }
 

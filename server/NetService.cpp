@@ -27,7 +27,7 @@ NetService::NetService(PyServiceMgr *mgr) : PyService(mgr, "machoNet"), m_dispat
 }
 
 NetService::~NetService() {
-	delete m_dispatch;
+	SafeDelete(m_dispatch);
 }
 
 PyResult NetService::Handle_GetInitVals(PyCallArgs &call) {

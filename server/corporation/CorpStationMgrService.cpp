@@ -42,7 +42,7 @@ public:
 		PyCallable_REG_CALL(CorpStationMgrIMBound, GetQuoteForRentingAnOffice)
 		PyCallable_REG_CALL(CorpStationMgrIMBound, RentOffice)
 	}
-	virtual ~CorpStationMgrIMBound() { delete m_dispatch; }
+	virtual ~CorpStationMgrIMBound() { SafeDelete(m_dispatch); }
 	virtual void Release() {
 		//I hate this statement
 		delete this;
@@ -75,7 +75,7 @@ CorpStationMgrService::CorpStationMgrService(PyServiceMgr *mgr, DBcore *db)
 }
 
 CorpStationMgrService::~CorpStationMgrService() {
-	delete m_dispatch;
+	SafeDelete(m_dispatch);
 }
 
 

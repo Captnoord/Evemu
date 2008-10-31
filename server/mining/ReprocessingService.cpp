@@ -58,7 +58,7 @@ ReprocessingService::ReprocessingService(PyServiceMgr *mgr, DBcore *db)
 }
 
 ReprocessingService::~ReprocessingService() {
-	delete m_dispatch;
+	SafeDelete(m_dispatch);
 }
 
 PyBoundObject *ReprocessingService::_CreateBoundObject(Client *c, const PyRep *bind_args) {
@@ -77,7 +77,7 @@ PyBoundObject *ReprocessingService::_CreateBoundObject(Client *c, const PyRep *b
 	ReprocessingServiceBound *obj = new ReprocessingServiceBound(m_manager, &m_db, stationID->value);
 	if(!obj->Load()) {
 		_log(SERVICE__ERROR, "Failed to load static info for station %lu.", stationID->value);
-		delete obj;
+		SafeDelete(obj);
 		return NULL;
 	} else
 		return(obj);

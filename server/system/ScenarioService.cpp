@@ -39,7 +39,7 @@ public:
 		PyCallable_REG_CALL(ScenarioBound, )
 		PyCallable_REG_CALL(ScenarioBound, )
 	}
-	virtual ~ScenarioBound() { delete m_dispatch; }
+	virtual ~ScenarioBound() { SafeDelete(m_dispatch); }
 	virtual void Release() {
 		//I hate this statement
 		delete this;
@@ -66,7 +66,7 @@ m_db(db)
 }
 
 ScenarioService::~ScenarioService() {
-	delete m_dispatch;
+	SafeDelete(m_dispatch);
 }
 
 

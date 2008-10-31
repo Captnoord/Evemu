@@ -129,7 +129,7 @@ InvBrokerService::InvBrokerService(PyServiceMgr *mgr, DBcore *db)
 }
 
 InvBrokerService::~InvBrokerService() {
-	delete m_dispatch;
+	SafeDelete(m_dispatch);
 }
 
 

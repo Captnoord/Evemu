@@ -126,7 +126,7 @@ ObjCacheService::ObjCacheService(PyServiceMgr *mgr, DBcore *dbc, const std::stri
 }
 
 ObjCacheService::~ObjCacheService() {
-	delete m_dispatch;
+	SafeDelete(m_dispatch);
 }
 
 PyResult ObjCacheService::Handle_GetCachableObject(PyCallArgs &call) {
@@ -303,7 +303,7 @@ ObjectCachedMethodID::ObjectCachedMethodID(const char *service, const char *meth
 }
 
 ObjectCachedMethodID::~ObjectCachedMethodID() {
-	delete objectID;
+	SafeDelete(objectID);
 }
 
 

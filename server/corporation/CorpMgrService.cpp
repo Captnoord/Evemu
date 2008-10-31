@@ -30,7 +30,7 @@ CorpMgrService::CorpMgrService(PyServiceMgr *mgr, DBcore *db)
 }
 
 CorpMgrService::~CorpMgrService() {
-	delete m_dispatch;
+	SafeDelete(m_dispatch);
 }
 
 

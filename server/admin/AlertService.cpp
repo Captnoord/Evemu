@@ -30,7 +30,7 @@ AlertService::AlertService(PyServiceMgr *mgr)
 }
 
 AlertService::~AlertService() {
-	delete m_dispatch;
+	SafeDelete(m_dispatch);
 }
 
 

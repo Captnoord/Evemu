@@ -43,7 +43,7 @@ public:
 		PyCallable_REG_CALL(SlashBound, )
 		PyCallable_REG_CALL(SlashBound, )
 	}
-	virtual ~SlashBound() { delete m_dispatch; }
+	virtual ~SlashBound() { SafeDelete(m_dispatch); }
 	virtual void Release() {
 		//I hate this statement
 		delete this;
@@ -70,7 +70,7 @@ SlashService::SlashService(PyServiceMgr *mgr, CommandDispatcher *cd)
 }
 
 SlashService::~SlashService() {
-	delete m_dispatch;
+	SafeDelete(m_dispatch);
 }
 
 

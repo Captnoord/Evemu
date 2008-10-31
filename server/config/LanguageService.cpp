@@ -38,7 +38,7 @@ public:
 		PyCallable_REG_CALL(LanguageBound, )
 		PyCallable_REG_CALL(LanguageBound, )
 	}
-	virtual ~LanguageBound() { delete m_dispatch; }
+	virtual ~LanguageBound() { SafeDelete(m_dispatch); }
 	virtual void Release() {
 		//I hate this statement
 		delete this;
@@ -66,7 +66,7 @@ LanguageService::LanguageService(PyServiceMgr *mgr, DBcore *db)
 }
 
 LanguageService::~LanguageService() {
-	delete m_dispatch;
+	SafeDelete(m_dispatch);
 }
 
 

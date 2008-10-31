@@ -72,7 +72,7 @@ InsuranceService::InsuranceService(PyServiceMgr *mgr, DBcore *db)
 }
 
 InsuranceService::~InsuranceService() {
-	delete m_dispatch;
+	SafeDelete(m_dispatch);
 }
 
 

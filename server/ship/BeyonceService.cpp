@@ -79,7 +79,7 @@ m_db(db)
 }
 
 BeyonceService::~BeyonceService() {
-	delete m_dispatch;
+	SafeDelete(m_dispatch);
 }
 
 

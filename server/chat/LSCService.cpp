@@ -51,7 +51,7 @@ LSCService::LSCService(PyServiceMgr *mgr, DBcore *db, CommandDispatcher* cd)
 }
 
 LSCService::~LSCService() {
-	delete m_dispatch;
+	SafeDelete(m_dispatch);
 	std::map<uint32, LSCChannel *>::iterator cur, end;
 	cur = m_channels.begin();
 	end = m_channels.end();

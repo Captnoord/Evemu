@@ -41,7 +41,7 @@ ConfigService::ConfigService(PyServiceMgr *mgr, DBcore *db)
 }
 
 ConfigService::~ConfigService() {
-	delete m_dispatch;
+	SafeDelete(m_dispatch);
 }
 
 PyResult ConfigService::Handle_GetMultiOwnersEx(PyCallArgs &call) {

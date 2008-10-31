@@ -38,7 +38,7 @@ Standing2Service::Standing2Service(PyServiceMgr *mgr, DBcore *db)
 }
 
 Standing2Service::~Standing2Service() {
-	delete m_dispatch;
+	SafeDelete(m_dispatch);
 }
 
 

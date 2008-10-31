@@ -39,7 +39,7 @@ public:
 		PyCallable_REG_CALL(DungeonBound, )
 		PyCallable_REG_CALL(DungeonBound, )
 	}
-	virtual ~DungeonBound() { delete m_dispatch; }
+	virtual ~DungeonBound() { SafeDelete(m_dispatch); }
 	virtual void Release() {
 		//I hate this statement
 		delete this;
@@ -68,7 +68,7 @@ m_db(db)
 }
 
 DungeonService::~DungeonService() {
-	delete m_dispatch;
+	SafeDelete(m_dispatch);
 }
 
 

@@ -55,7 +55,7 @@ m_dispatch(new Dispatcher(this))
 }
 
 AuthService::~AuthService() {
-	delete m_dispatch;
+	SafeDelete(m_dispatch);
 }
 
 

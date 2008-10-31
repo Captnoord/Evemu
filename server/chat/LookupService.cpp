@@ -78,7 +78,7 @@ m_db(db)
 }
 
 LookupService::~LookupService() {
-	delete m_dispatch;
+	SafeDelete(m_dispatch);
 }
 
 

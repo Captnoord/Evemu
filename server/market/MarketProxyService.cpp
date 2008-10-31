@@ -39,7 +39,7 @@ public:
 		PyCallable_REG_CALL(MarketProxyBound, )
 		PyCallable_REG_CALL(MarketProxyBound, )
 	}
-	virtual ~MarketProxyBound() { delete m_dispatch; }
+	virtual ~MarketProxyBound() { SafeDelete(m_dispatch); }
 	virtual void Release() {
 		//I hate this statement
 		delete this;
@@ -74,7 +74,7 @@ MarketProxyService::MarketProxyService(PyServiceMgr *mgr, DBcore *db)
 }
 
 MarketProxyService::~MarketProxyService() {
-	delete m_dispatch;
+	SafeDelete(m_dispatch);
 }
 
 

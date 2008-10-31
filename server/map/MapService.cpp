@@ -34,7 +34,7 @@ MapService::MapService(PyServiceMgr *mgr, DBcore *db)
 }
 
 MapService::~MapService() {
-	delete m_dispatch;
+	SafeDelete(m_dispatch);
 }
 
 

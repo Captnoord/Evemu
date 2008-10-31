@@ -55,7 +55,7 @@ CharacterService::CharacterService(PyServiceMgr *mgr, DBcore *dbc)
 }
 
 CharacterService::~CharacterService() {
-	delete m_dispatch;
+	SafeDelete(m_dispatch);
 }
 
 PyResult CharacterService::Handle_GetCharactersToSelect(PyCallArgs &call) {

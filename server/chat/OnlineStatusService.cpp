@@ -32,7 +32,7 @@ m_dispatch(new Dispatcher(this))
 }
 
 OnlineStatusService::~OnlineStatusService() {
-	delete m_dispatch;
+	SafeDelete(m_dispatch);
 }
 
 

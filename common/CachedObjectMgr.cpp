@@ -109,8 +109,8 @@ CachedObjectMgr::~CachedObjectMgr() {
 }
 
 CachedObjectMgr::CacheRecord::~CacheRecord() {
-	delete cache;
-	delete objectID;
+	SafeDelete(cache);
+	SafeDelete(objectID);
 }
 
 PyRepObject *CachedObjectMgr::CacheRecord::EncodeHint() const {
@@ -345,7 +345,7 @@ bool CachedObjectMgr::LoadCachedFromFile(const std::string &cacheDir, const PyRe
 	cache->version = header.version;
 	
 	if(fread(cache->cache->GetBuffer(), sizeof(byte), header.length, f) != header.length) {
-		delete cache;
+		SafeDelete(cache);
 		fclose(f);
 		return(false);
 	}
@@ -476,7 +476,7 @@ PyCachedObjectDecoder *CachedObjectMgr::LoadCachedFile(const char *filename, con
 
 	PyCachedObjectDecoder *obj = new PyCachedObjectDecoder();
 	if(!obj->Decode(&into)) {	//into is consumed.
-		delete obj;
+		SafeDelete(obj);
 		return NULL;
 	}
 
@@ -492,7 +492,7 @@ PyCachedCall *CachedObjectMgr::LoadCachedCall(const char *filename, const char *
 
 	PyCachedCall *obj = new PyCachedCall();
 	if(!obj->Decode(&into)) {	//into is consumed.
-		delete obj;
+		SafeDelete(obj);
 		return NULL;
 	}
 
@@ -536,7 +536,7 @@ PyRep *CachedObjectMgr::_MakeCacheHint(const char *oname) {
 	}
 
 	PyRep *hint = obj->EncodeHint();
-	delete obj;
+	SafeDelete(obj);
 	return(hint);
 }
 */
@@ -553,8 +553,8 @@ PyCachedObjectDecoder::PyCachedObjectDecoder()
 }
 
 PyCachedObjectDecoder::~PyCachedObjectDecoder() {
-	delete cache;
-	delete objectID;
+	SafeDelete(cache);
+	SafeDelete(objectID);
 }
 
 PyCachedObject::PyCachedObject()
@@ -569,8 +569,8 @@ PyCachedObject::PyCachedObject()
 }
 
 PyCachedObject::~PyCachedObject() {
-	delete cache;
-	delete objectID;
+	SafeDelete(cache);
+	SafeDelete(objectID);
 }
 
 PyCachedObject *PyCachedObject::Clone() const {
@@ -623,9 +623,9 @@ bool PyCachedObjectDecoder::Decode(PyRepSubStream **in_ss) {
 	PyRepSubStream *ss = *in_ss;	//consume
 	*in_ss = NULL;
 
-	delete cache;
+	SafeDelete(cache);
 	cache = NULL;
-	delete objectID;
+	SafeDelete(objectID);
 	objectID = NULL;
 	
 	ss->DecodeData();

@@ -75,7 +75,7 @@ m_db(db)
 }
 
 ShipService::~ShipService() {
-	delete m_dispatch;
+	SafeDelete(m_dispatch);
 }
 
 

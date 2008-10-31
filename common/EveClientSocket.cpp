@@ -611,6 +611,6 @@ void EveClientSocket::_authStateException(PyRep* packet)
 
 	// whoo delete if for now
 	//SafeDelete(packet);
-	delete obj;
+	SafeDelete(obj);
 	obj = NULL;
 }

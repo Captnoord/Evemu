@@ -38,7 +38,7 @@ public:
 		PyCallable_REG_CALL(PetitionerBound, )
 		PyCallable_REG_CALL(PetitionerBound, )
 	}
-	virtual ~PetitionerBound() { delete m_dispatch; }
+	virtual ~PetitionerBound() { SafeDelete(m_dispatch); }
 	virtual void Release() {
 		//I hate this statement
 		delete this;
@@ -66,7 +66,7 @@ m_dispatch(new Dispatcher(this))
 }
 
 PetitionerService::~PetitionerService() {
-	delete m_dispatch;
+	SafeDelete(m_dispatch);
 }
 
 

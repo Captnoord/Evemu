@@ -33,7 +33,7 @@ StationService::StationService(PyServiceMgr *mgr, DBcore *db)
 }
 
 StationService::~StationService() {
-	delete m_dispatch;
+	SafeDelete(m_dispatch);
 }
 
 

@@ -39,7 +39,7 @@ AccountService::AccountService(PyServiceMgr *mgr, DBcore *db)
 }
 
 AccountService::~AccountService() {
-	delete m_dispatch;
+	SafeDelete(m_dispatch);
 }
 
 

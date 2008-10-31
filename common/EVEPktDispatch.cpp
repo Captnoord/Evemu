@@ -43,11 +43,11 @@ void EVEPacketDispatcher::DispatchPacket(PyPacket **in_p) {
 		AuthenticationReq *obj = new AuthenticationReq();
 		if(!obj->Decode(&packet->payload)) {
 			_log(NET__DISPATCH_ERROR, "Failed to decode AuthenticationReq");
-			delete obj;
+			SafeDelete(obj);
 			break;
 		}
 		Handle_AuthenticationReq(packet, &obj);
-		delete obj;	//in case they didnt
+		SafeDelete(obj);	//in case they didn't
 	} break;
 	
 	case MACHONETMSG_TYPE_AUTHENTICATION_RSP: {
@@ -60,11 +60,11 @@ void EVEPacketDispatcher::DispatchPacket(PyPacket **in_p) {
 		AuthenticationRsp *obj = new AuthenticationRsp();
 		if(!obj->Decode(&packet->payload)) {
 			_log(NET__DISPATCH_ERROR, "Failed to decode AuthenticationRsp");
-			delete obj;
+			SafeDelete(obj);
 			break;
 		}
 		Handle_AuthenticationRsp(packet, &obj);
-		delete obj;	//in case they didnt
+		SafeDelete(obj);	//in case they didnt
 	} break;
 
 	case MACHONETMSG_TYPE_CALL_REQ: {
@@ -110,11 +110,11 @@ void EVEPacketDispatcher::DispatchPacket(PyPacket **in_p) {
 		EVENotificationStream *obj = new EVENotificationStream;
 		if(!obj->Decode(packet->type_string, packet->dest.service, packet->payload)) {
 			_log(NET__DISPATCH_ERROR, "Failed to decode notification of type '%s'", packet->dest.service.c_str());
-			delete obj;
+			SafeDelete(obj);
 			break;
 		}
 		Handle_Notify(packet, &obj);
-		delete obj;	//in case they didnt
+		SafeDelete(obj);	//in case they didnt
 	} break;
 	
 	case MACHONETMSG_TYPE_ERRORRESPONSE: {
@@ -127,11 +127,11 @@ void EVEPacketDispatcher::DispatchPacket(PyPacket **in_p) {
 		ErrorResponseBody *obj = new ErrorResponseBody;
 		if(!obj->Decode(&packet->payload)) {
 			_log(NET__DISPATCH_ERROR, "Failed to decode Error Response");
-			delete obj;
+			SafeDelete(obj);
 			break;
 		}
 		Handle_ErrorResponse(packet, &obj);
-		delete obj;	//in case they didnt
+		SafeDelete(obj);	//in case they didnt
 	} break;
 	
 	case MACHONETMSG_TYPE_SESSIONCHANGENOTIFICATION: {
@@ -144,11 +144,11 @@ void EVEPacketDispatcher::DispatchPacket(PyPacket **in_p) {
 		SessionChangeNotification *obj = new SessionChangeNotification();
 		if(!obj->Decode(&packet->payload)) {
 			_log(NET__DISPATCH_ERROR, "Failed to decode session change notification");
-			delete obj;
+			SafeDelete(obj);
 			break;
 		}
 		Handle_SessionChange(packet, &obj);
-		delete obj;	//in case they didnt
+		SafeDelete(obj);	//in case they didnt
 	} break;
 	
 	default: {

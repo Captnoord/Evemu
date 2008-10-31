@@ -38,7 +38,7 @@ public:
 		PyCallable_REG_CALL(MissionMgrBound, )
 		PyCallable_REG_CALL(MissionMgrBound, )
 	}
-	virtual ~MissionMgrBound() { delete m_dispatch; }
+	virtual ~MissionMgrBound() { SafeDelete(m_dispatch); }
 	virtual void Release() {
 		//I hate this statement
 		delete this;
@@ -65,7 +65,7 @@ m_db(db)
 }
 
 MissionMgrService::~MissionMgrService() {
-	delete m_dispatch;
+	SafeDelete(m_dispatch);
 }
 
 
