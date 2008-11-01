@@ -75,7 +75,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/IGNORE:4099"
-				AdditionalDependencies="wsock32.lib zlib.lib mysqlclient.lib Advapi32.lib user32.lib ascent-sharedd.lib ws2_32.lib"
+				AdditionalDependencies="wsock32.lib zlib.lib mysqlclient.lib Advapi32.lib user32.lib ws2_32.lib ascent-sharedd.lib EVECommond.lib"
 				OutputFile=".\..\..\bin\$(ConfigurationName)\$(ProjectName).exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;..\..\3rdparty\ascent-framework\lib\$(ConfigurationName)\&quot;;..\..\3rdparty\mysql\lib\debug;&quot;..\..\lib\$(ConfigurationName)\&quot;;..\..\lib"
