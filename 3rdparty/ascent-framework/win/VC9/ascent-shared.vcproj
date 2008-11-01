@@ -43,7 +43,7 @@
 				AdditionalOptions="/MP"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;..\..\include\ascent-shared\Network&quot;;&quot;..\..\include\ascent-shared\Database&quot;;&quot;..\..\include\ascent-shared\Config&quot;;&quot;..\..\include\ascent-shared\Auth&quot;;&quot;..\..\include\ascent-shared\Threading&quot;;&quot;..\..\include\ascent-shared&quot;;..\..\dep\include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_USRDLL;_WINDOWS"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="false"
 				ExceptionHandling="1"
 				BasicRuntimeChecks="3"
@@ -112,10 +112,10 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="&quot;..\..\include\ascent-shared\Network&quot;;&quot;..\..\include\ascent-shared\Database&quot;;&quot;..\..\include\ascent-shared\Config&quot;;&quot;..\..\include\ascent-shared\Auth&quot;;&quot;..\..\include\ascent-shared\Threading&quot;;&quot;..\..\include\ascent-shared&quot;;..\..\dep\include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_USRDLL;_WINDOWS"
-				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="true"
-				EnableEnhancedInstructionSet="2"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
+				RuntimeLibrary="0"
+				EnableFunctionLevelLinking="false"
+				EnableEnhancedInstructionSet="0"
 				UsePrecompiledHeader="0"
 				AssemblerListingLocation="$(IntDir)\"
 				ObjectFile="$(IntDir)\"
@@ -368,20 +368,8 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="Netalloc"
+			Name="Netalloc_todo"
 			>
-			<File
-				RelativePath="..\..\..\..\..\..\..\Ogre_trunk\OgreMain\src\nedmalloc\malloc.c.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\..\..\..\Ogre_trunk\OgreMain\src\nedmalloc\nedmalloc.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\..\..\..\Ogre_trunk\OgreMain\src\nedmalloc\nedmalloc.h"
-				>
-			</File>
 		</Filter>
 		<File
 			RelativePath="..\..\include\ascent-shared\ascent.h"
@@ -453,6 +441,10 @@
 		</File>
 		<File
 			RelativePath="..\..\include\ascent-shared\Errors.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\win32\VC9\EVECommon.vcproj"
 			>
 		</File>
 		<File

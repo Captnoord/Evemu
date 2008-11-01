@@ -8,6 +8,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XMLPktGen", "VC9\XMLPktGen.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ascent-shared", "..\3rdparty\ascent-framework\win\VC9\ascent-shared.vcproj", "{B0A489F8-0C45-49B5-967A-98272FA40A67}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EVECommon", "VC9\EVECommon.vcproj", "{22A1613F-8C5C-4186-B245-C2C375F948B3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -28,6 +30,10 @@ Global
 		{B0A489F8-0C45-49B5-967A-98272FA40A67}.Debug|Win32.Build.0 = Release|Win32
 		{B0A489F8-0C45-49B5-967A-98272FA40A67}.Release|Win32.ActiveCfg = Release|Win32
 		{B0A489F8-0C45-49B5-967A-98272FA40A67}.Release|Win32.Build.0 = Release|Win32
+		{22A1613F-8C5C-4186-B245-C2C375F948B3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{22A1613F-8C5C-4186-B245-C2C375F948B3}.Debug|Win32.Build.0 = Debug|Win32
+		{22A1613F-8C5C-4186-B245-C2C375F948B3}.Release|Win32.ActiveCfg = Release|Win32
+		{22A1613F-8C5C-4186-B245-C2C375F948B3}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

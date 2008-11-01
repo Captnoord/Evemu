@@ -888,7 +888,7 @@ bool TCPConnection::SendData(bool &sent_something, char* errbuf) {
 		ByteBuffer xdata;
 		xdata.append(data, size);
 		printf("\nSend:\n");
-		xdata.hexlike();
+		xdata.LogBuffer();
 		status = send(connection_socket, (const char *) data, size, 0);
 #else
 		status = send(connection_socket, data, size, MSG_NOSIGNAL);

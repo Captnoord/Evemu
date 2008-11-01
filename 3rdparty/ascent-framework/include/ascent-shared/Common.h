@@ -22,13 +22,14 @@
 
 #ifdef WIN32
 //#  pragma warning(disable:4996)
-#  pragma warning(disable:4251)		// 'dll'-interface warning, related to objects that doesn't have a 'declspec' definition
+#  pragma warning(disable:4251)							// 'dll'-interface warning, related to objects that doesn't have a 'declspec' definition
 
 // VC9 related 'CRT' warnings
 // TODO check if these warnings can be fixed in a cross platform way
 #  define _CRT_SECURE_NO_WARNINGS 1
 #  define _CRT_SECURE_NO_DEPRECATE 1
 #  define _CRT_SECURE_COPP_OVERLOAD_STANDARD_NAMES 1
+#  define _HAS_ITERATOR_DEBUGGING 0						// Speeds up debug build
 #endif//WIN32
 
 enum TimeVariables
@@ -81,8 +82,8 @@ enum MsTimeVariables
 
 #if defined( __WIN32__ ) || defined( WIN32 ) || defined( _WIN32 )
 #  define WIN32_LEAN_AND_MEAN
-#  define VC_EXTRALEAN
-#  define STRICT
+//#  define VC_EXTRALEAN
+//#  define STRICT
 #  ifndef _WIN32_WINNT
 #    define _WIN32_WINNT 0x0500
 #  endif

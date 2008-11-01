@@ -64,11 +64,12 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="zlib.lib wsock32.lib ascent-shared.lib"
+				AdditionalDependencies="zlib.lib wsock32.lib ascent-sharedd.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\3rdparty\mysql\lib\debug;&quot;..\..\3rdparty\ascent-framework\lib\$(ConfigurationName)\&quot;;..\..\lib;&quot;..\..\lib\$(ConfigurationName)\&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="1"
+				OptimizeForWindows98="0"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
 				TargetMachine="1"
@@ -120,13 +121,17 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\3rdparty\zlib;..\..\common"
+				InlineFunctionExpansion="2"
+				EnableIntrinsicFunctions="true"
+				FavorSizeOrSpeed="1"
+				AdditionalIncludeDirectories="&quot;..\..\3rdparty\ascent-framework\include\ascent-shared&quot;;..\..\3rdparty\mysql\include;..\..\3rdparty\zlib;..\..\common;..\..\server"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
+				DisableSpecificWarnings="4244;4355;4996"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -139,13 +144,14 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="zlib.lib wsock32.lib"
+				AdditionalDependencies="zlib.lib wsock32.lib ascent-shared.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\lib;C:\mysql\lib\opt"
-				GenerateDebugInformation="true"
+				AdditionalLibraryDirectories="..\..\3rdparty\mysql\lib\opt;&quot;..\..\3rdparty\ascent-framework\lib\$(ConfigurationName)\&quot;;&quot;..\..\lib\$(ConfigurationName)\&quot;;..\..\lib"
+				GenerateDebugInformation="false"
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				OptimizeForWindows98="0"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
 				TargetMachine="1"
