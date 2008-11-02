@@ -22,7 +22,7 @@
 	------------------------------------------------------------------------------------
 */
 
-#include "HeaderGenerator.h"
+#include "../xmlpktgen/HeaderGenerator.h"
 #include "../common/logsys.h"
 
 ClassHeaderGenerator::ClassHeaderGenerator() {

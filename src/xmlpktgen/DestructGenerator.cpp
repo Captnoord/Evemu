@@ -22,7 +22,7 @@
 	------------------------------------------------------------------------------------
 */
 
-#include "DestructGenerator.h"
+#include "../xmlpktgen/DestructGenerator.h"
 #include "../common/logsys.h"
 
 ClassDestructGenerator::ClassDestructGenerator() {

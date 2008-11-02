@@ -22,7 +22,7 @@
 	------------------------------------------------------------------------------------
 */
 
-#include "ImplGenerator.h"
+#include "../xmlpktgen/ImplGenerator.h"
 
 void ClassImplementationGenerator::Process_root(FILE *into, TiXmlElement *element) {
 	m_construct.Process_root(into, element);

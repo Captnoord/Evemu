@@ -22,7 +22,7 @@
 	------------------------------------------------------------------------------------
 */
 
-#include "CloneGenerator.h"
+#include "../xmlpktgen/CloneGenerator.h"
 #include "../common/logsys.h"
 
 ClassCloneGenerator::ClassCloneGenerator() {

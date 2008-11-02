@@ -22,7 +22,7 @@
 	------------------------------------------------------------------------------------
 */
 
-#include "ConstructGenerator.h"
+#include "../xmlpktgen/ConstructGenerator.h"
 #include "../common/logsys.h"
 
 ClassConstructGenerator::ClassConstructGenerator() {

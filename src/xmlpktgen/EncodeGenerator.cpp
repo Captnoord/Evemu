@@ -22,7 +22,7 @@
 	------------------------------------------------------------------------------------
 */
 
-#include "EncodeGenerator.h"
+#include "../xmlpktgen/EncodeGenerator.h"
 #include "../common/logsys.h"
 
 ClassEncodeGenerator::ClassEncodeGenerator()

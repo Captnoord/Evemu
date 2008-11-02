@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;..\..\3rdparty\ascent-framework\include\ascent-shared&quot;;..\..\3rdparty\mysql\include;..\..\3rdparty\zlib;..\..\common;..\..\server"
+				AdditionalIncludeDirectories="&quot;..\..\include\ascent-shared\Threading&quot;;&quot;..\..\include\ascent-shared&quot;;..\..\include\common;..\..\include\server;..\..\3rdparty\;..\..\dep\include;..\"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"

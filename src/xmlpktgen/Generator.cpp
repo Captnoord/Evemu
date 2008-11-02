@@ -1,5 +1,5 @@
 
-#include "Generator.h"
+#include "../xmlpktgen/Generator.h"
 #include "../common/logsys.h"
 
 

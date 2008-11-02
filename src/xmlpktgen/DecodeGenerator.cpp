@@ -22,7 +22,7 @@
 	------------------------------------------------------------------------------------
 */
 
-#include "DecodeGenerator.h"
+#include "../xmlpktgen/DecodeGenerator.h"
 #include "../common/logsys.h"
 
 #ifndef WIN32

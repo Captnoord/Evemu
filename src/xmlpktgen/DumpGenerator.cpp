@@ -22,7 +22,7 @@
 	------------------------------------------------------------------------------------
 */
 
-#include "DumpGenerator.h"
+#include "../xmlpktgen/DumpGenerator.h"
 #include "../common/logsys.h"
 
 ClassDumpGenerator::ClassDumpGenerator() {
