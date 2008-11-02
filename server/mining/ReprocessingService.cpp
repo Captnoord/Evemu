@@ -306,7 +306,7 @@ double ReprocessingServiceBound::_CalcReprocessingEfficiency(const InventoryItem
 PyRep *ReprocessingServiceBound::_GetQuote(const uint32 itemID, const Client *const c, bool throwException) const {
 	InventoryItem *item = m_manager->item_factory->Load(itemID, true);
 	if(item == NULL)
-		return NULL;	// No action as GetQuote is also called for reprocessed items (prolly for check)
+		return NULL;	// No action as GetQuote is also called for reprocessed items (probably for check)
 
 	if(item->ownerID() != c->GetCharacterID()) {
 		_log(SERVICE__ERROR, "Character %lu tried to reprocess item %lu of character %lu.", c->GetCharacterID(), item->itemID(), item->ownerID());

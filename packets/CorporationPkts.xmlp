@@ -717,7 +717,7 @@
       <int name="color1" none_marker="0" />
       <int name="color2" none_marker="0" />
       <int name="color3" none_marker="0" />
-      <raw name="typeface" /> <!-- Prolly always none -->
+      <raw name="typeface" /> <!-- probably always none -->
     </InlineTuple>
   </element>
 </Elements>

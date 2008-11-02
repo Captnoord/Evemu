@@ -490,7 +490,7 @@ static uint32 UnmarshalData(UnmarshalState *state, const byte *packet, uint32 le
 		len--;
 		len_used++;
 
-		//prolly supports length extension...
+		//probably supports length extension...
 
 		
 		_log(NET__UNMARSHAL_TRACE, "%s(0x%x)Op_PyUnicodeByteString of len %d*2", pfx, opcode, value);

@@ -184,7 +184,7 @@ InventoryItem *InventoryDB::_RowToItem(ItemFactory *factory, DBResultRow &row, b
 			row.GetDouble(11)),
 		(row.IsNull(12))?"":row.GetText(12),
 		row.GetUInt(13),
-		(EVEItemCategories)row.GetUInt(14),	//assume the DB dosent contain invalid category values... prolly not really a good assumption..
+		(EVEItemCategories)row.GetUInt(14),	//assume the DB dosent contain invalid category values... probably not really a good assumption..
 		true
 		);
 	if(result == NULL) {
@@ -233,7 +233,7 @@ bool InventoryDB::LoadEntityAttributes(InventoryItem *item) {
 					entry->double_attributes[row.GetInt(0)] = row.GetDouble(2);
 				} else {
 					//we keep it as an int internally.
-					//this should prolly produce a warning... this is rarely good.
+					//this should probably produce a warning... this is rarely good.
 					entry->int_attributes[row.GetInt(0)] = row.GetInt(2);
 				}
 			} else {

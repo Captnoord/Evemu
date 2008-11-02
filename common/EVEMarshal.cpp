@@ -144,7 +144,7 @@ public:
 				PutBytes(rep->value.c_str(), len);
 			} else {
 				//almost certain this isnt supported.
-				_log(NET__MARSHAL_ERROR, "Error: Length extension on Type1 string is untested, and prolly wont work.");
+				_log(NET__MARSHAL_ERROR, "Error: Length extension on Type1 string is untested, and probably wont work.");
 				PutByte(Op_PyByteString);
 				PutByte(0xFF);
 				PutBytes(&len, sizeof(len));
@@ -171,7 +171,7 @@ public:
 				} else {
 					//well, this type does not seem to support a length
 					//extension, so im hacking it to a buffer for now. We should
-					//prolly use a unicode string in the future
+					//probably use a unicode string in the future
 					PutByte(Op_PyUnicodeString);
 					PutByte(0xFF);
 					PutBytes(&len, sizeof(len));

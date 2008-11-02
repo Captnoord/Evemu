@@ -526,7 +526,7 @@ public:
 
 
 
-//this prolly belongs in its own file
+//this probably belongs in its own file
 class EVEStringTable {
 public:
 	static const uint8 None = 0;	//returned for no match

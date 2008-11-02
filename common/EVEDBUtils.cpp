@@ -476,7 +476,7 @@ static PyRepPackedObject1 *BuildRowDescriptor(const DBPackedColumnList &columns)
 }
 
 //orders DBPackedColumnList by DBTYPE
-//could be prolly done better
+//could be probably done better
 static void OrderPackedColumnList(DBPackedColumnList &columns) {
 	DBPackedColumnList ordered;
 	DBPackedColumnList::iterator cur, end, scur;
