@@ -15,10 +15,6 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
-
-
-
 #ifndef EVE_CLIENT_SESSION_H
 #define EVE_CLIENT_SESSION_H
 
