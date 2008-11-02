@@ -23,7 +23,7 @@
 #include <stdlib.h>
 #include <map>
 #include <iostream>
-#include <zlib.h>
+#include <zlib/zlib.h>
 #ifndef WIN32
 #include <sys/time.h>
 #include <sys/stat.h>

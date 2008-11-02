@@ -20,6 +20,8 @@
 #ifndef CONDITION_H
 #define CONDITION_H
 
+#include "Threading/Mutex.h"
+
 #ifdef WIN32
 //#include <windows.h>
 #define MAX_AWAITING_THREADS 10

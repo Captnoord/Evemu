@@ -21,7 +21,7 @@
 #define ASCENT_FRAMEWORKLOG_H
 
 #include "Common.h"
-//#include "Singleton.h"
+#include "Singleton.h"
 
 // console output colors
 #ifdef WIN32

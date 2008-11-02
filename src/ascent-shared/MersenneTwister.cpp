@@ -18,6 +18,7 @@
  */
 
 #include "MersenneTwister.h"
+#include "Threading/Mutex.h"
 #include "Timer.h"
 
 #define NUMBER_OF_GENERATORS 5

@@ -17,7 +17,7 @@
 
 
 #include <string.h>
-#include <zlib.h>
+#include <zlib/zlib.h>
 
 #include "../common/common.h"
 #include "../common/logsys.h"

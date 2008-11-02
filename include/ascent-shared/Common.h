@@ -29,7 +29,7 @@
 #  define _CRT_SECURE_NO_WARNINGS 1
 #  define _CRT_SECURE_NO_DEPRECATE 1
 #  define _CRT_SECURE_COPP_OVERLOAD_STANDARD_NAMES 1
-#  define _HAS_ITERATOR_DEBUGGING 0						// Speeds up debug build
+//#  define _HAS_ITERATOR_DEBUGGING 0						// Speeds up debug build
 #endif//WIN32
 
 enum TimeVariables
@@ -372,10 +372,10 @@ Scripting system exports/imports
 #include <assert.h>
 
 // threading
-#include "Threading/Threading.h"
+//#include "Threading/Threading.h"
 
 // random number generator
-#include "MersenneTwister.h"
+//#include "MersenneTwister.h"
 
 // utilities
 #include "Util.h"

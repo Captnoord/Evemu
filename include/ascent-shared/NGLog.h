@@ -22,6 +22,8 @@
 
 #include "Common.h"
 #include "Singleton.h"
+#include "Threading/Threading.h"
+
 
 #ifdef WIN32
 

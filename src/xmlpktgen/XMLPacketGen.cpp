@@ -22,15 +22,15 @@
 	------------------------------------------------------------------------------------
 */
 
-#include "XMLPacketGen.h"
+#include "../xmlpktgen/XMLPacketGen.h"
 #include "../common/logsys.h"
 #include <string>
 #include <map>
 #include <errno.h>
 #include <string.h>
 #include <stdio.h>
-#include "HeaderGenerator.h"
-#include "ImplGenerator.h"
+#include "../xmlpktgen/HeaderGenerator.h"
+#include "../xmlpktgen/ImplGenerator.h"
 
 static const char *GenFileComment = 
 "/*\n"

@@ -18,6 +18,7 @@
  */
 
 #include "../Common.h"
+#include "../Errors.h"
 #include "Mutex.h"
 #include "ThreadStarter.h"
 

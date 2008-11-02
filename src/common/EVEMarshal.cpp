@@ -26,7 +26,7 @@
 #include "logsys.h"
 #include <stdio.h>
 #include <string>
-#include <zlib.h>
+#include <zlib/zlib.h>
 
 using std::string;
 

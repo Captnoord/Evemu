@@ -24,7 +24,7 @@
 
 #include "../common/common.h"
 #include "../common/logsys.h"
-#include "XMLPacketGen.h"
+#include "../xmlpktgen/XMLPacketGen.h"
 #include <string>
 #include <sys/stat.h>
 
