@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="EVECommon"
+	Name="evemu-common"
 	ProjectGUID="{22A1613F-8C5C-4186-B245-C2C375F948B3}"
 	RootNamespace="EVECommon"
 	Keyword="Win32Proj"

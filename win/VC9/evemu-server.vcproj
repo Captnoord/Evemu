@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="EVEServer"
+	Name="evemu-server"
 	ProjectGUID="{7EBEC2E7-7322-475E-B76C-769397DD23BB}"
 	RootNamespace="EVEServer"
 	Keyword="Win32Proj"
