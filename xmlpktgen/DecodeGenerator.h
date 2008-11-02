@@ -4,8 +4,7 @@
 #include "Generator.h"
 #include <stack>
 
-class ClassDecodeGenerator
-: public TmplGenerator<ClassDecodeGenerator> {
+class ClassDecodeGenerator : public TmplGenerator<ClassDecodeGenerator> {
 public:
 	ClassDecodeGenerator();
 	virtual ~ClassDecodeGenerator() {}
@@ -24,7 +23,4 @@ protected:
 	AllProcFDecls();
 };
 
-
-#endif
-
-
+#endif//__DECODEGENERATOR_H_INCL__

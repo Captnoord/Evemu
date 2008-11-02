@@ -47,4 +47,4 @@ protected:
 	ClassCloneGenerator		m_clone;
 };
 
-#endif
+#endif//__IMPLGENERATOR_H_INCL__

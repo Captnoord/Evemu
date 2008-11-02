@@ -48,4 +48,4 @@ protected:
 	AllProcFDecls();
 };
 
-#endif
+#endif//__ENCODEGENERATOR_H_INCL__

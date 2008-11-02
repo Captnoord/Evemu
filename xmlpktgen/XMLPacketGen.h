@@ -38,4 +38,4 @@ protected:
 	
 };
 
-#endif
+#endif//__XMLPACKETGEN_H_INCL__

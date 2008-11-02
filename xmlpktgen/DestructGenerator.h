@@ -27,9 +27,7 @@
 
 #include "Generator.h"
 
-
-class ClassDestructGenerator
-: public TmplGenerator<ClassDestructGenerator> {
+class ClassDestructGenerator : public TmplGenerator<ClassDestructGenerator> {
 public:
 	ClassDestructGenerator();
 	virtual ~ClassDestructGenerator() {}
@@ -42,4 +40,4 @@ protected:
 	ProcFDecl(IDEntry);
 };
 
-#endif
+#endif//__DESTRUCTGENERATOR_H_INCL__

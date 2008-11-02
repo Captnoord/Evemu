@@ -40,4 +40,4 @@ protected:
 	ProcFDecl(IDEntry);
 };
 
-#endif
+#endif//__CLONEGENERATOR_H_INCL__

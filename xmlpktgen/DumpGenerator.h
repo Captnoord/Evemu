@@ -27,9 +27,7 @@
 
 #include "Generator.h"
 
-
-class ClassDumpGenerator
-: public TmplGenerator<ClassDumpGenerator> {
+class ClassDumpGenerator : public TmplGenerator<ClassDumpGenerator> {
 public:
 	ClassDumpGenerator();
 	virtual ~ClassDumpGenerator() {}
@@ -42,4 +40,4 @@ protected:
 	ProcFDecl(IDEntry);
 };
 
-#endif
+#endif//__DUMPGENERATOR_H_INCL__

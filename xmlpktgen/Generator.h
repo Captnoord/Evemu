@@ -65,7 +65,7 @@ protected:
 				continue;
 			}
 			if(field->Type() != TiXmlNode::ELEMENT)
-				continue;	//skip crap we dont care about
+				continue;	//skip crap we don't care about
 
 			count++;
 			if(max > 0 && count > max) {
@@ -90,8 +90,6 @@ protected:
 
 		return( (t->*p)(into, field) );
 	}
-
-	
 
 	std::map<std::string, fProcPtr> m_procs;
 };
@@ -155,4 +153,4 @@ protected:
 	ProcFMap(c, real, PyRepReal); \
 	ProcFMap(c, string, PyRepString)
 	
-#endif
+#endif//__GENERATOR_H_INCL__

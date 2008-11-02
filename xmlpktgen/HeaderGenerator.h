@@ -42,4 +42,4 @@ protected:
 	std::set<std::string> m_namesUsed;
 };
 
-#endif
+#endif//__HEADERGENERATOR_H_INCL__
