@@ -15,7 +15,6 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
 #include "common.h"
 #include "PyRep.h"
 #include "packet_dump.h"
@@ -27,9 +26,6 @@
 #include <stdio.h>
 #include <string>
 #include <zlib/zlib.h>
-
-using std::string;
-
 
 class MarshalVisitor : public PyVisitor {
 public:
@@ -45,7 +41,6 @@ public:
 			PutBytes(&value, sizeof(value));
 		} else if(rep->value > 0x7FFF) {
 			PutByte(Op_PyLong);
-			//PyRepInteger *rep1 = (PyRepInteger *)rep;
 			uint32 value = ((PyRepInteger *)rep)->GetUint32();
 			//TODO: byte swap.
 			PutBytes(&value, sizeof(value));

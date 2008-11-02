@@ -25,7 +25,7 @@
 
 #include "EvemuPCH.h"
 
-#include "ascent-shared/ByteBuffer.h"
+#include "ByteBuffer.h"
 
 // Dummy authorization handshake function
 static const byte handshakeFunc[] = {

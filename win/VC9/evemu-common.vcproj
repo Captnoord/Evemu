@@ -43,13 +43,15 @@
 				AdditionalOptions="/MP"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;..\..\include\ascent-shared\Threading&quot;;&quot;..\..\include\ascent-shared&quot;;..\..\include\common;..\..\include\server;..\..\3rdparty\zlib;..\..\3rdparty\;..\..\dep\include;..\"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS=1;_CRT_SECURE_NO_DEPRECATE=1;_CRT_SECURE_COPP_OVERLOAD_STANDARD_NAMES=1;_HAS_ITERATOR_DEBUGGING=0"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS=1;_CRT_SECURE_NO_DEPRECATE=1;_CRT_SECURE_COPP_OVERLOAD_STANDARD_NAMES=1"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
+				AssemblerListingLocation="$(IntDir)\"
+				ProgramDataBaseFileName="$(IntDir)\"
 				WarningLevel="3"
-				DebugInformationFormat="4"
+				DebugInformationFormat="3"
 				DisableSpecificWarnings="4355"
 			/>
 			<Tool

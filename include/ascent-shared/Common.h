@@ -371,12 +371,6 @@ Scripting system exports/imports
 // Include all threading files
 #include <assert.h>
 
-// threading
-//#include "Threading/Threading.h"
-
-// random number generator
-//#include "MersenneTwister.h"
-
 // utilities
 #include "Util.h"
 
@@ -447,8 +441,8 @@ static ASCENT_FORCEINLINE int float2int32(const float value)
 #endif
 }
 
-/// Fastest Method of long2int32
-static ASCENT_FORCEINLINE int long2int32(const double value)
+/// Fastest Method of double2int32
+static ASCENT_FORCEINLINE int double2int32(const double value)
 {
 #if !defined(X64) && COMPILER == COMPILER_MICROSOFT
 	int i;
@@ -532,8 +526,5 @@ ASCENT_FORCEINLINE void ASCENT_TOUPPER(std::string& str)
 #  define __LOC__ __FILE__ "("__STR1__(__LINE__)") : Warning Msg: "
 #  define __LOC2__ __FILE__ "("__STR1__(__LINE__)") : "
 #endif//WIN32
-
-
-
 
 #endif

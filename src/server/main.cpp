@@ -23,7 +23,6 @@ static void CatchSignal(int sig_num);
 static bool InitSignalHandlers();
 
 // wrapping up db starting
-//bool _DBStartup();
 bool _DBStartup(std::string _hostname, uint32 _port, std::string _username, std::string _password, std::string _database);
 bool _DBShutdown();
 
@@ -241,8 +240,8 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 	
-	EntityList entity_list(&db);
-	ItemFactory item_factory(&db, &entity_list);
+	//EntityList entity_list(&db);
+	//ItemFactory item_factory(&db, &entity_list);
 
 	
 
