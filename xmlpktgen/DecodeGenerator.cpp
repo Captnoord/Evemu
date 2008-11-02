@@ -506,7 +506,8 @@ bool ClassDecodeGenerator::Process_intdict(FILE *into, TiXmlElement *field) {
 		"		if(k->value > 0xFFFFFFFFLL) {\n"
 		"			_log(NET__PACKET_WARNING, \"Decode %s: truncating 64 bit into into 32 bit int in key of entry %%d in field %s\", %s_index);\n"
 		"		}\n"
-		"		%s[k->value] = %s_cur->second->Clone();\n"
+		//"		%s[k->value] = %s_cur->second->Clone();\n"
+		"		%s[k->GetUint32()] = %s_cur->second->Clone();\n"
 		"	}\n"
 		"	\n",
 		v,
@@ -586,7 +587,8 @@ bool ClassDecodeGenerator::Process_primdict(FILE *into, TiXmlElement *field) {
 		"		}\n"
 		"		PyRep%s *k = (PyRep%s *) %s_cur->first;\n"
 		"		PyRep%s *v = (PyRep%s *) %s_cur->second;\n"
-		"		%s[k->value] = v->value;\n"
+		//"		%s[k->value] = v->value;\n"
+		"		%s[k->GetUint32()] = v->GetUint32();\n"
 		"	}\n"
 		"	\n",
 		v,
@@ -694,7 +696,8 @@ bool ClassDecodeGenerator::Process_intlist(FILE *into, TiXmlElement *field) {
 		"		if(t->value > 0xFFFFFFFFLL) {\n"
 		"			_log(NET__PACKET_WARNING, \"Decode %s: truncating 64 bit into into 32 bit int for item %%d in field %s\", %s_index);\n"
 		"		}\n"
-		"		%s.push_back(t->value);\n"
+		//"		%s.push_back(t->value);\n"
+		"		%s.push_back(t->GetUint32());\n"
 		"	}\n"
 		"\n",
 		v, m_name, name, v, name,
@@ -743,7 +746,8 @@ bool ClassDecodeGenerator::Process_int64list(FILE *into, TiXmlElement *field) {
 		"			return false;\n"
 		"		}\n"
 		"		PyRepInteger *t = (PyRepInteger *) (*%s_cur);\n"
-		"		%s.push_back(t->value);\n"
+		//"		%s.push_back(t->value);\n"
+		"		%s.push_back(t->GetUint32());\n"
 		"	}\n"
 		"\n",
 		v, m_name, name, v, name,
@@ -906,7 +910,8 @@ bool ClassDecodeGenerator::Process_buffer(FILE *into, TiXmlElement *field) {
 		"	} else if(%s->CheckType(PyRep::String)) {\n"
 		"		PyRepString *__sss = (PyRepString *) %s;\n"
 		"		%s = NULL;\n"
-		"		%s = new PyRepBuffer((const byte *) __sss->value.c_str(), __sss->value.length());\n"
+		//"		%s = new PyRepBuffer((const byte *) __sss->value.c_str(), __sss->value.length());\n"
+		"		%s = new PyRepBuffer((const byte *) __sss->value.c_str(), (uint32)__sss->value.length());\n"
 		"		delete __sss;\n"
 		"	} else {\n"
 		"		_log(NET__PACKET_ERROR, \"Decode %s failed: %s is not a buffer: %%s\", %s->TypeString());\n"

@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
 		//all three files exist, check times.
 		if(xml_stat.st_mtime < h_stat.st_mtime && xml_stat.st_mtime < cpp_stat.st_mtime)
 		{
-			printf("%s is older than %s and %s, not rebuilding.\n", xml.c_str(), h.c_str(), cpp.c_str());
+			//printf("%s is older than %s and %s, not rebuilding.\n", xml.c_str(), h.c_str(), cpp.c_str());
 			return 0;
 		}
 	}

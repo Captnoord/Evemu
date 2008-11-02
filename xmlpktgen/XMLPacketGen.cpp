@@ -162,12 +162,9 @@ bool XMLPacketGen::GenPackets(
 	//header:
 	fprintf(cpp, 
 		"%s\n"
-		"\n"
 		"#include <string>\n"
 		"#include \"%s\"\n"
 		"#include \"../common/PyRep.h\"\n"
-		"\n"
-		"\n"
 		"\n",
 		GenFileComment, out_h
 	);
