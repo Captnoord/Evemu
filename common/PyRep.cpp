@@ -1137,7 +1137,7 @@ bool EVEStringTable::LoadFile(const char *file) {
 
 	FILE *f = fopen(file, "r");
 	if(f == NULL)
-		return(false);
+		return false;
 
 	uint8 index = 1;
 	
@@ -1154,7 +1154,7 @@ bool EVEStringTable::LoadFile(const char *file) {
 		index++;
 	}
 	fclose(f);
-	return(true);
+	return true;
 }
 
 //takes a string as an argument since its going to be converted to

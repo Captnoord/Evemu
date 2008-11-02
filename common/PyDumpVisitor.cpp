@@ -21,9 +21,7 @@
 #include "misc.h"
 #include "packet_functions.h"
 
-PyDumpVisitor::PyDumpVisitor(bool full_lists)
-: PyVisitor(),
-  m_full_lists(full_lists)
+PyDumpVisitor::PyDumpVisitor(bool full_lists) : PyVisitor(), m_full_lists(full_lists)
 {
 	push("");
 }
@@ -67,7 +65,6 @@ void PyLogsysDump::_hexDump(const byte *bytes, uint32 len) {
 		phex(m_hex_type, bytes, len);
 }
 
-
 PyFileDump::PyFileDump(FILE *into, bool full_hex)
 : PyDumpVisitor(false),
   m_into(into),
@@ -106,13 +103,6 @@ void PyFileDump::_pfxHexDump(const byte *data, uint32 length) {
 		fprintf(m_into, "%s%s\n", top(), buffer);
 	}
 }
-
-
-
-
-
-
-
 
 void PyDumpVisitor::VisitInteger(const PyRepInteger *rep) {
 	_print("Integer field: %lld", rep->value);

@@ -149,8 +149,8 @@ bool log_open_logfile(const char *fname) {
 		fclose(logsys_log_file);
 	logsys_log_file = fopen(fname, "w");
 	if(logsys_log_file == NULL)
-		return(false);
-	return(true);
+		return false;
+	return true;
 }
 bool load_log_settings(const std::string & filename)
 {
@@ -161,7 +161,7 @@ bool load_log_settings(const char *filename) {
 	//this is a terrible algorithm, but im lazy today
 	FILE *f = fopen(filename, "r");
 	if(f == NULL)
-		return(false);
+		return false;
 	char linebuf[512], type_name[256], value[256];
 	while(!feof(f)) {
 		if(fgets(linebuf, 512, f) == NULL)
@@ -224,7 +224,7 @@ bool load_log_settings(const char *filename) {
 			log_disable(LogType(r));
 	}
 	fclose(f);
-	return(true);
+	return true;
 }
 
 

@@ -29,13 +29,13 @@ bool XMLParser::ParseFile(const char *file, const char *root_ele) {
 	TiXmlDocument doc( file );
 	if(!doc.LoadFile()) {
 		printf("Unable to load '%s': %s\n", file, doc.ErrorDesc());
-		return(false);
+		return false;
 	}
 	
 	TiXmlElement *root = doc.FirstChildElement( root_ele );
 	if(root == NULL) {
 		printf("Unable to find root '%s' in %s\n",root_ele, file);
-		return(false);
+		return false;
 	}
 
 	ParseOkay=true;

@@ -13,7 +13,7 @@ void Generator::Generate(FILE *into, TiXmlElement *root) {
 			continue;
 		}
 		if(main_element->Type() != TiXmlNode::ELEMENT)
-			continue;	//skip crap we dont care about
+			continue;	//skip crap we don't care about
 		
 		TiXmlElement *ele = main_element->ToElement();
 		if(std::string("include") == ele->Value()) {
