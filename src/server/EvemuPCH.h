@@ -21,8 +21,8 @@
 // common files first
 #include "../common/common.h"
 
-#include "ascent-shared/ascent.h"
-#include "ascent-shared/ByteBuffer.h"
+#include "ascent.h"
+#include "ByteBuffer.h"
 
 // commented because why would we do this?....
 //#define IMPLEMENT_SIGEXCEPT
