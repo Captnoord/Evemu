@@ -64,7 +64,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="zlib.lib wsock32.lib ascent-sharedd.lib"
+				AdditionalDependencies="zlib.lib wsock32.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\3rdparty\mysql\lib\debug;&quot;..\..\3rdparty\ascent-framework\lib\$(ConfigurationName)\&quot;;..\..\lib;&quot;..\..\lib\$(ConfigurationName)\&quot;"
 				GenerateDebugInformation="true"
