@@ -88,42 +88,44 @@ public:
 	
 	PyRepInteger *TypedClone() const;
 
-	ASCENT_INLINE int8 GetInt8()
+	int8 GetInt8()
 	{
 		return int8(value & 0x000000FFLL);
 	};
 
-	ASCENT_INLINE uint8 GetUint8()
+	uint8 GetUint8()
 	{
 		return uint8(value & 0x000000FFLL);
 	};
 
-	ASCENT_INLINE int16 GetInt16()
+	int16 GetInt16()
 	{
 		return int16(value & 0x0000FFFFLL);
 	};
 
-	ASCENT_INLINE uint16 GetUint16()
+	uint16 GetUint16()
 	{
 		return uint16(value & 0x0000FFFFLL);
 	};
 
-	ASCENT_INLINE int32 GetInt32()
+	int32 GetInt32()
 	{
 		return int32(value & 0xFFFFFFFFLL);
 	};
 
-	ASCENT_INLINE uint32 GetUint32()
+	uint32 GetUint32()
 	{
 		return uint32(value & 0xFFFFFFFFLL);
 	};
 
-	ASCENT_INLINE int64 GetInt64()
+	// slow.... on a 32 bits system
+	int64 GetInt64()
 	{
 		return *(int64*)&value;
 	};
 
-	ASCENT_INLINE uint64 GetUint64()
+	// slow.... on a 32 bits system
+	uint64 GetUint64()
 	{
 		return value;
 	};

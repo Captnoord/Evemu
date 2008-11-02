@@ -45,12 +45,13 @@ public:
 			PutBytes(&value, sizeof(value));
 		} else if(rep->value > 0x7FFF) {
 			PutByte(Op_PyLong);
-			uint32 value = rep->value;
+			//PyRepInteger *rep1 = (PyRepInteger *)rep;
+			uint32 value = ((PyRepInteger *)rep)->GetUint32();
 			//TODO: byte swap.
 			PutBytes(&value, sizeof(value));
 		} else if(rep->value > 1) {
 			PutByte(Op_PySignedShort);
-			uint16 value = rep->value;
+			uint16 value = ((PyRepInteger *)rep)->GetUint16();
 			//TODO: byte swap.
 			PutBytes(&value, sizeof(value));
 /*      } else if(rep->value > 0xFF) {
