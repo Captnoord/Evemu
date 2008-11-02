@@ -320,26 +320,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\PyDumpVisitor.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\common\PyPacket.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\common\PyRep.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\common\PyUtils.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\common\PyVisitor.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\common\XMLParser.cpp"
 				>
 			</File>
@@ -364,6 +344,30 @@
 				</File>
 				<File
 					RelativePath="..\..\3rdparty\tinyxml\tinyxmlparser.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Python"
+				>
+				<File
+					RelativePath="..\..\common\PyDumpVisitor.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\common\PyPacket.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\common\PyRep.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\common\PyUtils.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\common\PyVisitor.cpp"
 					>
 				</File>
 			</Filter>
