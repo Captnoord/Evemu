@@ -155,7 +155,7 @@ bool FindNumber(const std::vector<byte> &digits, int byte, const FindSpec *f) {
 int main(int argc, char *argv[]) {
 	if(argc != 3) {
 		printf("Usage: %s [number] [file]\n");
-		return(1);
+		return 1;
 	}
 
 	FindSpec s;
@@ -167,7 +167,7 @@ int main(int argc, char *argv[]) {
 	FILE *f = fopen(argv[2], "rb");
 	if(f == NULL) {
 		printf("Unable to open input file\n");
-		return(1);
+		return 1;
 	}
 	
 	int block_size = 102400;
@@ -183,7 +183,7 @@ int main(int argc, char *argv[]) {
 		if(len < 0) {
 			printf("Error reading.\n");
 			fclose(f);
-			return(1);
+			return 1;
 		} else if(len == 0) {
 			continue;
 		}

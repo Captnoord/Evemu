@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/MP"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;..\..\include\ascent-shared\Network&quot;;&quot;..\..\include\ascent-shared\Database&quot;;&quot;..\..\include\ascent-shared\Config&quot;;&quot;..\..\include\ascent-shared\Auth&quot;;&quot;..\..\include\ascent-shared\Threading&quot;;&quot;..\..\include\ascent-shared&quot;;..\..\dep\include"
+				AdditionalIncludeDirectories="&quot;..\..\include\ascent-shared&quot;;..\..\dep\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="false"
 				ExceptionHandling="1"
@@ -441,10 +441,6 @@
 		</File>
 		<File
 			RelativePath="..\..\include\ascent-shared\Errors.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\..\win32\VC9\EVECommon.vcproj"
 			>
 		</File>
 		<File

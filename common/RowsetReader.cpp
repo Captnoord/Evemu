@@ -101,7 +101,7 @@ uint32 BaseRowsetReader::base_iterator::GetInt(uint32 index) const {
 	if(ele == NULL || !ele->CheckType(PyRep::Integer))
 		return(0x7F000000LL);
 	PyRepInteger *e = (PyRepInteger *) ele;
-	return(e->value);
+	return(e->GetUint32());
 }
 
 uint64 BaseRowsetReader::base_iterator::GetInt64(uint32 index) const {

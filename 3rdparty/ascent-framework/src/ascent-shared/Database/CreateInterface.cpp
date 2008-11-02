@@ -24,17 +24,17 @@
 
 #if defined(ENABLE_DATABASE_MYSQL)
 #  pragma message("[DATABASE LAYER] MySql")
-#  include "MySQLDatabase.h"
+#  include "Database/MySQLDatabase.h"
 #endif
 
 #if defined(ENABLE_DATABASE_POSTGRES)
 #  pragma message("[DATABASE LAYER] PostgreSql")
-#  include "PostgresDatabase.h"
+#  include "Database/PostgresDatabase.h"
 #endif
 
 #if defined(ENABLE_DATABASE_SQLITE)
 #  pragma message("[DATABASE LAYER] Sqlite 3")
-#  include "SQLiteDatabase.h"
+#  include "Database/SQLiteDatabase.h"
 #endif
 
 Database * Database::CreateDatabaseInterface(uint32 uType)

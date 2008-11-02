@@ -262,7 +262,7 @@ int ShipModule::Activate(const std::string &effectName, uint32 target, uint32 re
 			_log(SHIP__MODULE_TRACE, "Module %s (%lu): Activate requested for effect.", m_item->itemName().c_str(), m_item->itemID());
 			m_timer.Start(_ActivationInterval());
 			m_state = PuttingOnline;
-			return(1);
+			return 1;
 		} else {
 			_log(SHIP__MODULE_TRACE, "Module %s (%lu): Activation requested in state %d, ignoring.", m_item->itemName().c_str(), m_item->itemID(), m_state);
 			return 0;
@@ -360,7 +360,7 @@ int ActivatableModule::Activate(const std::string &effectName, uint32 target, ui
 			m_target = target;
 			StartEffect();
 			DoEffect();
-			return(1);
+			return 1;
 		} else {
 			_log(SHIP__MODULE_TRACE, "Module %s (%lu): Activation requested with %s in state %d. Ignoring..", m_item->itemName().c_str(), m_item->itemID(), m_effectName, m_state);
 			return 0;

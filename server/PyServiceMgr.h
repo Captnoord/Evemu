@@ -43,7 +43,8 @@ class ItemFactory;
 
 class LSCService;
 
-class PyServiceMgr {
+class PyServiceMgr : public Singleton<PyServiceMgr>
+{
 public:
 	PyServiceMgr(uint32 nodeID, DBcore *db, EntityList *elist, ItemFactory *ifactory, const std::string &CacheDirectory);
 	~PyServiceMgr();

@@ -394,7 +394,7 @@ static uint8 GetTypeSizeIndex(DBTYPE t) {
 	case DBTYPE_I4:
 	case DBTYPE_UI4:
 	case DBTYPE_R4:
-		return(1);
+		return 1;
 	case DBTYPE_I2:
 	case DBTYPE_UI2:
 		return(2);

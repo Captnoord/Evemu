@@ -281,4 +281,10 @@
 #include "../common/Space.h"
 #include "../common/SpaceRunnable.h"
 
+
+/* db stuff */
+extern Database * Database_Generic;
+
+#define GenericDatabase (*Database_Generic)
+
 #endif//__EVEPCH_H

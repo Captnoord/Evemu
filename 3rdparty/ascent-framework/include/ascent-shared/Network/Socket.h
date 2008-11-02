@@ -242,7 +242,8 @@ public:
 	void Update()
 	{
 		map<Socket*, time_t>::iterator i, i2;
-		time_t t = time(NULL);//UNIXTIME;
+		//time_t t = time(NULL);//UNIXTIME;
+		time_t t = UNIXTIME;
 		lock.Acquire();
 		for(i = deletionQueue.begin(); i != deletionQueue.end();)
 		{

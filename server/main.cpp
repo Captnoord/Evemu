@@ -22,6 +22,13 @@
 static void CatchSignal(int sig_num);
 static bool InitSignalHandlers();
 
+// wrapping up db starting
+//bool _DBStartup();
+bool _DBStartup(std::string _hostname, uint32 _port, std::string _username, std::string _password, std::string _database);
+bool _DBShutdown();
+
+Database* Database_Generic;
+
 static volatile bool RunLoops = true;
 
 int main(int argc, char *argv[]) 
@@ -36,17 +43,30 @@ int main(int argc, char *argv[])
 	sLog.outString("Revision: %s", EVEMU_REVISION);
 	sLog.outString("Supported Client: %s, Version %.2f, Build %d, MachoNet %d", EVEProjectVersion, EVEVersionNumber, EVEBuildVersion, MachoNetVersion);
 
+	printf( "The key combination <Ctrl-C> will safely shut down the server at any time.\n" );
+	Log.Line();
+
+#ifndef WIN32
+	if(geteuid() == 0 || getegid() == 0)
+	{
+		Log.LargeErrorMessage( LARGERRORMESSAGE_WARNING, "You are running Evemu as root.", "This is not needed, and may be a possible security risk.", "It is advised to hit CTRL+C now and", "start as a non-privileged user.", NULL);
+	}
+#endif//WIN32
+
+	/* start the 'threadpool', this needs to be in front of things that uses the 'threadpool' */
 	ThreadPool.Startup();
 
+	
+
 	//it is important to do this before doing much of anything, in case they use it.
-	Timer::SetCurrentTime();
+	//Timer::SetCurrentTime();
 	
 	// Load server configuration
 	sLog.outString("Loading server configuration..");
 	if (!EVEmuServerConfig::LoadConfig()) 
 	{
 		sLog.outError("EVEmu", "Loading server configuration failed.");
-		return(1);
+		return 1;
 	}
 	const EVEmuServerConfig *Config=EVEmuServerConfig::get();
 
@@ -70,12 +90,19 @@ int main(int argc, char *argv[])
 	
 	if(!PyRepString::LoadStringFile(Config->StringsFile.c_str())) {
 		sLog.outString("Unable to open %s, i need it to decode string table elements!", Config->StringsFile.c_str());
-		return(1);
+		return 1;
+	}
+
+	bool dbret = _DBStartup(Config->DatabaseHost,Config->DatabasePort, Config->DatabaseUsername, Config->DatabasePassword, Config->DatabaseDB);
+
+	if(dbret == false)
+	{
+		return 1;
 	}
 
 	//connect to the database...
 	DBcore db;
-	{
+	/*{
 		DBerror err;
 		if(!db.Open(err, 
 			Config->DatabaseHost.c_str(),
@@ -85,15 +112,31 @@ int main(int argc, char *argv[])
 			Config->DatabasePort)
 		) {
 			sLog.outError("Unable to connect to the database: %s", err.c_str());
-			return(1);
+			return 1;
 		}
-	}
+	}*/
 
 	/* new socket stuff */
 #ifndef enable_ascent
 #define enable_ascent
 #endif
 #ifdef enable_ascent
+
+	// Startup banner
+	UNIXTIME = time(NULL);
+	g_localTime = *localtime(&UNIXTIME);
+
+	time_t curTime;
+
+	uint32 realCurrTime, realPrevTime;
+	realCurrTime = realPrevTime = getMSTime();
+
+	// Socket loop timing
+	uint32 start;
+	uint32 diff;
+	uint32 last_time = now();
+	uint32 etime;
+	uint32 next_printout = getMSTime(), next_send = getMSTime();
 
 	// runnable thread to update server systems and sessions
 	SpaceRunnable * sr = new SpaceRunnable();
@@ -104,8 +147,21 @@ int main(int argc, char *argv[])
 	new Space;
 	sSocketMgr.SpawnWorkerThreads();
 
+
+	/* old 'evemu' spec stuff */
+	EntityList entity_list(&db);
+	ItemFactory item_factory(&db, &entity_list);
+
+	/* global service manager */
+	PyServiceMgr services(888444, &db, &entity_list, &item_factory, Config->CacheDirectory);
+
+	/* end old 'evemu' spec stuff */
+
+
+
 	static volatile bool m_stopEvent;
 
+	/* these settings are 'hardcoded' for now */
 	uint32 wsport = 26000;
 	std::string host = "127.0.0.1";
 
@@ -119,31 +175,58 @@ int main(int argc, char *argv[])
 	ListenSocket<EveClientSocket> * ls = new ListenSocket<EveClientSocket>(host.c_str(), wsport);
 	bool listnersockcreate = ls->IsOpen();
 #ifdef WIN32
-	if( listnersockcreate )
+	if( listnersockcreate == true )
 		ThreadPool.ExecuteTask(ls);
 #endif
+
+	/* main thread loop */
 	while( !m_stopEvent && listnersockcreate )
 	{
+		start = now();
+		diff = start - last_time;
+
 		if(! ((++loopcounter) % 10000) )		// 5mins
 		{
 			ThreadPool.ShowStats();
 			ThreadPool.IntegrityCheck();
 		}
 
+		/* since time() is an expensive system call, we only update it once per server loop */
+		curTime = time(NULL);
+		if( UNIXTIME != curTime )
+		{
+			UNIXTIME = curTime;
+			g_localTime = *localtime(&curTime);
+		}
+
 		// check for garbage sockets
 		sSocketGarbageCollector.Update();
 
+		/* UPDATE */
+		last_time = now();
+		etime = last_time - start;
+
 		// do the stuff for thread sleeping
+		if( 50 > etime )
+		{
 #ifdef WIN32
-		//WaitForSingleObject( hThread, 50 - etime );
-		WaitForSingleObject( hThread, 50 );
+			WaitForSingleObject( hThread, 50 - etime );
 #else
-		//Sleep( 50 - etime );
-		Sleep( 50 );
+			Sleep( 50 - etime );
 #endif
+		}
 	}
 
 #endif//enable_ascent
+
+
+
+
+
+
+
+
+
 
 
 	//Start up the TCP server
@@ -161,8 +244,7 @@ int main(int argc, char *argv[])
 	EntityList entity_list(&db);
 	ItemFactory item_factory(&db, &entity_list);
 
-	//now, the service manager...
-	PyServiceMgr services(888444, &db, &entity_list, &item_factory, Config->CacheDirectory);
+	
 
 	//setup the command dispatcher
 	//CommandDispatcher command_dispatcher(new CommandDB(&db), &services);
@@ -247,7 +329,7 @@ int main(int argc, char *argv[])
 	 *
 	 */
 	if(!InitSignalHandlers())	//do not set these up until the main loop is about to start, else we cannot abort init.
-		return(1);
+		return 1;
 	EVETCPConnection *tcpc;
 	while(RunLoops) {
 		Timer::SetCurrentTime();
@@ -306,3 +388,33 @@ static void CatchSignal(int sig_num) {
 	RunLoops = false;
 }
 
+/* internal db start up wrapper... */
+bool _DBStartup(std::string _hostname, uint32 _port, std::string _username, std::string _password, std::string _database)
+{
+	std::string hostname = _hostname;
+	std::string username = _username;
+	std::string password = _password;
+	std::string database = _database;
+
+	int port = _port;
+	int type = 1; // 1 is mysql
+	int connectionCount = 3; // make this configurable
+
+	Database_Generic = Database::CreateDatabaseInterface(type);
+
+	// Initialize it
+	if( !GenericDatabase.Initialize(hostname.c_str(), (unsigned int)port, username.c_str(),
+	   password.c_str(), database.c_str(), connectionCount, 16384 ) )
+	{
+		Log.Error( "sql","Main database initialization failed. Exiting." );
+		return false;
+	}
+
+	return true;
+}
+
+bool _DBShutdown()
+{
+	SafeDelete(Database_Generic);
+	return true;
+}

@@ -228,7 +228,7 @@ void EveClientSocket::OnRead()
 		/* IMPORTANT TODO, InflateAndUnmarshal should not be in the socket, as when receiving big packets this could block the
 		 * network core. So move it somehow to the session class, also as its recursive it can run forever.
 		 */
-		PyRep *recvPyPacket = InflateAndUnmarshal(packet->contents(), packet->size());
+		PyRep *recvPyPacket = InflateAndUnmarshal(packet->contents(), (uint32)packet->size());
 
 		printf("\nrecv packet with opcode:%d and Type:%s and size:%d\n", ((PyPacket*)recvPyPacket)->type, recvPyPacket->TypeString(), packet->size());
 		packet->LogBuffer();

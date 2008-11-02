@@ -46,7 +46,6 @@
 extern SERVER_DECL time_t UNIXTIME;		/* update this every loop to avoid the time() syscall! */
 extern SERVER_DECL tm g_localTime;
 
-
 // unix color strings
 #ifndef WIN32
 static const char* colorstrings[TBLUE+1] = {

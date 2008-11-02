@@ -48,7 +48,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm250 /MP"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;..\..\3rdparty\ascent-framework\include\ascent-shared/Threading&quot;;&quot;..\..\3rdparty\ascent-framework\include\ascent-shared&quot;;&quot;..\..\3rdparty\ascent-framework\include\&quot;;..\..\3rdparty\mysql\include;..\..\3rdparty\zlib;..\..\3rdparty\;..\..\common;..\..\server;..\"
+				AdditionalIncludeDirectories="&quot;D:\Dev\Evemu\branches\ascentframework\3rdparty\ascent-framework\dep\include&quot;;&quot;..\..\3rdparty\ascent-framework\include\ascent-shared/Threading&quot;;&quot;..\..\3rdparty\ascent-framework\include\ascent-shared&quot;;&quot;..\..\3rdparty\ascent-framework\dep\include\&quot;;&quot;..\..\3rdparty\ascent-framework\include\&quot;;..\..\3rdparty\zlib;..\..\3rdparty\;..\..\common;..\..\server;..\"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS=1;_CRT_SECURE_NO_DEPRECATE=1;_CRT_SECURE_COPP_OVERLOAD_STANDARD_NAMES=1;_HAS_ITERATOR_DEBUGGING=0"
 				MinimalRebuild="false"
 				ExceptionHandling="1"
@@ -61,6 +61,7 @@
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
 				CallingConvention="0"
+				DisableSpecificWarnings="4355"
 				ShowIncludes="false"
 			/>
 			<Tool

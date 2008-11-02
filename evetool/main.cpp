@@ -91,7 +91,7 @@ int main(int argc, char *argv[]) {
 
 	if(!PyRepString::LoadStringFile("../data/strings.txt")) {
 		_log(CCLIENT__INIT_ERR, "Unable to open ../data/strings.txt, i need it to decode string table elements!");
-		return(1);
+		return 1;
 	}
 	
 	

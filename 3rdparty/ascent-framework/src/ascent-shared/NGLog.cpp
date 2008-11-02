@@ -137,7 +137,7 @@ void CLog::Error(const char * source, const char * format, ...)
 
 void CLog::Time()
 {
-	UNIXTIME = time(NULL);
+	//UNIXTIME = time(NULL);
 	tm * t = localtime(&UNIXTIME);
 	printf("%02u:%02u ", t->tm_hour, t->tm_min);
 	//printf("%02u:%02u ", g_localTime.tm_hour, g_localTime.tm_min);
