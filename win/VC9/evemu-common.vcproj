@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/MP"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;..\..\include\ascent-shared/Threading&quot;;&quot;..\..\include\ascent-shared&quot;;..\..\include\common;..\..\include\server;..\..\3rdparty\zlib;..\..\3rdparty\;..\..\dep\include;..\"
+				AdditionalIncludeDirectories="&quot;..\..\include\ascent-shared\Threading&quot;;&quot;..\..\include\ascent-shared&quot;;..\..\include\common;..\..\include\server;..\..\3rdparty\zlib;..\..\3rdparty\;..\..\dep\include;..\"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS=1;_CRT_SECURE_NO_DEPRECATE=1;_CRT_SECURE_COPP_OVERLOAD_STANDARD_NAMES=1;_HAS_ITERATOR_DEBUGGING=0"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="3"

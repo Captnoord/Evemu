@@ -23,7 +23,7 @@
 #endif
 
 #include "../common.h"
-#include "sym_engine.h"
+#include "../common/sigexcept/sym_engine.h"
 
 #include <crtdbg.h>
 #include <malloc.h> 

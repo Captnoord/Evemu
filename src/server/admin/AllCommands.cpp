@@ -21,8 +21,7 @@ void RegisterAllCommands(CommandDispatcher *into) {
 	
 	#define COMMAND(name, role, description) \
 		into->AddCommand( #name, description, role, Command_##name );
-	#include "AllCommandsList.h"
-	
+	#include "admin/AllCommandsList.h"
 }
 
 

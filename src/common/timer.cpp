@@ -26,7 +26,7 @@
 #include <iostream>
 using namespace std;
 
-#include "timer.h"
+#include "../common/timer.h"
 
 static int32 current_time = 0;
 static int32 current_seconds = 0;

@@ -122,7 +122,8 @@ ObjCacheService::ObjCacheService(PyServiceMgr *mgr, DBcore *dbc, const std::stri
 	//register full name -> short key in m_cacheKeys
 	#define KCACHABLE(name, key, symbol, type, query) \
 		m_cacheKeys[name] = key;
-	#include "CachableList.h"
+	#include "cache\CachableList.h"
+
 }
 
 ObjCacheService::~ObjCacheService() {

@@ -260,207 +260,207 @@
 			Name="Packets"
 			>
 			<File
-				RelativePath="..\..\src\packets\AccountPkts.cpp"
+				RelativePath="..\..\include\packets\AccountPkts.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\AccountPkts.h"
+				RelativePath="..\..\include\packets\AccountPkts.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\AccountPkts.xmlp"
+				RelativePath="..\..\include\packets\AccountPkts.xmlp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\Character.cpp"
+				RelativePath="..\..\include\packets\Character.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\Character.h"
+				RelativePath="..\..\include\packets\Character.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\Character.xmlp"
+				RelativePath="..\..\include\packets\Character.xmlp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\CorporationPkts.cpp"
+				RelativePath="..\..\include\packets\CorporationPkts.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\CorporationPkts.h"
+				RelativePath="..\..\include\packets\CorporationPkts.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\CorporationPkts.xmlp"
+				RelativePath="..\..\include\packets\CorporationPkts.xmlp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\Crypto.cpp"
+				RelativePath="..\..\include\packets\Crypto.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\Crypto.h"
+				RelativePath="..\..\include\packets\Crypto.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\Crypto.xmlp"
+				RelativePath="..\..\include\packets\Crypto.xmlp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\Destiny.cpp"
+				RelativePath="..\..\include\packets\Destiny.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\Destiny.h"
+				RelativePath="..\..\include\packets\Destiny.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\Destiny.xmlp"
+				RelativePath="..\..\include\packets\Destiny.xmlp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\DogmaIM.cpp"
+				RelativePath="..\..\include\packets\DogmaIM.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\DogmaIM.h"
+				RelativePath="..\..\include\packets\DogmaIM.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\DogmaIM.xmlp"
+				RelativePath="..\..\include\packets\DogmaIM.xmlp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\General.cpp"
+				RelativePath="..\..\include\packets\General.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\General.h"
+				RelativePath="..\..\include\packets\General.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\General.xmlp"
+				RelativePath="..\..\include\packets\General.xmlp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\Inventory.cpp"
+				RelativePath="..\..\include\packets\Inventory.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\Inventory.h"
+				RelativePath="..\..\include\packets\Inventory.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\Inventory.xmlp"
+				RelativePath="..\..\include\packets\Inventory.xmlp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\Language.cpp"
+				RelativePath="..\..\include\packets\Language.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\Language.h"
+				RelativePath="..\..\include\packets\Language.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\Language.xmlp"
+				RelativePath="..\..\include\packets\Language.xmlp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\LSCPkts.cpp"
+				RelativePath="..\..\include\packets\LSCPkts.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\LSCPkts.h"
+				RelativePath="..\..\include\packets\LSCPkts.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\LSCPkts.xmlp"
+				RelativePath="..\..\include\packets\LSCPkts.xmlp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\Manufacturing.cpp"
+				RelativePath="..\..\include\packets\Manufacturing.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\Manufacturing.h"
+				RelativePath="..\..\include\packets\Manufacturing.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\Manufacturing.xmlp"
+				RelativePath="..\..\include\packets\Manufacturing.xmlp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\Market.cpp"
+				RelativePath="..\..\include\packets\Market.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\Market.h"
+				RelativePath="..\..\include\packets\Market.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\Market.xmlp"
+				RelativePath="..\..\include\packets\Market.xmlp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\Missions.cpp"
+				RelativePath="..\..\include\packets\Missions.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\Missions.h"
+				RelativePath="..\..\include\packets\Missions.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\Missions.xmlp"
+				RelativePath="..\..\include\packets\Missions.xmlp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\ObjectCaching.cpp"
+				RelativePath="..\..\include\packets\ObjectCaching.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\ObjectCaching.h"
+				RelativePath="..\..\include\packets\ObjectCaching.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\ObjectCaching.xmlp"
+				RelativePath="..\..\include\packets\ObjectCaching.xmlp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\Standing2.cpp"
+				RelativePath="..\..\include\packets\Standing2.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\Standing2.h"
+				RelativePath="..\..\include\packets\Standing2.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\Standing2.xmlp"
+				RelativePath="..\..\include\packets\Standing2.xmlp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\Tutorial.cpp"
+				RelativePath="..\..\include\packets\Tutorial.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\Tutorial.h"
+				RelativePath="..\..\include\packets\Tutorial.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\Tutorial.xmlp"
+				RelativePath="..\..\include\packets\Tutorial.xmlp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\Wallet.cpp"
+				RelativePath="..\..\include\packets\Wallet.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\Wallet.h"
+				RelativePath="..\..\include\packets\Wallet.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\packets\Wallet.xmlp"
+				RelativePath="..\..\include\packets\Wallet.xmlp"
 				>
 			</File>
 		</Filter>

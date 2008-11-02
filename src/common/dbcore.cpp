@@ -16,8 +16,8 @@
 */
 
 #include "EvemuPCH.h"
-#include <errmsg.h>
-#include <mysqld_error.h>
+#include <mysql/errmsg.h>
+#include <mysql/mysqld_error.h>
 #include <limits.h>
 #include <string.h>
 #include <stdarg.h>

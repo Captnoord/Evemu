@@ -24,7 +24,7 @@ ObjCacheDB::ObjCacheDB(DBcore *db)
 	//register all the generators
 	#define KCACHABLE(name, key, symbol, type, query) \
 		m_generators[name] = &ObjCacheDB::Generate_##symbol;
-	#include "CachableList.h"
+	#include "cache\CachableList.h"
 }
 
 ObjCacheDB::~ObjCacheDB() {
@@ -81,7 +81,7 @@ PyRep *ObjCacheDB::Generate_##symbol() { \
 	} \
 	return(DBResultTo##type(key, res)); \
 }
-#include "CachableList.h"
+#include "cache\CachableList.h"
 
 
 

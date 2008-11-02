@@ -24,7 +24,7 @@
 #include "misc.h"
 #include "EVEMarshal.h"
 #include "packet_functions.h"
-#include "crc32.h"
+#include "../common/crc32.h"
 #include "EVEUtils.h"
 #include "EVEMarshalOpcodes.h"
 #include "PyDumpVisitor.h"

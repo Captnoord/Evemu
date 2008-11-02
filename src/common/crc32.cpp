@@ -16,11 +16,11 @@
 */
 
 #include "common.h"
-#include "crc32.h"
+#include "../common/crc32.h"
 #include <assert.h>
 #include <memory.h>
 
-uint32 CRC32Table[256] =
+static const uint32 CRC32Table[256] =
 {
 	0x00000000, 0x77073096, 0xEE0E612C, 0x990951BA,
 	0x076DC419, 0x706AF48F, 0xE963A535, 0x9E6495A3,

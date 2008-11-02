@@ -1130,7 +1130,7 @@ public:
 		#define ATTR(ID, name, default_value, type, persistent_value) \
 			persistent[ID] = persistent_value; \
 			is_int[ID] = ( TypeInd_##type == TypeInd_int );
-		#include "EVEAttributes.h"
+		#include "../server/inventory/EVEAttributes.h"
 	}
 	bool persistent[InventoryItem::Invalid_Attr];
 	bool is_int[InventoryItem::Invalid_Attr];
