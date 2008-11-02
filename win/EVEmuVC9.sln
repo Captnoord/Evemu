@@ -2,8 +2,6 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EVEServer", "VC9\EVEServer.vcproj", "{7EBEC2E7-7322-475E-B76C-769397DD23BB}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EVETool", "VC9\EVETool.vcproj", "{A8DC0868-C2AA-4C5A-BAE3-F3CB77D4B3A6}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XMLPktGen", "VC9\XMLPktGen.vcproj", "{22CD0D69-A133-45EB-BFA8-407A61E1822A}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ascent-shared", "..\3rdparty\ascent-framework\win\VC9\ascent-shared.vcproj", "{B0A489F8-0C45-49B5-967A-98272FA40A67}"
@@ -20,8 +18,6 @@ Global
 		{7EBEC2E7-7322-475E-B76C-769397DD23BB}.Debug|Win32.Build.0 = Debug|Win32
 		{7EBEC2E7-7322-475E-B76C-769397DD23BB}.Release|Win32.ActiveCfg = Release|Win32
 		{7EBEC2E7-7322-475E-B76C-769397DD23BB}.Release|Win32.Build.0 = Release|Win32
-		{A8DC0868-C2AA-4C5A-BAE3-F3CB77D4B3A6}.Debug|Win32.ActiveCfg = Debug|Win32
-		{A8DC0868-C2AA-4C5A-BAE3-F3CB77D4B3A6}.Release|Win32.ActiveCfg = Release|Win32
 		{22CD0D69-A133-45EB-BFA8-407A61E1822A}.Debug|Win32.ActiveCfg = Debug|Win32
 		{22CD0D69-A133-45EB-BFA8-407A61E1822A}.Debug|Win32.Build.0 = Debug|Win32
 		{22CD0D69-A133-45EB-BFA8-407A61E1822A}.Release|Win32.ActiveCfg = Release|Win32

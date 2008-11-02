@@ -154,158 +154,158 @@
 			Name="Common Headers"
 			>
 			<File
-				RelativePath="..\..\common\Base64.h"
+				RelativePath="..\..\src\common\Base64.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\CachedObjectMgr.h"
+				RelativePath="..\..\src\common\CachedObjectMgr.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\common.h"
+				RelativePath="..\..\src\common\common.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\crc32.h"
+				RelativePath="..\..\src\common\crc32.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\dbcore.h"
+				RelativePath="..\..\src\common\dbcore.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\DestinyStructs.h"
+				RelativePath="..\..\src\common\DestinyStructs.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\DirWalker.h"
+				RelativePath="..\..\src\common\DirWalker.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\EVEDBUtils.h"
+				RelativePath="..\..\src\common\EVEDBUtils.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\EVEMarshal.h"
+				RelativePath="..\..\src\common\EVEMarshal.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\EVEMarshalOpcodes.h"
+				RelativePath="..\..\src\common\EVEMarshalOpcodes.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\EVEPktDispatch.h"
+				RelativePath="..\..\src\common\EVEPktDispatch.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\EVEPresentation.h"
+				RelativePath="..\..\src\common\EVEPresentation.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\EVETCPConnection.h"
+				RelativePath="..\..\src\common\EVETCPConnection.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\EVETCPServer.h"
+				RelativePath="..\..\src\common\EVETCPServer.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\EVEUnmarshal.h"
+				RelativePath="..\..\src\common\EVEUnmarshal.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\EVEUtils.h"
+				RelativePath="..\..\src\common\EVEUtils.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\EVEVersion.h"
+				RelativePath="..\..\src\common\EVEVersion.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\EVEZeroCompress.h"
+				RelativePath="..\..\src\common\EVEZeroCompress.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\GaMath.h"
+				RelativePath="..\..\src\common\GaMath.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\GaPreReqs.h"
+				RelativePath="..\..\src\common\GaPreReqs.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\GaTypes.h"
+				RelativePath="..\..\src\common\GaTypes.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\logsys.h"
+				RelativePath="..\..\src\common\logsys.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\logtypes.h"
+				RelativePath="..\..\src\common\logtypes.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\misc.h"
+				RelativePath="..\..\src\common\misc.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\MiscFunctions.h"
+				RelativePath="..\..\src\common\MiscFunctions.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\packet_dump.h"
+				RelativePath="..\..\src\common\packet_dump.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\packet_functions.h"
+				RelativePath="..\..\src\common\packet_functions.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\packet_types.h"
+				RelativePath="..\..\src\common\packet_types.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\queue.h"
+				RelativePath="..\..\src\common\queue.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\RowsetReader.h"
+				RelativePath="..\..\src\common\RowsetReader.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\RowsetToSQL.h"
+				RelativePath="..\..\src\common\RowsetToSQL.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\seperator.h"
+				RelativePath="..\..\src\common\seperator.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\StreamPacketizer.h"
+				RelativePath="..\..\src\common\StreamPacketizer.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\TCPConnection.h"
+				RelativePath="..\..\src\common\TCPConnection.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\TCPServer.h"
+				RelativePath="..\..\src\common\TCPServer.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\timer.h"
+				RelativePath="..\..\src\common\timer.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\types.h"
+				RelativePath="..\..\src\common\types.h"
 				>
 			</File>
 			<Filter
 				Name="threading"
 				>
 				<File
-					RelativePath="..\..\common\Mutex.h"
+					RelativePath="..\..\src\common\Mutex.h"
 					>
 				</File>
 			</Filter>
@@ -313,31 +313,31 @@
 				Name="Python"
 				>
 				<File
-					RelativePath="..\..\common\PyDumpVisitor.h"
+					RelativePath="..\..\src\common\PyDumpVisitor.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\common\PyLookupDump.h"
+					RelativePath="..\..\src\common\PyLookupDump.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\common\PyPacket.h"
+					RelativePath="..\..\src\common\PyPacket.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\common\PyRep.h"
+					RelativePath="..\..\src\common\PyRep.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\common\PyUtils.h"
+					RelativePath="..\..\src\common\PyUtils.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\common\PyVisitor.h"
+					RelativePath="..\..\src\common\PyVisitor.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\common\PyXMLGenerator.h"
+					RelativePath="..\..\src\common\PyXMLGenerator.h"
 					>
 				</File>
 			</Filter>
@@ -346,130 +346,130 @@
 			Name="Common Source"
 			>
 			<File
-				RelativePath="..\..\common\Base64.cpp"
+				RelativePath="..\..\src\common\Base64.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\CachedObjectMgr.cpp"
+				RelativePath="..\..\src\common\CachedObjectMgr.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\crc32.cpp"
+				RelativePath="..\..\src\common\crc32.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\dbcore.cpp"
+				RelativePath="..\..\src\common\dbcore.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\DestinyBinDump.cpp"
+				RelativePath="..\..\src\common\DestinyBinDump.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\DirWalker.cpp"
+				RelativePath="..\..\src\common\DirWalker.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\EVEDBUtils.cpp"
+				RelativePath="..\..\src\common\EVEDBUtils.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\EVEMarshal.cpp"
+				RelativePath="..\..\src\common\EVEMarshal.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\EVEPktDispatch.cpp"
+				RelativePath="..\..\src\common\EVEPktDispatch.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\EVEPresentation.cpp"
+				RelativePath="..\..\src\common\EVEPresentation.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\EVETCPConnection.cpp"
+				RelativePath="..\..\src\common\EVETCPConnection.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\EVETCPServer.cpp"
+				RelativePath="..\..\src\common\EVETCPServer.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\EVEUnmarshal.cpp"
+				RelativePath="..\..\src\common\EVEUnmarshal.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\EVEUtils.cpp"
+				RelativePath="..\..\src\common\EVEUtils.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\EVEZeroCompress.cpp"
+				RelativePath="..\..\src\common\EVEZeroCompress.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\GaMath.cpp"
+				RelativePath="..\..\src\common\GaMath.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\GaTypes.cpp"
+				RelativePath="..\..\src\common\GaTypes.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\gpoint.cpp"
+				RelativePath="..\..\src\common\gpoint.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\logsys.cpp"
+				RelativePath="..\..\src\common\logsys.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\misc.cpp"
+				RelativePath="..\..\src\common\misc.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\MiscFunctions.cpp"
+				RelativePath="..\..\src\common\MiscFunctions.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\packet_dump.cpp"
+				RelativePath="..\..\src\common\packet_dump.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\packet_functions.cpp"
+				RelativePath="..\..\src\common\packet_functions.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\RowsetReader.cpp"
+				RelativePath="..\..\src\common\RowsetReader.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\StreamPacketizer.cpp"
+				RelativePath="..\..\src\common\StreamPacketizer.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\sigexcept\sym_engine.cpp"
+				RelativePath="..\..\src\common\sigexcept\sym_engine.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\TCPConnection.cpp"
+				RelativePath="..\..\src\common\TCPConnection.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\TCPServer.cpp"
+				RelativePath="..\..\src\common\TCPServer.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\timer.cpp"
+				RelativePath="..\..\src\common\timer.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\XMLParser.cpp"
+				RelativePath="..\..\src\common\XMLParser.cpp"
 				>
 			</File>
 			<Filter
 				Name="threading"
 				>
 				<File
-					RelativePath="..\..\common\Mutex.cpp"
+					RelativePath="..\..\src\common\Mutex.cpp"
 					>
 				</File>
 			</Filter>
@@ -477,31 +477,31 @@
 				Name="python"
 				>
 				<File
-					RelativePath="..\..\common\PyDumpVisitor.cpp"
+					RelativePath="..\..\src\common\PyDumpVisitor.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\common\PyLookupDump.cpp"
+					RelativePath="..\..\src\common\PyLookupDump.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\common\PyPacket.cpp"
+					RelativePath="..\..\src\common\PyPacket.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\common\PyRep.cpp"
+					RelativePath="..\..\src\common\PyRep.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\common\PyUtils.cpp"
+					RelativePath="..\..\src\common\PyUtils.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\common\PyVisitor.cpp"
+					RelativePath="..\..\src\common\PyVisitor.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\common\PyXMLGenerator.cpp"
+					RelativePath="..\..\src\common\PyXMLGenerator.cpp"
 					>
 				</File>
 			</Filter>
@@ -530,79 +530,79 @@
 			Name="Header Files"
 			>
 			<File
-				RelativePath="..\..\server\character\CharacterAppearance_fields.h"
+				RelativePath="..\..\src\server\character\CharacterAppearance_fields.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\ClientSession.h"
+				RelativePath="..\..\src\server\ClientSession.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\market\ContractMgrService.h"
+				RelativePath="..\..\src\server\market\ContractMgrService.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\inventory\EVEAttributes.h"
+				RelativePath="..\..\src\server\inventory\EVEAttributes.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\EVEmuServerConfig.h"
+				RelativePath="..\..\src\server\EVEmuServerConfig.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\EVEmuServerConfig_elements.h"
+				RelativePath="..\..\src\server\EVEmuServerConfig_elements.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\standing\FactionWarMgrDB.h"
+				RelativePath="..\..\src\server\standing\FactionWarMgrDB.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\standing\FactionWarMgrService.h"
+				RelativePath="..\..\src\server\standing\FactionWarMgrService.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\manufacturing\FactoryDB.h"
+				RelativePath="..\..\src\server\manufacturing\FactoryDB.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\manufacturing\FactoryService.h"
+				RelativePath="..\..\src\server\manufacturing\FactoryService.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\inventory\InventoryItem.h"
+				RelativePath="..\..\src\server\inventory\InventoryItem.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\inventory\ItemDB.h"
+				RelativePath="..\..\src\server\inventory\ItemDB.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\inventory\ItemFactory.h"
+				RelativePath="..\..\src\server\inventory\ItemFactory.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\market\MarketDB.h"
+				RelativePath="..\..\src\server\market\MarketDB.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\market\MarketProxyService.h"
+				RelativePath="..\..\src\server\market\MarketProxyService.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\manufacturing\RamProxyDB.h"
+				RelativePath="..\..\src\server\manufacturing\RamProxyDB.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\manufacturing\RamProxyService.h"
+				RelativePath="..\..\src\server\manufacturing\RamProxyService.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\chat\VoiceMgrService.h"
+				RelativePath="..\..\src\server\chat\VoiceMgrService.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\standing\WarRegistryService.h"
+				RelativePath="..\..\src\server\standing\WarRegistryService.h"
 				>
 			</File>
 		</Filter>
@@ -610,414 +610,414 @@
 			Name="Source Files"
 			>
 			<File
-				RelativePath="..\..\server\account\AccountDB.cpp"
+				RelativePath="..\..\src\server\account\AccountDB.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\account\AccountService.cpp"
+				RelativePath="..\..\src\server\account\AccountService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\missions\Agent.cpp"
+				RelativePath="..\..\src\server\missions\Agent.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\missions\AgentMgrService.cpp"
+				RelativePath="..\..\src\server\missions\AgentMgrService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\admin\AlertService.cpp"
+				RelativePath="..\..\src\server\admin\AlertService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\admin\AllCommands.cpp"
+				RelativePath="..\..\src\server\admin\AllCommands.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\mining\Asteroid.cpp"
+				RelativePath="..\..\src\server\mining\Asteroid.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\mining\AsteroidBeltManager.cpp"
+				RelativePath="..\..\src\server\mining\AsteroidBeltManager.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\account\AuthService.cpp"
+				RelativePath="..\..\src\server\account\AuthService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\ship\BeyonceService.cpp"
+				RelativePath="..\..\src\server\ship\BeyonceService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\market\BillMgrService.cpp"
+				RelativePath="..\..\src\server\market\BillMgrService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\system\BookmarkService.cpp"
+				RelativePath="..\..\src\server\system\BookmarkService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\system\BubbleManager.cpp"
+				RelativePath="..\..\src\server\system\BubbleManager.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\character\CharacterDB.cpp"
+				RelativePath="..\..\src\server\character\CharacterDB.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\character\CharacterService.cpp"
+				RelativePath="..\..\src\server\character\CharacterService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\character\CharMgrService.cpp"
+				RelativePath="..\..\src\server\character\CharMgrService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\Client.cpp"
+				RelativePath="..\..\src\server\Client.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\ClientSession.cpp"
+				RelativePath="..\..\src\server\ClientSession.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\admin\CommandDB.cpp"
+				RelativePath="..\..\src\server\admin\CommandDB.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\admin\CommandDispatcher.cpp"
+				RelativePath="..\..\src\server\admin\CommandDispatcher.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\config\ConfigDB.cpp"
+				RelativePath="..\..\src\server\config\ConfigDB.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\config\ConfigService.cpp"
+				RelativePath="..\..\src\server\config\ConfigService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\market\ContractMgrService.cpp"
+				RelativePath="..\..\src\server\market\ContractMgrService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\corporation\CorpMgrService.cpp"
+				RelativePath="..\..\src\server\corporation\CorpMgrService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\corporation\CorporationDB.cpp"
+				RelativePath="..\..\src\server\corporation\CorporationDB.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\corporation\CorporationService.cpp"
+				RelativePath="..\..\src\server\corporation\CorporationService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\corporation\CorpRegistryService.cpp"
+				RelativePath="..\..\src\server\corporation\CorpRegistryService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\corporation\CorpStationMgrService.cpp"
+				RelativePath="..\..\src\server\corporation\CorpStationMgrService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\system\Damage.cpp"
+				RelativePath="..\..\src\server\system\Damage.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\ship\DestinyManager.cpp"
+				RelativePath="..\..\src\server\ship\DestinyManager.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\dogmaim\DogmaIMDB.cpp"
+				RelativePath="..\..\src\server\dogmaim\DogmaIMDB.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\dogmaim\DogmaIMService.cpp"
+				RelativePath="..\..\src\server\dogmaim\DogmaIMService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\system\DungeonService.cpp"
+				RelativePath="..\..\src\server\system\DungeonService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\EntityList.cpp"
+				RelativePath="..\..\src\server\EntityList.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\EVEmuServerConfig.cpp"
+				RelativePath="..\..\src\server\EVEmuServerConfig.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\standing\FactionWarMgrDB.cpp"
+				RelativePath="..\..\src\server\standing\FactionWarMgrDB.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\standing\FactionWarMgrService.cpp"
+				RelativePath="..\..\src\server\standing\FactionWarMgrService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\manufacturing\FactoryDB.cpp"
+				RelativePath="..\..\src\server\manufacturing\FactoryDB.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\manufacturing\FactoryService.cpp"
+				RelativePath="..\..\src\server\manufacturing\FactoryService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\admin\GMCommands.cpp"
+				RelativePath="..\..\src\server\admin\GMCommands.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\ship\InsuranceService.cpp"
+				RelativePath="..\..\src\server\ship\InsuranceService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\inventory\InvBrokerService.cpp"
+				RelativePath="..\..\src\server\inventory\InvBrokerService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\inventory\InventoryDB.cpp"
+				RelativePath="..\..\src\server\inventory\InventoryDB.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\inventory\InventoryItem.cpp"
+				RelativePath="..\..\src\server\inventory\InventoryItem.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\inventory\ItemDB.cpp"
+				RelativePath="..\..\src\server\inventory\ItemDB.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\inventory\ItemFactory.cpp"
+				RelativePath="..\..\src\server\inventory\ItemFactory.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\station\JumpCloneService.cpp"
+				RelativePath="..\..\src\server\station\JumpCloneService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\system\KeeperService.cpp"
+				RelativePath="..\..\src\server\system\KeeperService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\config\LanguageService.cpp"
+				RelativePath="..\..\src\server\config\LanguageService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\chat\LookupService.cpp"
+				RelativePath="..\..\src\server\chat\LookupService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\chat\LSCChannel.cpp"
+				RelativePath="..\..\src\server\chat\LSCChannel.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\chat\LSCDB.cpp"
+				RelativePath="..\..\src\server\chat\LSCDB.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\chat\LSCService.cpp"
+				RelativePath="..\..\src\server\chat\LSCService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\map\MapDB.cpp"
+				RelativePath="..\..\src\server\map\MapDB.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\map\MapService.cpp"
+				RelativePath="..\..\src\server\map\MapService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\market\MarketDB.cpp"
+				RelativePath="..\..\src\server\market\MarketDB.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\market\MarketProxyService.cpp"
+				RelativePath="..\..\src\server\market\MarketProxyService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\mining\MiningCommands.cpp"
+				RelativePath="..\..\src\server\mining\MiningCommands.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\mining\MiningDB.cpp"
+				RelativePath="..\..\src\server\mining\MiningDB.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\missions\MissionDB.cpp"
+				RelativePath="..\..\src\server\missions\MissionDB.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\missions\MissionMgrService.cpp"
+				RelativePath="..\..\src\server\missions\MissionMgrService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\ship\ModuleManager.cpp"
+				RelativePath="..\..\src\server\ship\ModuleManager.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\NetService.cpp"
+				RelativePath="..\..\src\server\NetService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\npc\NPC.cpp"
+				RelativePath="..\..\src\server\npc\NPC.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\npc\NPCAI.cpp"
+				RelativePath="..\..\src\server\npc\NPCAI.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\cache\ObjCacheDB.cpp"
+				RelativePath="..\..\src\server\cache\ObjCacheDB.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\cache\ObjCacheService.cpp"
+				RelativePath="..\..\src\server\cache\ObjCacheService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\chat\OnlineStatusService.cpp"
+				RelativePath="..\..\src\server\chat\OnlineStatusService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\admin\PetitionerService.cpp"
+				RelativePath="..\..\src\server\admin\PetitionerService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\posmgr\PosMgrDB.cpp"
+				RelativePath="..\..\src\server\posmgr\PosMgrDB.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\posmgr\PosMgrService.cpp"
+				RelativePath="..\..\src\server\posmgr\PosMgrService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\manufacturing\RamProxyDB.cpp"
+				RelativePath="..\..\src\server\manufacturing\RamProxyDB.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\manufacturing\RamProxyService.cpp"
+				RelativePath="..\..\src\server\manufacturing\RamProxyService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\mining\ReprocessingDB.cpp"
+				RelativePath="..\..\src\server\mining\ReprocessingDB.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\mining\ReprocessingService.cpp"
+				RelativePath="..\..\src\server\mining\ReprocessingService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\system\ScenarioService.cpp"
+				RelativePath="..\..\src\server\system\ScenarioService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\ServiceDB.cpp"
+				RelativePath="..\..\src\server\ServiceDB.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\ship\ShipDB.cpp"
+				RelativePath="..\..\src\server\ship\ShipDB.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\ship\ShipService.cpp"
+				RelativePath="..\..\src\server\ship\ShipService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\character\SkillMgrService.cpp"
+				RelativePath="..\..\src\server\character\SkillMgrService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\admin\SlashService.cpp"
+				RelativePath="..\..\src\server\admin\SlashService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\spawn\SpawnDB.cpp"
+				RelativePath="..\..\src\server\spawn\SpawnDB.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\spawn\SpawnManager.cpp"
+				RelativePath="..\..\src\server\spawn\SpawnManager.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\standing\Standing2Service.cpp"
+				RelativePath="..\..\src\server\standing\Standing2Service.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\standing\StandingDB.cpp"
+				RelativePath="..\..\src\server\standing\StandingDB.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\station\StationDB.cpp"
+				RelativePath="..\..\src\server\station\StationDB.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\station\StationService.cpp"
+				RelativePath="..\..\src\server\station\StationService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\station\StationSvcService.cpp"
+				RelativePath="..\..\src\server\station\StationSvcService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\system\SystemBubble.cpp"
+				RelativePath="..\..\src\server\system\SystemBubble.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\system\SystemDB.cpp"
+				RelativePath="..\..\src\server\system\SystemDB.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\system\SystemEntities.cpp"
+				RelativePath="..\..\src\server\system\SystemEntities.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\system\SystemEntity.cpp"
+				RelativePath="..\..\src\server\system\SystemEntity.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\system\SystemManager.cpp"
+				RelativePath="..\..\src\server\system\SystemManager.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\ship\TargetManager.cpp"
+				RelativePath="..\..\src\server\ship\TargetManager.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\tutorial\TutorialDB.cpp"
+				RelativePath="..\..\src\server\tutorial\TutorialDB.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\tutorial\TutorialService.cpp"
+				RelativePath="..\..\src\server\tutorial\TutorialService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\chat\VoiceMgrService.cpp"
+				RelativePath="..\..\src\server\chat\VoiceMgrService.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\server\standing\WarRegistryService.cpp"
+				RelativePath="..\..\src\server\standing\WarRegistryService.cpp"
 				>
 			</File>
 			<Filter
 				Name="Python"
 				>
 				<File
-					RelativePath="..\..\server\PyBoundObject.cpp"
+					RelativePath="..\..\src\server\PyBoundObject.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\server\PyCallable.cpp"
+					RelativePath="..\..\src\server\PyCallable.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\server\PyService.cpp"
+					RelativePath="..\..\src\server\PyService.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\server\PyServiceMgr.cpp"
+					RelativePath="..\..\src\server\PyServiceMgr.cpp"
 					>
 				</File>
 			</Filter>

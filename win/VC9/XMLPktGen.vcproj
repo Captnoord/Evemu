@@ -188,47 +188,47 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\xmlpktgen\CloneGenerator.cpp"
+				RelativePath="..\..\src\xmlpktgen\CloneGenerator.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\xmlpktgen\ConstructGenerator.cpp"
+				RelativePath="..\..\src\xmlpktgen\ConstructGenerator.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\xmlpktgen\DecodeGenerator.cpp"
+				RelativePath="..\..\src\xmlpktgen\DecodeGenerator.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\xmlpktgen\DestructGenerator.cpp"
+				RelativePath="..\..\src\xmlpktgen\DestructGenerator.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\xmlpktgen\DumpGenerator.cpp"
+				RelativePath="..\..\src\xmlpktgen\DumpGenerator.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\xmlpktgen\EncodeGenerator.cpp"
+				RelativePath="..\..\src\xmlpktgen\EncodeGenerator.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\xmlpktgen\Generator.cpp"
+				RelativePath="..\..\src\xmlpktgen\Generator.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\xmlpktgen\HeaderGenerator.cpp"
+				RelativePath="..\..\src\xmlpktgen\HeaderGenerator.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\xmlpktgen\ImplGenerator.cpp"
+				RelativePath="..\..\src\xmlpktgen\ImplGenerator.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\xmlpktgen\main.cpp"
+				RelativePath="..\..\src\xmlpktgen\main.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\xmlpktgen\XMLPacketGen.cpp"
+				RelativePath="..\..\src\xmlpktgen\XMLPacketGen.cpp"
 				>
 			</File>
 		</Filter>
@@ -238,43 +238,43 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\xmlpktgen\CloneGenerator.h"
+				RelativePath="..\..\src\xmlpktgen\CloneGenerator.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\xmlpktgen\ConstructGenerator.h"
+				RelativePath="..\..\src\xmlpktgen\ConstructGenerator.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\xmlpktgen\DecodeGenerator.h"
+				RelativePath="..\..\src\xmlpktgen\DecodeGenerator.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\xmlpktgen\DestructGenerator.h"
+				RelativePath="..\..\src\xmlpktgen\DestructGenerator.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\xmlpktgen\DumpGenerator.h"
+				RelativePath="..\..\src\xmlpktgen\DumpGenerator.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\xmlpktgen\EncodeGenerator.h"
+				RelativePath="..\..\src\xmlpktgen\EncodeGenerator.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\xmlpktgen\Generator.h"
+				RelativePath="..\..\src\xmlpktgen\Generator.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\xmlpktgen\HeaderGenerator.h"
+				RelativePath="..\..\src\xmlpktgen\HeaderGenerator.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\xmlpktgen\ImplGenerator.h"
+				RelativePath="..\..\src\xmlpktgen\ImplGenerator.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\xmlpktgen\XMLPacketGen.h"
+				RelativePath="..\..\src\xmlpktgen\XMLPacketGen.h"
 				>
 			</File>
 		</Filter>
@@ -282,46 +282,46 @@
 			Name="Common Source"
 			>
 			<File
-				RelativePath="..\..\common\crc32.cpp"
+				RelativePath="..\..\src\common\crc32.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\EVEMarshal.cpp"
+				RelativePath="..\..\src\common\EVEMarshal.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\EVEUnmarshal.cpp"
+				RelativePath="..\..\src\common\EVEUnmarshal.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\EVEZeroCompress.cpp"
+				RelativePath="..\..\src\common\EVEZeroCompress.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\logsys.cpp"
+				RelativePath="..\..\src\common\logsys.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\misc.cpp"
+				RelativePath="..\..\src\common\misc.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\MiscFunctions.cpp"
+				RelativePath="..\..\src\common\MiscFunctions.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\packet_functions.cpp"
+				RelativePath="..\..\src\common\packet_functions.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\common\XMLParser.cpp"
+				RelativePath="..\..\src\common\XMLParser.cpp"
 				>
 			</File>
 			<Filter
 				Name="3rd Party"
 				>
 				<File
-					RelativePath="..\..\common\Base64.cpp"
+					RelativePath="..\..\src\common\Base64.cpp"
 					>
 				</File>
 				<File
@@ -345,23 +345,23 @@
 				Name="Python"
 				>
 				<File
-					RelativePath="..\..\common\PyDumpVisitor.cpp"
+					RelativePath="..\..\src\common\PyDumpVisitor.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\common\PyPacket.cpp"
+					RelativePath="..\..\src\common\PyPacket.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\common\PyRep.cpp"
+					RelativePath="..\..\src\common\PyRep.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\common\PyUtils.cpp"
+					RelativePath="..\..\src\common\PyUtils.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\common\PyVisitor.cpp"
+					RelativePath="..\..\src\common\PyVisitor.cpp"
 					>
 				</File>
 			</Filter>
