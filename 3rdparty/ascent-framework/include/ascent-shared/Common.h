@@ -525,6 +525,15 @@ ASCENT_FORCEINLINE void ASCENT_TOUPPER(std::string& str)
 		str[i] = (char)toupper(str[i]);
 };
 
+/* stuff for pragma message, so we can show file and line number */
+#ifdef WIN32
+#  define __STR2__(x) #x
+#  define __STR1__(x) __STR2__(x)
+#  define __LOC__ __FILE__ "("__STR1__(__LINE__)") : Warning Msg: "
+#  define __LOC2__ __FILE__ "("__STR1__(__LINE__)") : "
+#endif//WIN32
+
+
 
 
 #endif

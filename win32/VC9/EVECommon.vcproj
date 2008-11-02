@@ -43,12 +43,12 @@
 				AdditionalOptions="/MP"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;..\..\3rdparty\ascent-framework\include\ascent-shared/Threading&quot;;&quot;..\..\3rdparty\ascent-framework\include\ascent-shared&quot;;&quot;..\..\3rdparty\ascent-framework\include\&quot;;..\..\3rdparty\mysql\include;..\..\3rdparty\zlib;..\..\3rdparty\;..\..\common;..\..\server;..\"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS=1;_CRT_SECURE_NO_DEPRECATE=1;_CRT_SECURE_COPP_OVERLOAD_STANDARD_NAMES=1;_HAS_ITERATOR_DEBUGGING=0"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
-				WarningLevel="0"
+				WarningLevel="3"
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -109,11 +109,12 @@
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				AdditionalIncludeDirectories="&quot;..\..\3rdparty\ascent-framework\include\ascent-shared/Threading&quot;;&quot;..\..\3rdparty\ascent-framework\include\ascent-shared&quot;;&quot;..\..\3rdparty\ascent-framework\include\&quot;;..\..\3rdparty\mysql\include;..\..\3rdparty\zlib;..\..\3rdparty\;..\..\common;..\..\server;..\"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS=1;_CRT_SECURE_NO_DEPRECATE=1;_CRT_SECURE_COPP_OVERLOAD_STANDARD_NAMES=1"
+				IgnoreStandardIncludePath="false"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
-				WarningLevel="0"
+				WarningLevel="3"
 				DebugInformationFormat="3"
 			/>
 			<Tool

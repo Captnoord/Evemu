@@ -195,7 +195,7 @@ bool PyPacket::Decode(PyRep *&in_packet) {
 
 	if(tuple->items[3]->CheckType(PyRep::Integer)) {
 		PyRepInteger *i = (PyRepInteger *) tuple->items[3];
-		userid = i->value;
+		userid = i->GetUint32();
 	} else if(tuple->items[3]->CheckType(PyRep::None)) {
 		userid = 0;
 	} else {
@@ -680,7 +680,7 @@ bool PyCallStream::Decode(const std::string &type, PyRepTuple *&in_payload) {
 	//parse first tuple element, unknown
 	if(maint->items[0]->CheckType(PyRep::Integer)) {
 		PyRepInteger *tuple0 = (PyRepInteger *) maint->items[0];
-		remoteObject = tuple0->value;
+		remoteObject = tuple0->GetUint32();
 		remoteObjectStr = "";
 	} else if(maint->items[0]->CheckType(PyRep::String)) {
 		PyRepString *tuple0 = (PyRepString *) maint->items[0];
@@ -867,7 +867,7 @@ bool EVENotificationStream::Decode(const std::string &pkt_type, const std::strin
 	//parse first tuple element, remote object
 	if(robjt->items[0]->CheckType(PyRep::Integer)) {
 		PyRepInteger *tuple0 = (PyRepInteger *) robjt->items[0];
-		remoteObject = tuple0->value;
+		remoteObject = tuple0->GetUint32();
 		remoteObjectStr = "";
 	} else if(robjt->items[0]->CheckType(PyRep::String)) {
 		PyRepString *tuple0 = (PyRepString *) robjt->items[0];

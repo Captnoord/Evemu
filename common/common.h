@@ -127,5 +127,7 @@ using namespace std;
 #include "./queue.h"
 
 #include "MacroUtil.h"
+
+#define ENABLE_EASY_PY_OBJECT_USE
 	
 #endif

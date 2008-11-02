@@ -69,18 +69,64 @@ protected:
 	const Type m_type;
 };
 
+#define ASCENT_INLINE
+
 //storing all integers (and bools) as uint64s is a lot of craziness right now
 //but its better than a ton of virtual functions to achieve the same thing.
 class PyRepInteger : public PyRep {
 public:
+	// constructor
 	PyRepInteger(uint64 i) : PyRep(PyRep::Integer), value(i) {}
+
+	// destructor
 	virtual ~PyRepInteger() {}
+
 	virtual void Dump(FILE *into, const char *pfx) const;
 	virtual void Dump(LogType type, const char *pfx) const;
 	virtual PyRep *Clone() const { return(TypedClone()); }
 	virtual void visit(PyVisitor *v) const;
 	
 	PyRepInteger *TypedClone() const;
+
+	ASCENT_INLINE int8 GetInt8()
+	{
+		return int8(value & 0x000000FFLL);
+	};
+
+	ASCENT_INLINE uint8 GetUint8()
+	{
+		return uint8(value & 0x000000FFLL);
+	};
+
+	ASCENT_INLINE int16 GetInt16()
+	{
+		return int16(value & 0x0000FFFFLL);
+	};
+
+	ASCENT_INLINE uint16 GetUint16()
+	{
+		return uint16(value & 0x0000FFFFLL);
+	};
+
+	ASCENT_INLINE int32 GetInt32()
+	{
+		return int32(value & 0xFFFFFFFFLL);
+	};
+
+	ASCENT_INLINE uint32 GetUint32()
+	{
+		return uint32(value & 0xFFFFFFFFLL);
+	};
+
+	ASCENT_INLINE int64 GetInt64()
+	{
+		return *(int64*)&value;
+	};
+
+	ASCENT_INLINE uint64 GetUint64()
+	{
+		return value;
+	};
 
 	uint64 value;
 };
