@@ -392,10 +392,6 @@ DBQueryResult::~DBQueryResult() {
 	// also check if the first entry has data........
 	if (m_fields != NULL && m_fields[0] != NULL)
 	{
-		/*for (uint32 i = 0; i < ColumnCount(); i++)
-		{
-			delete m_fields[i];
-		}*/
 		SafeDeleteArray(m_fields);
 	}
 
