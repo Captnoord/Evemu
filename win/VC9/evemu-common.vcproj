@@ -331,6 +331,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\include\server\PyService.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\include\common\PyUtils.h"
 					>
 				</File>
@@ -976,7 +980,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\system\SystemEntities.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\system\SystemEntity.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\server\system\SystemEntity.h"
 				>
 			</File>
 			<File

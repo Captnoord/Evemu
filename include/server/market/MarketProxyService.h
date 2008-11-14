@@ -18,9 +18,9 @@
 #ifndef __MARKETPROXY_SERVICE_H_INCL__
 #define __MARKETPROXY_SERVICE_H_INCL__
 
-#include "../PyService.h"
+//#include "../PyService.h"
 
-#include "MarketDB.h"
+//#include "MarketDB.h"
 
 class MarketProxyService
 : public PyService {

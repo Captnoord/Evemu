@@ -18,7 +18,7 @@
 #ifndef __CONTRACT_MGR__H__INCL__
 #define __CONTRACT_MGR__H__INCL__
 
-#include "../PyService.h"
+//#include "../PyService.h"
 
 class ContractMgrService : public PyService {
 public:

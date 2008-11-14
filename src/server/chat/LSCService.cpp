@@ -525,7 +525,7 @@ void Client::SelfEveMail(const char *subject, const char *fmt, ...) {
 	vaMakeAnyLenString(&str, fmt, args);
 	va_end(args);
 
-	m_services->lsc_service->SendMail(GetCharacterID(), GetCharacterID(), subject, str);
+	sPyServiceMgr.lsc_service->SendMail(GetCharacterID(), GetCharacterID(), subject, str);
 }
 
 PyResult LSCService::Handle_MarkMessagesRead(PyCallArgs &call) {

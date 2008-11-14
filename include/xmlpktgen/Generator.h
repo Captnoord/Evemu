@@ -25,11 +25,11 @@
 #ifndef __GENERATOR_H_INCL__
 #define __GENERATOR_H_INCL__
 
-#include "../3rdparty/tinyxml/tinyxml.h"
-#include "../common/logsys.h"
-#include <stdio.h>
-#include <map>
-#include <string>
+//#include "../3rdparty/tinyxml/tinyxml.h"
+//#include "../common/logsys.h"
+//#include <stdio.h>
+//#include <map>
+//#include <string>
 
 class Generator {
 public:

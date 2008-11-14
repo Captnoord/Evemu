@@ -18,7 +18,7 @@
 #ifndef __WAR_REGISTRY_SERVICE__H__INCL__
 #define __WAR_REGISTRY_SERVICE__H__INCL__
 
-#include "../PyService.h"
+//#include "../PyService.h"
 
 class WarRegistryService : public PyService {
 public:

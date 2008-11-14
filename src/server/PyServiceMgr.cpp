@@ -26,8 +26,7 @@
 class PyServiceMgr::BoundCaller : public PyService
 {
 public:
-	BoundCaller(PyServiceMgr *mgr)
-	: PyService(mgr, "BoundCallFakeService") {
+	BoundCaller(PyServiceMgr *mgr) : PyService(mgr, "BoundCallFakeService") {
 	}
 	virtual PyResult Call(PyCallStream &call, PyCallArgs &args) {
 		if(call.remoteObject != 0) {

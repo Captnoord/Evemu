@@ -18,8 +18,8 @@
 #ifndef EVE_CLIENT_SESSION_H
 #define EVE_CLIENT_SESSION_H
 
-#include "../common/logsys.h"
-#include <string>
+//#include "../common/logsys.h"
+//#include <string>
 
 //class PyRepDict;
 class SessionChangeNotification;

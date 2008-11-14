@@ -18,7 +18,7 @@
 #ifndef __FACTION_WAR_MGR_DB__H__INCL__
 #define __FACTION_WAR_MGR_DB__H__INCL__
 
-#include "../ServiceDB.h"
+//#include "../ServiceDB.h"
 
 class PyRep;
 

@@ -26,9 +26,8 @@
 #ifndef __EVECLIENTSOCKET_H
 #define __EVECLIENTSOCKET_H
 
-/* some lame buffer size stuff, these values aren't based on anything. */
-#define CLIENTSOCKET_SENDBUF_SIZE 131078
-#define CLIENTOCKET_RECVBUF_SIZE 16384
+#define CLIENTSOCKET_SENDBUF_SIZE 0xF4240
+#define CLIENTOCKET_RECVBUF_SIZE 0xF4240
 
 /* outPacket queue system, part of a reliable packet sending system */
 enum OUTPACKET_RESULT
@@ -68,7 +67,7 @@ public:
 	void OnDisconnect();
 
 	/* Basic PyRep send function */
-	ASCENT_INLINE void OutPacket(PyRep * packet );
+	ASCENT_INLINE void OutPacket(PyRep * packet);
 
 	/* set the sessions socket */
 	void SetSession(EveClientSession* session) { mSession = session; }

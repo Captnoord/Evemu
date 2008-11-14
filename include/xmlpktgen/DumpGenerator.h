@@ -25,7 +25,7 @@
 #ifndef __DUMPGENERATOR_H_INCL__
 #define __DUMPGENERATOR_H_INCL__
 
-#include "Generator.h"
+//#include "Generator.h"
 
 class ClassDumpGenerator : public TmplGenerator<ClassDumpGenerator> {
 public:

@@ -18,7 +18,7 @@
 #ifndef __ITEMDB_H_INCL__
 #define __ITEMDB_H_INCL__
 
-#include "../ServiceDB.h"
+//#include "../ServiceDB.h"
 
 class ItemDB
 : public ServiceDB {

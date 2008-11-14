@@ -25,8 +25,8 @@
 #ifndef __ENCODEGENERATOR_H_INCL__
 #define __ENCODEGENERATOR_H_INCL__
 
-#include "Generator.h"
-#include <stack>
+//#include "Generator.h"
+//#include <stack>
 
 class ClassEncodeGenerator : public TmplGenerator<ClassEncodeGenerator> {
 public:

@@ -8,8 +8,6 @@ class PyRepTuple;
 
 bool ParseIntegerList(const PyRepTuple *iargs, const char *caller, std::vector<uint32> &into);
 
-
-
 #endif
 
 

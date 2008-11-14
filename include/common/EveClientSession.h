@@ -37,6 +37,14 @@ public:
 
 	void OutPacket(PyRep* packet) {if(_socket) _socket->OutPacket(packet);}
 
+	void Send(PyPacket& packet)
+	{
+		PyRep* raw = packet.Encode();
+		if(_socket)
+			_socket->OutPacket(raw);
+		SafeDelete(raw);
+	}
+
 	ASCENT_INLINE void QueuePacket(PyPacket* packet);
 
 	ASCENT_INLINE EveClientSocket* GetSocket();
@@ -65,6 +73,7 @@ public:
 private:
 
 	EveClientSocket *_socket;
+	Client* _client;
 
 	uint32 _userId;
 	std::string _accountName;

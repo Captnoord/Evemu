@@ -407,7 +407,7 @@ void Client::Killed(Damage &fatal_blow) {
 		//We are currently not keeping our real capsule around in the DB, so we need to make a new one.
 		
 		std::string capsule_name = m_char.name + "'s Capsule";
-		InventoryItem *capsule = m_services->item_factory->SpawnSingleton(
+		InventoryItem *capsule = sPyServiceMgr.item_factory->SpawnSingleton(
 																		 itemTypeCapsule,
 																		 m_char.charid,
 																		 m_char.stationID,
@@ -496,7 +496,7 @@ void NPC::_AwardBounty(SystemEntity *who) {
 
 	std::string reason = "Bounty";	//TODO: improve this.
 	
-	if(!m_services->GetServiceDB()->GiveCash(
+	if(!sPyServiceMgr.GetServiceDB()->GiveCash(
 			killer->GetID(),
 			RefType_playerDonation,	//TODO: find the proper type
 			m_self->itemID(),	//probably actually a special concord item ID or something.

@@ -23,8 +23,7 @@
 #include <string>
 #include <stack>
 
-class PyXMLGenerator
-: public PyVisitor {
+class PyXMLGenerator : public PyVisitor {
 public:
 	PyXMLGenerator(FILE *into);
 	virtual ~PyXMLGenerator();

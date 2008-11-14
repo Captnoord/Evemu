@@ -18,9 +18,9 @@
 #ifndef __RAM_PROXY_DB__H__
 #define __RAM_PROXY_DB__H__
 
-#include "../ServiceDB.h"
-#include "PyRep.h"
-#include "../inventory/InventoryItem.h"
+//#include "../ServiceDB.h"
+//#include "PyRep.h"
+//#include "../inventory/InventoryItem.h"
 
 //from table 'ramActivities'
 enum EVERamActivity {

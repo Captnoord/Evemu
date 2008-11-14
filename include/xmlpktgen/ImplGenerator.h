@@ -25,12 +25,12 @@
 #ifndef __IMPLGENERATOR_H_INCL__
 #define __IMPLGENERATOR_H_INCL__
 
-#include "ConstructGenerator.h"
-#include "DestructGenerator.h"
-#include "DumpGenerator.h"
-#include "EncodeGenerator.h"
-#include "DecodeGenerator.h"
-#include "CloneGenerator.h"
+//#include "ConstructGenerator.h"
+//#include "DestructGenerator.h"
+//#include "DumpGenerator.h"
+//#include "EncodeGenerator.h"
+//#include "DecodeGenerator.h"
+//#include "CloneGenerator.h"
 
 class ClassImplementationGenerator
 : public Generator {

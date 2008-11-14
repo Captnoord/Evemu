@@ -261,31 +261,31 @@ void EveClientSocket::_authStateHandshake(PyRep* packet)
 
 	if(data.birthday != EVEBirthday)
 	{
-		//sLog.outDebug("%s: Client's birthday does not match ours!", GetRemoteIP().c_str());
+		//sLog.Debug("%s: Client's birthday does not match ours!", GetRemoteIP().c_str());
 		Disconnect();
 	}
 
 	if(data.macho_version != MachoNetVersion)
 	{
-		//sLog.outDebug("%s: Client's macho_version not match ours!", GetRemoteIP().c_str());
+		//sLog.Debug("%s: Client's macho_version not match ours!", GetRemoteIP().c_str());
 		Disconnect();
 	}
 
 	if(data.version_number != EVEVersionNumber)
 	{
-		//sLog.outDebug("%s: Client's version_number not match ours!", GetRemoteIP().c_str());
+		//sLog.Debug("%s: Client's version_number not match ours!", GetRemoteIP().c_str());
 		Disconnect();
 	}
 
 	if(data.build_version != EVEBuildVersion)
 	{
-		//sLog.outDebug("%s: Client's build_version not match ours!", GetRemoteIP().c_str());
+		//sLog.Debug("%s: Client's build_version not match ours!", GetRemoteIP().c_str());
 		Disconnect();
 	}
 
 	if(data.project_version != EVEProjectVersion)
 	{
-		//sLog.outDebug("%s: Client's project_version not match ours!", GetRemoteIP().c_str());
+		//sLog.Debug("%s: Client's project_version not match ours!", GetRemoteIP().c_str());
 		Disconnect();
 	}
 
@@ -298,7 +298,7 @@ void EveClientSocket::_authStateQueueCommand(PyRep* packet)
 	//check if it actually is tuple
 	if(packet->CheckType(PyRep::Tuple) == false)
 	{
-		//sLog.outDebug("%s: Invalid packet during waiting for command (tuple expected).", GetRemoteIP().c_str());
+		//sLog.Debug("%s: Invalid packet during waiting for command (tuple expected).", GetRemoteIP().c_str());
 		Disconnect();
 		return;
 	}
@@ -311,18 +311,18 @@ void EveClientSocket::_authStateQueueCommand(PyRep* packet)
 		NetCommand_QC cmd;
 		if(cmd.Decode(&tuple) == false)
 		{
-			//sLog.outDebug("%s: Failed to decode 2-arg command.", GetRemoteIP().c_str());
+			//sLog.Debug("%s: Failed to decode 2-arg command.", GetRemoteIP().c_str());
 			Disconnect();
 			return;
 		}
 
 		if(cmd.command != "QC")
 		{
-			//sLog.outDebug("%s: Unknown 2-arg command '%s'.", GetRemoteIP().c_str(), cmd.command.c_str());
+			//sLog.Debug("%s: Unknown 2-arg command '%s'.", GetRemoteIP().c_str(), cmd.command.c_str());
 			Disconnect();
 			return;
 		}
-		sLog.outDebug("%s: Got Queue Check command.", GetRemoteIP().c_str());
+		sLog.Debug("%s: Got Queue Check command.", GetRemoteIP().c_str());
 		
 
 		/* Send the position 1 or 0  the queue, which is 1 for now until we implemented a real login queue
@@ -345,18 +345,18 @@ void EveClientSocket::_authStateQueueCommand(PyRep* packet)
 		NetCommand_VK cmd;
 		if(cmd.Decode(&tuple) == false)
 		{
-			//sLog.outDebug("%s: Failed to decode 3-arg command.", GetRemoteIP().c_str());
+			//sLog.Debug("%s: Failed to decode 3-arg command.", GetRemoteIP().c_str());
 			Disconnect();
 			return;
 		}
 		// VK == VIP mode
 		if(cmd.command != "VK")
 		{
-			//sLog.outDebug("%s: Unknown 3-arg command '%s'.", GetRemoteIP().c_str(), cmd.command.c_str());
+			//sLog.Debug("%s: Unknown 3-arg command '%s'.", GetRemoteIP().c_str(), cmd.command.c_str());
 			Disconnect();
 			return;
 		}
-		//sLog.outDebug("%s: Got VK command, vipKey=%s.", GetRemoteIP().c_str(), cmd.vipKey.c_str());
+		//sLog.Debug("%s: Got VK command, vipKey=%s.", GetRemoteIP().c_str(), cmd.vipKey.c_str());
 		Log.Debug("AuthStateMachine","State changed into StateStateNoCrypto");
 		mCurrentStateMachine = &EveClientSocket::_authStateNoCrypto;
 		return;
@@ -364,7 +364,7 @@ void EveClientSocket::_authStateQueueCommand(PyRep* packet)
 	else 
 	{
 		//Log.Debug("EVE Socket","StateQueueCommand received a invalid packet");
-		sLog.outDebug("%s: Received invalid command packet:", GetRemoteIP().c_str());
+		sLog.Debug("%s: Received invalid command packet:", GetRemoteIP().c_str());
 		Disconnect();
 	}
 
@@ -381,14 +381,14 @@ void EveClientSocket::_authStateNoCrypto(PyRep* packet)
 
 	if(cryptoRequest.Decode(&data) == false)
 	{
-		//sLog.outDebug("%S: Received invalid 'crypto' request!", GetRemoteIP().c_str());
+		//sLog.Debug("%S: Received invalid 'crypto' request!", GetRemoteIP().c_str());
 		Disconnect();
 		return;
 	}
 
 	if(cryptoRequest.keyVersion == "placebo")
 	{
-		//sLog.outDebug("%s: Received Placebo 'crypto' request, accepting.", GetRemoteIP().c_str());
+		//sLog.Debug("%s: Received Placebo 'crypto' request, accepting.", GetRemoteIP().c_str());
 		Log.Debug("AuthStateMachine","State changed into StateCryptoChallenge");
 		mCurrentStateMachine = &EveClientSocket::_authStateCryptoChallenge;
 
@@ -401,13 +401,13 @@ void EveClientSocket::_authStateNoCrypto(PyRep* packet)
 		CryptoAPIRequestParams car;
 		if(car.Decode(&params) == false)
 		{
-			//sLog.outDebug("%s: Received invalid CryptoAPI request!", GetRemoteIP().c_str());
+			//sLog.Debug("%s: Received invalid CryptoAPI request!", GetRemoteIP().c_str());
 			Disconnect();
 			return;
 		}
 
-		sLog.outDebug("%s: 'Unhandled' CryptoAPI request: hashmethod=%s sessionkeylength=%d provider=%s sessionkeymethod=%s", GetRemoteIP().c_str(), car.hashmethod.c_str(), car.sessionkeylength, car.provider.c_str(), car.sessionkeymethod.c_str());
-		sLog.outDebug("%s: You must change your client to use Placebo 'crypto' in common.ini to talk to this server!\n", GetRemoteIP().c_str());
+		sLog.Debug("%s: 'Unhandled' CryptoAPI request: hashmethod=%s sessionkeylength=%d provider=%s sessionkeymethod=%s", GetRemoteIP().c_str(), car.hashmethod.c_str(), car.sessionkeylength, car.provider.c_str(), car.sessionkeymethod.c_str());
+		sLog.Debug("%s: You must change your client to use Placebo 'crypto' in common.ini to talk to this server!\n", GetRemoteIP().c_str());
 	}
 }
 
@@ -421,18 +421,18 @@ void EveClientSocket::_authStateCryptoChallenge(PyRep* packet)
 
 	if(mRequest->Decode(&packet) == false)
 	{
-		//sLog.outDebug("%s: Received invalid 'crypto' challenge!", GetRemoteIP().c_str());
+		//sLog.Debug("%s: Received invalid 'crypto' challenge!", GetRemoteIP().c_str());
 		Disconnect();
 		return;
 	}
 
-	sLog.outDebug("%s: Received Client Challenge.", GetRemoteIP().c_str(), mRequest->user_name.c_str());
+	sLog.Debug("%s: Received Client Challenge.", GetRemoteIP().c_str(), mRequest->user_name.c_str());
 
 	if(mRequest->user_password->CheckType(PyRep::None) == true)
 	{
 		//this is little wrong because on live they send password version always, but only once,
 		//but we send password version when we get request with hashed password ...
-		sLog.outDebug("%s: Got hashed password, requesting plain.", GetRemoteIP().c_str());
+		sLog.Debug("%s: Got hashed password, requesting plain.", GetRemoteIP().c_str());
 		delete mRequest;
 		mRequest = NULL;
 
@@ -441,7 +441,7 @@ void EveClientSocket::_authStateCryptoChallenge(PyRep* packet)
 		return;
 	}
 
-	sLog.outDebug("%s:		username='%s'", GetRemoteIP().c_str(), mRequest->user_name.c_str());
+	sLog.Debug("%s:		username='%s'", GetRemoteIP().c_str(), mRequest->user_name.c_str());
 
 	//send our handshake
 	CryptoServerHandshake server_shake;
@@ -472,7 +472,7 @@ void EveClientSocket::_authStateHandshakeSend(PyRep* packet)
 	PyRep * data = packet;
 	if(handshakeResult.Decode(&data) == false)
 	{
-		sLog.outDebug("%s: Received invalid 'crypto' handshake result!", GetRemoteIP().c_str());
+		sLog.Debug("%s: Received invalid 'crypto' handshake result!", GetRemoteIP().c_str());
 		Disconnect();
 		return;
 	}
@@ -481,11 +481,11 @@ void EveClientSocket::_authStateHandshakeSend(PyRep* packet)
 	//client->Login(m_request);
 
 	/* now comes code that should be in the client class, but as we are hacking anyway why care at all */
-	sLog.outDebug("Login with %s", mRequest->user_name.c_str());
+	sLog.Debug("Login with %s", mRequest->user_name.c_str());
 
 	if(mRequest->user_password->CheckType(PyRep::PackedObject2) == false)
 	{
-		//sLog.outDebug("Failed to get password: user password is not PackedObject2.");
+		//sLog.Debug("Failed to get password: user password is not PackedObject2.");
 		Disconnect();
 		return;
 	}
@@ -496,12 +496,12 @@ void EveClientSocket::_authStateHandshakeSend(PyRep* packet)
 	if(!passString.Decode(&obj->args1))
 	{
 		Disconnect();
-		//sLog.outDebug("Failed to decode password.");
+		//sLog.Debug("Failed to decode password.");
 		return;
 	}
 
 	// db check stuff
-	/*if(!m_services->GetServiceDB()->DoLogin(mRequest->user_name.c_str(), pass.arg.c_str(), m_accountID, m_role)) {
+	/*if(!sPyServiceMgr.GetServiceDB()->DoLogin(mRequest->user_name.c_str(), pass.arg.c_str(), m_accountID, m_role)) {
 		_log(CLIENT__MESSAGE, "%s: Login rejected by DB", mRequest->user_name.c_str());
 
 		PyRepPackedObject1 *e = new PyRepPackedObject1("exceptions.GPSMACHONETMSG_TYPE_TRANSPORTCLOSED");
@@ -513,7 +513,7 @@ void EveClientSocket::_authStateHandshakeSend(PyRep* packet)
 
 	// this is needed so if we exit before selecting a character, the account 'online' flag would switch back to 0
 	//m_char.charid = 0;
-	//m_services->GetServiceDB()->SetAccountOnlineStatus(m_accountID, true);
+	//sPyServiceMgr.GetServiceDB()->SetAccountOnlineStatus(m_accountID, true);
 
 	mUserName =  mRequest->user_name;
 	mUserid = 42;

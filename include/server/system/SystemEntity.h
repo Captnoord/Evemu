@@ -19,8 +19,7 @@
 #define __SYSTEMENTITY_H_INCL__
 
 #include "../ship/TargetManager.h"
-#include <vector>
-
+//#include <vector>
 
 class PyRepDict;
 class PyRepList;
@@ -179,9 +178,4 @@ protected:
 	DestinyManager *m_destiny;	//we own this! NULL if we are not in a system
 };
 
-
 #endif
-
-
-
-

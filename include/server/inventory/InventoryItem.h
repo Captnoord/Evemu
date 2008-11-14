@@ -17,14 +17,14 @@
 #ifndef EVE_INVENTORY_ITEM_H
 #define EVE_INVENTORY_ITEM_H
 
-#include <map>
-#include <string>
-#include <vector>
-#include <set>
+//#include <map>
+//#include <string>
+//#include <vector>
+//#include <set>
 
 #include "../common/packet_types.h"
 #include "../common/gpoint.h"
-//#include "InventoryDB.h"
+#include "InventoryDB.h"
 
 class PyRep;
 class PyRepDict;

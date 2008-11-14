@@ -39,8 +39,8 @@ int main(int argc, char *argv[])
 	printf("For a copy of this license, see the COPYING file provided with this distribution.\n");
 	Log.Line();
 	
-	sLog.outString("Revision: %s", EVEMU_REVISION);
-	sLog.outString("Supported Client: %s, Version %.2f, Build %d, MachoNet %d", EVEProjectVersion, EVEVersionNumber, EVEBuildVersion, MachoNetVersion);
+	sLog.String("Revision: %s", EVEMU_REVISION);
+	sLog.String("Supported Client: %s, Version %.2f, Build %d, MachoNet %d", EVEProjectVersion, EVEVersionNumber, EVEBuildVersion, MachoNetVersion);
 
 	printf( "The key combination <Ctrl-C> will safely shut down the server at any time.\n" );
 	Log.Line();
@@ -55,53 +55,51 @@ int main(int argc, char *argv[])
 	/* start the 'threadpool', this needs to be in front of things that uses the 'threadpool' */
 	ThreadPool.Startup();
 
-	
-
 	//it is important to do this before doing much of anything, in case they use it.
-	//Timer::SetCurrentTime();
+	Timer::SetCurrentTime();
 	
 	// Load server configuration
-	sLog.outString("Loading server configuration..");
+	sLog.String("Loading server configuration..");
 	if (!EVEmuServerConfig::LoadConfig()) 
 	{
-		sLog.outError("EVEmu", "Loading server configuration failed.");
+		sLog.Error("EVEmu", "Loading server configuration failed.");
 		return 1;
 	}
 	const EVEmuServerConfig *Config=EVEmuServerConfig::get();
 
 	if(!load_log_settings(Config->LogSettingsFile.c_str()))
 	{
-		sLog.outString("Warning: Unable to read %s (this file is optional)", Config->LogSettingsFile.c_str());
+		sLog.Warning("Warning: Unable to read %s (this file is optional)", Config->LogSettingsFile.c_str());
 	}
 	else
 	{
-		sLog.outString("Log settings loaded from %s", Config->LogSettingsFile.c_str());
+		sLog.String("Log settings loaded from %s", Config->LogSettingsFile.c_str());
 	}
 
 	//open up the log file if specified.
 	if(!Config->LogFile.empty()) {
 		if(log_open_logfile(Config->LogFile.c_str())) {
-			sLog.outString("Opened log file %s", Config->LogFile.c_str());
+			sLog.String("Opened log file %s", Config->LogFile.c_str());
 		} else {
-			sLog.outString("Unable to open log file '%s', only logging to the screen now.", Config->LogFile.c_str());
+			sLog.String("Unable to open log file '%s', only logging to the screen now.", Config->LogFile.c_str());
 		}
 	}
 	
 	if(!PyRepString::LoadStringFile(Config->StringsFile.c_str())) {
-		sLog.outString("Unable to open %s, i need it to decode string table elements!", Config->StringsFile.c_str());
+		sLog.String("Unable to open %s, i need it to decode string table elements!", Config->StringsFile.c_str());
 		return 1;
 	}
 
-	bool dbret = _DBStartup(Config->DatabaseHost,Config->DatabasePort, Config->DatabaseUsername, Config->DatabasePassword, Config->DatabaseDB);
+	/*bool dbret = _DBStartup(Config->DatabaseHost,Config->DatabasePort, Config->DatabaseUsername, Config->DatabasePassword, Config->DatabaseDB);
 
 	if(dbret == false)
 	{
 		return 1;
-	}
+	}*/
 
 	//connect to the database...
 	DBcore db;
-	/*{
+	{
 		DBerror err;
 		if(!db.Open(err, 
 			Config->DatabaseHost.c_str(),
@@ -110,16 +108,10 @@ int main(int argc, char *argv[])
 			Config->DatabaseDB.c_str(),
 			Config->DatabasePort)
 		) {
-			sLog.outError("Unable to connect to the database: %s", err.c_str());
+			sLog.Error("Unable to connect to the database: %s", err.c_str());
 			return 1;
 		}
-	}*/
-
-	/* new socket stuff */
-#ifndef enable_ascent
-#define enable_ascent
-#endif
-#ifdef enable_ascent
+	}
 
 	// Startup banner
 	UNIXTIME = time(NULL);
@@ -146,13 +138,56 @@ int main(int argc, char *argv[])
 	new Space;
 	sSocketMgr.SpawnWorkerThreads();
 
-
 	/* old 'evemu' spec stuff */
 	EntityList entity_list(&db);
 	ItemFactory item_factory(&db, &entity_list);
 
 	/* global service manager */
 	PyServiceMgr services(888444, &db, &entity_list, &item_factory, Config->CacheDirectory);
+	services.RegisterService(new AgentMgrService(&services, &db));
+	services.RegisterService(new MissionMgrService(&services, &db));
+	services.RegisterService(new AccountService(&services, &db));
+	services.RegisterService(new AlertService(&services));
+	services.RegisterService(new AuthService(&services));
+	services.RegisterService(new BillMgrService(&services, &db));
+	services.RegisterService(new BookmarkService(&services));
+	services.RegisterService(new CharacterService(&services, &db));
+	services.RegisterService(new CharMgrService(&services, &db));
+	services.RegisterService(new ConfigService(&services, &db));
+	services.RegisterService(new LanguageService(&services, &db));
+	services.RegisterService(new CorpMgrService(&services, &db));
+	services.RegisterService(new CorpStationMgrService(&services, &db));
+	services.RegisterService(new CorporationService(&services, &db));
+	services.RegisterService(new CorpRegistryService(&services, &db));
+	services.RegisterService(new DogmaIMService(&services, &db));
+	services.RegisterService(new InvBrokerService(&services, &db));
+	//services.RegisterService(services.lsc_service = new LSCService(&services, &db, &command_dispatcher));
+	services.RegisterService(new LookupService(&services, &db));
+	services.RegisterService(new VoiceMgrService(&services));
+	services.RegisterService(new ShipService(&services, &db));
+	services.RegisterService(new InsuranceService(&services, &db));
+	services.RegisterService(new BeyonceService(&services, &db));
+	services.RegisterService(new MapService(&services, &db));
+	services.RegisterService(new OnlineStatusService(&services));
+	services.RegisterService(new Standing2Service(&services, &db));
+	services.RegisterService(new WarRegistryService(&services));
+	services.RegisterService(new FactionWarMgrService(&services, &db));
+	services.RegisterService(new StationService(&services, &db));
+	services.RegisterService(new StationSvcService(&services, &db));
+	services.RegisterService(new JumpCloneService(&services, &db));
+	services.RegisterService(new KeeperService(&services, &db));
+	services.RegisterService(new DungeonService(&services, &db));
+	services.RegisterService(new SkillMgrService(&services, &db));
+	services.RegisterService(new TutorialService(&services, &db));
+	services.RegisterService(new PetitionerService(&services));
+	//services.RegisterService(new SlashService(&services, &command_dispatcher));
+	services.RegisterService(new MarketProxyService(&services, &db));
+	services.RegisterService(new ContractMgrService(&services));
+	services.RegisterService(new ReprocessingService(&services, &db));
+	services.RegisterService(new FactoryService(&services, &db));
+	services.RegisterService(new RamProxyService(&services, &db));
+	services.RegisterService(new PosMgrService(&services, &db));
+	services.RegisterService(new NetService(&services));
 
 	/* end old 'evemu' spec stuff */
 
@@ -215,18 +250,7 @@ int main(int argc, char *argv[])
 #endif
 		}
 	}
-
-#endif//enable_ascent
-
-
-
-
-
-
-
-
-
-
+	return 0;
 
 	//Start up the TCP server
 	EVETCPServer tcps;

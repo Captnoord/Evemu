@@ -19,10 +19,10 @@
 #ifndef __PYSERVICEMGR_H_INCL__
 #define __PYSERVICEMGR_H_INCL__
 
-#include "../common/common.h"
+/*#include "../common/common.h"
 #include "../common/CachedObjectMgr.h"
 #include "../common/timer.h"
-#include "inventory/ItemFactory.h"
+#include "inventory/ItemFactory.h"*/
 
 #include <set>
 #include <map>
@@ -42,6 +42,8 @@ class DBcore;
 class ItemFactory;
 
 class LSCService;
+
+initialiseSingleton( PyServiceMgr );
 
 class PyServiceMgr : public Singleton<PyServiceMgr>
 {
@@ -104,10 +106,11 @@ protected:
 	ServiceDB *const m_svcDB;	//this is crap, get rid of this
 };
 
-
-
-
+// global singleton macro
+#define sPyServiceMgr PyServiceMgr::getSingleton()
 
 #endif
+
+
 
 

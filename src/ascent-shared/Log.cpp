@@ -54,7 +54,16 @@ oLog::oLog()
 	Init(-3,3);
 }
 
-void oLog::outString( const char * str, ... )
+void oLog::SetColor(unsigned int color)
+{
+#ifndef WIN32
+	fputs(colorstrings[color], stdout);
+#else
+	SetConsoleTextAttribute(stdout_handle, (WORD)color);
+#endif
+}
+
+void oLog::String( const char * str, ... )
 {
 #ifdef ENABLE_CONSOLE_LOG
 	if(m_fileLogLevel < 0 && m_screenLogLevel < 0)
@@ -73,7 +82,7 @@ void oLog::outString( const char * str, ... )
 #endif//ENABLE_CONSOLE_LOG
 }
 
-void oLog::outError( const char * err, ... )
+void oLog::Error( const char * err, ... )
 {
 #ifdef ENABLE_CONSOLE_LOG
 	if(m_fileLogLevel < 1 && m_screenLogLevel < 1)
@@ -84,25 +93,38 @@ void oLog::outError( const char * err, ... )
 
 	if(m_screenLogLevel >= 1)
 	{
-#ifdef WIN32
-		SetConsoleTextAttribute(stderr_handle, FOREGROUND_RED | FOREGROUND_INTENSITY);
-#else
-		puts(colorstrings[TRED]);
-#endif
+		SetColor(TRED);
 		vfprintf(stderr, err, ap);
 		putc('\n', stderr);
-#ifdef WIN32
-		SetConsoleTextAttribute(stderr_handle, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN);
-#else
-		puts(colorstrings[TNORMAL]);
-#endif
+		SetColor(TNORMAL);
 	}
 
 	va_end(ap);
 #endif//ENABLE_CONSOLE_LOG
 }
 
-void oLog::outBasic( const char * str, ... )
+void oLog::Warning( const char * warning, ... )
+{
+#ifdef ENABLE_CONSOLE_LOG
+	if(m_fileLogLevel < 1 && m_screenLogLevel < 1)
+		return;
+
+	va_list ap;
+	va_start(ap, warning);
+
+	if(m_screenLogLevel >= 1)
+	{
+		SetColor(TYELLOW);
+		vfprintf(stdout, warning, ap);
+		putc('\n', stdout);
+		SetColor(TNORMAL);
+	}
+
+	va_end(ap);
+#endif//ENABLE_CONSOLE_LOG
+}
+
+void oLog::Basic( const char * str, ... )
 {
 #ifdef ENABLE_CONSOLE_LOG
 	if(m_fileLogLevel < 1 && m_screenLogLevel < 1)
@@ -121,7 +143,7 @@ void oLog::outBasic( const char * str, ... )
 #endif//ENABLE_CONSOLE_LOG
 }
 
-void oLog::outDetail( const char * str, ... )
+void oLog::Detail( const char * str, ... )
 {
 #ifdef ENABLE_CONSOLE_LOG
 	if(m_fileLogLevel < 2 && m_screenLogLevel < 2)
@@ -140,7 +162,7 @@ void oLog::outDetail( const char * str, ... )
 #endif//ENABLE_CONSOLE_LOG
 }
 
-void oLog::outDebug( const char * str, ... )
+void oLog::Debug( const char * str, ... )
 {
 #ifdef ENABLE_CONSOLE_LOG
 	if(m_fileLogLevel < 3 && m_screenLogLevel < 3)
@@ -159,7 +181,7 @@ void oLog::outDebug( const char * str, ... )
 #endif//ENABLE_CONSOLE_LOG
 }
 
-void oLog::outMenu( const char * str, ... )
+void oLog::Menu( const char * str, ... )
 {
 #ifdef ENABLE_CONSOLE_LOG
 	va_list ap;
@@ -192,7 +214,7 @@ void oLog::SetFileLoggingLevel(int32 level)
 	m_fileLogLevel = level;
 }
 
-void oLog::outColor(uint32 colorcode, const char * str, ...)
+void oLog::Color(uint32 colorcode, const char * str, ...)
 {
 #ifdef ENABLE_CONSOLE_LOG
 	if( !str ) return;

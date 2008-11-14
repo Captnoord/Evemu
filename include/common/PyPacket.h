@@ -19,8 +19,8 @@
 #ifndef EVE_PY_PACKET_H
 #define EVE_PY_PACKET_H
 
-#include <stdio.h>
-#include <string>
+//#include <stdio.h>
+//#include <string>
 
 #include "packet_types.h"
 #include "logsys.h"
@@ -82,7 +82,8 @@ protected:
 	bool _DecodeTypeID(PyRep *rep);
 };
 
-class PyPacket {
+class PyPacket
+{
 public:
 	PyPacket();
 	PyPacket(MACHONETMSG_TYPE _type, std::string _typestring);

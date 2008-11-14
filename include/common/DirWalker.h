@@ -25,8 +25,8 @@
 #include <dirent.h>
 #endif
 
-#include <vector>
-#include <string>
+//#include <vector>
+//#include <string>
 
 class DirWalker {
 public:

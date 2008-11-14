@@ -18,7 +18,7 @@
 #ifndef __VOICE_MGR__H__INCL__
 #define __VOICE_MGR__H__INCL__
 
-#include "../PyService.h"
+//#include "../PyService.h"
 
 class VoiceMgrService : public PyService {
 public:

@@ -49,12 +49,14 @@ std::string FormatOutputString(const char * Prefix, const char * Description, bo
 class SERVER_DECL oLog : public Singleton<oLog> {
 public:
   oLog();
-  void outString( const char * str, ... );
-  void outError( const char * err, ... );
-  void outBasic( const char * str, ... );
-  void outDetail( const char * str, ... );
-  void outDebug( const char * str, ... );
-  void outMenu( const char * str, ... );
+  void String( const char * str, ... );
+  void Error( const char * err, ... );
+  void Basic( const char * str, ... );
+  void Detail( const char * str, ... );
+  void Debug( const char * str, ... );
+  void Menu( const char * str, ... );
+  void Warning( const char * str, ... );
+  
 
   void fLogText(const char *text);
   void SetLogging(bool enabled);
@@ -63,13 +65,15 @@ public:
   void SetFileLoggingLevel(int32 level);
   void SetScreenLoggingLevel(int32 level);
 
-  void outColor(uint32 colorcode, const char * str, ...);
+  void Color(uint32 colorcode, const char * str, ...);
   
 #ifdef WIN32
   HANDLE stdout_handle, stderr_handle;
 #endif
   int32 m_fileLogLevel;
   int32 m_screenLogLevel;
+private:
+	void SetColor(unsigned int color);
 };
 
 class SessionLogWriter

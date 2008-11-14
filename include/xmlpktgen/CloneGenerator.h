@@ -25,7 +25,7 @@
 #ifndef __CLONEGENERATOR_H_INCL__
 #define __CLONEGENERATOR_H_INCL__
 
-#include "Generator.h"
+////#include "Generator.h"
 
 class ClassCloneGenerator : public TmplGenerator<ClassCloneGenerator> {
 public:

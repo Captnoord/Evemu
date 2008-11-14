@@ -22,10 +22,10 @@
 #include "common.h"
 #include "logsys.h"
 
-#include <vector>
-#include <map>
-#include <string>
-#include <stdio.h>
+//#include <vector>
+//#include <map>
+//#include <string>
+//#include <stdio.h>
 
 class PyVisitor;
 

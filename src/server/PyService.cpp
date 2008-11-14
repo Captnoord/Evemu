@@ -17,9 +17,7 @@
 
 #include "EvemuPCH.h"
 
-
-PyService::PyService(PyServiceMgr *mgr, const char *serviceName)
-: PyCallable(mgr, serviceName)
+PyService::PyService(PyServiceMgr *mgr, const char *serviceName) : PyCallable(mgr, serviceName)
 {
 }
 
@@ -181,19 +179,3 @@ PyRepObject *PyService::_BuildCachedReturn(PyRepSubStream **in_result, const cha
 	
 	return(cached.Encode());
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

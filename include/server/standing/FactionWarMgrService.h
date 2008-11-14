@@ -18,8 +18,8 @@
 #ifndef __FACTION_WAR_MGR__H__INCL__
 #define __FACTION_WAR_MGR__H__INCL__
 
-#include "../PyService.h"
-#include "FactionWarMgrDB.h"
+//#include "../PyService.h"
+//#include "FactionWarMgrDB.h"
 
 class FactionWarMgrService : public PyService {
 public:

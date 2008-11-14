@@ -24,8 +24,8 @@
 #define __CACHEDOBJECTMGR_H_INCL__
 
 #include "common.h"
-#include <string>
-#include <map>
+//#include <string>
+//#include <map>
 
 class PyRep;
 class PyRepSubStream;

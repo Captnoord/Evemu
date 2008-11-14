@@ -20,6 +20,7 @@
 
 // common files first
 #include "../common/common.h"
+#include "../common/types.h"
 
 #include "ascent.h"
 #include "ByteBuffer.h"
@@ -28,7 +29,7 @@
 //#define IMPLEMENT_SIGEXCEPT
 //#include "../common/sigexcept/sigexcept.h"
 
-//#include "../common/dbcore.h"
+#include "../common/dbcore.h"
 #include "../common/logsys.h"
 
 #include "../common/PyRep.h"
@@ -107,6 +108,11 @@
 
 #include "../common/misc.h"
 
+/* Ascent new stuff */
+#include "../common/EveClientSocket.h"
+#include "../common/EveClientSession.h"
+#include "../common/Space.h"
+#include "../common/SpaceRunnable.h"
 
 #include "../server/ClientSession.h"
 
@@ -244,6 +250,9 @@
 #include "../server/system/SystemEntity.h"
 #include "../server/system/SystemManager.h"
 
+//#include "system/SystemEntity.h"
+#include "../server/ship/ModuleManager.h"
+
 
 #include "../server/ship/ModuleManager.h"
 #include "../server/ship/BeyonceService.h"
@@ -271,15 +280,14 @@
 #include "../server/tutorial/TutorialDB.h"
 #include "../server/tutorial/TutorialService.h"
 
+
+
 // client stuff
+#include "../server/system/SystemEntity.h"
 #include "../server/Client.h"
 #include "../server/PyServiceCD.h"
 
-/* Ascent new stuff */
-#include "../common/EveClientSocket.h"
-#include "../common/EveClientSession.h"
-#include "../common/Space.h"
-#include "../common/SpaceRunnable.h"
+
 
 
 /* db stuff */

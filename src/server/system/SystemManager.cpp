@@ -32,7 +32,7 @@ SystemManager::SystemManager(const char *systemName, uint32 systemID, DBcore *db
 {
 	m_systemSecurity = m_db.GetSystemSecurity(m_systemID);
 	//create our chat channel
-	m_services->lsc_service->CreateSystemChannel(m_systemID);
+	sPyServiceMgr.lsc_service->CreateSystemChannel(m_systemID);
 }
 
 SystemManager::~SystemManager() {
@@ -146,7 +146,7 @@ bool SystemManager::_LoadSystemDynamics() {
 	cur = entities.begin();
 	end = entities.end();
 	for(; cur != end; cur++) {
-		SystemEntity *se = DynamicEntityFactory::BuildEntity(this, m_services->item_factory, *cur);
+		SystemEntity *se = DynamicEntityFactory::BuildEntity(this, sPyServiceMgr.item_factory, *cur);
 		if(se == NULL) {
 			codelog(SERVICE__ERROR, "Failed to create entity for item %lu (type %lu)", cur->itemID, cur->typeID);
 			continue;
@@ -477,7 +477,7 @@ void SystemManager::RangecastDestiny(const GPoint &pt, double range, std::vector
 }
 
 ItemFactory *SystemManager::itemFactory() const {
-	return(m_services->item_factory);
+	return(sPyServiceMgr.item_factory);
 }
 
 

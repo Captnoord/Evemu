@@ -19,10 +19,10 @@
 #ifndef __PYSERVICE_H_INCL__
 #define __PYSERVICE_H_INCL__
 
-#include <string>
-#include <map>
-#include "PyCallable.h"
-#include "PyServiceMgr.h"
+//#include <string>
+//#include <map>
+//#include "PyCallable.h"
+//#include "PyServiceMgr.h"
 
 class PyPacket;
 class PyRep;

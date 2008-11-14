@@ -17,9 +17,9 @@
 #ifndef EVE_ITEM_FACTORY_H
 #define EVE_ITEM_FACTORY_H
 
-#include <map>
+//#include <map>
 
-#include "../common/packet_types.h"
+//#include "../common/packet_types.h"
 #include "../common/gpoint.h"
 #include "InventoryDB.h"
 

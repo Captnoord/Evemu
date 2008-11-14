@@ -62,8 +62,12 @@ detect clients moving into agro radius
 #include "../common/EVEUtils.h"
 #include "../common/EVEPresentation.h"*/
 
+//#include "system/SystemEntity.h"
+//#include "ship/ModuleManager.h"
+
 #include "system/SystemEntity.h"
 #include "ship/ModuleManager.h"
+#include "ClientSession.h"
 
 class PyPacket;
 class PyRep;
@@ -79,6 +83,9 @@ class InventoryItem;
 class LSCChannel;
 class SystemManager;
 class CryptoChallengePacket;
+class DynamicSystemEntity;
+
+//class EveClientSession;
 
 class CharacterData {
 public:
@@ -346,6 +353,17 @@ public:
 	
 	//FunctorTimerQueue::TimerID Delay( uint32 time_in_ms, void (Client::* clientCall)() );
 	//FunctorTimerQueue::TimerID Delay( uint32 time_in_ms, ClientFunctor **functor );
+
+	void Send(PyPacket* packet)
+	{
+		if (mClientSession)
+		{
+			mClientSession->Send(*packet);
+
+		}
+		else
+			return;
+	}
 	
 protected:
 	void _SendPingRequest();
@@ -364,6 +382,9 @@ protected:
 
 	PyServiceMgr *const m_services;
 	EVEPresentation m_net;
+
+	EveClientSession* mClientSession;
+
 	Timer m_pingTimer;
 
 	uint32 m_accountID;

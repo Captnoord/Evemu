@@ -18,7 +18,7 @@
 #ifndef __MARKETDB_H_INCL__
 #define __MARKETDB_H_INCL__
 
-#include "../ServiceDB.h"
+//#include "../ServiceDB.h"
 
 class PyRep;
 

@@ -25,8 +25,8 @@
 #ifndef __HEADERGENERATOR_H_INCL__
 #define __HEADERGENERATOR_H_INCL__
 
-#include "Generator.h"
-#include <set>
+//#include "Generator.h"
+//#include <set>
 
 class ClassHeaderGenerator : public TmplGenerator<ClassHeaderGenerator> {
 public:
