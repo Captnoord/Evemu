@@ -7,6 +7,10 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "evemu-common", "VC9\evemu-common.vcproj", "{22A1613F-8C5C-4186-B245-C2C375F948B3}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "evemu-server", "VC9\evemu-server.vcproj", "{7EBEC2E7-7322-475E-B76C-769397DD23BB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{22A1613F-8C5C-4186-B245-C2C375F948B3} = {22A1613F-8C5C-4186-B245-C2C375F948B3}
+		{B0A489F8-0C45-49B5-967A-98272FA40A67} = {B0A489F8-0C45-49B5-967A-98272FA40A67}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,6 +29,7 @@ Global
 		{22A1613F-8C5C-4186-B245-C2C375F948B3}.Release|Win32.ActiveCfg = Release|Win32
 		{22A1613F-8C5C-4186-B245-C2C375F948B3}.Release|Win32.Build.0 = Release|Win32
 		{7EBEC2E7-7322-475E-B76C-769397DD23BB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7EBEC2E7-7322-475E-B76C-769397DD23BB}.Debug|Win32.Build.0 = Debug|Win32
 		{7EBEC2E7-7322-475E-B76C-769397DD23BB}.Release|Win32.ActiveCfg = Release|Win32
 		{7EBEC2E7-7322-475E-B76C-769397DD23BB}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection

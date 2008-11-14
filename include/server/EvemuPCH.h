@@ -63,7 +63,6 @@
 #include "../common/EVETCPConnection.h" // eve client socket
 #include "../common/EVEUtils.h"
 #include "../common/EVEDBUtils.h"
-#include "../common/EVEPresentation.h"
 #include "../common/EVEmuRevision.h"
 #include "../common/EVEVersion.h"
 

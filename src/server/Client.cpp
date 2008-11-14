@@ -19,6 +19,8 @@
 
 static const uint32 PING_INTERVAL_US = 60000;
 
+#define GetConnectedAddress() mClientSession->GetSocket()->GetRemoteIP()
+
 CharacterAppearance::CharacterAppearance() {
 	//NULL all dynamic fields
 #define NULL_FIELD(v) \
@@ -192,8 +194,10 @@ void Client::QueuePacket(PyPacket *p)
 
 }
 
-void Client::FastQueuePacket(PyPacket **p)
+void Client::FastQueuePacket(PyPacket *p)
 {
+	//Send()
+	//p->Encode()
 	//m_net.FastQueuePacket(p);
 	//mClientSession->OutPacket()
 
@@ -202,6 +206,25 @@ void Client::FastQueuePacket(PyPacket **p)
 		OutPacket(ectpack);
 		delete ectpack;
 		*/
+
+	if(p == NULL)
+		return;
+
+	/*PyRep *r = p->Encode();
+	SafeDelete(p);
+	if(r == NULL)
+	{
+		sLog.Error("%s: Failed to encode???", GetConnectedAddress().c_str());
+		
+		return;
+	}*/
+
+	// should be queued
+	mClientSession->Send(p);
+
+	
+	
+	SafeDelete(p);
 }
 
 bool Client::ProcessNet() {
@@ -434,7 +457,7 @@ void Client::Login(CryptoChallengePacket *pack) {
 	ack.maxSessionTime = new PyRepNone;
 	ack.userType = 1;	//TODO: what is this??
 	ack.role = m_role;
-	ack.address = m_net.GetConnectedAddress();
+	ack.address = GetConnectedAddress();
 	ack.inDetention = new PyRepNone;
 	ack.user_clientid = m_accountID;
 
@@ -442,14 +465,15 @@ void Client::Login(CryptoChallengePacket *pack) {
 
 	session.Set_userType(1);	//TODO: what is this??
 	session.Set_userid(m_accountID);
-	session.Set_address(m_net.GetConnectedAddress().c_str());
+	session.Set_address(GetConnectedAddress().c_str());
 	session.Set_role(m_role);
 	session.Set_languageID(pack->user_languageid.c_str());
 
 	_CheckSessionChange();
 }
 
-void Client::_SendPingRequest() {
+void Client::_SendPingRequest()
+{
 	PyPacket *ping_req = new PyPacket(MACHONETMSG_TYPE_PING_REQ, "macho.PingReq");
 	
 	ping_req->source.type = PyAddress::Node;
@@ -467,10 +491,11 @@ void Client::_SendPingRequest() {
 	ping_req->payload->items[0] = new PyRepList();	//times
 	ping_req->named_payload = new PyRepDict();
 	
-	FastQueuePacket(&ping_req);
+	FastQueuePacket(ping_req);
 }
 
-void Client::_CheckSessionChange() {
+void Client::_CheckSessionChange()
+{
 	if(!session.IsDirty())
 		return;
 
@@ -480,7 +505,7 @@ void Client::_CheckSessionChange() {
 	if(scn.changes.empty())
 		return;
 	
-	_log(CLIENT__SESSION, "Session updated, sending session change");
+	sLog.Basic("Session updated, sending session change");
 	scn.changes.Dump(CLIENT__SESSION, "  Changes: ");
 
 	//this is probably not necessary...
@@ -504,7 +529,7 @@ void Client::_CheckSessionChange() {
 	p->named_payload = new PyRepDict();
 	p->named_payload->add("channel", new PyRepString("sessionchange"));
 
-	FastQueuePacket(&p);
+	FastQueuePacket(p);
 }
 
 /* sync the session with our current state. */
@@ -843,7 +868,7 @@ void Client::_SendCallReturn(PyPacket *req, PyRep **return_value, const char *ch
 		p->named_payload->add("channel", new PyRepString(channel));
 	}
 
-	FastQueuePacket(&p);
+	FastQueuePacket(p);
 }
 
 void Client::_SendException(PyPacket *req, MACHONETERR_TYPE type, PyRep **payload) {
@@ -865,7 +890,7 @@ void Client::_SendException(PyPacket *req, MACHONETERR_TYPE type, PyRep **payloa
 	*payload = NULL;	//consumed
 
 	p->payload = e.Encode();
-	FastQueuePacket(&p);
+	FastQueuePacket(p);
 }
 
 //these are specialized Queue functions when our caller can
@@ -968,7 +993,7 @@ void Client::SendNotification(const PyAddress &dest, EVENotificationStream *noti
 		p->Dump(CLIENT__NOTIFY_REP, &dumper);
 	}
 
-	FastQueuePacket(&p);
+	FastQueuePacket(p);
 }
 
 void Client::WarpTo(const GPoint &to) {

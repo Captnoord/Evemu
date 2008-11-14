@@ -434,7 +434,13 @@ static void GetPackedColumnList(const DBQueryResult &res, DBPackedColumnList &in
 	for(uint32 i = 0; i < cc; i++) {
 		DBPackedColumnInfo info;
 		info.index = i;
-		info.name = res.ColumnName(i);
+		const char * columName = res.ColumnName(i);
+		if (columName != NULL)
+			info.name = columName;
+		else
+		{
+			sLog.String("WHAAAA HENK");
+		}
 		info.type = GetPackedColumnType(res.ColumnType(i));
 		into.push_back(info);
 	}

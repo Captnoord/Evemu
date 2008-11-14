@@ -387,6 +387,18 @@ DBQueryResult::DBQueryResult()
 }
 
 DBQueryResult::~DBQueryResult() {
+
+	// check if the field double pointer has a real pointer
+	// also check if the first entry has data........
+	if (m_fields != NULL && m_fields[0] != NULL)
+	{
+		/*for (uint32 i = 0; i < ColumnCount(); i++)
+		{
+			delete m_fields[i];
+		}*/
+		SafeDeleteArray(m_fields);
+	}
+
 	if(m_res != NULL)
 		mysql_free_result(m_res);
 }
@@ -411,7 +423,7 @@ const char *DBQueryResult::ColumnName(uint32 column) const {
 		return("(ERROR)");		//nothing better to do...
 	}
 #endif
-	return(m_fields[column].name);
+	return(m_fields[column]->name);
 }
 
 DBQueryResult::ColType DBQueryResult::ColumnType(uint32 column) const {
@@ -421,7 +433,7 @@ DBQueryResult::ColType DBQueryResult::ColumnType(uint32 column) const {
 		return(String);		//nothing better to do...
 	}
 #endif
-	switch(m_fields[column].type) {
+	switch(m_fields[column]->type) {
 	case FIELD_TYPE_TINY:
 		return(Int8);
 	case FIELD_TYPE_SHORT:
@@ -465,10 +477,25 @@ void DBQueryResult::SetResult(MYSQL_RES **res, uint32 colcount) {
 	m_res = *res;
 	*res = NULL;
 	m_col_count = colcount;
-	if(m_res != NULL)
+
+	if (m_res == NULL)
+	{
+		m_fields = NULL;
+		return;
+	}
+
+	m_fields = new MYSQL_FIELD*[m_col_count];
+
+	// we are
+	for (uint32 i = 0; i < colcount; i++)
+	{
+		m_fields[i] = mysql_fetch_field(m_res);
+	}
+
+	/*if(m_res != NULL)
 		m_fields = mysql_fetch_fields(m_res);
 	else
-		m_fields = NULL;
+		m_fields = NULL;*/
 }
 
 void DBQueryResult::Reset() {

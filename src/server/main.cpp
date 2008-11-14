@@ -189,9 +189,11 @@ int main(int argc, char *argv[])
 	services.RegisterService(new PosMgrService(&services, &db));
 	services.RegisterService(new NetService(&services));
 
+	services.GetCache()->PrimeCache();
+
+	services.GetServiceDB()->SetServerOnlineStatus(true);
+
 	/* end old 'evemu' spec stuff */
-
-
 
 	static volatile bool m_stopEvent;
 

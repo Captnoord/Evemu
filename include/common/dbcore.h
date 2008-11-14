@@ -86,7 +86,7 @@ protected:
 
 	uint32 m_col_count;
 	MYSQL_RES *m_res;
-	MYSQL_FIELD *m_fields;
+	MYSQL_FIELD **m_fields;
 };
 
 class DBResultRow {

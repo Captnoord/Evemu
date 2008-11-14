@@ -167,7 +167,7 @@ void EveClientSocket::OutPacket(PyRep * packet )
 	EVENetPacket * netData = new EVENetPacket;
 	netData->data = Marshal(packet, netData->length);
 	_outPacket(netData);
-	delete netData;
+	SafeDelete(netData);
 }
 
 void EveClientSocket::OnConnect()

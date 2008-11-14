@@ -260,8 +260,8 @@ public:
 	ClientSession session;
 	ModuleManager modules;
 
-	virtual void	QueuePacket(PyPacket *p);
-	virtual void	FastQueuePacket(PyPacket **p);
+	void	QueuePacket(PyPacket *p);
+	void	FastQueuePacket(PyPacket *p);
 	bool			ProcessNet();
 	virtual void	Process();
 	virtual void	ProcessDestiny();
@@ -358,8 +358,7 @@ public:
 	{
 		if (mClientSession)
 		{
-			mClientSession->Send(*packet);
-
+			mClientSession->Send(packet);
 		}
 		else
 			return;

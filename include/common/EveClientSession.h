@@ -37,9 +37,10 @@ public:
 
 	void OutPacket(PyRep* packet) {if(_socket) _socket->OutPacket(packet);}
 
-	void Send(PyPacket& packet)
+	// this needs to be optimized.... 'outpacket'.... and ->encode can be combined.... and should be because it doesn't require a delete
+	void Send(PyPacket* packet)
 	{
-		PyRep* raw = packet.Encode();
+		PyRep* raw = packet->Encode();
 		if(_socket)
 			_socket->OutPacket(raw);
 		SafeDelete(raw);
