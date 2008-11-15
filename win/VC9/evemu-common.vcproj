@@ -971,6 +971,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\include\server\PyServiceMgr.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\common\PyUtils.cpp"
 					>
 				</File>

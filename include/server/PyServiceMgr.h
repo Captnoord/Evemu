@@ -43,8 +43,6 @@ class ItemFactory;
 
 class LSCService;
 
-initialiseSingleton( PyServiceMgr );
-
 class PyServiceMgr : public Singleton<PyServiceMgr>
 {
 public:

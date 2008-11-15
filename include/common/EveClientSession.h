@@ -101,6 +101,8 @@ public:
 	void _SendException(PyPacket *req, MACHONETERR_TYPE type, PyRep **payload);
 	void _CheckSessionChange();
 
+	Client* _client;
+
 private:
 
 	bool bDeleted;
@@ -109,7 +111,7 @@ private:
 	Mutex _deleteMutex;
 
 	EveClientSocket *_socket;
-	Client* _client;
+	
 
 	FastQueue<PyPacket*, Mutex> _recvQueue;
 

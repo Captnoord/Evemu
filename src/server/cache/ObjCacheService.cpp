@@ -167,7 +167,7 @@ void ObjCacheService::PrimeCache() {
 	for(; cur != end; cur++)
 	{
 		//_log(SERVICE__CACHE, "Priming cache object '%s'", cur->first.c_str());
-		sLog.String("Priming cache object '%s'", cur->first.c_str());
+		//sLog.String("Priming cache object '%s'", cur->first.c_str());
 
 		if( !((++c) % period) )
 			Log.Notice("ObjCacheService", "PrimeCache Done %u/%u, %u%% complete.", c, m_cacheKeys.size(), float2int32( (float(c) / float(m_cacheKeys.size()))*100.0f ));

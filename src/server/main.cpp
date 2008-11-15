@@ -162,6 +162,7 @@ int main(int argc, char *argv[])
 	services.RegisterService(new DogmaIMService(&services, &db));
 	services.RegisterService(new InvBrokerService(&services, &db));
 	//services.RegisterService(services.lsc_service = new LSCService(&services, &db, &command_dispatcher));
+	services.RegisterService(services.lsc_service = new LSCService(&services, &db, NULL));
 	services.RegisterService(new LookupService(&services, &db));
 	services.RegisterService(new VoiceMgrService(&services));
 	services.RegisterService(new ShipService(&services, &db));
