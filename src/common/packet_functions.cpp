@@ -50,7 +50,7 @@ void e_free_func(voidpf opaque, voidpf address) {
 #endif
 
 //returns ownership of buffer!
-byte *DeflatePacket(const byte *data, uint32 &length) {
+byte *DeflatePacket(const byte *data, uint32 &length, bool best) {
 #ifdef REUSE_ZLIB
 	static bool inited = false;
 	static z_stream zstream;
@@ -102,7 +102,12 @@ byte *DeflatePacket(const byte *data, uint32 &length) {
 	zstream.zfree     = e_free_func;
 	zstream.opaque    = Z_NULL;
 
-	int zerror = deflateInit(&zstream, Z_DEFAULT_COMPRESSION);
+	int clevel = Z_DEFAULT_COMPRESSION;
+
+	if (best)
+		clevel = Z_BEST_COMPRESSION;
+
+	int zerror = deflateInit(&zstream, clevel);
 	if(zerror != Z_OK) {
 		_log(COMMON__ERROR, "Error: DeflatePacket: deflateInit() returned %d (%s).",
 			zerror, (zstream.msg == NULL ? "No additional message" : zstream.msg));

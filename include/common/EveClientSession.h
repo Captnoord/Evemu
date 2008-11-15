@@ -32,8 +32,20 @@ class SERVER_DECL EveClientSession
 {
 	friend class EveClientSocket;
 public:
+	EveClientSession(EveClientSession* session);
+
 	EveClientSession(uint32 userId, string name, EveClientSocket *sock );
 	~EveClientSession();
+
+	void Init(uint32 userId, string accountName)
+	{
+		ASSERT(_userId == 0); // only initializing a 'EveClientSession' once
+		ASSERT(_accountName.size() == 0); // again only initializing a 'EveClientSession' once
+
+		_userId = userId;
+		_accountName = accountName;
+		//bInitialized = true;
+	}
 
 	void OutPacket(PyRep* packet) {if(_socket) _socket->OutPacket(packet);}
 
@@ -46,6 +58,17 @@ public:
 		SafeDelete(raw);
 	}
 
+	void SendPyRep(PyRep* packet)
+	{
+		//PyRep* raw = packet->Encode();
+		//if(_socket)
+		//	_socket->OutPacket(raw);
+		//SafeDelete(raw);
+
+		if(_socket)
+			_socket->OutPacket(packet);
+	}
+
 	ASCENT_INLINE void QueuePacket(PyPacket* packet);
 
 	ASCENT_INLINE EveClientSocket* GetSocket();
@@ -56,6 +79,9 @@ public:
 	void Delete();
 
 	int Update();
+
+	// returns true if successful and false if its not.
+	bool DoLogin(CryptoChallengePacket& requestPack);
 
 	void _ProcessNone(PyPacket& packet);
 	void _ProcessCallRequest(PyPacket& packet);
@@ -71,21 +97,29 @@ public:
 
 	void _sendLoginFailed();
 
+	void _SendCallReturn(PyPacket *req, PyRep **return_value, const char *channel = NULL);
+	void _SendException(PyPacket *req, MACHONETERR_TYPE type, PyRep **payload);
+	void _CheckSessionChange();
+
 private:
+
+	bool bDeleted;
+	uint32 _userId;
+	string _accountName;
+	Mutex _deleteMutex;
 
 	EveClientSocket *_socket;
 	Client* _client;
 
-	uint32 _userId;
-	std::string _accountName;
-	Mutex deleteMutex;
-
-	bool bDeleted;
-
 	FastQueue<PyPacket*, Mutex> _recvQueue;
+
+	// this of course will result in a lookup table for every player..... 84 bytes on a 32 bits machine 168 byts on a 64 bits machine..
+	packetHandler Handlers[MACHONETMSG_TYPE_MAX];
+
 };
 
-static packetHandler Handlers[MACHONETMSG_TYPE_MAX] = {
+//static
+/*packetHandler Handlers[MACHONETMSG_TYPE_MAX] = {
 	&EveClientSession::_ProcessNone, //0
 	&EveClientSession::_ProcessNone, //1
 	&EveClientSession::_ProcessNone, //2
@@ -108,6 +142,6 @@ static packetHandler Handlers[MACHONETMSG_TYPE_MAX] = {
 	&EveClientSession::_ProcessNone, //19
 	&EveClientSession::_ProcessPingRequest, //20
 	&EveClientSession::_ProcessPingResponce, //21
-};
+};*/
 
 #endif//__EVECLIENTSESSION_H

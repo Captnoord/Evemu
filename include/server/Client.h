@@ -254,7 +254,9 @@ protected:
 //DO NOT INHERIT THIS OBJECT!
 class Client : public DynamicSystemEntity {
 public:
-	Client(PyServiceMgr *services, EVETCPConnection **con);
+	//Client(PyServiceMgr *services, EVETCPConnection **con);
+	Client(EveClientSession* xsession);
+
 	virtual ~Client();
 	
 	ClientSession session;
@@ -364,18 +366,21 @@ public:
 			return;
 	}
 	
-protected:
-	void _SendPingRequest();
-	
 	void _ProcessNotification(PyPacket *packet);
-	void _CheckSessionChange();
-	
-	void _ReduceDamage(Damage &d);
-	
 	//call stuff
 	void _ProcessCallRequest(PyPacket *packet);
 	void _SendCallReturn(PyPacket *req, PyRep **return_value, const char *channel = NULL);
 	void _SendException(PyPacket *req, MACHONETERR_TYPE type, PyRep **payload);
+
+protected:
+	void _SendPingRequest();
+	
+	
+	void _CheckSessionChange();
+	
+	void _ReduceDamage(Damage &d);
+	
+	
 
 	InventoryItem *m_ship;
 

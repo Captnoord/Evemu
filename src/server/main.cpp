@@ -367,9 +367,9 @@ int main(int argc, char *argv[])
 			struct in_addr in;
 			in.s_addr = tcpc->GetrIP();
 			_log(SERVER__CLIENTS, "New TCP connection from %s:%d", inet_ntoa(in),tcpc->GetrPort());
-			Client *c = new Client(&services, &tcpc);
+			//Client *c = new Client(&services, &tcpc);
 					
-			entity_list.Add(&c);
+			//entity_list.Add(&c);
 		}
 		
 		entity_list.Process();

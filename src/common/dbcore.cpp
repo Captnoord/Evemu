@@ -487,11 +487,6 @@ void DBQueryResult::SetResult(MYSQL_RES **res, uint32 colcount) {
 	{
 		m_fields[i] = mysql_fetch_field(m_res);
 	}
-
-	/*if(m_res != NULL)
-		m_fields = mysql_fetch_fields(m_res);
-	else
-		m_fields = NULL;*/
 }
 
 void DBQueryResult::Reset() {

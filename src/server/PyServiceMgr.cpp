@@ -17,6 +17,8 @@
 
 #include "EvemuPCH.h"
 
+initialiseSingleton( PyServiceMgr );
+
 /*                                                                              
  * This is a quick proxy object which receives any calls with no service in
  * their destination, assumes they are calls on bound objects, and tries to find

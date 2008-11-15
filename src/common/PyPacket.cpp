@@ -52,7 +52,10 @@ const char* MACHONETMSG_TYPE_str[MACHONETMSG_TYPE_MAX] = {
 PyPacket::PyPacket() : type_string("none"), type(MACHONETMSG_TYPE_UNK2), userid(0), payload(NULL), named_payload(NULL) {
 }
 
-PyPacket::PyPacket(MACHONETMSG_TYPE _type, std::string _typestring) : type(_type), type_string(_typestring) {
+PyPacket::PyPacket(MACHONETMSG_TYPE _type, std::string _typestring) : type(_type), type_string(_typestring)
+{
+	payload = NULL;
+	named_payload = NULL;
 }
 
 PyPacket::~PyPacket() {

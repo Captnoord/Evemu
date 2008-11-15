@@ -158,9 +158,20 @@ void ObjCacheService::PrimeCache() {
 	std::map<std::string, std::string>::const_iterator cur, end;
 	cur = m_cacheKeys.begin();
 	end = m_cacheKeys.end();
-	for(; cur != end; cur++) {
+	
+	//////////
+	uint32 period = (m_cacheKeys.size() / 20) + 1;
+	uint32 c = 0;
+	/////////
+	
+	for(; cur != end; cur++)
+	{
 		//_log(SERVICE__CACHE, "Priming cache object '%s'", cur->first.c_str());
 		sLog.String("Priming cache object '%s'", cur->first.c_str());
+
+		if( !((++c) % period) )
+			Log.Notice("ObjCacheService", "PrimeCache Done %u/%u, %u%% complete.", c, m_cacheKeys.size(), float2int32( (float(c) / float(m_cacheKeys.size()))*100.0f ));
+
 		PyRepString str(cur->first);
 		_LoadCachableObject(&str);
 	}

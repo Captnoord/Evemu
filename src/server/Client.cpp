@@ -116,11 +116,13 @@ void CharacterAppearance::operator=(const CharacterAppearance &from) {
 #undef COPY_DYN
 }
 
-Client::Client(PyServiceMgr *services, EVETCPConnection **con) : DynamicSystemEntity(NULL),
+//Client::Client(PyServiceMgr *services, EVETCPConnection **con) : DynamicSystemEntity(NULL),
+
+Client::Client(EveClientSession* xsession) : DynamicSystemEntity(NULL),
   modules(this),
   m_ship(NULL),
-  m_services(services),
-  m_net(*con, this),
+  m_services(NULL),
+  m_net(NULL, this),
   m_pingTimer(PING_INTERVAL_US),
   m_accountID(0),
   m_role(1),
@@ -134,7 +136,8 @@ Client::Client(PyServiceMgr *services, EVETCPConnection **con) : DynamicSystemEn
   m_nextNotifySequence(1)
 //  m_nextDestinyUpdate(46751)
 {
-	*con = NULL;
+	//*con = NULL;
+	mClientSession = xsession;
 
 	m_moveTimer.Disable();
 	m_pingTimer.Start();
@@ -189,9 +192,14 @@ Client::~Client()
 
 void Client::QueuePacket(PyPacket *p)
 {
-	p->userid = m_accountID;
-	m_net.QueuePacket(p);
+	if(p == NULL)
+		return;
 
+	p->userid = m_accountID;
+	//m_net.QueuePacket(p);
+
+	mClientSession->Send(p);
+	SafeDelete(p);
 }
 
 void Client::FastQueuePacket(PyPacket *p)
@@ -461,7 +469,7 @@ void Client::Login(CryptoChallengePacket *pack) {
 	ack.inDetention = new PyRepNone;
 	ack.user_clientid = m_accountID;
 
-	m_net._QueueRep(ack.Encode());
+	mClientSession->SendPyRep(ack.Encode());
 
 	session.Set_userType(1);	//TODO: what is this??
 	session.Set_userid(m_accountID);
