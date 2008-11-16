@@ -121,7 +121,7 @@ bool ServiceDB::GiveCash(
 
 	{
 		_log(SERVICE__ERROR, "Error in query : %s", err.c_str());
-		return(false);
+		return false;
 	}
 
 	return (true);

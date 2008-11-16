@@ -86,7 +86,8 @@ PyCallArgs::~PyCallArgs() {
 	}
 }
 
-void PyCallArgs::Dump(LogType type) const {
+void PyCallArgs::Dump(LogType type) const
+{
 	if(!is_log_enabled(type))
 		return;
 	
@@ -104,68 +105,32 @@ void PyCallArgs::Dump(LogType type) const {
 	}
 }
 
-PyResult::PyResult()
-: ssResult(NULL)
+PyResult::PyResult() : ssResult(NULL)
 {
 	_log(SERVER__INIT, "Constructing Regular NULL");
 }
 
-PyResult::PyResult(PyRep *result)
-: ssResult(
-	  (result==NULL)
-	  ? new PyRepNone()
-	  : result
-	  )
+PyResult::PyResult(PyRep *result) : ssResult((result==NULL) ? new PyRepNone() : result)
 {
 	_log(SERVER__INIT, "Constructing Regular %p", &(*ssResult));
 }
 
-PyResult::~PyResult() {
+PyResult::~PyResult()
+{
 	_log(SERVER__INIT, "Destroying Regular %p", &(*ssResult));
 }
 
-PyException::PyException()
-: ssException(NULL)
+PyException::PyException() : ssException(NULL)
 {
 	_log(SERVER__INIT, "Constructing Exception NULL");
 }
 
-PyException::PyException(PyRep *except)
-: ssException(
-		(except==NULL)
-		? new PyRepNone
-		: except
-		)
+PyException::PyException(PyRep *except) : ssException((except==NULL) ? new PyRepNone : except)
 {
 	_log(SERVER__INIT, "Constructing Exception %p", &(*ssException));
 }
 
-PyException::~PyException() {
+PyException::~PyException()
+{
 	_log(SERVER__INIT, "Destroying Exception %p", &(*ssException));
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

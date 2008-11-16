@@ -189,7 +189,7 @@ PyResult ConfigService::Handle_GetMapObjects(PyCallArgs &call) {
 			_log(NET__PACKET_ERROR, "Decode Handle_GetMapObjects failed: arg 3 is not an int: %s", 
 				v->TypeString());
 			SafeDelete(packet);
-			return(false);
+			return false;
 		}
 		PyRepInteger *iii = (PyRepInteger *) v;
 		wantSystems = (iii->value==0)?false:true;
@@ -200,7 +200,7 @@ PyResult ConfigService::Handle_GetMapObjects(PyCallArgs &call) {
 			_log(NET__PACKET_ERROR, "Decode Handle_GetMapObjects failed: arg 2 is not an int: %s", 
 				v->TypeString());
 			SafeDelete(packet);
-			return(false);
+			return false;
 		}
 		PyRepInteger *iii = (PyRepInteger *) v;
 		wantConstellations = (iii->value==0)?false:true;
@@ -211,7 +211,7 @@ PyResult ConfigService::Handle_GetMapObjects(PyCallArgs &call) {
 			_log(NET__PACKET_ERROR, "Decode Handle_GetMapObjects failed: arg 1 is not an int: %s", 
 				v->TypeString());
 			SafeDelete(packet);
-			return(false);
+			return false;
 		}
 		PyRepInteger *iii = (PyRepInteger *) v;
 		wantRegions = (iii->value==0)?false:true;
@@ -222,7 +222,7 @@ PyResult ConfigService::Handle_GetMapObjects(PyCallArgs &call) {
 			_log(NET__PACKET_ERROR, "Decode Handle_GetMapObjects failed: arg 0 is not an int: %s", 
 				v->TypeString());
 			SafeDelete(packet);
-			return(false);
+			return false;
 		}
 		PyRepInteger *iii = (PyRepInteger *) v;
 		arg = iii->value;
@@ -230,7 +230,7 @@ PyResult ConfigService::Handle_GetMapObjects(PyCallArgs &call) {
 	if(packet->items.size() == 0 || packet->items.size() > 6) {
 		_log(NET__PACKET_ERROR, "Decode Handle_GetMapObjects failed: tuple0 is the wrong size: expected 1-6, but got %d", packet->items.size());
 		SafeDelete(packet);
-		return(false);
+		return false;
 	}
 
 	SafeDelete(packet);

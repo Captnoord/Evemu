@@ -152,8 +152,7 @@ void SpawnEntry::_DoSpawn(SystemManager *mgr, PyServiceMgr *svc) {
 			
 			//create them all at the same point to start with...
 			//we will move them before they get added to the system
-			NPC *npc = new NPC(mgr, svc,
-				i, cur->corporationID, 0, spawn_point, this);	//TODO: add allianceID
+			NPC *npc = new NPC(mgr, svc,i, cur->corporationID, 0, spawn_point, this);	//TODO: add allianceID
 			spawned.push_back(npc);
 		}
 	}
@@ -222,29 +221,29 @@ bool SpawnEntry::CheckBounds() const {
 	case boundsPoint: {
 		if(bounds.size() != 1) {
 			_log(SPAWN__ERROR, "Invalid number of bounds points specified in spawn entry %lu with type %lu: %lu != 1", GetID(), m_boundsType, bounds.size());
-			return(false);
+			return false;
 		}
 	} break;
 	
 	case boundsLine: {
 		if(bounds.size() != 2) {
 			_log(SPAWN__ERROR, "Invalid number of bounds points specified in spawn entry %lu with type %lu: %lu != 2", GetID(), m_boundsType, bounds.size());
-			return(false);
+			return false;
 		}
 	} break;
 	
 	case boundsCube: {
 		if(bounds.size() != 2) {
 			_log(SPAWN__ERROR, "Invalid number of bounds points specified in spawn entry %lu with type %lu: %lu != 2", GetID(), m_boundsType, bounds.size());
-			return(false);
+			return false;
 		}
 	} break;
 	
 	default:
 		_log(SPAWN__ERROR, "Invalid bounds type %lu on spawn entry %lu", m_boundsType, GetID());
-		return(false);
+		return false;
 	}
-	return(true);
+	return true;
 }
 
 
@@ -257,21 +256,21 @@ bool SpawnManager::Load() {
 	// (Drones too?)
 	if(!m_db.LoadSpawnGroups(m_system->GetID(), m_groups)) {
 		_log(SPAWN__ERROR, "Failed to load spawn groups for system %lu!", m_system->GetID());
-		return(false);
+		return false;
 	}
 	
 	if(!m_db.LoadSpawnEntries(m_system->GetID(), m_groups, m_spawns)) {
 		_log(SPAWN__ERROR, "Failed to load spawn entries for system %lu!", m_system->GetID());
-		return(false);
+		return false;
 	}
 
-	return(true);
+	return true;
 }
 
 bool SpawnManager::DoInitialSpawn() {
 	//right now, just running through Process will spawn what needs to be spawned.
 	Process();
-	return(true);
+	return true;
 }
 
 void SpawnManager::Process() {

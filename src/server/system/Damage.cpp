@@ -114,9 +114,9 @@ static const char *DamageMessageIDs_Other[6] = {
 	"AttackHit6"	//strikes you  perfectly, wrecking
 };
 
-
 //the notifications which this puts out probably needs some work.
-void Client::ApplyDamage(Damage &d) {
+void Client::ApplyDamage(Damage &d)
+{
 	_ReduceDamage(d);
 	
 	//shieldUniformity
@@ -133,26 +133,27 @@ void Client::ApplyDamage(Damage &d) {
 	PyRepTuple *up;
 	
 	//Notifications to ourself:
-		up = noeh.Encode();
-		QueueDestinyEvent(&up);
-		delete up;
-		
+	up = noeh.Encode();
+	QueueDestinyEvent(up);
+	//delete up;
 	
-		//NOTE: could send out the RD version of this message instead of the R version, which
-		//includes "weapon" and "owner" instead of "source".
-		Notify_OnDamageMessage_Self ondam;
-		ondam.messageID = "AttackHit2R";	//TODO: randomize/select this somehow.
-		ondam.damage = damage;
-		ondam.source = d.source->GetID();
-		ondam.splash = "";
-		up = ondam.FastEncode();
-		QueueDestinyEvent(&up);
-		delete up;
+
+	//NOTE: could send out the RD version of this message instead of the R version, which
+	//includes "weapon" and "owner" instead of "source".
+	Notify_OnDamageMessage_Self ondam;
+	ondam.messageID = "AttackHit2R";	//TODO: randomize/select this somehow.
+	ondam.damage = damage;
+	ondam.source = d.source->GetID();
+	ondam.splash = "";
+	up = ondam.FastEncode();
+	QueueDestinyEvent(up);
+	//delete up;
 
 	//Notifications to others:
 		//I am not sure what the correct scope of this broadcast
 		//should be. For now, it goes to anybody targeting us.
-		if(targets.IsTargetedBySomething()) {
+		if(targets.IsTargetedBySomething())
+		{
 			up = noeh.Encode();
 			targets.QueueTBDestinyEvent(&up);
 			delete up;

@@ -743,11 +743,11 @@ void RamProxyService::_VerifyCompleteJob(const Call_CompleteJob &args, Client *c
 
 bool RamProxyService::_Calculate(const Call_InstallJob &args, const InventoryItem *const installedItem, Client *const c, Rsp_InstallJob &into) {
 	if(!m_db.GetAssemblyLineProperties(args.installationAssemblyLineID, into.materialMultiplier, into.timeMultiplier, into.installCost, into.usageCost))
-		return(false);
+		return false;
 
 	into.productionTime = m_db.GetBlueprintProductionTime(installedItem->typeID(), (EVERamActivity)args.activityID);
 	if(!into.productionTime)
-		return(false);
+		return false;
 
 	uint32 productGroupID = installedItem->groupID();	//default
 	// perform some activity-specific actions
@@ -759,7 +759,7 @@ bool RamProxyService::_Calculate(const Call_InstallJob &args, const InventoryIte
 			double wasteFactor;
 			uint32 materialLevel, productivityLevel, productivityModifier;
 			if(!m_db.GetAdditionalBlueprintProperties(installedItem->itemID(), materialLevel, wasteFactor, productivityLevel, productivityModifier))
-				return(false);
+				return false;
 
 			into.materialMultiplier *= 1.0 + (wasteFactor / (1 + materialLevel));
 			into.timeMultiplier *= (into.productionTime - (1.0 - (1.0 / (1 + productivityLevel))) * productivityModifier) / into.productionTime;
@@ -788,7 +788,7 @@ bool RamProxyService::_Calculate(const Call_InstallJob &args, const InventoryIte
 		case ramActivityCopying: {
 			uint32 maxProductionLimit = m_db.GetMaxProductionLimit(installedItem->typeID());
 			if(!maxProductionLimit)
-				return(false);
+				return false;
 
 			// no ceil() here on purpose
 			into.productionTime = (into.productionTime / maxProductionLimit) * args.licensedProductionRuns;
@@ -806,7 +806,7 @@ bool RamProxyService::_Calculate(const Call_InstallJob &args, const InventoryIte
 
 	if(productGroupID != NULL)
 		if(!m_db.MultiplyMultipliers(args.installationAssemblyLineID, productGroupID, into.materialMultiplier, into.timeMultiplier))
-			return(false);
+			return false;
 
 	// calculate the remaining things
 	into.productionTime *= into.timeMultiplier * into.charTimeMultiplier * args.runs;
@@ -818,7 +818,7 @@ bool RamProxyService::_Calculate(const Call_InstallJob &args, const InventoryIte
 	// I have no idea how to avoid this ...
 	into.maxJobStartTime = m_db.GetNextFreeTime(args.installationAssemblyLineID);
 
-	return(true);
+	return true;
 }
 
 void RamProxyService::_EncodeBillOfMaterials(const std::vector<RequiredItem> &reqItems, double materialMultiplier, double charMaterialMultiplier, uint32 runs, BillOfMaterials &into) {

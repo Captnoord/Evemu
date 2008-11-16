@@ -51,7 +51,7 @@ bool CharacterDB::ValidateCharName(const char *name) {
 
 	if(!m_db->IsSafeString(name)) {
 		_log(SERVICE__ERROR, "Name '%s' contains invalid characters.", name);
-		return(false);
+		return false;
 	}
 	
 	//TODO: should reserve the name, but I dont wanna insert a fake char in order to do it.
@@ -62,16 +62,16 @@ bool CharacterDB::ValidateCharName(const char *name) {
 		name))
 	{
 		codelog(SERVICE__ERROR, "Error in query for '%s': %s", name, res.error.c_str());
-		return(false);
+		return false;
 	}
 
 	DBResultRow row;
 	if(res.GetRow(row)) {
 	   _log(SERVICE__MESSAGE, "Name '%s' is already taken", name);
-	   return(false); 
+	   return false; 
 	}
 
-	return(true);
+	return true;
 }
 
 PyRepObject *CharacterDB::GetCharSelectInfo(uint32 characterID) {
@@ -241,16 +241,16 @@ uint32 CharacterDB::GetRaceFromBloodline(uint32 bloodline) {
 		bloodline))
 	{
 		_log(SERVICE__ERROR, "Error in GetRaceFromBloodline query: %s", res.error.c_str());
-		return(false);
+		return false;
 	}
 
 	DBResultRow row;
 	if(res.GetRow(row)) {
 	   _log(SERVICE__MESSAGE, "Name '%s' is already taken", name);
-	   return(false); 
+	   return false; 
 	}
 
-	return(true);
+	return true;
 }*/
 
 PyRepObject *CharacterDB::GetCharPublicInfo(uint32 characterID) {
@@ -332,13 +332,13 @@ bool CharacterDB::LoadCharacterAppearance(uint32 characterID, CharacterAppearanc
 	" WHERE characterID=%lu", characterID))
 	{
 		codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
-		return(false);
+		return false;
 	}
 	
 	DBResultRow row;
 	if(!res.GetRow(row)) {
 		_log(SERVICE__ERROR, "Error in LoadCharacterAppearance query: no data for char %d", characterID);
-		return(false);
+		return false;
 	}
 
 	uint32 i = 0;
@@ -384,7 +384,7 @@ bool CharacterDB::LoadCharacterAppearance(uint32 characterID, CharacterAppearanc
 	row.IsNull(i)?into.Clear_morph4s():into.Set_morph4s(row.GetDouble(i)); i++;
 	row.IsNull(i)?into.Clear_morph4w():into.Set_morph4w(row.GetDouble(i)); i++;
 	
-	return(true);
+	return true;
 }
 
 /////////////////////////////////
@@ -426,7 +426,7 @@ bool CharacterDB::SetCharDesc(uint32 characterID, const char *str) {
 		" WHERE characterID=%lu", stringEsc.c_str(),characterID))
 	{
 		codelog(SERVICE__ERROR, "Error in query: %s", err.c_str());
-		return(false);
+		return false;
 	}
 
 	return (true);
@@ -443,14 +443,14 @@ bool CharacterDB::GetCharItems(uint32 characterID, std::set<uint32> &into) {
 		characterID))
 	{
 		_log(DATABASE__ERROR, "Failed to query items of char %lu: %s.", characterID, res.error.c_str());
-		return(false);
+		return false;
 	}
 
 	DBResultRow row;
 	while(res.GetRow(row))
 		into.insert(row.GetUInt(0));
 	
-	return(true);
+	return true;
 }
 
 //Try to run through all of the tables which might have data relavent to
@@ -536,7 +536,7 @@ bool CharacterDB::DeleteCharacter(uint32 characterID) {
 		"DELETE FROM character_ WHERE characterID=%lu", characterID))
 	{
 		codelog(SERVICE__ERROR, "Error in query: %s", err.c_str());
-		return(false);
+		return false;
 	}
 
 	return (true);
@@ -565,9 +565,8 @@ PyRepObject *CharacterDB::GetCharacterAppearance(uint32 charID) {
 	return(DBResultToRowset(res));
 }
 
-
-
-bool CharacterDB::GetAttributesFromBloodline(CharacterData & cdata) {
+bool CharacterDB::GetAttributesFromBloodline(CharacterData & cdata)
+{
 	DBQueryResult res;
 
 	if (!m_db->RunQuery(res,
@@ -586,7 +585,7 @@ bool CharacterDB::GetAttributesFromBloodline(CharacterData & cdata) {
 	DBResultRow row;
 	if(!res.GetRow(row)) {
 		codelog(SERVICE__ERROR, "Failed to find bloodline information for bloodline %lu", cdata.bloodlineID);
-		return(false);
+		return false;
 	}
 
 	cdata.typeID = row.GetUInt(0);
@@ -618,7 +617,7 @@ bool CharacterDB::GetAttributesFromAncestry(CharacterData & cdata) {
 	DBResultRow row;
 	if(!res.GetRow(row)) {
 		codelog(SERVICE__ERROR, "Failed to find ancestry information for ancestry %lu", cdata.ancestryID);
-		return(false);
+		return false;
 	}
 	
 	cdata.ModifyAttributes(
@@ -666,7 +665,7 @@ bool CharacterDB::GetLocationCorporationByCareer(CharacterData & cdata, double &
 	DBResultRow row;
 	if(!res.GetRow(row)) {
 		codelog(SERVICE__ERROR, "Failed to find career %lu", cdata.careerID);
-		return(false);
+		return false;
 	}
 	
 	cdata.corporationID = row.GetUInt(0);
@@ -694,18 +693,18 @@ bool CharacterDB::GetShipTypeByBloodline(uint32 bloodlineID, uint32 &shipTypeID)
 		bloodlineID))
 	{
 		_log(DATABASE__ERROR, "Failed to query ship type for bloodline %lu: %s.", bloodlineID, res.error.c_str());
-		return(false);
+		return false;
 	}
 
 	DBResultRow row;
 	if(!res.GetRow(row)) {
 		_log(DATABASE__ERROR, "Bloodline %lu not found.", bloodlineID);
-		return(false);
+		return false;
 	}
 
 	shipTypeID = row.GetUInt(0);
 
-	return(true);
+	return true;
 }
 
 
@@ -857,7 +856,7 @@ bool CharacterDB::SetNote(uint32 ownerID, uint32 itemID, const char *str) {
 			)
 		{
 			codelog(CLIENT__ERROR, "Error on query: %s", err.c_str());
-			return(false);
+			return false;
 		}
 	}
 	else {
@@ -869,11 +868,11 @@ bool CharacterDB::SetNote(uint32 ownerID, uint32 itemID, const char *str) {
 			)
 		{
 			codelog(CLIENT__ERROR, "Error on query: %s", err.c_str());
-			return(false);
+			return false;
 		}
 	}
 
-	return(true);
+	return true;
 }
 
 uint32 CharacterDB::AddOwnerNote(uint32 charID, const std::string & label, const std::string & content) {
@@ -934,11 +933,3 @@ PyRepObject *CharacterDB::GetOwnerNote(uint32 charID, uint32 noteID) {
 
 	return DBResultToRowset(res);
 }
-
-
-
-
-
-
-
-

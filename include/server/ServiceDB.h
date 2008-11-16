@@ -43,7 +43,7 @@ class PyRepObject;
 class PyRepDict;
 class EntityList;
 class Client;
-class CharacterData;
+struct CharacterData;
 class CorpMemberInfo;
 //class InventoryItem;
 

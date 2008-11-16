@@ -27,7 +27,8 @@ class InventoryItem;
 class SystemEntity;
 class Client;
 
-class ShipModule {
+class ShipModule
+{
 public:
 	//factory method:
 	static ShipModule *CreateModule(Client *owner, InventoryItem *self, InventoryItem *charge);
@@ -154,7 +155,6 @@ public:
 	void Deactivate(uint32 itemID, const std::string &effectName);
 	void ReplaceCharges(EVEItemFlags flag, InventoryItem *charge);
 	
-	
 protected:
 	Client *const m_pilot;
 	
@@ -165,10 +165,4 @@ protected:
 	ShipModule *m_modules[MAX_MODULE_COUNT];
 };
 
-
-
-
-
-#endif
-
-
+#endif//__MODULEMANAGER_H_INCL__

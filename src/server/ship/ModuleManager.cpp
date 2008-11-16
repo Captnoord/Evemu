@@ -413,8 +413,8 @@ void ActivatableModule::_SendGodmaShipEffect(EVEEffectID effect, bool active) {
 
 	//should this only go to ourself?
 	PyRepTuple *up = gse.FastEncode();
-	m_pilot->QueueDestinyEvent(&up);
-	delete up;
+	m_pilot->QueueDestinyEvent(up);
+	//delete up;
 }
 
 void ActivatableModule::_SendWeaponEffect(const char *effect, SystemEntity *target) {

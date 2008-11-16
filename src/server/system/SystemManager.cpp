@@ -76,7 +76,7 @@ bool SystemManager::_LoadSystemCelestials() {
 	std::vector<DBSystemEntity> entities;
 	if(!m_db.LoadSystemEntities(m_systemID, entities)) {
 		_log(SERVICE__ERROR, "Unable to load celestial entities during boot of system %lu.", m_systemID);
-		return(false);
+		return false;
     }
 
 	//uint32 next_hack_entity_ID = m_systemID + 900000000;
@@ -100,16 +100,19 @@ bool SystemManager::_LoadSystemCelestials() {
 		m_entityChanged = true;
 	}
 	
-	return(true);
+	return true;
 }
 
-class DynamicEntityFactory {
+class DynamicEntityFactory
+{
 public:
 	static SystemEntity *BuildEntity(SystemManager *system, ItemFactory *factory, const DBSystemDynamicEntity &entity) {
 		using namespace EVEDB;
-		switch(entity.categoryID) {
+		switch(entity.categoryID)
+		{
 		
-		case invCategories::Asteroid: {
+		case invCategories::Asteroid:
+		{
 			//first load up the item.
 			InventoryItem *i;
 			i = factory->Load(entity.itemID, false);	//should not have any contents...
@@ -137,7 +140,7 @@ bool SystemManager::_LoadSystemDynamics() {
 	std::vector<DBSystemDynamicEntity> entities;
 	if(!m_db.LoadSystemDynamicEntities(m_systemID, entities)) {
 		_log(SERVICE__ERROR, "Unable to load dynamic entities during boot of system %lu.", m_systemID);
-		return(false);
+		return false;
     }
 
 	//uint32 next_hack_entity_ID = m_systemID + 900000000;
@@ -158,34 +161,34 @@ bool SystemManager::_LoadSystemDynamics() {
 		m_entityChanged = true;
 	}
 	
-	return(true);
+	return true;
 }
 
 bool SystemManager::BootSystem() {
 	
 	//load the static system stuff...
 	if(!_LoadSystemCelestials())
-		return(false);
+		return false;
 	
 	//load the dynamic system stuff (items, roids, etc...)
 	if(!_LoadSystemDynamics())
-		return(false);
+		return false;
 	
 	/* temporarily commented out until we find out why they
 	 * make client angry ...
 	//the statics have been loaded, now load up the spawns...
 	if(!m_spawnManager->Load()) {
 		_log(SERVICE__ERROR, "Unable to load spawns during boot of system %lu.", m_systemID);
-		return(false);
+		return false;
 	}
 	//spawns are loaded, fire up the initial spawn.
 	if(!m_spawnManager->DoInitialSpawn()) {
 		_log(SERVICE__ERROR, "Unable to do initial spawns during boot of system %lu.", m_systemID);
-		return(false);
+		return false;
 	}
 	*/
 	
-	return(true);
+	return true;
 }
 
 //called many times a second
@@ -207,7 +210,7 @@ bool SystemManager::Process() {
 	
 	bubbles.Process();
 	
-	return(true);
+	return true;
 }
 
 //called once per second.
@@ -393,8 +396,8 @@ void SystemManager::RangecastDestinyUpdate(const GPoint &pt, double range, PyRep
 			continue;
 		//else, in range
 		PyRepTuple *dup = payload->TypedClone();
-		(*curc)->QueueDestinyUpdate(&dup);
-		delete dup;	//just in case. We know these are clients, so we can count on them normally consuming it, so we do not need to try to optimize the clone like we do with entities
+		(*curc)->QueueDestinyUpdate(dup);
+		//delete dup;	//just in case. We know these are clients, so we can count on them normally consuming it, so we do not need to try to optimize the clone like we do with entities
 	}
 
 	SafeDelete(payload);
@@ -417,8 +420,8 @@ void SystemManager::RangecastDestinyEvent(const GPoint &pt, double range, PyRepT
 			continue;
 		//else, in range
 		PyRepTuple *dup = payload->TypedClone();
-		(*curc)->QueueDestinyEvent(&dup);
-		delete dup;	//just in case. We know these are clients, so we can count on them normally consuming it, so we do not need to try to optimize the clone like we do with entities
+		(*curc)->QueueDestinyEvent(dup);
+		//delete dup;	//just in case. We know these are clients, so we can count on them normally consuming it, so we do not need to try to optimize the clone like we do with entities
 	}
 
 	SafeDelete(payload);
@@ -444,16 +447,16 @@ void SystemManager::RangecastDestiny(const GPoint &pt, double range, std::vector
 			end = updates.end();
 			for(; cur != end; cur++) {
 				PyRepTuple *t = (*cur)->TypedClone();
-				(*curc)->QueueDestinyUpdate(&t);
-				delete t;	//just in case. We know these are clients, so we can count on them normally consuming it, so we do not need to try to optimize the clone like we do with entities
+				(*curc)->QueueDestinyUpdate(t);
+				//delete t;	//just in case. We know these are clients, so we can count on them normally consuming it, so we do not need to try to optimize the clone like we do with entities
 			}
 			
 			cur = events.begin();
 			end = events.end();
 			for(; cur != end; cur++) {
 				PyRepTuple *t = (*cur)->TypedClone();
-				(*curc)->QueueDestinyEvent(&t);
-				delete t;	//just in case. We know these are clients, so we can count on them normally consuming it, so we do not need to try to optimize the clone like we do with entities
+				(*curc)->QueueDestinyEvent(t);
+				//delete t;	//just in case. We know these are clients, so we can count on them normally consuming it, so we do not need to try to optimize the clone like we do with entities
 			}
 		}
 	}

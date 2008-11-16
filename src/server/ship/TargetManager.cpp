@@ -162,7 +162,7 @@ bool TargetManager::StartTargeting(SystemEntity *who, uint32 lock_time) {
 	if(res != m_targets.end()) {
 		//what to do?
 		_log(TARGET__TRACE, "Told to start targeting %lu, but we are already processing them. Ignoring request.", who->GetID());
-		return(false);
+		return false;
 	}
 
 	//TODO: check against max locked target.
@@ -173,7 +173,7 @@ bool TargetManager::StartTargeting(SystemEntity *who, uint32 lock_time) {
 	m_targets[who] = te;
 	
 	_log(TARGET__TRACE, "%lu started targeting %lu (%lu ms lock time)", m_self->GetID(), who->GetID(), lock_time);
-	return(true);
+	return true;
 }
 
 void TargetManager::TargetEntry::Dump() const {
@@ -273,11 +273,11 @@ void TargetManager::QueueTBDestinyEvent(PyRepTuple **up_in) const {
 	for(; cur != end; ++cur) {
 		if(up_dup == NULL)
 			up_dup = up->TypedClone();
-		cur->first->QueueDestinyEvent(&up_dup);
+		cur->first->QueueDestinyEvent(up_dup);
 		//they may not have consumed it (NPCs for example), so dont re-dup it in that case.
 	}
 	
-	delete up_dup;
+	//delete up_dup;
 	delete up;
 }
 
@@ -292,12 +292,12 @@ void TargetManager::QueueTBDestinyUpdate(PyRepTuple **up_in) const {
 	for(; cur != end; ++cur) {
 		if(up_dup == NULL)
 			up_dup = up->TypedClone();
-		cur->first->QueueDestinyUpdate(&up_dup);
-		//they may not have consumed it (NPCs for example), so dont re-dup it in that case.
+		cur->first->QueueDestinyUpdate(up_dup);
+		//they may not have consumed it (NPCs for example), so don't re-dup it in that case.
 	}
 	
-	delete up_dup;
-	delete up;
+	//delete up_dup;
+	//delete up;
 }
 
 /*void TargetManager::TargetedByLocking(SystemEntity *from_who) {

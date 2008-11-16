@@ -96,10 +96,12 @@ uint32 GetRoidType(double p, const std::map<double, uint32> & roids) {
 
 	return 1230; // return Veldspar
 }
-void GetAsteroid(Client *who, uint32 typeID, double radius, const Ga::GaVec3 & position) {
-	InventoryItem *i;
+void GetAsteroid(Client *who, uint32 typeID, double radius, const Ga::GaVec3 & position)
+{
+	
 	//TODO: make item in IsUniverseAsteroid() range...
-	i = who->GetServices()->item_factory->SpawnSingleton(
+	//i = who->GetServices()->item_factory->SpawnSingleton(
+	InventoryItem *i = sPyServiceMgr.item_factory->SpawnSingleton(
 		typeID,
 		1,	//who->GetCorporationID(),	//owner
 		who->GetLocationID(),

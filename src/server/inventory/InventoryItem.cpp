@@ -163,30 +163,30 @@ void InventoryItem::Save(bool recursive) {
 
 bool InventoryItem::LoadStatic() {
 	if(m_staticLoaded)
-		return(true);
+		return true;
 	
 	m_int_attributes.clear();
 	m_double_attributes.clear();
 	
 	if(!factory->db().LoadEntityAttributes(this))
-		return(false);
+		return false;
 	if(!factory->db().LoadItemAttributes(this))
-		return(false);
+		return false;
 	
 	m_staticLoaded = true;
-	return(true);
+	return true;
 }
 
 //this is intended for items loaded from the DB
 bool InventoryItem::Load(bool recurse) {
 	if(!LoadStatic())
-		return(false);
+		return false;
 	
 	//load player/ship/other non-static attributes.
 	if(!m_attributesLoaded) {
 		if(m_inDB) {	//no bother checking the DB if the item has never been there..
 			if(!factory->db().LoadPersistentAttributes(this))
-				return(false);
+				return false;
 		}
 		m_attributesLoaded = true;
 	}
@@ -194,21 +194,21 @@ bool InventoryItem::Load(bool recurse) {
 	//now load contained items
 	if(recurse) {
 		if(!LoadContents(recurse))
-			return(false);
+			return false;
 	}
 	
-	return(true);
+	return true;
 }
 
 bool InventoryItem::LoadContents(bool recursive) {
 	if(m_contentsLoaded)
-		return(true);
+		return true;
 	m_contentsLoaded = true;
 
 	//load the list of items we need
 	std::vector<uint32> m_itemIDs;
 	if(!factory->db().GetItemContents(this, m_itemIDs))
-		return(false);
+		return false;
 	
 	//Now get each one from the factory (possibly recursing)
 	InventoryItem *i;
@@ -228,7 +228,7 @@ bool InventoryItem::LoadContents(bool recursive) {
 		// into contents before checking if item isn't already in m_contents, so we were having 2 or more refs at once
 	}
 	
-	return(true);
+	return true;
 }
 
 PyRepDict *InventoryItem::GetEntityAttributes() const {
@@ -347,7 +347,7 @@ bool InventoryItem::Populate(Rsp_CommonGetInfo_Entry &result) const {
 	result.invItem = GetEntityRow();
 	if(result.invItem == NULL) {
 		codelog(ITEM__ERROR, "%s (%lu): Unable to build item row for move", m_itemName.c_str(), m_itemID);
-		return(false);
+		return false;
 	}
 
 	//hacky, but it dosent really hurt anything.
@@ -378,7 +378,7 @@ bool InventoryItem::Populate(Rsp_CommonGetInfo_Entry &result) const {
 	codelog(SERVICE__WARNING, "%s (%lu): sending faked time", m_itemName.c_str(), m_itemID);
 	result.time = Win32TimeNow();
 
-	return(true);
+	return true;
 }
 
 PyRepObject *InventoryItem::ItemGetInfo() const {
@@ -720,11 +720,11 @@ void InventoryItem::ChangeFlag(EVEItemFlags new_flag, bool notify) {
 
 bool InventoryItem::AlterQuantity(int32 qty_change, bool notify) {
 	if(qty_change == 0)
-		return(true);
+		return true;
 
 	if((int32(m_quantity) + qty_change) < 0) {
 		codelog(ITEM__ERROR, "%s (%lu): Tried to remove %ld quantity from stack of %lu", m_itemName.c_str(), m_itemID, -qty_change, m_quantity);
-		return(false);
+		return false;
 	}
 
 	return(SetQuantity(uint32(m_quantity + qty_change), notify));
@@ -736,7 +736,7 @@ bool InventoryItem::SetQuantity(uint32 qty_new, bool notify) {
 		//Print error
 		codelog(ITEM__ERROR, "%s (%lu): Failed to set quantity %lu , the items singleton bit is set", m_itemName.c_str(), m_itemID, qty_new);
 		//return false
-		return(false);
+		return false;
 	}
 
 	uint32 old_qty = m_quantity;
@@ -744,7 +744,7 @@ bool InventoryItem::SetQuantity(uint32 qty_new, bool notify) {
 	
 	if(!factory->db().ChangeQuantity(m_itemID, new_qty)) {
 		codelog(ITEM__ERROR, "%s (%lu): Failed to change quantity in the DB to %lu", m_itemName.c_str(), m_itemID, new_qty);
-		return(false);
+		return false;
 	}
 
 	m_quantity = new_qty;
@@ -758,7 +758,7 @@ bool InventoryItem::SetQuantity(uint32 qty_new, bool notify) {
 		SendItemChange(m_ownerID, changes);	//changes is consumed
 	}
 	
-	return(true);
+	return true;
 }
 
 InventoryItem *InventoryItem::Split(int32 qty_to_take, bool notify) {
@@ -790,36 +790,36 @@ InventoryItem *InventoryItem::Split(int32 qty_to_take, bool notify) {
 bool InventoryItem::Merge(InventoryItem *to_merge, int32 qty, bool notify) {
 	if(to_merge == NULL) {
 		_log(ITEM__ERROR, "%s (%lu): Cannot merge with NULL item.", itemName().c_str(), itemID());
-		return(false);
+		return false;
 	}
 	if(typeID() != to_merge->typeID()) {
 		_log(ITEM__ERROR, "%s (%lu): Asked to merge with %s (%lu).", itemName().c_str(), itemID(), to_merge->itemName().c_str(), to_merge->itemID());
-		return(false);
+		return false;
 	}
 	if(locationID() != to_merge->locationID() || flag() != to_merge->flag()) {
 		_log(ITEM__ERROR, "%s (%lu) in location %lu, flag %lu: Asked to merge with item %lu in location %lu, flag %lu.", itemName().c_str(), itemID(), locationID(), flag(), to_merge->itemID(), to_merge->locationID(), to_merge->flag());
-		return(false);
+		return false;
 	}
 	if(qty == 0)
 		qty = to_merge->quantity();
 	if(qty <= 0) {
 		_log(ITEM__ERROR, "%s (%lu): Asked to merge with %ld units of item %lu.", itemName().c_str(), itemID(), qty, to_merge->itemID());
-		return(false);
+		return false;
 	}
 	if(!AlterQuantity(qty, notify)) {
 		_log(ITEM__ERROR, "%s (%lu): Failed to add quantity %ld.", itemName().c_str(), itemID(), qty);
-		return(false);
+		return false;
 	}
 
 	if(qty == to_merge->quantity())
 		to_merge->Delete();	//consumes ref
 	else if(!to_merge->AlterQuantity(-qty, notify)) {
 		_log(ITEM__ERROR, "%s (%lu): Failed to remove quantity %ld.", to_merge->itemName().c_str(), to_merge->itemID(), qty);
-		return(false);
+		return false;
 	} else
 		to_merge->Release();	//consume ref
 
-	return(true);
+	return true;
 }
 
 bool InventoryItem::ChangeSingleton(bool new_singleton, bool notify)
@@ -827,11 +827,11 @@ bool InventoryItem::ChangeSingleton(bool new_singleton, bool notify)
 	bool old_singleton = m_singleton;
 	
 	if(new_singleton == old_singleton)
-		return(true);	//nothing to do...
+		return true;	//nothing to do...
 	
 	if(!factory->db().ChangeSingletonEntity(m_itemID, new_singleton)) {
 		codelog(ITEM__ERROR, "%s (%lu): Failed to change singleton to %d", m_itemName.c_str(), m_itemID, new_singleton);
-		return(false);
+		return false;
 	}
 	
 	m_singleton = new_singleton;
@@ -842,7 +842,7 @@ bool InventoryItem::ChangeSingleton(bool new_singleton, bool notify)
 		changes[ixSingleton] = new PyRepInteger(old_singleton);
 		SendItemChange(m_ownerID, changes);	//changes is consumed
 	}
-	return(true);
+	return true;
 }
 
 void InventoryItem::ChangeOwner(uint32 new_owner, bool notify) {
@@ -982,9 +982,9 @@ void InventoryItem::SetCustomInfo(const char *ci) {
 
 bool InventoryItem::Contains(InventoryItem *item, bool recursive) const {
 	if(m_contents.find(item->itemID()) != m_contents.end())
-		return(true);
+		return true;
 	if(!recursive)
-		return(false);
+		return false;
 	InventoryItem *i;
 	std::map<uint32, InventoryItem *>::const_iterator cur, end;
 	cur = m_contents.begin();
@@ -992,9 +992,9 @@ bool InventoryItem::Contains(InventoryItem *item, bool recursive) const {
 	for(; cur != end; cur++) {
 		i = cur->second;
 		if(i->Contains(item, true))
-			return(true);
+			return true;
 	}
-	return(false);
+	return false;
 }
 
 //I think I ultimately want this logic somewhere else...

@@ -285,11 +285,11 @@ bool CorpRegistryBound::JoinCorporation(Client *who, uint32 newCorpID, const Cor
 	) {
 		codelog(CLIENT__ERROR, "Failed to update database for corporation join of '%s' to corp %lu", who->GetName(), newCorpID);
 		who->SendErrorMsg("Unable to notify about corp creation. Try logging in again.");
-		return(false);
+		return false;
 	}
 
 	who->JoinCorporationUpdate(newCorpID);
-	return(true);
+	return true;
 }
 
 PyResult CorpRegistryBound::Handle_GetSuggestedTickerNames(PyCallArgs &call) {

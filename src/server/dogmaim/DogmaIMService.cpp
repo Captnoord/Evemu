@@ -93,23 +93,19 @@ PyBoundObject *DogmaIMService::_CreateBoundObject(Client *c, const PyRep *bind_a
 	return(new DogmaIMBound(m_manager, &m_db));
 }
 
+PyResult DogmaIMService::Handle_GetAttributeTypes(PyCallArgs &call)
+{
 
-PyResult DogmaIMService::Handle_GetAttributeTypes(PyCallArgs &call) {
-	PyRep *result = NULL;
-
-	//PyRep *hint = call.client->GetServices()->GetCache()->GetCacheHint("dogmaIM.attributesByName");
 	PyRep *hint = sPyServiceMgr.GetCache()->GetCacheHint("dogmaIM.attributesByName");
 
 	if(hint == NULL) {
 		_log(CLIENT__ERROR, "Unable to load cache hint for dogmaIM.attributesByName");
 		return(new PyRepNone());
 	}
-	result = hint;
-
 
 	_log(CLIENT__MESSAGE, "Sending attributes type reply");
 
-	return(result);
+	return hint;
 }
 
 PyResult DogmaIMBound::Handle_ShipGetInfo(PyCallArgs &call) {

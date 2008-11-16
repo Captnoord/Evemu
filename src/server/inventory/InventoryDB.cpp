@@ -52,9 +52,9 @@ bool InventoryDB::RenameItem(uint32 itemID, const char *name) {
 	))
 	{
 		codelog(SERVICE__ERROR, "Error in query: %s", err.c_str());
-		return(false);
+		return false;
 	}
-	return(true);
+	return true;
 }
 
 bool InventoryDB::ChangeOwner(uint32 itemID, uint32 ownerID) {
@@ -69,9 +69,9 @@ bool InventoryDB::ChangeOwner(uint32 itemID, uint32 ownerID) {
 	))
 	{
 		codelog(SERVICE__ERROR, "Error in query: %s", err.c_str());
-		return(false);
+		return false;
 	}
-	return(true);
+	return true;
 }
 
 bool InventoryDB::ChangeQuantity(uint32 itemID, uint32 quantity) {
@@ -86,9 +86,9 @@ bool InventoryDB::ChangeQuantity(uint32 itemID, uint32 quantity) {
 	))
 	{
 		codelog(SERVICE__ERROR, "Error in query: %s", err.c_str());
-		return(false);
+		return false;
 	}
-	return(true);
+	return true;
 }
 
 
@@ -126,7 +126,7 @@ InventoryItem *InventoryDB::LoadItem(uint32 itemID, ItemFactory *factory, bool r
 	DBResultRow row;
 	if(!res.GetRow(row)) {
 		codelog(SERVICE__ERROR, "Unable to load item %lu", itemID);
-		return(false);
+		return false;
 	}
 
 	return(_RowToItem(factory, row, recurse));
@@ -149,14 +149,14 @@ bool InventoryDB::GetItemContents(InventoryItem *item, std::vector<uint32> &item
 			item->itemID()))
 	{
 		codelog(SERVICE__ERROR, "Error in query for item %lu: %s", item->itemID(), res.error.c_str());
-		return(false);
+		return false;
 	}
 	
 	DBResultRow row;
 	while(res.GetRow(row)) {
 		items.push_back(row.GetUInt(0));
 	}
-	return(true);
+	return true;
 }
 
 InventoryItem *InventoryDB::_RowToItem(ItemFactory *factory, DBResultRow &row, bool recurse) {
@@ -217,7 +217,7 @@ bool InventoryDB::LoadEntityAttributes(InventoryItem *item) {
 		" WHERE typeID=%lu", item->typeID()))
 		{
 			codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
-			return(false);
+			return false;
 		}
 	
 		AttrCacheEntry *entry = new AttrCacheEntry(item->typeID());
@@ -273,7 +273,7 @@ bool InventoryDB::LoadEntityAttributes(InventoryItem *item) {
 		item->SetAttributeByIndexDouble(curd->first, curd->second);
 	}
 	
-	return(true);
+	return true;
 }
 
 
@@ -288,7 +288,7 @@ bool InventoryDB::LoadPersistentAttributes(InventoryItem *item) {
 	" WHERE itemID=%lu", item->itemID()))
 	{
 		codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
-		return(false);
+		return false;
 	}
 	
 	DBResultRow row;
@@ -305,7 +305,7 @@ bool InventoryDB::LoadPersistentAttributes(InventoryItem *item) {
 		}
 	}
 	
-	return(true);
+	return true;
 }
 
 bool InventoryDB::LoadItemAttributes(InventoryItem *item) {
@@ -318,13 +318,13 @@ bool InventoryDB::LoadItemAttributes(InventoryItem *item) {
 	" WHERE typeID=%lu", item->typeID()))
 	{
 		codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
-		return(false);
+		return false;
 	}
 	
 	DBResultRow row;
 	if(!res.GetRow(row)) {
 		codelog(SERVICE__ERROR, "Error in query: no data for type %d", item->typeID());
-		return(false);
+		return false;
 	}
 
 	if(!row.IsNull(0))	//radius
@@ -338,7 +338,7 @@ bool InventoryDB::LoadItemAttributes(InventoryItem *item) {
 	if(!row.IsNull(4))	//raceID
 		item->Set_raceID(row.GetInt(4));
 
-	return(true);
+	return true;
 }
 /* * * * * * * * * * * *
  * BLUEPRINTS:
@@ -436,10 +436,10 @@ bool InventoryDB::_NewBlueprintEntry(const uint32 itemID) {
 		itemID))
 	{
 		_log(DATABASE__ERROR, "Unable to create new blueprint entry for blueprint %lu: %s.", itemID, err.c_str());
-		return(false);
+		return false;
 	}
 
-	return(true);
+	return true;
 }
 
 bool InventoryDB::MoveEntity(uint32 itemID, uint32 newLocation, EVEItemFlags flag) {
@@ -452,7 +452,7 @@ bool InventoryDB::MoveEntity(uint32 itemID, uint32 newLocation, EVEItemFlags fla
 			newLocation, itemID)
 		) {
 			_log(SERVICE__ERROR, "Failed to move entity %li: %s", itemID, err.c_str());
-			return(false);
+			return false;
 		}
 	} else {
 		if(!m_db->RunQuery(err,
@@ -460,11 +460,11 @@ bool InventoryDB::MoveEntity(uint32 itemID, uint32 newLocation, EVEItemFlags fla
 			newLocation, flag, itemID)
 		) {
 			_log(SERVICE__ERROR, "Failed to move entity %li: %s", itemID, err.c_str());
-			return(false);
+			return false;
 		}
 	}
 	
-	return(true);
+	return true;
 }
 
 bool InventoryDB::ChangeSingletonEntity(uint32 itemID, bool singleton) {
@@ -475,10 +475,10 @@ bool InventoryDB::ChangeSingletonEntity(uint32 itemID, bool singleton) {
 		singleton, itemID))
 	{
 		_log(SERVICE__ERROR, "Failed to set singleton for entity %li: %s", itemID, err.c_str());
-		return(false);
+		return false;
 	}
 	
-	return(true);
+	return true;
 }
 
 bool InventoryDB::DeleteItem(InventoryItem *item) {
@@ -491,7 +491,7 @@ bool InventoryDB::DeleteItem(InventoryItem *item) {
 		item->itemID()))
 	{
 		codelog(DATABASE__ERROR, "Failed to delete attributes of item %lu: %s.", item->itemID(), err.c_str());
-		return(false);
+		return false;
 	}
 	
 	//note: all child entities should be deleted by the caller first.
@@ -506,9 +506,9 @@ bool InventoryDB::DeleteItem(InventoryItem *item) {
 	))
 	{
 		codelog(DATABASE__ERROR, "Failed to delete item %lu: %s", item->itemID(), err.c_str());
-		return(false);
+		return false;
 	}
-	return(true);
+	return true;
 }
 
 bool InventoryDB::SetCustomInfo(uint32 itemID, const char *ci) {
@@ -520,7 +520,7 @@ bool InventoryDB::SetCustomInfo(uint32 itemID, const char *ci) {
 			itemID)
 		) {
 			codelog(SERVICE__ERROR, "Failed query: %s", err.c_str());
-			return(false);
+			return false;
 		}
 	} else {
 		std::string ciEsc;
@@ -531,10 +531,10 @@ bool InventoryDB::SetCustomInfo(uint32 itemID, const char *ci) {
 			ciEsc.c_str(), itemID)
 		) {
 			codelog(SERVICE__ERROR, "Failed query: %s", err.c_str());
-			return(false);
+			return false;
 		}
 	}
-	return(true);
+	return true;
 }
 
 bool InventoryDB::RelocateEntity(uint32 itemID, double x, double y, double z) {
@@ -544,9 +544,9 @@ bool InventoryDB::RelocateEntity(uint32 itemID, double x, double y, double z) {
 		x, y, z, itemID)
 	) {
 		codelog(SERVICE__ERROR, "Failed to relocate entity %li: %s", itemID, err.c_str());
-		return(false);
+		return false;
 	}
-	return(true);
+	return true;
 }
 
 bool InventoryDB::SaveAttributes(InventoryItem *item) {
@@ -576,7 +576,7 @@ bool InventoryDB::SaveAttributes(InventoryItem *item) {
 				UpdateAttribute_double(item->itemID(), curd->first, curd->second);
 		}
 	}
-	return(true);
+	return true;
 }
 
 bool InventoryDB::EraseAttribute(uint32 itemID, uint32 attributeID) {
@@ -587,9 +587,9 @@ bool InventoryDB::EraseAttribute(uint32 itemID, uint32 attributeID) {
 		itemID, attributeID)
 	) {
 		codelog(SERVICE__ERROR, "Failed to erase attribute %d for item %lu: %s", attributeID, itemID, err.c_str());
-		return(false);
+		return false;
 	}
-	return(true);
+	return true;
 }
 
 bool InventoryDB::UpdateAttribute_int(uint32 itemID, uint32 attributeID, int v) {
@@ -602,9 +602,9 @@ bool InventoryDB::UpdateAttribute_int(uint32 itemID, uint32 attributeID, int v) 
 		itemID, attributeID, v)
 	) {
 		codelog(SERVICE__ERROR, "Failed to store attribute %d for item %lu: %s", attributeID, itemID, err.c_str());
-		return(false);
+		return false;
 	}
-	return(true);
+	return true;
 }
 
 bool InventoryDB::UpdateAttribute_double(uint32 itemID, uint32 attributeID, double v) {
@@ -617,9 +617,9 @@ bool InventoryDB::UpdateAttribute_double(uint32 itemID, uint32 attributeID, doub
 		itemID, attributeID, v)
 	) {
 		codelog(SERVICE__ERROR, "Failed to store attribute %d for item %lu: %s", attributeID, itemID, err.c_str());
-		return(false);
+		return false;
 	}
-	return(true);
+	return true;
 }
 
 EVEDB::invCategories::invCategories InventoryDB::GetCatByGroup(EVEDB::invGroups::invGroups g) {

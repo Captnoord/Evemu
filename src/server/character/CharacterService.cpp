@@ -136,11 +136,7 @@ PyResult CharacterService::Handle_GetCharCreationInfo(PyCallArgs &call) {
 	result = cachables;
 
 	//send all the cache hints needed for char creation.
-	
-	//call.client->GetServices()->GetCache()->InsertCacheHints(
-	sPyServiceMgr.GetCache()->InsertCacheHints(
-		ObjCacheService::hCharCreateCachables,
-		cachables );
+	sPyServiceMgr.GetCache()->InsertCacheHints( ObjCacheService::hCharCreateCachables, cachables );
 		
 	_log(CLIENT__MESSAGE, "Sending char creation info reply");
 	
@@ -165,10 +161,7 @@ PyResult CharacterService::Handle_GetAppearanceInfo(PyCallArgs &call) {
 	result = cachables;
 
 	//send all the cache hints needed for char creation.
-	//call.client->GetServices()->GetCache()->InsertCacheHints(
-	sPyServiceMgr.GetCache()->InsertCacheHints(
-		ObjCacheService::hAppearanceCachables,
-		cachables );
+	sPyServiceMgr.GetCache()->InsertCacheHints(ObjCacheService::hAppearanceCachables, cachables );
 	
 	_log(CLIENT__MESSAGE, "Sending appearance info reply");
 	

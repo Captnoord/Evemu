@@ -34,6 +34,11 @@ class SystemBubble;
 //NOTE: we currently have no inertial mass
 class DestinyManager {
 public:
+
+	typedef std::vector<PyRepTuple *>			DestinyUpdateVector;
+	typedef DestinyUpdateVector::iterator		DestinyUpdateVectorItr;
+	typedef DestinyUpdateVector::const_iterator DestinyUpdateVectorConstItr;
+
 	static uint32 GetStamp() { return(m_stamp); }
 	static bool IsTicActive() { return(m_stampTimer.Check(false)); }
 	static void TicCompleted() { if(m_stampTimer.Check(true)) m_stamp++; }
@@ -44,8 +49,8 @@ public:
 	void Process();
 
 	void SendSingleDestinyUpdate(PyRepTuple **up, bool self_only=false) const;
-	void SendDestinyUpdate(std::vector<PyRepTuple *> &updates, bool self_only) const;
-	void SendDestinyUpdate(std::vector<PyRepTuple *> &updates, std::vector<PyRepTuple *> &events, bool self_only) const;
+	void SendDestinyUpdate(DestinyUpdateVector &updates, bool self_only) const;
+	void SendDestinyUpdate(DestinyUpdateVector &updates, DestinyUpdateVector &events, bool self_only) const;
 	
 	const GPoint &GetPosition() const { return(m_position); }
 	

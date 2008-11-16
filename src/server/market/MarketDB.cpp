@@ -322,7 +322,7 @@ bool MarketDB::BuildOldPriceHistory() {
 			))
 	{
 		codelog(MARKET__ERROR, "Error in query: %s", err.c_str());
-		return(false);
+		return false;
 	}
 	
 	//now remove the transactions which have been aged out?
@@ -335,10 +335,10 @@ bool MarketDB::BuildOldPriceHistory() {
 
 	{
 		codelog(MARKET__ERROR, "Error in query: %s", err.c_str());
-		return(false);
+		return false;
 	}
 
-	return(true);
+	return true;
 }
 PyRepObject *MarketDB::GetCorporationBills(uint32 corpID, bool payable) {
 	DBQueryResult res;
@@ -613,7 +613,7 @@ uint32 MarketDB::FindBuyOrder(
 		price))
 	{
 		codelog(MARKET__ERROR, "Error in query: %s", res.error.c_str());
-		return(false);
+		return false;
 	}
 	
 	DBResultRow row;
@@ -648,7 +648,7 @@ uint32 MarketDB::FindSellOrder(
 		price))
 	{
 		codelog(MARKET__ERROR, "Error in query: %s", res.error.c_str());
-		return(false);
+		return false;
 	}
 	
 	DBResultRow row;
@@ -672,13 +672,13 @@ bool MarketDB::GetOrderInfo(uint32 orderID, uint32 &orderOwnerID, uint32 &typeID
 		orderID))
 	{
 		_log(MARKET__ERROR, "Error in query: %s.", res.error.c_str());
-		return(false);
+		return false;
 	}
 
 	DBResultRow row;
 	if(!res.GetRow(row)) {
 		_log(MARKET__ERROR, "Order %lu not found.", orderID);
-		return(false);
+		return false;
 	}
 
 	quantity = row.GetUInt(0);
@@ -686,7 +686,7 @@ bool MarketDB::GetOrderInfo(uint32 orderID, uint32 &orderOwnerID, uint32 &typeID
 	typeID = row.GetUInt(2);
 	orderOwnerID = row.GetUInt(3);
 
-	return(true);
+	return true;
 }
 
 //NOTE: this logic needs some work if there are multiple concurrent market services running at once.
@@ -701,10 +701,10 @@ bool MarketDB::AlterOrderQuantity(uint32 orderID, uint32 new_qty) {
 		new_qty, orderID))
 	{
 		_log(MARKET__ERROR, "Error in query: %s.", err.c_str());
-		return(false);
+		return false;
 	}
 
-	return(true);
+	return true;
 }
 
 bool MarketDB::AlterOrderPrice(uint32 orderID, double new_price) {
@@ -718,10 +718,10 @@ bool MarketDB::AlterOrderPrice(uint32 orderID, double new_price) {
 		new_price, orderID))
 	{
 		_log(MARKET__ERROR, "Error in query: %s.", err.c_str());
-		return(false);
+		return false;
 	}
 
-	return(true);
+	return true;
 }
 
 bool MarketDB::DeleteOrder(uint32 orderID) {
@@ -734,10 +734,10 @@ bool MarketDB::DeleteOrder(uint32 orderID) {
 		orderID))
 	{
 		_log(MARKET__ERROR, "Error in query: %s.", orderID);
-		return(false);
+		return false;
 	}
 
-	return(true);
+	return true;
 }
 
 bool MarketDB::RecordTransaction(
@@ -765,9 +765,9 @@ bool MarketDB::RecordTransaction(
 			))
 	{
 		codelog(MARKET__ERROR, "Error in query: %s", err.c_str());
-		return(false);
+		return false;
 	}
-	return(true);
+	return true;
 }
 
 uint32 MarketDB::_StoreOrder(

@@ -21,127 +21,225 @@ static const uint32 PING_INTERVAL_US = 60000;
 
 #define GetConnectedAddress() mClientSession->GetSocket()->GetRemoteIP()
 
-CharacterAppearance::CharacterAppearance() {
-	//NULL all dynamic fields
-#define NULL_FIELD(v) \
-	v = NULL;
+// unwrapped char appearance....
+CharacterAppearance::CharacterAppearance()
+{
+	accessoryID = 0;
+	beardID = 0;
+	decoID = 0;
+	lipstickID = 0;
+	makeupID = 0;
 
-#define INT_DYN(v) NULL_FIELD(v)
-#define REAL_DYN(v) NULL_FIELD(v)
-#include "character/CharacterAppearance_fields.h"
-
-#undef NULL_FIELD
+	morph1e = 0;
+	morph1n = 0;
+	morph1s = 0;
+	morph1w = 0;
+	morph2e = 0;
+	morph2n = 0;
+	morph2s = 0;
+	morph2w = 0;
+	morph3e = 0;
+	morph3n = 0;
+	morph3s = 0;
+	morph3w = 0;
+	morph4e = 0;
+	morph4n = 0;
+	morph4s = 0;
+	morph4w = 0;
 }
 
-CharacterAppearance::CharacterAppearance(const CharacterAppearance &from) {
-	//just do deep copy
+CharacterAppearance::CharacterAppearance(const CharacterAppearance &from)
+{
 	*this = from;
 }
 
-CharacterAppearance::~CharacterAppearance() {
-	//delete all dynamic fields
-#define CLEAR_FIELD(v) \
-	Clear_##v();
+CharacterAppearance::~CharacterAppearance()
+{
+	Clear_accessoryID();
+	Clear_beardID();
+	Clear_decoID();
+	Clear_lipstickID();
+	Clear_makeupID();
 
-#define INT_DYN(v) CLEAR_FIELD(v)
-#define REAL_DYN(v) CLEAR_FIELD(v)
-#include "character/CharacterAppearance_fields.h"
-
-#undef CLEAR_FIELD
+	Clear_morph1e();
+	Clear_morph1n();
+	Clear_morph1s();
+	Clear_morph1w();
+	Clear_morph2e();
+	Clear_morph2n();
+	Clear_morph2s();
+	Clear_morph2w();
+	Clear_morph3e();
+	Clear_morph3n();
+	Clear_morph3s();
+	Clear_morph3w();
+	Clear_morph4e();
+	Clear_morph4n();
+	Clear_morph4s();
+	Clear_morph4w();
 }
 
 void CharacterAppearance::Build(const std::map<std::string, PyRep *> &from) {
-	//builds our contents from strdict
+
 	std::map<std::string, PyRep *>::const_iterator itr;
 
-	_log(CLIENT__MESSAGE, "  Appearance Data:");
+	do
+	{
+		if(log_type_info[ CLIENT__MESSAGE ].enabled)
+		{
+			log_message(CLIENT__MESSAGE, "  Appearance Data:" );
+		}
+	} while(false);
 
-#define INT(v) \
-	itr = from.find(#v); \
-	if(itr != from.end()) { \
-		if(!itr->second->CheckType(PyRep::Integer)) \
-			_log(CLIENT__ERROR, "Invalid type for " #v ": expected integer, got %s.", itr->second->TypeString()); \
-		else { \
-			v = ((PyRepInteger *)itr->second)->value; \
-			_log(CLIENT__MESSAGE, "     %s: %lu", itr->first.c_str(), v); \
-		} \
-	}
-#define INT_DYN(v) \
-	itr = from.find(#v); \
-	if(itr != from.end()) { \
-		if(!itr->second->CheckType(PyRep::Integer)) \
-			_log(CLIENT__ERROR, "Invalid type for " #v ": expected integer, got %s.", itr->second->TypeString()); \
-		else { \
-			Set_##v(((PyRepInteger *)itr->second)->value); \
-			_log(CLIENT__MESSAGE, "     %s: %lu", itr->first.c_str(), Get_##v()); \
-		} \
-	}
-#define REAL(v) \
-	itr = from.find(#v); \
-	if(itr != from.end()) { \
-		if(!itr->second->CheckType(PyRep::Real)) \
-			_log(CLIENT__ERROR, "Invalid type for " #v ": expected real, got %s.", itr->second->TypeString()); \
-		else { \
-			v = ((PyRepReal *)itr->second)->value; \
-			_log(CLIENT__MESSAGE, "     %s: %f", itr->first.c_str(), v); \
-		} \
-	}
-#define REAL_DYN(v) \
-	itr = from.find(#v); \
-	if(itr != from.end()) { \
-		if(!itr->second->CheckType(PyRep::Real)) \
-			_log(CLIENT__ERROR, "Invalid type for " #v ": expected real, got %s.", itr->second->TypeString()); \
-		else { \
-			Set_##v(((PyRepReal *)itr->second)->value); \
-			_log(CLIENT__MESSAGE, "     %s: %f", itr->first.c_str(), Get_##v()); \
-		} \
-	}
-#include "character/CharacterAppearance_fields.h"
+	itr = from.find("accessoryID"); if(itr != from.end()) { if(!itr->second->CheckType(PyRep::Integer)) do { if(log_type_info[ CLIENT__ERROR ].enabled) { log_message(CLIENT__ERROR, "Invalid type for " "accessoryID" ": expected integer, got %s.",itr->second->TypeString()); } } while(false); else { Set_accessoryID(((PyRepInteger *)itr->second)->value); do { if(log_type_info[ CLIENT__MESSAGE ].enabled) { log_message(CLIENT__MESSAGE, "     %s: %lu",itr->first.c_str(), Get_accessoryID()); } } while(false); } }
+	itr = from.find("beardID"); if(itr != from.end()) { if(!itr->second->CheckType(PyRep::Integer)) do { if(log_type_info[ CLIENT__ERROR ].enabled) { log_message(CLIENT__ERROR, "Invalid type for " "beardID" ": expected integer, got %s.",itr->second->TypeString()); } } while(false); else { Set_beardID(((PyRepInteger *)itr->second)->value); do { if(log_type_info[ CLIENT__MESSAGE ].enabled) { log_message(CLIENT__MESSAGE, "     %s: %lu",itr->first.c_str(), Get_beardID()); } } while(false); } }
+	itr = from.find("costumeID"); if(itr != from.end()) { if(!itr->second->CheckType(PyRep::Integer)) do { if(log_type_info[ CLIENT__ERROR ].enabled) { log_message(CLIENT__ERROR, "Invalid type for " "costumeID" ": expected integer, got %s.",itr->second->TypeString()); } } while(false); else { costumeID = ((PyRepInteger *)itr->second)->value; do { if(log_type_info[ CLIENT__MESSAGE ].enabled) { log_message(CLIENT__MESSAGE, "     %s: %lu",itr->first.c_str(), costumeID); } } while(false); } }
+	itr = from.find("decoID"); if(itr != from.end()) { if(!itr->second->CheckType(PyRep::Integer)) do { if(log_type_info[ CLIENT__ERROR ].enabled) { log_message(CLIENT__ERROR, "Invalid type for " "decoID" ": expected integer, got %s.",itr->second->TypeString()); } } while(false); else { Set_decoID(((PyRepInteger *)itr->second)->value); do { if(log_type_info[ CLIENT__MESSAGE ].enabled) { log_message(CLIENT__MESSAGE, "     %s: %lu",itr->first.c_str(), Get_decoID()); } } while(false); } }
+	itr = from.find("eyebrowsID"); if(itr != from.end()) { if(!itr->second->CheckType(PyRep::Integer)) do { if(log_type_info[ CLIENT__ERROR ].enabled) { log_message(CLIENT__ERROR, "Invalid type for " "eyebrowsID" ": expected integer, got %s.",itr->second->TypeString()); } } while(false); else { eyebrowsID = ((PyRepInteger *)itr->second)->value; do { if(log_type_info[ CLIENT__MESSAGE ].enabled) { log_message(CLIENT__MESSAGE, "     %s: %lu",itr->first.c_str(), eyebrowsID); } } while(false); } }
+	itr = from.find("eyesID"); if(itr != from.end()) { if(!itr->second->CheckType(PyRep::Integer)) do { if(log_type_info[ CLIENT__ERROR ].enabled) { log_message(CLIENT__ERROR, "Invalid type for " "eyesID" ": expected integer, got %s.",itr->second->TypeString()); } } while(false); else { eyesID = ((PyRepInteger *)itr->second)->value; do { if(log_type_info[ CLIENT__MESSAGE ].enabled) { log_message(CLIENT__MESSAGE, "     %s: %lu",itr->first.c_str(), eyesID); } } while(false); } }
+	itr = from.find("hairID"); if(itr != from.end()) { if(!itr->second->CheckType(PyRep::Integer)) do { if(log_type_info[ CLIENT__ERROR ].enabled) { log_message(CLIENT__ERROR, "Invalid type for " "hairID" ": expected integer, got %s.",itr->second->TypeString()); } } while(false); else { hairID = ((PyRepInteger *)itr->second)->value; do { if(log_type_info[ CLIENT__MESSAGE ].enabled) { log_message(CLIENT__MESSAGE, "     %s: %lu",itr->first.c_str(), hairID); } } while(false); } }
+	itr = from.find("lipstickID"); if(itr != from.end()) { if(!itr->second->CheckType(PyRep::Integer)) do { if(log_type_info[ CLIENT__ERROR ].enabled) { log_message(CLIENT__ERROR, "Invalid type for " "lipstickID" ": expected integer, got %s.",itr->second->TypeString()); } } while(false); else { Set_lipstickID(((PyRepInteger *)itr->second)->value); do { if(log_type_info[ CLIENT__MESSAGE ].enabled) { log_message(CLIENT__MESSAGE, "     %s: %lu",itr->first.c_str(), Get_lipstickID()); } } while(false); } }
+	itr = from.find("makeupID"); if(itr != from.end()) { if(!itr->second->CheckType(PyRep::Integer)) do { if(log_type_info[ CLIENT__ERROR ].enabled) { log_message(CLIENT__ERROR, "Invalid type for " "makeupID" ": expected integer, got %s.",itr->second->TypeString()); } } while(false); else { Set_makeupID(((PyRepInteger *)itr->second)->value); do { if(log_type_info[ CLIENT__MESSAGE ].enabled) { log_message(CLIENT__MESSAGE, "     %s: %lu",itr->first.c_str(), Get_makeupID()); } } while(false); } }
+	itr = from.find("skinID"); if(itr != from.end()) { if(!itr->second->CheckType(PyRep::Integer)) do { if(log_type_info[ CLIENT__ERROR ].enabled) { log_message(CLIENT__ERROR, "Invalid type for " "skinID" ": expected integer, got %s.",itr->second->TypeString()); } } while(false); else { skinID = ((PyRepInteger *)itr->second)->value; do { if(log_type_info[ CLIENT__MESSAGE ].enabled) { log_message(CLIENT__MESSAGE, "     %s: %lu",itr->first.c_str(), skinID); } } while(false); } }
+	itr = from.find("backgroundID"); if(itr != from.end()) { if(!itr->second->CheckType(PyRep::Integer)) do { if(log_type_info[ CLIENT__ERROR ].enabled) { log_message(CLIENT__ERROR, "Invalid type for " "backgroundID" ": expected integer, got %s.",itr->second->TypeString()); } } while(false); else { backgroundID = ((PyRepInteger *)itr->second)->value; do { if(log_type_info[ CLIENT__MESSAGE ].enabled) { log_message(CLIENT__MESSAGE, "     %s: %lu",itr->first.c_str(), backgroundID); } } while(false); } }
+	itr = from.find("lightID"); if(itr != from.end()) { if(!itr->second->CheckType(PyRep::Integer)) do { if(log_type_info[ CLIENT__ERROR ].enabled) { log_message(CLIENT__ERROR, "Invalid type for " "lightID" ": expected integer, got %s.",itr->second->TypeString()); } } while(false); else { lightID = ((PyRepInteger *)itr->second)->value; do { if(log_type_info[ CLIENT__MESSAGE ].enabled) { log_message(CLIENT__MESSAGE, "     %s: %lu",itr->first.c_str(), lightID); } } while(false); } }
+
+	itr = from.find("headRotation1"); if(itr != from.end()) { if(!itr->second->CheckType(PyRep::Real)) do { if(log_type_info[ CLIENT__ERROR ].enabled) { log_message(CLIENT__ERROR, "Invalid type for " "headRotation1" ": expected real, got %s.",itr->second->TypeString()); } } while(false); else { headRotation1 = ((PyRepReal *)itr->second)->value; do { if(log_type_info[ CLIENT__MESSAGE ].enabled) { log_message(CLIENT__MESSAGE, "     %s: %f",itr->first.c_str(), headRotation1); } } while(false); } }
+	itr = from.find("headRotation2"); if(itr != from.end()) { if(!itr->second->CheckType(PyRep::Real)) do { if(log_type_info[ CLIENT__ERROR ].enabled) { log_message(CLIENT__ERROR, "Invalid type for " "headRotation2" ": expected real, got %s.",itr->second->TypeString()); } } while(false); else { headRotation2 = ((PyRepReal *)itr->second)->value; do { if(log_type_info[ CLIENT__MESSAGE ].enabled) { log_message(CLIENT__MESSAGE, "     %s: %f",itr->first.c_str(), headRotation2); } } while(false); } }
+	itr = from.find("headRotation3"); if(itr != from.end()) { if(!itr->second->CheckType(PyRep::Real)) do { if(log_type_info[ CLIENT__ERROR ].enabled) { log_message(CLIENT__ERROR, "Invalid type for " "headRotation3" ": expected real, got %s.",itr->second->TypeString()); } } while(false); else { headRotation3 = ((PyRepReal *)itr->second)->value; do { if(log_type_info[ CLIENT__MESSAGE ].enabled) { log_message(CLIENT__MESSAGE, "     %s: %f",itr->first.c_str(), headRotation3); } } while(false); } }
+
+	itr = from.find("eyeRotation1"); if(itr != from.end()) { if(!itr->second->CheckType(PyRep::Real)) do { if(log_type_info[ CLIENT__ERROR ].enabled) { log_message(CLIENT__ERROR, "Invalid type for " "eyeRotation1" ": expected real, got %s.",itr->second->TypeString()); } } while(false); else { eyeRotation1 = ((PyRepReal *)itr->second)->value; do { if(log_type_info[ CLIENT__MESSAGE ].enabled) { log_message(CLIENT__MESSAGE, "     %s: %f",itr->first.c_str(), eyeRotation1); } } while(false); } }
+	itr = from.find("eyeRotation2"); if(itr != from.end()) { if(!itr->second->CheckType(PyRep::Real)) do { if(log_type_info[ CLIENT__ERROR ].enabled) { log_message(CLIENT__ERROR, "Invalid type for " "eyeRotation2" ": expected real, got %s.",itr->second->TypeString()); } } while(false); else { eyeRotation2 = ((PyRepReal *)itr->second)->value; do { if(log_type_info[ CLIENT__MESSAGE ].enabled) { log_message(CLIENT__MESSAGE, "     %s: %f",itr->first.c_str(), eyeRotation2); } } while(false); } }
+	itr = from.find("eyeRotation3"); if(itr != from.end()) { if(!itr->second->CheckType(PyRep::Real)) do { if(log_type_info[ CLIENT__ERROR ].enabled) { log_message(CLIENT__ERROR, "Invalid type for " "eyeRotation3" ": expected real, got %s.",itr->second->TypeString()); } } while(false); else { eyeRotation3 = ((PyRepReal *)itr->second)->value; do { if(log_type_info[ CLIENT__MESSAGE ].enabled) { log_message(CLIENT__MESSAGE, "     %s: %f",itr->first.c_str(), eyeRotation3); } } while(false); } }
+
+	itr = from.find("camPos1"); if(itr != from.end()) { if(!itr->second->CheckType(PyRep::Real)) do { if(log_type_info[ CLIENT__ERROR ].enabled) { log_message(CLIENT__ERROR, "Invalid type for " "camPos1" ": expected real, got %s.",itr->second->TypeString()); } } while(false); else { camPos1 = ((PyRepReal *)itr->second)->value; do { if(log_type_info[ CLIENT__MESSAGE ].enabled) { log_message(CLIENT__MESSAGE, "     %s: %f",itr->first.c_str(), camPos1); } } while(false); } }
+	itr = from.find("camPos2"); if(itr != from.end()) { if(!itr->second->CheckType(PyRep::Real)) do { if(log_type_info[ CLIENT__ERROR ].enabled) { log_message(CLIENT__ERROR, "Invalid type for " "camPos2" ": expected real, got %s.",itr->second->TypeString()); } } while(false); else { camPos2 = ((PyRepReal *)itr->second)->value; do { if(log_type_info[ CLIENT__MESSAGE ].enabled) { log_message(CLIENT__MESSAGE, "     %s: %f",itr->first.c_str(), camPos2); } } while(false); } }
+	itr = from.find("camPos3"); if(itr != from.end()) { if(!itr->second->CheckType(PyRep::Real)) do { if(log_type_info[ CLIENT__ERROR ].enabled) { log_message(CLIENT__ERROR, "Invalid type for " "camPos3" ": expected real, got %s.",itr->second->TypeString()); } } while(false); else { camPos3 = ((PyRepReal *)itr->second)->value; do { if(log_type_info[ CLIENT__MESSAGE ].enabled) { log_message(CLIENT__MESSAGE, "     %s: %f",itr->first.c_str(), camPos3); } } while(false); } }
+
+	itr = from.find("morph1e"); if(itr != from.end()) { if(!itr->second->CheckType(PyRep::Real)) do { if(log_type_info[ CLIENT__ERROR ].enabled) { log_message(CLIENT__ERROR, "Invalid type for " "morph1e" ": expected real, got %s.",itr->second->TypeString()); } } while(false); else { Set_morph1e(((PyRepReal *)itr->second)->value); do { if(log_type_info[ CLIENT__MESSAGE ].enabled) { log_message(CLIENT__MESSAGE, "     %s: %f",itr->first.c_str(), Get_morph1e()); } } while(false); } }
+	itr = from.find("morph1n"); if(itr != from.end()) { if(!itr->second->CheckType(PyRep::Real)) do { if(log_type_info[ CLIENT__ERROR ].enabled) { log_message(CLIENT__ERROR, "Invalid type for " "morph1n" ": expected real, got %s.",itr->second->TypeString()); } } while(false); else { Set_morph1n(((PyRepReal *)itr->second)->value); do { if(log_type_info[ CLIENT__MESSAGE ].enabled) { log_message(CLIENT__MESSAGE, "     %s: %f",itr->first.c_str(), Get_morph1n()); } } while(false); } }
+	itr = from.find("morph1s"); if(itr != from.end()) { if(!itr->second->CheckType(PyRep::Real)) do { if(log_type_info[ CLIENT__ERROR ].enabled) { log_message(CLIENT__ERROR, "Invalid type for " "morph1s" ": expected real, got %s.",itr->second->TypeString()); } } while(false); else { Set_morph1s(((PyRepReal *)itr->second)->value); do { if(log_type_info[ CLIENT__MESSAGE ].enabled) { log_message(CLIENT__MESSAGE, "     %s: %f",itr->first.c_str(), Get_morph1s()); } } while(false); } }
+	itr = from.find("morph1w"); if(itr != from.end()) { if(!itr->second->CheckType(PyRep::Real)) do { if(log_type_info[ CLIENT__ERROR ].enabled) { log_message(CLIENT__ERROR, "Invalid type for " "morph1w" ": expected real, got %s.",itr->second->TypeString()); } } while(false); else { Set_morph1w(((PyRepReal *)itr->second)->value); do { if(log_type_info[ CLIENT__MESSAGE ].enabled) { log_message(CLIENT__MESSAGE, "     %s: %f",itr->first.c_str(), Get_morph1w()); } } while(false); } }
+	itr = from.find("morph2e"); if(itr != from.end()) { if(!itr->second->CheckType(PyRep::Real)) do { if(log_type_info[ CLIENT__ERROR ].enabled) { log_message(CLIENT__ERROR, "Invalid type for " "morph2e" ": expected real, got %s.",itr->second->TypeString()); } } while(false); else { Set_morph2e(((PyRepReal *)itr->second)->value); do { if(log_type_info[ CLIENT__MESSAGE ].enabled) { log_message(CLIENT__MESSAGE, "     %s: %f",itr->first.c_str(), Get_morph2e()); } } while(false); } }
+	itr = from.find("morph2n"); if(itr != from.end()) { if(!itr->second->CheckType(PyRep::Real)) do { if(log_type_info[ CLIENT__ERROR ].enabled) { log_message(CLIENT__ERROR, "Invalid type for " "morph2n" ": expected real, got %s.",itr->second->TypeString()); } } while(false); else { Set_morph2n(((PyRepReal *)itr->second)->value); do { if(log_type_info[ CLIENT__MESSAGE ].enabled) { log_message(CLIENT__MESSAGE, "     %s: %f",itr->first.c_str(), Get_morph2n()); } } while(false); } }
+	itr = from.find("morph2s"); if(itr != from.end()) { if(!itr->second->CheckType(PyRep::Real)) do { if(log_type_info[ CLIENT__ERROR ].enabled) { log_message(CLIENT__ERROR, "Invalid type for " "morph2s" ": expected real, got %s.",itr->second->TypeString()); } } while(false); else { Set_morph2s(((PyRepReal *)itr->second)->value); do { if(log_type_info[ CLIENT__MESSAGE ].enabled) { log_message(CLIENT__MESSAGE, "     %s: %f",itr->first.c_str(), Get_morph2s()); } } while(false); } }
+	itr = from.find("morph2w"); if(itr != from.end()) { if(!itr->second->CheckType(PyRep::Real)) do { if(log_type_info[ CLIENT__ERROR ].enabled) { log_message(CLIENT__ERROR, "Invalid type for " "morph2w" ": expected real, got %s.",itr->second->TypeString()); } } while(false); else { Set_morph2w(((PyRepReal *)itr->second)->value); do { if(log_type_info[ CLIENT__MESSAGE ].enabled) { log_message(CLIENT__MESSAGE, "     %s: %f",itr->first.c_str(), Get_morph2w()); } } while(false); } }
+	itr = from.find("morph3e"); if(itr != from.end()) { if(!itr->second->CheckType(PyRep::Real)) do { if(log_type_info[ CLIENT__ERROR ].enabled) { log_message(CLIENT__ERROR, "Invalid type for " "morph3e" ": expected real, got %s.",itr->second->TypeString()); } } while(false); else { Set_morph3e(((PyRepReal *)itr->second)->value); do { if(log_type_info[ CLIENT__MESSAGE ].enabled) { log_message(CLIENT__MESSAGE, "     %s: %f",itr->first.c_str(), Get_morph3e()); } } while(false); } }
+	itr = from.find("morph3n"); if(itr != from.end()) { if(!itr->second->CheckType(PyRep::Real)) do { if(log_type_info[ CLIENT__ERROR ].enabled) { log_message(CLIENT__ERROR, "Invalid type for " "morph3n" ": expected real, got %s.",itr->second->TypeString()); } } while(false); else { Set_morph3n(((PyRepReal *)itr->second)->value); do { if(log_type_info[ CLIENT__MESSAGE ].enabled) { log_message(CLIENT__MESSAGE, "     %s: %f",itr->first.c_str(), Get_morph3n()); } } while(false); } }
+	itr = from.find("morph3s"); if(itr != from.end()) { if(!itr->second->CheckType(PyRep::Real)) do { if(log_type_info[ CLIENT__ERROR ].enabled) { log_message(CLIENT__ERROR, "Invalid type for " "morph3s" ": expected real, got %s.",itr->second->TypeString()); } } while(false); else { Set_morph3s(((PyRepReal *)itr->second)->value); do { if(log_type_info[ CLIENT__MESSAGE ].enabled) { log_message(CLIENT__MESSAGE, "     %s: %f",itr->first.c_str(), Get_morph3s()); } } while(false); } }
+	itr = from.find("morph3w"); if(itr != from.end()) { if(!itr->second->CheckType(PyRep::Real)) do { if(log_type_info[ CLIENT__ERROR ].enabled) { log_message(CLIENT__ERROR, "Invalid type for " "morph3w" ": expected real, got %s.",itr->second->TypeString()); } } while(false); else { Set_morph3w(((PyRepReal *)itr->second)->value); do { if(log_type_info[ CLIENT__MESSAGE ].enabled) { log_message(CLIENT__MESSAGE, "     %s: %f",itr->first.c_str(), Get_morph3w()); } } while(false); } }
+	itr = from.find("morph4e"); if(itr != from.end()) { if(!itr->second->CheckType(PyRep::Real)) do { if(log_type_info[ CLIENT__ERROR ].enabled) { log_message(CLIENT__ERROR, "Invalid type for " "morph4e" ": expected real, got %s.",itr->second->TypeString()); } } while(false); else { Set_morph4e(((PyRepReal *)itr->second)->value); do { if(log_type_info[ CLIENT__MESSAGE ].enabled) { log_message(CLIENT__MESSAGE, "     %s: %f",itr->first.c_str(), Get_morph4e()); } } while(false); } }
+	itr = from.find("morph4n"); if(itr != from.end()) { if(!itr->second->CheckType(PyRep::Real)) do { if(log_type_info[ CLIENT__ERROR ].enabled) { log_message(CLIENT__ERROR, "Invalid type for " "morph4n" ": expected real, got %s.",itr->second->TypeString()); } } while(false); else { Set_morph4n(((PyRepReal *)itr->second)->value); do { if(log_type_info[ CLIENT__MESSAGE ].enabled) { log_message(CLIENT__MESSAGE, "     %s: %f",itr->first.c_str(), Get_morph4n()); } } while(false); } }
+	itr = from.find("morph4s"); if(itr != from.end()) { if(!itr->second->CheckType(PyRep::Real)) do { if(log_type_info[ CLIENT__ERROR ].enabled) { log_message(CLIENT__ERROR, "Invalid type for " "morph4s" ": expected real, got %s.",itr->second->TypeString()); } } while(false); else { Set_morph4s(((PyRepReal *)itr->second)->value); do { if(log_type_info[ CLIENT__MESSAGE ].enabled) { log_message(CLIENT__MESSAGE, "     %s: %f",itr->first.c_str(), Get_morph4s()); } } while(false); } }
+	itr = from.find("morph4w"); if(itr != from.end()) { if(!itr->second->CheckType(PyRep::Real)) do { if(log_type_info[ CLIENT__ERROR ].enabled) { log_message(CLIENT__ERROR, "Invalid type for " "morph4w" ": expected real, got %s.",itr->second->TypeString()); } } while(false); else { Set_morph4w(((PyRepReal *)itr->second)->value); do { if(log_type_info[ CLIENT__MESSAGE ].enabled) { log_message(CLIENT__MESSAGE, "     %s: %f",itr->first.c_str(), Get_morph4w()); } } while(false); } }
 }
 
-void CharacterAppearance::operator=(const CharacterAppearance &from) {
-#define COPY(v) \
-	v = from.v;
-#define COPY_DYN(v) \
-	if(!from.IsNull_##v()) \
-		Set_##v(from.Get_##v());
+void CharacterAppearance::operator=(const CharacterAppearance &from)
+{
+	if(!from.IsNull_accessoryID())
+		Set_accessoryID(from.Get_accessoryID());
+	
+	if(!from.IsNull_beardID())
+		Set_beardID(from.Get_beardID());
+	
+	costumeID = from.costumeID;
+	if(!from.IsNull_decoID())
+		Set_decoID(from.Get_decoID());
+	
+	eyebrowsID = from.eyebrowsID;
+	eyesID = from.eyesID;
+	hairID = from.hairID;
+	if(!from.IsNull_lipstickID())
+		Set_lipstickID(from.Get_lipstickID());
+	
+	if(!from.IsNull_makeupID())
+		Set_makeupID(from.Get_makeupID());
 
-#define INT(v) COPY(v)
-#define INT_DYN(v) COPY_DYN(v)
-#define REAL(v) COPY(v)
-#define REAL_DYN(v) COPY_DYN(v)
-#include "character/CharacterAppearance_fields.h"
+	skinID = from.skinID;
+	backgroundID = from.backgroundID;
+	lightID = from.lightID;
 
-#undef COPY
-#undef COPY_DYN
+	headRotation1 = from.headRotation1;
+	headRotation2 = from.headRotation2;
+	headRotation3 = from.headRotation3;
+
+	eyeRotation1 = from.eyeRotation1;
+	eyeRotation2 = from.eyeRotation2;
+	eyeRotation3 = from.eyeRotation3;
+
+	camPos1 = from.camPos1;
+	camPos2 = from.camPos2;
+	camPos3 = from.camPos3;
+
+	if(!from.IsNull_morph1e())
+		Set_morph1e(from.Get_morph1e());
+
+	if(!from.IsNull_morph1n())
+		Set_morph1n(from.Get_morph1n());
+
+	if(!from.IsNull_morph1s())
+		Set_morph1s(from.Get_morph1s());
+
+	if(!from.IsNull_morph1w())		
+		Set_morph1w(from.Get_morph1w());
+
+	if(!from.IsNull_morph2e())
+		Set_morph2e(from.Get_morph2e());
+
+	if(!from.IsNull_morph2n())
+		Set_morph2n(from.Get_morph2n());
+
+	if(!from.IsNull_morph2s())
+		Set_morph2s(from.Get_morph2s());
+
+	if(!from.IsNull_morph2w())
+		Set_morph2w(from.Get_morph2w());
+
+	if(!from.IsNull_morph3e())
+		Set_morph3e(from.Get_morph3e());
+
+	if(!from.IsNull_morph3n())
+		Set_morph3n(from.Get_morph3n());
+
+	if(!from.IsNull_morph3s())
+		Set_morph3s(from.Get_morph3s());
+
+	if(!from.IsNull_morph3w())
+		Set_morph3w(from.Get_morph3w());
+
+	if(!from.IsNull_morph4e())
+		Set_morph4e(from.Get_morph4e());
+
+	if(!from.IsNull_morph4n())
+		Set_morph4n(from.Get_morph4n());
+
+	if(!from.IsNull_morph4s())
+		Set_morph4s(from.Get_morph4s());
+
+	if(!from.IsNull_morph4w())
+		Set_morph4w(from.Get_morph4w());
 }
-
-//Client::Client(PyServiceMgr *services, EVETCPConnection **con) : DynamicSystemEntity(NULL),
 
 Client::Client(EveClientSession* xsession) : DynamicSystemEntity(NULL),
   modules(this),
   m_ship(NULL),
   m_services(NULL),
-  m_net(NULL, this),
   m_pingTimer(PING_INTERVAL_US),
   m_accountID(0),
   m_role(1),
   m_gangRole(1),
   m_system(NULL),
-//  m_destinyTimer(1000, true),	//accurate timing is essential
-//  m_lastDestinyTime(Timer::GetTimeSeconds()),
   m_moveState(msIdle),
   m_moveTimer(500),
   m_movePoint(0, 0, 0),
   m_nextNotifySequence(1)
-//  m_nextDestinyUpdate(46751)
 {
-	//*con = NULL;
 	mClientSession = xsession;
 
 	m_moveTimer.Disable();
 	m_pingTimer.Start();
 
+	// this needs to change.........
 	m_char.name = "monkey";
 	m_char.charid = 444666;
 	m_char.bloodlineID = 0;
@@ -155,9 +253,6 @@ Client::Client(EveClientSession* xsession) : DynamicSystemEntity(NULL),
 	m_char.Perception = 8;
 	m_char.Memory = 9;
 	m_char.Willpower = 10;
-
-	//initialize connection
-	//m_net.SendHandshake(sPyServiceMgr.entity_list->GetClientCount());
 }
 
 Client::~Client()
@@ -204,86 +299,19 @@ void Client::QueuePacket(PyPacket *p)
 
 void Client::FastQueuePacket(PyPacket *p)
 {
-	//Send()
-	//p->Encode()
-	//m_net.FastQueuePacket(p);
-	//mClientSession->OutPacket()
-
-		/*
-		PyRep * ectpack = cryptoHandshakeAck.Encode();
-		OutPacket(ectpack);
-		delete ectpack;
-		*/
-
 	if(p == NULL)
 		return;
 
-	/*PyRep *r = p->Encode();
-	SafeDelete(p);
-	if(r == NULL)
-	{
-		sLog.Error("%s: Failed to encode???", GetConnectedAddress().c_str());
-		
-		return;
-	}*/
-
 	// should be queued
 	mClientSession->Send(p);
-
-	
 	
 	SafeDelete(p);
 }
 
-bool Client::ProcessNet() {
-	//TRY_SIGEXCEPT {
-		
-		if(!m_net.Connected())
-			return(false);
-		
-		if(m_pingTimer.Check()) {
-			_log(CLIENT__TRACE, "%s: Sending ping request.", GetName());
-			_SendPingRequest();
-		}
-		
-		PyPacket *p;
-		while((p = m_net.PopPacket())) {
-			{
-				PyLogsysDump dumper(CLIENT__IN_ALL);
-				_log(CLIENT__IN_ALL, "Received packet:");
-				p->Dump(CLIENT__IN_ALL, &dumper);
-			}
-	
-			switch(p->type) {
-			case MACHONETMSG_TYPE_CALL_REQ:
-				_ProcessCallRequest(p);
-				break;
-			case MACHONETMSG_TYPE_NOTIFICATION:
-				_ProcessNotification(p);
-				break;
-			case MACHONETMSG_TYPE_PING_REQ:
-				_log(CLIENT__TRACE, "%s: Unhandled ping request.", GetName());
-				break;
-			case MACHONETMSG_TYPE_PING_RSP:
-				_log(CLIENT__TRACE, "%s: Received ping response.", GetName());
-				break;
-			default:
-				_log(CLIENT__ERROR, "%s: Unhandled message type %d", GetName(), p->type);
-			}
-			
-			delete p;
-			p = NULL;
-		}
-	
-		return(true);
-	/*} CATCH_SIGEXCEPT(e) {
-		  _log(CLIENT__ERROR, "%s: Exception caught processing network packets\n%s", GetName(), e.stack_string().c_str());
-		  return(false);
-	}*/
-}
-
-void Client::Process() {
-	if(m_moveTimer.Check(false)) {
+void Client::Update()
+{
+	if(m_moveTimer.Check(false))
+	{
 		m_moveTimer.Disable();
 		_MoveState s = m_moveState;
 		m_moveState = msIdle;
@@ -303,7 +331,9 @@ void Client::Process() {
 	SystemEntity::Process();
 }
 
-void Client::ProcessDestiny() {
+
+void Client::ProcessDestiny()
+{
 	//send changes from previous tic
 	_SendQueuedUpdates(DestinyManager::GetStamp()-1);
 	DynamicSystemEntity::ProcessDestiny();
@@ -392,7 +422,6 @@ void Client::SelfChatMessage(const char *fmt, ...) {
 		return;
 	}
 
-	
 	_log(CLIENT__TEXT, "%s: Self message on all channels: %s", GetName(), str);
 
 	//this is such a pile of crap, but im not sure whats better.
@@ -599,7 +628,7 @@ bool Client::EnterSystem() {
 		if(m_system == NULL) {
 			_log(CLIENT__ERROR, "Failed to boot system %lu for char %s (%lu)", GetSystemID(), GetName(), GetCharacterID());
 			SendErrorMsg("Unable to boot system %lu", GetSystemID());
-			return(false);
+			return false;
 		}
 		m_system->AddClient(this);
 	}
@@ -630,10 +659,10 @@ bool Client::EnterSystem() {
 	} /*else {	//just dont do anything extra and let them be where they are
 		_log(CLIENT__ERROR, "Char %s (%lu) is in a bad location %lu", GetName(), GetCharacterID(), GetLocationID());
 		SendErrorMsg("In a bad location %lu", GetLocationID());
-		return(false);
+		return false;
 	}*/
 	
-	return(true);
+	return true;
 }
 
 void Client::MoveToLocation(uint32 location, const GPoint &pt) {
@@ -903,17 +932,22 @@ void Client::_SendException(PyPacket *req, MACHONETERR_TYPE type, PyRep **payloa
 
 //these are specialized Queue functions when our caller can
 //easily provide us with our own copy of the data.
-void Client::QueueDestinyUpdate(PyRepTuple **du) {
-	m_destinyUpdateQueue.push_back(*du);
-	*du = NULL;
+void Client::QueueDestinyUpdate(PyRepTuple *du)
+{
+	m_destinyUpdateQueue.push_back(du);
+	//du = NULL;
 }
 
-void Client::QueueDestinyEvent(PyRepTuple **multiEvent) {
-	m_destinyEventQueue.push_back(*multiEvent);
-	*multiEvent = NULL;
+void Client::QueueDestinyEvent(PyRepTuple *multiEvent)
+{
+	//m_destinyEventQueue.push_back(*multiEvent);
+	//*multiEvent = NULL;
+
+	m_destinyEventQueue.push_back(multiEvent);
 }
 
-void Client::_SendQueuedUpdates(uint32 stamp) {
+void Client::_SendQueuedUpdates(uint32 stamp)
+{
 	std::vector<PyRepTuple *>::const_iterator cur, end;
 	
 	if(m_destinyUpdateQueue.empty()) {
@@ -1062,19 +1096,19 @@ void Client::_ExecuteJump() {
 
 bool Client::AddBalance(double amount) {
 	if(amount == 0)
-		return(true);
+		return true;
 	
 	double result = m_char.balance + amount;
 	
 	//remember, this can take a negative amount...
 	if(result < 0) {
-		return(false);
+		return false;
 	}
 	
 	m_char.balance = result;
 	
 	if(!sPyServiceMgr.GetServiceDB()->SetCharacterBalance(GetCharacterID(), m_char.balance))
-		return(false);
+		return false;
 	
 	//send notification of change
 	OnAccountChange ac;
@@ -1084,7 +1118,7 @@ bool Client::AddBalance(double amount) {
 	PyRepTuple *answer = ac.Encode();
 	SendNotification("OnAccountChange", "cash", &answer, false);
 
-	return(true);
+	return true;
 }
 
 
@@ -1092,32 +1126,32 @@ bool Client::AddBalance(double amount) {
 bool Client::Load(uint32 char_id) {
 	if(!sPyServiceMgr.GetServiceDB()->LoadCharacter(char_id, m_char)) {
 		_log(CLIENT__ERROR, "Failed to load character data for char %lu.", char_id);
-		return(false);
+		return false;
 	}
 	if(!sPyServiceMgr.GetServiceDB()->LoadCorporationMemberInfo(char_id, m_corpstate)) {
 		_log(CLIENT__ERROR, "Failed to load corp member info for char %lu.", char_id);
-		return(false);
+		return false;
 	}
 
 	//get char
 	InventoryItem *character = sPyServiceMgr.item_factory->Load(char_id, true);
 	if(character == NULL)
-		return(false);
+		return false;
 
 	InventoryItem *ship = sPyServiceMgr.item_factory->Load(character->locationID(), true);
 	if(ship == NULL)
-		return(false);
+		return false;
 
 	_SetSelf(character);	//ref is stored
 	BoardShip(ship);	//updates modules
 	ship->Release();
 
 	if(!EnterSystem())
-		return(false);
+		return false;
 
 	SessionSync();
 
-	return(true);
+	return true;
 }
 
 uint32 Client::GetShipID() const {
@@ -1275,7 +1309,7 @@ DoDestinyUpdate ,*args= ([(31759,
 
 	if(!IsSolarSystem(GetLocationID())) {
 		_log(SERVICE__ERROR, "%s: Trying to launch drone when not in space!", GetName());
-		return(false);
+		return false;
 	}
 
 	_log(CLIENT__MESSAGE, "%s: Launching drone %lu", GetName(), drone->itemID());
@@ -1369,7 +1403,7 @@ DoDestinyUpdate ,*args= ([(31759,
 	//TODO: delay this until after the return.
 	//_SendDestinyUpdate(&actions, false);
 
-	return(false);
+	return false;
 }
 
 //assumes that the backend DB stuff was already done.
@@ -1434,10 +1468,10 @@ bool FunctorTimerQueue::Cancel(TimerID id) {
 	for(; cur != end; cur++) {
 		if((*cur)->id == id) {
 			m_queue.erase(cur);
-			return(true);
+			return true;
 		}
 	}
-	return(false);
+	return false;
 }
 
 void FunctorTimerQueue::Process() {

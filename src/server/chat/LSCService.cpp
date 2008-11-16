@@ -21,7 +21,6 @@
 
 PyCallable_Make_InnerDispatcher(LSCService)
 
-
 LSCService::LSCService(PyServiceMgr *mgr, DBcore *db, CommandDispatcher* cd)
 : PyService(mgr, "LSC"),
   m_dispatch(new Dispatcher(this)),

@@ -46,7 +46,7 @@ SimpleSystemEntity::SimpleSystemEntity(SystemManager *system, const DBSystemEnti
 }
 
 bool SimpleSystemEntity::LoadExtras(SystemDB *db) {
-	return(true);
+	return true;
 }
 
 PyRepDict *SimpleSystemEntity::MakeSlimItem() const {
@@ -65,18 +65,15 @@ void SimpleSystemEntity::MakeDamageState(DoDestinyDamageState &into) const {
 	into.timestamp = Win32TimeNow();
 }
 
-void InanimateSystemEntity::QueueDestinyUpdate(PyRepTuple **du) {
+void InanimateSystemEntity::QueueDestinyUpdate(PyRepTuple *du) {
 	//do nothing, the caller will handle it properly.
 	//this gives them the opportunity to reduce a copy if they are smart.
 }
 
-void InanimateSystemEntity::QueueDestinyEvent(PyRepTuple **multiEvent) {
+void InanimateSystemEntity::QueueDestinyEvent(PyRepTuple *multiEvent) {
 	//do nothing, the caller will handle it properly.
 	//this gives them the opportunity to reduce a copy if they are smart.
 }
-
-
-
 
 SystemPlanetEntity::SystemPlanetEntity(SystemManager *system, const DBSystemEntity &entity)
 : SimpleSystemEntity(system, entity) {
@@ -188,12 +185,12 @@ SystemStargateEntity::~SystemStargateEntity() {
 	
 bool SystemStargateEntity::LoadExtras(SystemDB *db) {
 	if(!SystemStationEntity::LoadExtras(db))
-		return(false);
+		return false;
 
 	m_jumps = db->ListJumps(GetID());
 	if(m_jumps == NULL)
-		return(false);
-	return(true);
+		return false;
+	return true;
 }
 
 PyRepDict *SystemStargateEntity::MakeSlimItem() const {
@@ -252,7 +249,7 @@ void SystemAsteroidBeltEntity::EncodeDestiny(std::vector<byte> &into) const {
 
 bool SystemAsteroidBeltEntity::LoadExtras(SystemDB *db) {
 	if(!SimpleSystemEntity::LoadExtras(db))
-		return(false);
+		return false;
 	
 	//TODO: fire up the belt manager.
 	//m_manager = new AsteroidBeltManager(new MiningDB(db), data.itemID);
@@ -260,7 +257,7 @@ bool SystemAsteroidBeltEntity::LoadExtras(SystemDB *db) {
 	// should just cram it into the system DB.. Obviously a mining DB is desirable, but
 	//  we need to solve the issue of who owns the object and where to keep it.
 	
-	return(true);
+	return true;
 }
 
 void SystemAsteroidBeltEntity::Process() {

@@ -30,7 +30,7 @@ public:
 	InanimateSystemEntity(SystemManager *system) : SystemEntity(), m_system(system) {}
 	
 	virtual EntityClass GetClass() const { return(ecCelestial); }
-	virtual bool IsCelestial() const { return(true); }
+	virtual bool IsCelestial() const { return true; }
 	
 	//I really dislike having this here...
 	virtual InventoryItem *Item() const { return(NULL); }
@@ -41,8 +41,8 @@ public:
 	virtual void TargetedLost(SystemEntity *who) {}
 	virtual void TargetsCleared() {}
 	virtual void ProcessDestiny() {}
-	virtual void QueueDestinyUpdate(PyRepTuple **du);
-	virtual void QueueDestinyEvent(PyRepTuple **multiEvent);
+	virtual void QueueDestinyUpdate(PyRepTuple *du);
+	virtual void QueueDestinyEvent(PyRepTuple *multiEvent);
 	//virtual const GPoint &GetPosition() const;
 	virtual void ApplyDamageModifiers(Damage &d, SystemEntity *target) {}
 	virtual void ApplyDamage(Damage &d) {}
@@ -59,7 +59,7 @@ public:
 	virtual ~SimpleSystemEntity() {}
 
 	//for now, all simple entities are celestials, which are always visible.
-	virtual bool IsVisibleSystemWide() const { return(true); }
+	virtual bool IsVisibleSystemWide() const { return true; }
 
 	static SimpleSystemEntity *MakeEntity(SystemManager *system, const DBSystemEntity &entity);
 	
@@ -121,7 +121,7 @@ public:
 	virtual ~SystemDungeonEntranceEntity() { targets.DoDestruction(); }
 	
 	virtual SystemManager *System() const { return(m_system); }
-	virtual bool IsVisibleSystemWide() const { return(true); }
+	virtual bool IsVisibleSystemWide() const { return true; }
 
 	virtual PyRepDict *MakeSlimItem() const;
 	virtual void EncodeDestiny(std::vector<byte> &into) const;

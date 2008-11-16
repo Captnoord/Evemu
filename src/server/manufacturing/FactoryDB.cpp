@@ -49,13 +49,13 @@ bool FactoryDB::GetBlueprintAttributes(const uint32 blueprintID, Rsp_GetBlueprin
 				blueprintID))
 	{
 		_log(DATABASE__ERROR, "Could not retrieve attributes for blueprint type %lu : %s", blueprintID, res.error.c_str());
-		return(false);
+		return false;
 	}
 
 	DBResultRow row;
 	if(!res.GetRow(row)) {
 		_log(DATABASE__ERROR, "No data found for blueprint ID %lu.", blueprintID);
-		return(false);
+		return false;
 	}
 
 	into.blueprintID = blueprintID;
@@ -72,7 +72,7 @@ bool FactoryDB::GetBlueprintAttributes(const uint32 blueprintID, Rsp_GetBlueprin
 	into.researchProductivityTime = row.GetInt(10);
 	into.researchCopyTime = row.GetInt(11);
 
-	return(true);
+	return true;
 }
 
 PyRep *FactoryDB::GetMaterialsForTypeWithActivity(const uint32 blueprintTypeID) const {

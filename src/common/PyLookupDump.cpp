@@ -63,7 +63,7 @@ PyLookupResolver::PyLookupResolver() {
 bool PyLookupResolver::LoadIntFile(const char *file) {
 	FILE *f = fopen(file, "r");
 	if(f == NULL)
-		return(false);
+		return false;
 	char *buf = new char[10240];
 	while(fgets(buf, 10240, f)) {
 		//kill empty lines
@@ -93,13 +93,13 @@ bool PyLookupResolver::LoadIntFile(const char *file) {
 	}
 	SafeDeleteArray(buf);
 	fclose(f);
-	return(true);
+	return true;
 }
 
 bool PyLookupResolver::LoadStringFile(const char *file) {
 	FILE *f = fopen(file, "r");
 	if(f == NULL)
-		return(false);
+		return false;
 	char *buf = new char[10240];
 	while(fgets(buf, 10240, f)) {
 		//kill empty lines
@@ -127,7 +127,7 @@ bool PyLookupResolver::LoadStringFile(const char *file) {
 	}
 	SafeDeleteArray(buf);
 	fclose(f);
-	return(true);
+	return true;
 }
 
 const char *PyLookupResolver::LookupInt(uint64 value) const {

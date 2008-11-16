@@ -185,14 +185,14 @@ bool ObjCacheService::LoadCachedFile(const char *filename, const char *oname, Py
 
 bool ObjCacheService::_LoadCachableObject(const PyRep *objectID) {
 	if(m_cache.HaveCached(objectID))
-		return(true);
+		return true;
 	
 	const std::string objectID_string = CachedObjectMgr::OIDToString(objectID);
 
 	if(!m_cacheDir.empty()) {
 		if(m_cache.LoadCachedFromFile(m_cacheDir, objectID)) {
 			_log(SERVICE__CACHE, "Loaded cached object '%s' from file.", objectID_string.c_str());
-			return(true);
+			return true;
 		}
 	}
 	
@@ -210,7 +210,7 @@ bool ObjCacheService::_LoadCachableObject(const PyRep *objectID) {
 		ss = new PyRepSubStream();
 		if(!m_cache.LoadCachedObject(objectID_string.c_str(), ss)) {
 			_log(SERVICE__ERROR, "Failed to create or load cache file for '%s'", objectID_string.c_str());
-			return(false);
+			return false;
 		}
 		
 		//we have generated the cache file in question, remember it
@@ -226,7 +226,7 @@ bool ObjCacheService::_LoadCachableObject(const PyRep *objectID) {
 		}
 	}
 
-	return(true);
+	return true;
 }
 
 PyRep *ObjCacheService::GetCacheHint(const char *objectID) {

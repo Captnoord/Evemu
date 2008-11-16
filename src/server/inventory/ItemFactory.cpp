@@ -295,10 +295,10 @@ InventoryItem *ItemFactory::Spawn(
 bool ItemFactory::_SpawnCommon(InventoryItem *i) {
 	if(!i->Load(true)) {
 		codelog(ITEM__DEBUG, "Failed load new item of type %lu for owner %lu in the DB.", i->typeID(), i->ownerID());
-		return(false);
+		return false;
 	}
 	
-	return(true);
+	return true;
 }
 
 void ItemFactory::_DeleteItem(InventoryItem *i) {

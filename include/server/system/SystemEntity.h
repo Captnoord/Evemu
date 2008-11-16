@@ -57,22 +57,22 @@ public:
 
 	//this is a bit crude, but I prefer this over RTTI.
 	virtual EntityClass GetClass() const { return(ecOther); }
-	virtual bool IsClient() const { return(false); }
-	virtual bool IsNPC() const { return(false); }
-	virtual bool IsCelestial() const { return(false); }
+	virtual bool IsClient() const { return false; }
+	virtual bool IsNPC() const { return false; }
+	virtual bool IsCelestial() const { return false; }
 	virtual Client *CastToClient() { return(NULL); }
 	virtual const Client *CastToClient() const { return(NULL); }
 	virtual NPC *CastToNPC() { return(NULL); }
 	virtual const NPC *CastToNPC() const { return(NULL); }
 	
-	virtual bool IsStaticEntity() const { return(true); }	//will this entity's position never change?
-	virtual bool IsVisibleSystemWide() const { return(false); }
+	virtual bool IsStaticEntity() const { return true; }	//will this entity's position never change?
+	virtual bool IsVisibleSystemWide() const { return false; }
 	
 	inline SystemBubble *Bubble() const { return(m_bubble); }	//may be NULL
 	
 	//may consume the arguments, or not.
-	virtual void QueueDestinyUpdate(PyRepTuple **du) = 0;
-	virtual void QueueDestinyEvent(PyRepTuple **multiEvent) = 0;
+	virtual void QueueDestinyUpdate(PyRepTuple *du) = 0;
+	virtual void QueueDestinyEvent(PyRepTuple *multiEvent) = 0;
 	
 	//I am not sure if I want this here...
 	virtual InventoryItem *Item() const = 0;
@@ -160,7 +160,7 @@ public:
 	virtual void ProcessDestiny();
 	virtual const GPoint &GetPosition() const;
 	virtual void EncodeDestiny(std::vector<byte> &into) const;
-	virtual bool IsStaticEntity() const { return(false); }
+	virtual bool IsStaticEntity() const { return false; }
 
 	//Added interface:
 	//get the corporation of this entity

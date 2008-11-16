@@ -36,9 +36,9 @@ const BaseRowsetReader::base_iterator &RowsetReader::base_iterator::operator++()
 
 bool BaseRowsetReader::base_iterator::_baseEqual(const base_iterator &other) const {
 	if(m_end && other.m_end)
-		return(true);	//'end' iterator
+		return true;	//'end' iterator
 	if(m_end || other.m_end)
-		return(false);
+		return false;
 	return(m_index == other.m_index);
 }
 
@@ -225,13 +225,13 @@ RowsetReader::iterator::iterator(RowsetReader *parent, bool is_end)
 
 bool RowsetReader::iterator::operator==(const iterator &other) {
 	if(m_parent != other.m_parent)
-		return(false);
+		return false;
 	return(_baseEqual(other));
 }
 
 bool RowsetReader::iterator::operator!=(const iterator &other) {
 	if(m_parent != other.m_parent)
-		return(true);
+		return true;
 	return(!_baseEqual(other));
 }
 
@@ -303,13 +303,13 @@ TuplesetReader::iterator::iterator(TuplesetReader *parent, bool is_end)
 
 bool TuplesetReader::iterator::operator==(const iterator &other) {
 	if(m_parent != other.m_parent)
-		return(false);
+		return false;
 	return(_baseEqual(other));
 }
 
 bool TuplesetReader::iterator::operator!=(const iterator &other) {
 	if(m_parent != other.m_parent)
-		return(true);
+		return true;
 	return(!_baseEqual(other));
 }
 

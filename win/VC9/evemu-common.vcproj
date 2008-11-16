@@ -204,6 +204,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\ship\BeyonceService.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\market\BillMgrService.cpp"
 				>
 			</File>
@@ -329,6 +333,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\server\ship\DestinyManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\server\ship\DestinyManager.h"
 				>
 			</File>
 			<File
@@ -520,6 +528,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\ship\InsuranceService.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\inventory\InvBrokerService.cpp"
 				>
 			</File>
@@ -652,6 +664,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\ship\ModuleManager.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\NetService.cpp"
 				>
 			</File>
@@ -764,7 +780,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\ship\ShipDB.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\ship\ShipService.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\server\ship\ShipService.h"
 				>
 			</File>
 			<File
@@ -845,6 +869,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\server\ship\TargetManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\server\ship\TargetManager.h"
 				>
 			</File>
 			<File

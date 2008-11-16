@@ -78,8 +78,8 @@ public:
 	virtual ~Asteroid();
 
 	//SystemEntity interface:
-	virtual void QueueDestinyUpdate(PyRepTuple **du) {}
-	virtual void QueueDestinyEvent(PyRepTuple **multiEvent) {}
+	virtual void QueueDestinyUpdate(PyRepTuple *du) {}
+	virtual void QueueDestinyEvent(PyRepTuple *multiEvent) {}
 	virtual void TargetAdded(SystemEntity *who) {}
 	virtual void TargetLost(SystemEntity *who) {}
 	virtual void TargetedAdd(SystemEntity *who) {}
@@ -110,16 +110,4 @@ protected:
 	//double m_radius;	//radius of 91-95 makes for reasonable asteroids.
 };
 
-
-
-
-
-
-
-
-
-
-
 #endif
-
-

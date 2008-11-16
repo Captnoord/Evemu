@@ -64,7 +64,7 @@ void SystemBubble::BubblecastDestinyUpdate(PyRepTuple **payload, const char *des
 		if(up_dup == NULL)
 			up_dup = up->TypedClone();
 		_log(DESTINY__BUBBLE_TRACE, "Bubblecast %s update to %s (%lu)", desc, (*cur)->GetName(), (*cur)->GetID());
-		(*cur)->QueueDestinyUpdate(&up_dup);
+		(*cur)->QueueDestinyUpdate(up_dup);
 		//they may not have consumed it (NPCs for example), so dont re-dup it in that case.
 	}
 	
@@ -86,11 +86,11 @@ void SystemBubble::BubblecastDestinyEvent(PyRepTuple **payload, const char *desc
 		if(up_dup == NULL)
 			up_dup = up->TypedClone();
 		_log(DESTINY__BUBBLE_TRACE, "Bubblecast %s event to %s (%lu)", desc, (*cur)->GetName(), (*cur)->GetID());
-		(*cur)->QueueDestinyEvent(&up_dup);
+		(*cur)->QueueDestinyEvent(up_dup);
 		//they may not have consumed it (NPCs for example), so dont re-dup it in that case.
 	}
 	
-	delete up_dup;
+	//delete up_dup;
 	delete up;
 }
 
@@ -118,7 +118,7 @@ bool SystemBubble::ProcessWander(std::vector<SystemEntity *> &wanderers) {
 	for(; curw != endw; ++curw) {
 		Remove(*curw);
 	}
-	return(false);
+	return false;
 }
 
 void SystemBubble::Add(SystemEntity *ent, bool notify) {
@@ -241,7 +241,7 @@ void SystemBubble::_SendAddBalls(SystemEntity *to_who) {
 	Destiny::DumpUpdate(DESTINY__TRACE, addballs.destiny_binary->GetBuffer(), addballs.destiny_binary->GetLength());
 
 	PyRepTuple *tmp = addballs.FastEncode();
-	to_who->QueueDestinyUpdate(&tmp);	//may consume, but may not.
+	to_who->QueueDestinyUpdate(tmp);	//may consume, but may not.
 	delete tmp;	//may not have been consumed.
 }
 
@@ -266,8 +266,8 @@ void SystemBubble::_SendRemoveBalls(SystemEntity *to_who) {
 	remove_balls.Dump(DESTINY__TRACE, "    ");
 	
 	PyRepTuple *tmp = remove_balls.FastEncode();
-	to_who->QueueDestinyUpdate(&tmp);	//may consume, but may not.
-	delete tmp;	//may not have been consumed.
+	to_who->QueueDestinyUpdate(tmp);	//may consume, but may not.
+	//delete tmp;	//may not have been consumed.
 }
 
 void SystemBubble::_BubblecastAddBall(SystemEntity *about_who) {
