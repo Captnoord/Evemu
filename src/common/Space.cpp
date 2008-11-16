@@ -149,16 +149,17 @@ void Space::UpdateSessions(time_t diff)
 				DeleteSession(session);
 			}
 			Sessions.erase(it2);
+
+			/*	this is part of the hack described above.......
+				Note: reason: there is no use in updating a client that has been deleted
+			*/
+			continue;
+
 		}
 
-		/*if((result = session->Update()))
-		{
-			if(result == 1)
-			{
-				// complete deletion
-				DeleteSession(session);
-			}
-			Sessions.erase(it2);
-		}*/
+		/* THIS IS A HACK.... player updates should be done in a quad tree style of grid.... resulting in not updating players
+		   and sending packets to players that we can't even see..... what so ever...
+		*/
+		session->_client->Update();
 	}
 }

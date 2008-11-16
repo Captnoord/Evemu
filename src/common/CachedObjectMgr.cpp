@@ -296,7 +296,6 @@ bool CachedObjectMgr::IsCacheUpToDate(const PyRep *objectID, uint32 version, uin
 	return true;
 }
 
-
 typedef struct {
 	uint64 timestamp;
 	uint32 version;
@@ -305,7 +304,6 @@ typedef struct {
 } CacheFileHeader;
 
 static const uint32 CacheFileMagic = 0xFF886622;
-
 
 bool CachedObjectMgr::LoadCachedFromFile(const std::string &cacheDir, const std::string &objectID) {
 	//this is sub-optimal, but it keeps things more consistent (in case StringCollapseVisitor ever gets more complicated)
@@ -880,20 +878,3 @@ bool PyCachedCall::Decode(PyRepSubStream **in_ss) {
 	SafeDelete(ss);
 	return(result != NULL);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
