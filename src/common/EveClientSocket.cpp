@@ -421,8 +421,8 @@ void EveClientSocket::OnRead()
 		 */
 		PyRep *recvPyPacket = InflateAndUnmarshal(packet->contents(), (uint32)packet->size());
 
-		printf("\nrecv packet with opcode:%d and Type:%s and size:%d\n", ((PyPacket*)recvPyPacket)->type, recvPyPacket->TypeString(), packet->size());
-		packet->LogBuffer();
+		// printf("\nrecv packet with opcode:%d and Type:%s and size:%d\n", ((PyPacket*)recvPyPacket)->type, recvPyPacket->TypeString(), packet->size());
+		// packet->LogBuffer();
 
 		// the state machine magic
 		(this->*mCurrentStateMachine)(recvPyPacket);

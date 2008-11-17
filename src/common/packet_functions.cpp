@@ -15,7 +15,7 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
+#include "NGLog.h" // ascent logging stuff
 #include <string.h>
 #include <zlib/zlib.h>
 
@@ -93,7 +93,7 @@ byte *DeflatePacket(const byte *data, uint32 &length, bool best) {
 	}
 #else
 	if(data == NULL || length == 0)
-		return 0;
+		return NULL;
 
 	z_stream zstream;
 	zstream.next_in   = const_cast<byte *>(data);
@@ -102,17 +102,17 @@ byte *DeflatePacket(const byte *data, uint32 &length, bool best) {
 	zstream.zfree     = e_free_func;
 	zstream.opaque    = Z_NULL;
 
-	int clevel = Z_DEFAULT_COMPRESSION;
+	int clevel = Z_BEST_SPEED;//Z_DEFAULT_COMPRESSION;
 
 	if (best)
 		clevel = Z_BEST_COMPRESSION;
 
 	int zerror = deflateInit(&zstream, clevel);
-	if(zerror != Z_OK) {
-		_log(COMMON__ERROR, "Error: DeflatePacket: deflateInit() returned %d (%s).",
-			zerror, (zstream.msg == NULL ? "No additional message" : zstream.msg));
+	if(zerror != Z_OK)
+	{
+		Log.Error("ZLIB","DeflatePacket: deflateInit() returned %d (%s).", zerror, (zstream.msg == NULL ? "No additional message" : zstream.msg));
 
-		return 0;
+		return NULL;
 	}
 
 	length = deflateBound(&zstream, length);
@@ -123,18 +123,20 @@ byte *DeflatePacket(const byte *data, uint32 &length, bool best) {
 
 	zerror = deflate(&zstream, Z_FINISH);
 
-	if(zerror == Z_STREAM_END) {
-		//deflation successfull
+	if(zerror == Z_STREAM_END)
+	{
+		//deflation successful
 		deflateEnd(&zstream);
 		//truncate output buffer to necessary size
 		length = zstream.total_out;
 		out_data = (byte *)realloc(out_data, length);
 
 		return(out_data);
-	} else {
-		//error occured
-		_log(COMMON__ERROR, "Error: DeflatePacket: deflate() returned %d (%s).",
-			zerror, (zstream.msg == NULL ? "No additional message" : zstream.msg));
+	}
+	else
+	{
+		//error occurred
+		Log.Error("ZLIB","Error: DeflatePacket: deflate() returned %d (%s).", zerror, (zstream.msg == NULL ? "No additional message" : zstream.msg));
 
 		deflateEnd(&zstream);
 		//delete output buffer

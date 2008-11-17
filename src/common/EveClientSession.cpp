@@ -174,13 +174,13 @@ void EveClientSession::_ProcessNone(PyPacket& packet)
 
 void EveClientSession::_ProcessCallRequest(PyPacket& packet)
 {
-	Log.Debug("SessionPacketDispatcher", "ProcessCallRequest");
+	//Log.Debug("SessionPacketDispatcher", "ProcessCallRequest");
 	_client->_ProcessCallRequest(&packet);
 }
 
 void EveClientSession::_ProcessNotification(PyPacket& packet)
 {
-	Log.Debug("SessionPacketDispatcher", "ProcessNotification");
+	//Log.Debug("SessionPacketDispatcher", "ProcessNotification");
 	_client->_ProcessNotification(&packet);
 }
 

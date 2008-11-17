@@ -536,7 +536,8 @@ void PyRepSubStream::Dump(LogType type, const char *pfx) const {
 	}
 }
 
-void PyRepSubStream::EncodeData() {
+void PyRepSubStream::EncodeData()
+{
 	if(data != NULL)
 		return;
 	if(decoded == NULL)

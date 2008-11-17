@@ -345,13 +345,15 @@ bool InventoryItem::Populate(Rsp_CommonGetInfo_Entry &result) const {
 
 	//invItem:
 	result.invItem = GetEntityRow();
-	if(result.invItem == NULL) {
+	if(result.invItem == NULL)
+	{
 		codelog(ITEM__ERROR, "%s (%lu): Unable to build item row for move", m_itemName.c_str(), m_itemID);
 		return false;
 	}
 
-	//hacky, but it dosent really hurt anything.
-	if(isOnline() != 0) {
+	//hacky, but it doesn't really hurt anything.
+	if(isOnline() != 0)
+	{
 		//there is an effect that goes along with this. We should
 		//probably be properly tracking the effect due to some
 		// timer things, but for now, were hackin it.

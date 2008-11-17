@@ -183,14 +183,17 @@ bool ObjCacheService::LoadCachedFile(const char *filename, const char *oname, Py
 }
 
 
-bool ObjCacheService::_LoadCachableObject(const PyRep *objectID) {
+bool ObjCacheService::_LoadCachableObject(const PyRep *objectID)
+{
 	if(m_cache.HaveCached(objectID))
 		return true;
 	
 	const std::string objectID_string = CachedObjectMgr::OIDToString(objectID);
 
-	if(!m_cacheDir.empty()) {
-		if(m_cache.LoadCachedFromFile(m_cacheDir, objectID)) {
+	if(!m_cacheDir.empty())
+	{
+		if(m_cache.LoadCachedFromFile(m_cacheDir, objectID))
+		{
 			_log(SERVICE__CACHE, "Loaded cached object '%s' from file.", objectID_string.c_str());
 			return true;
 		}
@@ -201,14 +204,18 @@ bool ObjCacheService::_LoadCachableObject(const PyRep *objectID) {
 	//first try to generate it from the database...
 	//we go to the DB with a string, not a rep
 	PyRep *cache = m_db.GetCachableObject(objectID_string);
-	if(cache != NULL) {
+	if(cache != NULL)
+	{
 		//we have generated the cache file in question, remember it
 		m_cache.UpdateCache(objectID, &cache);
-	} else {
+	}
+	else
+	{
 		//failed to query from the database... fall back to old
 		//hackish file loading.
 		ss = new PyRepSubStream();
-		if(!m_cache.LoadCachedObject(objectID_string.c_str(), ss)) {
+		if(!m_cache.LoadCachedObject(objectID_string.c_str(), ss))
+		{
 			_log(SERVICE__ERROR, "Failed to create or load cache file for '%s'", objectID_string.c_str());
 			return false;
 		}
@@ -218,10 +225,14 @@ bool ObjCacheService::_LoadCachableObject(const PyRep *objectID) {
 	}
 	
 	//if we have a cache dir, write out the cache entry:
-	if(!m_cacheDir.empty()) {
-		if(!m_cache.SaveCachedToFile(m_cacheDir, objectID)) {
+	if(!m_cacheDir.empty())
+	{
+		if(!m_cache.SaveCachedToFile(m_cacheDir, objectID))
+		{
 			_log(SERVICE__ERROR, "Failed to save cache file for '%s' in '%s'", objectID_string.c_str(), m_cacheDir.c_str());
-		} else {
+		}
+		else
+		{
 			_log(SERVICE__CACHE, "Saved cached object '%s' to file.", objectID_string.c_str());
 		}
 	}
@@ -318,24 +329,3 @@ ObjectCachedMethodID::ObjectCachedMethodID(const char *service, const char *meth
 ObjectCachedMethodID::~ObjectCachedMethodID() {
 	SafeDelete(objectID);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

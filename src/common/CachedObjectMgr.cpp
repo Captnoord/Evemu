@@ -177,7 +177,8 @@ void CachedObjectMgr::UpdateCache(const std::string &objectID, PyRep **in_cached
 	UpdateCache(&str, in_cached_data);
 }
 
-void CachedObjectMgr::UpdateCache(const PyRep *objectID, PyRep **in_cached_data) {
+void CachedObjectMgr::UpdateCache(const PyRep *objectID, PyRep **in_cached_data)
+{
 	PyRep *cached_data = *in_cached_data;
 	*in_cached_data = NULL;
 
@@ -186,7 +187,8 @@ void CachedObjectMgr::UpdateCache(const PyRep *objectID, PyRep **in_cached_data)
 
 	_UpdateCache(objectID, &buf, len);
 
-	if(is_log_enabled(SERVICE__CACHE_DUMP)) {
+	if(is_log_enabled(SERVICE__CACHE_DUMP))
+	{
 		PyLogsysDump dumper(SERVICE__CACHE_DUMP, SERVICE__CACHE_DUMP, false, true);
 		cached_data->visit(&dumper);
 	}

@@ -73,7 +73,8 @@ void UnpackZeroCompressed(const byte *in_buf, int32 in_length, std::vector<byte>
 	_log(NET__ZEROINFL, "  Zero-inflating buffer yields %d inflated bytes", buffer.size());
 }
 
-void PackZeroCompressed(const byte *in_buf, int32 in_length, std::vector<byte> &out_buf) {
+void PackZeroCompressed(const byte *in_buf, int32 in_length, std::vector<byte> &out_buf)
+{
 	out_buf.clear();
 	if(in_buf == NULL || in_length == 0)
 		return;
@@ -89,64 +90,77 @@ void PackZeroCompressed(const byte *in_buf, int32 in_length, std::vector<byte> &
 	byte last_zero_count = 0;
 	
 	const byte *end = in_buf + in_length;
-	while(in_buf < end) {
-		if(*in_buf == 0) {
+	while(in_buf < end)
+	{
+		if(*in_buf == 0)
+		{
 			//we are starting with zero, hunting for non-zero
 
 			//figure out how many zeros in a row we have, up to 8
-			byte zero_count = 0;
-			while(in_buf < end && *in_buf == 0 && zero_count < 8) {
+			uint8 zero_count = 0;
+			while(in_buf < end && *in_buf == 0 && zero_count < 8)
+			{
 				zero_count++;
 				in_buf++;
 			}
 
-			byte this_opcode = 0x8 | (zero_count - 1);
+			uint8 this_opcode = 0x8 | (zero_count - 1);
 			_log(NET__ZEROCOMP, "  Found %d zeros, opcode=0x%x", zero_count, this_opcode);
 			
-			if(last_data_count != 0 || last_zero_count != 0) {
+			if(last_data_count != 0 || last_zero_count != 0)
+			{
 				//we had something before this, now we have more data, write it
-				byte opcode = (this_opcode << 4) | last_opcode;
+				uint8 opcode = (this_opcode << 4) | last_opcode;
 				_log(NET__ZEROCOMP, "    Previous opcode 0x%x yields stream byte 0x%02x at %d", last_opcode, opcode, out_buf.size());
 				out_buf.push_back(opcode);
 
 				
-				if(last_data_count != 0) {
+				if(last_data_count != 0)
+				{
 					//we had previous data, push it out
 					_log(NET__ZEROCOMP, "    Writing %d previous bytes at %d", last_data_count, out_buf.size());
-					for(; last_data_count > 0; last_data_count--) {
+					for(; last_data_count > 0; last_data_count--)
+					{
 						out_buf.push_back(*last_data_start);
 						last_data_start++;
 					}
 					last_data_count = 0;	//just for clarity
-				} else {
+				}
+				else
+				{
 					//else, it was previous zeros, do nothing
 					last_zero_count = 0;
 				}
 
 				//we do nothing to represent the current zeros 
-			} else {
+			}
+			else
+			{
 				//we had nothing pending before us, save it for next block.
 				last_zero_count = zero_count;
 				last_opcode = this_opcode;
 			}
-		} else {
+		}
+		else
+		{
 			//we are starting with data, hunting for zero
 
 			//figure out how many non-zero bytes we have in a row, up to 8
-			byte data_count = 0;
-			const byte *data_start = in_buf;
-			while(in_buf < end && *in_buf != 0 && data_count < 8) {
+			uint8 data_count = 0;
+			const uint8 *data_start = in_buf;
+			while(in_buf < end && *in_buf != 0 && data_count < 8)
+			{
 				data_count++;
 				in_buf++;
 			}
 			
 			
-			byte this_opcode = 8 - data_count;
+			uint8 this_opcode = 8 - data_count;
 			_log(NET__ZEROCOMP, "  Found %d data bytes, opcode=0x%x", data_count, this_opcode);
 			
 			if(last_data_count != 0 || last_zero_count != 0) {
 				//we had something before this, now we have more data, write it
-				byte opcode = (this_opcode << 4) | last_opcode;
+				uint8 opcode = (this_opcode << 4) | last_opcode;
 				_log(NET__ZEROCOMP, "    Previous opcode 0x%x yields stream byte 0x%02x at %d", last_opcode, opcode, out_buf.size());
 				out_buf.push_back(opcode);
 				
@@ -165,11 +179,14 @@ void PackZeroCompressed(const byte *in_buf, int32 in_length, std::vector<byte> &
 				
                 //now we push out the current data
 				_log(NET__ZEROCOMP, "    Writing %d current bytes at %d", data_count, out_buf.size());
-				for(; data_count > 0; data_count--) {
+				for(; data_count > 0; data_count--)
+				{
 					out_buf.push_back(*data_start);
 					data_start++;
 				}
-			} else {
+			}
+			else
+			{
 				//we had nothing pending before us, save it for next block.
 				last_data_count = data_count;
 				last_data_start = data_start;
@@ -180,13 +197,15 @@ void PackZeroCompressed(const byte *in_buf, int32 in_length, std::vector<byte> &
 
 	//if there were pending zeros, we truncate them
     //but pending data needs to be written.
-	if(last_data_count != 0) {
+	if(last_data_count != 0)
+	{
 		//this seems wrong to me, putting a 0 in the high nibble (should mean there are 8 more bytes of data)
 		byte opcode = last_opcode;
 		_log(NET__ZEROCOMP, "  Remnant data bytes produces opcode 0x%x at %d", opcode, out_buf.size());
 		out_buf.push_back(opcode);
 		_log(NET__ZEROCOMP, "    Writing %d remnant bytes at %d", last_data_count, out_buf.size());
-		for(; last_data_count > 0; last_data_count--) {
+		for(; last_data_count > 0; last_data_count--)
+		{
 			out_buf.push_back(*last_data_start);
 			last_data_start++;
 		}
@@ -194,8 +213,6 @@ void PackZeroCompressed(const byte *in_buf, int32 in_length, std::vector<byte> &
 
 	_log(NET__ZEROCOMP, "  Zero-compressing buffer resulted in %d bytes", out_buf.size());
 }
-
-
 
 #ifdef ZC_TEST
 
