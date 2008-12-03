@@ -26,17 +26,13 @@
 /* Small Todo and note space
    - check http://nedprod.com/programs/portable/nedmalloc/index.html as the we allocate and deallocate very very often due to
      the design
-
 */
 
 #include "EvemuPCH.h"
 
 initialiseSingleton( Space );
 
-Space::Space() : mAcceptedConnections(0), mAuthorizedConnections(0), mStartTime(0)
-{
-
-}
+Space::Space() : mAcceptedConnections(0), mAuthorizedConnections(0), mStartTime(0) { }
 
 EveClientSession* Space::FindSession(uint32 id)
 {
@@ -131,16 +127,6 @@ void Space::UpdateSessions(time_t diff)
 		it2 = itr;
 		++itr;
 
-		/*it2 = itr;
-		++itr;
-		if(!session || session->GetInstance() != 0)
-		{
-			Sessions.erase(it2);
-			continue;
-		}*/
-
-		//session->Update();
-
 		if((result = session->Update()))
 		{
 			if(result == 1)
@@ -154,7 +140,6 @@ void Space::UpdateSessions(time_t diff)
 				Note: reason: there is no use in updating a client that has been deleted
 			*/
 			continue;
-
 		}
 
 		/* THIS IS A HACK.... player updates should be done in a quad tree style of grid.... resulting in not updating players

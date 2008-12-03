@@ -273,12 +273,12 @@ void EveClientSocket::_sendHandShake()
 	uint32 authCount = (uint32)sSpace.GetAuthorizedCount();
 
 	VersionExchange version;
-	version.birthday = EVEBirthday;
+	version.birthday = EveBirthday;
 	version.macho_version = MachoNetVersion;
 	version.user_count = authCount;
-	version.version_number = EVEVersionNumber;
-	version.build_version = EVEBuildVersion;
-	version.project_version = EVEProjectVersion;
+	version.version_number = EveVersionNumber;
+	version.build_version = EveBuildVersion;
+	version.project_version = EveProjectVersion;
 
 	PyRep *rep = version.Encode();
 	OutPacket(rep);
@@ -450,7 +450,7 @@ void EveClientSocket::_authStateHandshake(PyRep* packet)
 		return;
 	}
 
-	if(data.birthday != EVEBirthday)
+	if(data.birthday != EveBirthday)
 	{
 		//sLog.Debug("%s: Client's birthday does not match ours!", GetRemoteIP().c_str());
 		Disconnect();
@@ -462,19 +462,19 @@ void EveClientSocket::_authStateHandshake(PyRep* packet)
 		Disconnect();
 	}
 
-	if(data.version_number != EVEVersionNumber)
+	if(data.version_number != EveVersionNumber)
 	{
 		//sLog.Debug("%s: Client's version_number not match ours!", GetRemoteIP().c_str());
 		Disconnect();
 	}
 
-	if(data.build_version != EVEBuildVersion)
+	if(data.build_version != EveBuildVersion)
 	{
 		//sLog.Debug("%s: Client's build_version not match ours!", GetRemoteIP().c_str());
 		Disconnect();
 	}
 
-	if(data.project_version != EVEProjectVersion)
+	if(data.project_version != EveProjectVersion)
 	{
 		//sLog.Debug("%s: Client's project_version not match ours!", GetRemoteIP().c_str());
 		Disconnect();
@@ -639,10 +639,10 @@ void EveClientSocket::_authStateCryptoChallenge(PyRep* packet)
 	server_shake.serverChallenge = "hi";
 	server_shake.func_marshaled_code = new PyRepBuffer(handshakeFunc, sizeof(handshakeFunc));
 	server_shake.macho_version = MachoNetVersion;
-	server_shake.boot_version = EVEVersionNumber;
-	server_shake.boot_build = EVEBuildVersion;
-	server_shake.boot_codename = EVEProjectCodename;
-	server_shake.boot_region = EVEProjectRegion;
+	server_shake.boot_version = EveVersionNumber;
+	server_shake.boot_build = EveBuildVersion;
+	server_shake.boot_codename = EveProjectCodename;
+	server_shake.boot_region = EveProjectRegion;
 	server_shake.cluster_usercount = 100;//m_userCount;
 	server_shake.proxy_nodeid = 0xFFAA;
 	server_shake.user_logonqueueposition = 1;

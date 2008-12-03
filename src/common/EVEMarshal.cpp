@@ -126,12 +126,12 @@ public:
 		
 		rep->GetHeader()->visit(this);
 		
-		printf("VisitPackedRow buffersize before zero compression:%u\n",  rep->GetBufferSize());
+		//printf("VisitPackedRow buffersize before zero compression:%u\n",  rep->GetBufferSize());
 		//pack the bytes with the zero compression algorithm.
 		std::vector<byte> packed;
 		PackZeroCompressed(rep->GetBuffer(), rep->GetBufferSize(), packed);
 
-		printf("VisitPackedRow buffersize after zero compression:%u\n",  packed.size());
+		//printf("VisitPackedRow buffersize after zero compression:%u\n",  packed.size());
 		
 		if(packed.size() >= 0xFF)
 		{
@@ -574,7 +574,7 @@ uint8 *Marshal(const PyRep *rep, uint32 &len, bool inlineSubStream)
 	rep->visit(&v);
 
 	len = (uint32)v._storage.size();
-	printf("\tMarshalled size:%u\n", len);
+	//printf("\tMarshalled size:%u\n", len);
 	byte *b = new byte[len];
 
 	memcpy(b, &v._storage[0], len);

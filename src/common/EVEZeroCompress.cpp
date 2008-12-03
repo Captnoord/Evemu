@@ -25,7 +25,8 @@
 	#include "logsys.h"
 #endif
 
-void UnpackZeroCompressed(const byte *in_buf, int32 in_length, std::vector<byte> &buffer) {
+void UnpackZeroCompressed(const byte *in_buf, int32 in_length, std::vector<byte> &buffer)
+{
 	buffer.clear();
 	if(in_buf == NULL || in_length == 0)
 		return;

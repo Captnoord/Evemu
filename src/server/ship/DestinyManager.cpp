@@ -95,7 +95,7 @@ void DestinyManager::SendDestinyUpdate(DestinyUpdateVector &updates, DestinyUpda
 		{
 			PyRepTuple *t = *cur;
 			m_self->QueueDestinyUpdate(t);
-			//delete t;	//they are not required to consume it.
+			delete t;	//they are not required to consume it.
 		}
 		updates.clear();
 		
@@ -105,7 +105,7 @@ void DestinyManager::SendDestinyUpdate(DestinyUpdateVector &updates, DestinyUpda
 		{
 			PyRepTuple *t = *cur;
 			m_self->QueueDestinyEvent(t);
-			//delete t;	//they are not required to consume it.
+			delete t;	//they are not required to consume it.
 		}
 		events.clear();
 	}
@@ -1096,5 +1096,5 @@ void DestinyManager::DoTargetAdded(SystemEntity *who) const
 	te.targetID = who->GetID();
 	PyRepTuple *tmp2 = te.FastEncode();
 	m_self->QueueDestinyEvent(tmp2);
-	//delete tmp2;
+	delete tmp2;
 }

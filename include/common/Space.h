@@ -99,4 +99,3 @@ protected:
 #endif//__SPACE_H
 
 #define sSpace Space::getSingleton()
-

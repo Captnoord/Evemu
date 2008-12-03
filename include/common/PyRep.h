@@ -22,10 +22,7 @@
 #include "common.h"
 #include "logsys.h"
 
-//#include <vector>
-//#include <map>
-//#include <string>
-//#include <stdio.h>
+#include "ascent.h"
 
 class PyVisitor;
 
@@ -230,7 +227,7 @@ public:
 	typedef std::vector<PyRep *>::iterator iterator;
 	typedef std::vector<PyRep *>::const_iterator const_iterator;
 	
-	PyRepTuple(uint32 item_count) : PyRep(PyRep::Tuple), items(item_count, NULL) {}
+	PyRepTuple(uint32 item_count) : PyRep(PyRep::Tuple), items(item_count, NULL), genericIndex(0) {}
 	virtual ~PyRepTuple();
 	virtual void Dump(FILE *into, const char *pfx) const;
 	virtual void Dump(LogType type, const char *pfx) const;
@@ -239,9 +236,28 @@ public:
 
 	void CloneFrom(const PyRepTuple *from);
 	PyRepTuple *TypedClone() const;
-	
+
+	void AddInteger(uint64 value)
+	{
+		ASSERT(genericIndex < items.size());
+		items[genericIndex] = new PyRepInteger(value);
+		genericIndex++;
+	}
+
+	/*PyRep* operator[](size_t pos) {
+		//return read<uint8>(pos);
+		return items[pos];
+	}*/
+
+	PyRep** operator[](size_t pos) {
+		//return read<uint8>(pos);
+		return &items[pos];
+	}
+
 	storage_type items;
-	
+
+	uint32 genericIndex;
+
 	iterator begin() { return(items.begin()); }
 	iterator end() { return(items.end()); }
 	const_iterator begin() const { return(items.begin()); }

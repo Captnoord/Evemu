@@ -160,7 +160,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\account\AccountDB.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\account\AccountService.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\server\account\AccountService.h"
 				>
 			</File>
 			<File
@@ -168,7 +176,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\missions\Agent.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\missions\AgentMgrService.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\server\missions\AgentMgrService.h"
 				>
 			</File>
 			<File
@@ -176,7 +192,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\admin\AlertService.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\admin\AllCommands.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\server\admin\AllCommands.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\server\admin\AllCommandsList.h"
 				>
 			</File>
 			<File
@@ -184,11 +212,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\mining\Asteroid.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\mining\AsteroidBeltManager.cpp"
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\mining\AsteroidBeltManager.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\account\AuthService.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\server\account\AuthService.h"
 				>
 			</File>
 			<File
@@ -212,11 +252,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\market\BillMgrService.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\system\BookmarkService.cpp"
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\system\BookmarkService.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\system\BubbleManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\server\system\BubbleManager.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\server\cache\CachableList.h"
 				>
 			</File>
 			<File
@@ -236,11 +292,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\character\CharacterDB.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\character\CharacterService.cpp"
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\character\CharacterService.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\character\CharMgrService.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\server\character\CharMgrService.h"
 				>
 			</File>
 			<File
@@ -264,7 +332,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\admin\CommandDB.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\admin\CommandDispatcher.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\server\admin\CommandDispatcher.h"
 				>
 			</File>
 			<File
@@ -276,7 +352,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\config\ConfigDB.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\config\ConfigService.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\server\config\ConfigService.h"
 				>
 			</File>
 			<File
@@ -292,7 +376,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\corporation\CorpMgrService.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\server\corporation\CorporationCarrier.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\corporation\CorporationDB.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\server\corporation\CorporationDB.h"
 				>
 			</File>
 			<File
@@ -300,11 +396,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\corporation\CorporationService.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\corporation\CorpRegistryService.cpp"
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\corporation\CorpRegistryService.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\corporation\CorpStationMgrService.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\server\corporation\CorpStationMgrService.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\common\counted_ptr.h"
 				>
 			</File>
 			<File
@@ -320,6 +432,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\system\Damage.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\common\dbcore.cpp"
 				>
 			</File>
@@ -329,6 +445,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\common\DestinyBinDump.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\common\DestinyBinDump.h"
 				>
 			</File>
 			<File
@@ -356,7 +476,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\dogmaim\DogmaIMDB.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\dogmaim\DogmaIMService.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\server\dogmaim\DogmaIMService.h"
 				>
 			</File>
 			<File
@@ -364,7 +492,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\system\DungeonService.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\EntityList.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\server\EntityList.h"
 				>
 			</File>
 			<File
@@ -392,15 +528,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\common\EVEmuRevision.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\EVEmuServerConfig.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\include\server\EVEmuServerConfig.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\server\EVEmuServerConfig_elements.h"
 				>
 			</File>
 			<File
@@ -520,7 +656,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\admin\GMCommands.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\common\gpoint.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\common\gpoint.h"
 				>
 			</File>
 			<File
@@ -536,7 +680,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\inventory\InvBrokerService.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\inventory\InventoryDB.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\server\inventory\InventoryDB.h"
 				>
 			</File>
 			<File
@@ -568,11 +720,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\station\JumpCloneService.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\system\KeeperService.cpp"
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\system\KeeperService.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\config\LanguageService.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\server\config\LanguageService.h"
 				>
 			</File>
 			<File
@@ -592,7 +756,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\chat\LookupService.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\chat\LSCChannel.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\server\chat\LSCChannel.h"
 				>
 			</File>
 			<File
@@ -600,7 +772,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\chat\LSCDB.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\chat\LSCService.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\server\chat\LSCService.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\server\main.cpp"
 				>
 			</File>
 			<File
@@ -608,7 +792,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\map\MapDB.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\map\MapService.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\server\map\MapService.h"
 				>
 			</File>
 			<File
@@ -632,7 +824,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\mining\MiningCommands.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\mining\MiningDB.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\server\mining\MiningDB.h"
 				>
 			</File>
 			<File
@@ -656,7 +856,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\missions\MissionDB.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\missions\MissionMgrService.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\server\missions\MissionMgrService.h"
 				>
 			</File>
 			<File
@@ -672,7 +880,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\NetService.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\npc\NPC.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\server\npc\NPC.h"
 				>
 			</File>
 			<File
@@ -680,7 +896,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\npc\NPCAI.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\cache\ObjCacheDB.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\server\cache\ObjCacheDB.h"
 				>
 			</File>
 			<File
@@ -688,7 +912,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\cache\ObjCacheService.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\chat\OnlineStatusService.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\server\chat\OnlineStatusService.h"
 				>
 			</File>
 			<File
@@ -716,11 +948,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\admin\PetitionerService.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\posmgr\PosMgrDB.cpp"
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\posmgr\PosMgrDB.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\posmgr\PosMgrService.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\server\posmgr\PosMgrService.h"
 				>
 			</File>
 			<File
@@ -748,7 +992,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\mining\ReprocessingDB.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\mining\ReprocessingService.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\server\mining\ReprocessingService.h"
 				>
 			</File>
 			<File
@@ -768,11 +1020,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\system\ScenarioService.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\include\common\seperator.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\server\ServiceDB.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\server\ServiceDB.h"
 				>
 			</File>
 			<File
@@ -796,7 +1056,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\character\SkillMgrService.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\admin\SlashService.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\server\admin\SlashService.h"
 				>
 			</File>
 			<File
@@ -804,7 +1072,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\spawn\SpawnDB.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\spawn\SpawnManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\server\spawn\SpawnManager.h"
 				>
 			</File>
 			<File
@@ -812,7 +1088,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\standing\Standing2Service.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\standing\StandingDB.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\server\standing\StandingDB.h"
 				>
 			</File>
 			<File
@@ -820,11 +1104,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\station\StationDB.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\station\StationService.cpp"
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\station\StationService.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\station\StationSvcService.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\server\station\StationSvcService.h"
 				>
 			</File>
 			<File
@@ -836,15 +1132,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\sigexcept\sym_engine.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\server\system\SystemBubble.cpp"
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\system\SystemBubble.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\system\SystemDB.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\server\system\SystemDB.h"
 				>
 			</File>
 			<File
@@ -868,11 +1168,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\system\SystemManager.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\ship\TargetManager.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\include\server\ship\TargetManager.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\common\TCPBasicServer.h"
 				>
 			</File>
 			<File
@@ -904,11 +1212,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\tutorial\TutorialDB.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\tutorial\TutorialService.cpp"
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\server\tutorial\TutorialService.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\include\common\types.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\common\unix.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\common\unix.h"
 				>
 			</File>
 			<File
@@ -929,6 +1253,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\common\XMLParser.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\common\XMLParser.h"
 				>
 			</File>
 			<Filter

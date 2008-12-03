@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
 	Log.Line();
 	
 	sLog.String("Revision: %s", EVEMU_REVISION);
-	sLog.String("Supported Client: %s, Version %.2f, Build %d, MachoNet %d", EVEProjectVersion, EVEVersionNumber, EVEBuildVersion, MachoNetVersion);
+	sLog.String("Supported Client: %s, Version %.2f, Build %d, MachoNet %d", EveProjectVersion, EveVersionNumber, EveBuildVersion, MachoNetVersion);
 
 	printf( "The key combination <Ctrl-C> will safely shut down the server at any time.\n" );
 	Log.Line();
@@ -238,6 +238,9 @@ int main(int argc, char *argv[])
 
 		// check for garbage sockets
 		sSocketGarbageCollector.Update();
+
+		// temp solution for updating services
+		services.Process();
 
 		/* UPDATE */
 		last_time = now();

@@ -44,19 +44,6 @@ bool SpaceRunnable::run()
 
 	while(m_threadRunning == true)
 	{
-		// Provision for pausing this thread.
-		/*if(ThreadState == THREADSTATE_PAUSED)
-		{
-			while(ThreadState == THREADSTATE_PAUSED)
-			{
-				Sleep(200);
-			}
-		}
-		if(ThreadState == THREADSTATE_TERMINATE)
-			break;
-
-		ThreadState = THREADSTATE_BUSY;*/
-
 		uint32 diff;
 		//calculate time passed
 		uint32 now,execution_start;
@@ -88,10 +75,6 @@ bool SpaceRunnable::run()
 			diff = SPACE_UPDATE_DELAY - now;
 		else
 			diff = now - execution_start;//time used for updating 
-		//if(ThreadState == THREADSTATE_TERMINATE)
-		//	break;
-
-		//ThreadState = THREADSTATE_SLEEPING;
 
 		/*This is execution time compensating system
 			if execution took more than default delay 

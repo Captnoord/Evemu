@@ -170,19 +170,19 @@ PyPacket *EVEPresentation::_Dispatch(PyRep *r) {
 			_log(NET__PRES_REP, "%s: Received Low Level Version Exchange:\n", GetConnectedAddress().c_str());
 			ve.Dump(NET__PRES_REP, "    ");
 
-			if(ve.birthday != EVEBirthday) {
+			if(ve.birthday != EveBirthday) {
 				_log(NET__PRES_ERROR, "%s: Client's birthday does not match ours!", GetConnectedAddress().c_str());
 			}
 			if(ve.macho_version != MachoNetVersion) {
 				_log(NET__PRES_ERROR, "%s: Client's macho_version not match ours!", GetConnectedAddress().c_str());
 			}
-			if(ve.version_number != EVEVersionNumber) {
+			if(ve.version_number != EveVersionNumber) {
 				_log(NET__PRES_ERROR, "%s: Client's version_number not match ours!", GetConnectedAddress().c_str());
 			}
-			if(ve.build_version != EVEBuildVersion) {
+			if(ve.build_version != EveBuildVersion) {
 				_log(NET__PRES_ERROR, "%s: Client's build_version not match ours!", GetConnectedAddress().c_str());
 			}
-			if(ve.project_version != EVEProjectVersion) {
+			if(ve.project_version != EveProjectVersion) {
 				_log(NET__PRES_ERROR, "%s: Client's project_version not match ours!", GetConnectedAddress().c_str());
 			}
 
@@ -301,10 +301,10 @@ PyPacket *EVEPresentation::_Dispatch(PyRep *r) {
 			server_shake.serverChallenge = "hi";
 			server_shake.func_marshaled_code = new PyRepBuffer(handshakeFunc, sizeof(handshakeFunc));
 			server_shake.macho_version = MachoNetVersion;
-			server_shake.boot_version = EVEVersionNumber;
-			server_shake.boot_build = EVEBuildVersion;
-			server_shake.boot_codename = EVEProjectCodename;
-			server_shake.boot_region = EVEProjectRegion;
+			server_shake.boot_version = EveVersionNumber;
+			server_shake.boot_build = EveBuildVersion;
+			server_shake.boot_codename = EveProjectCodename;
+			server_shake.boot_region = EveProjectRegion;
 			server_shake.cluster_usercount = m_userCount;
 			server_shake.proxy_nodeid = 0xFFAA;
 			server_shake.user_logonqueueposition = 1;
@@ -350,12 +350,12 @@ PyPacket *EVEPresentation::_Dispatch(PyRep *r) {
 
 void EVEPresentation::_SendHandshake() {
 	VersionExchange version;
-	version.birthday = EVEBirthday;
+	version.birthday = EveBirthday;
 	version.macho_version = MachoNetVersion;
 	version.user_count = m_userCount;
-	version.version_number = EVEVersionNumber;
-	version.build_version = EVEBuildVersion;
-	version.project_version = EVEProjectVersion;
+	version.version_number = EveVersionNumber;
+	version.build_version = EveBuildVersion;
+	version.project_version = EveProjectVersion;
 	
 	_log(NET__PRES_REP_OUT, "%s: Sending Low Level Version Exchange:", GetConnectedAddress().c_str());
 	version.Dump(NET__PRES_REP_OUT, "    ");

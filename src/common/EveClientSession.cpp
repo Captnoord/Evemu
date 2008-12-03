@@ -188,7 +188,7 @@ void EveClientSession::_ProcessPingRequest(PyPacket& packet)
 {
 	Log.Debug("SessionPacketDispatcher", /*"%s:*/ "'Unhandled' ping request.");//, GetName());
 
-/*	PyLogsysDump dumper(SERVICE__ERROR);
+	PyLogsysDump dumper(SERVICE__ERROR);
 	packet.Dump(SERVICE__ERROR,&dumper);
 
 	//PyRepChecksumedStream * pingPacket = new PyRepChecksumedStream;
@@ -210,18 +210,25 @@ void EveClientSession::_ProcessPingRequest(PyPacket& packet)
 	ping_req.payload = new PyRepTuple(1);
 
 	PyRepList* list = new PyRepList();
-	PyRepTuple* container = new PyRepTuple(3);
-	list->add(container);
-	container->items[0] = new PyRepInteger(0); // wrong I know, I think its old ping time....
-	container->items[1] = new PyRepInteger(Win32TimeNow());
-	container->items[2] = new PyRepString("client::stop");
+
 	ping_req.payload->items[0] = list;	//times
 
-	ping_req.named_payload = new PyRepDict();
+	PyRepTuple* container = new PyRepTuple(3);
+	PyRepTuple* container2 = new PyRepTuple(3);
+	list->add(container);
+	list->add(container2);
 
-	Send(&ping_req);*/
+	(*container)[0] = new PyRepInteger(Win32TimeNow());
+	(*container)[1] = new PyRepInteger(Win32TimeNow());
+	(*container)[2] = new PyRepString("server::handle_message");
+	
+	(*container2)[0] = new PyRepInteger(Win32TimeNow());
+	(*container2)[1] = new PyRepInteger(Win32TimeNow());
+	(*container2)[2] = new PyRepString("server::turnaround");
 
+	//ping_req.named_payload = new PyRepDict();
 
+	Send(&ping_req);
 
 	/*PyPacket *ping_req = new PyPacket(MACHONETMSG_TYPE_PING_REQ, "macho.PingReq");
 
