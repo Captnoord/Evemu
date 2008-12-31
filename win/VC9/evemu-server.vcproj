@@ -80,7 +80,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/IGNORE:4099"
-				AdditionalDependencies="wsock32.lib zlib.lib mysqlclient.lib Advapi32.lib user32.lib ws2_32.lib ascent-sharedd.lib evemu-commond.lib"
+				AdditionalDependencies="wsock32.lib zlib.lib Advapi32.lib user32.lib ws2_32.lib ascent-sharedd.lib evemu-commond.lib"
 				OutputFile=".\..\..\bin\$(ConfigurationName)\$(ProjectName).exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;..\..\3rdparty\ascent-framework\lib\$(ConfigurationName)\&quot;;..\..\3rdparty\mysql\lib\debug;&quot;..\..\lib\$(ConfigurationName)\&quot;;..\..\lib"
@@ -221,7 +221,7 @@
 	</References>
 	<Files>
 		<Filter
-			Name="NewStuff"
+			Name="server"
 			>
 			<File
 				RelativePath="..\..\src\common\EveClientSession.cpp"
@@ -265,210 +265,34 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="Packets"
+			Name="communication"
 			>
 			<File
-				RelativePath="..\..\include\packets\AccountPkts.cpp"
+				RelativePath="..\..\include\common\packet_types.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\packets\AccountPkts.h"
+				RelativePath="..\..\src\rewrite\PyStream.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\packets\AccountPkts.xmlp"
+				RelativePath="..\..\src\rewrite\PyStream.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\packets\Character.cpp"
+				RelativePath="..\..\src\rewrite\PyStringTable.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\packets\Character.h"
+				RelativePath="..\..\src\rewrite\PyStringTable.h"
 				>
 			</File>
+		</Filter>
+		<Filter
+			Name="utilities"
+			>
 			<File
-				RelativePath="..\..\include\packets\Character.xmlp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\CorporationPkts.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\CorporationPkts.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\CorporationPkts.xmlp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\Crypto.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\Crypto.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\Crypto.xmlp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\Destiny.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\Destiny.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\Destiny.xmlp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\DogmaIM.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\DogmaIM.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\DogmaIM.xmlp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\General.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\General.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\General.xmlp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\Inventory.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\Inventory.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\Inventory.xmlp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\Language.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\Language.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\Language.xmlp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\LSCPkts.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\LSCPkts.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\LSCPkts.xmlp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\Manufacturing.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\Manufacturing.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\Manufacturing.xmlp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\Market.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\Market.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\Market.xmlp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\Missions.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\Missions.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\Missions.xmlp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\ObjectCaching.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\ObjectCaching.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\ObjectCaching.xmlp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\Standing2.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\Standing2.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\Standing2.xmlp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\Tutorial.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\Tutorial.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\Tutorial.xmlp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\Wallet.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\Wallet.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\packets\Wallet.xmlp"
+				RelativePath="..\..\src\rewrite\FileLogger.h"
 				>
 			</File>
 		</Filter>

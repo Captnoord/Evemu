@@ -254,6 +254,8 @@ enum MsTimeVariables
 #include <queue>
 #include <sstream>
 #include <algorithm>
+#include <unordered_map>
+#include <unordered_set>
 
 #if defined (__GNUC__)
 #  define GCC_VERSION (__GNUC__ * 10000 \

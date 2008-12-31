@@ -52,10 +52,10 @@ public:
 	// this needs to be optimized.... 'outpacket'.... and ->encode can be combined.... and should be because it doesn't require a delete
 	void Send(PyPacket* packet)
 	{
-		PyRep* raw = packet->Encode();
+		/*PyRep* raw = packet->Encode();
 		if(_socket)
 			_socket->OutPacket(raw);
-		SafeDelete(raw);
+		SafeDelete(raw);*/
 	}
 
 	void SendPyRep(PyRep* packet)
@@ -98,10 +98,10 @@ public:
 	void _sendLoginFailed();
 
 	void _SendCallReturn(PyPacket *req, PyRep **return_value, const char *channel = NULL);
-	void _SendException(PyPacket *req, MACHONETERR_TYPE type, PyRep **payload);
+	//void _SendException(PyPacket *req, MACHONETERR_TYPE type, PyRep **payload);
 	void _CheckSessionChange();
 
-	Client* _client;
+	//Client* _client;
 
 private:
 
@@ -117,7 +117,6 @@ private:
 
 	// this of course will result in a lookup table for every player..... 84 bytes on a 32 bits machine 168 byts on a 64 bits machine..
 	packetHandler Handlers[MACHONETMSG_TYPE_MAX];
-
 };
 
 //static

@@ -207,7 +207,7 @@ public:
 				}
 				else if(len < 0xFF)
 				{
-					PutByte(Op_PyByteString2);
+					PutByte(Op_PyShortString);
 					PutByte(len);
 					PutBytes(rep->value.c_str(), len);
 				} else {
@@ -248,7 +248,7 @@ public:
 
 	inline void VisitPackedObject1(const PyRepPackedObject1 *rep)
 	{
-		PutByte(Op_PackedObject1);
+		PutByte(Op_NewObject1);
 		//this is little 'hackish', but we don't have to clone whole contents
 		if(rep->keywords.empty())
 		{
@@ -275,7 +275,7 @@ public:
 	}
 
 	inline void VisitPackedObject2(const PyRepPackedObject2 *rep) {
-		PutByte(Op_PackedObject2);
+		PutByte(Op_NewObject2);
 		//this is little hackish, but we don't have to clone whole contents
 		if(rep->args2 == NULL)
 			PutByte(Op_PyOneTuple);

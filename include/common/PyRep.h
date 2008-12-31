@@ -210,7 +210,7 @@ public:
 	PyRepString *TypedClone() const;
 
 	std::string value;
-	bool is_type_1;	//true if this is an Op_PyByteString instead of the default Op_PyByteString2
+	bool is_type_1;	//true if this is an Op_PyByteString instead of the default Op_PyShortString
 
 
 //string table stuff:

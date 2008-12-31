@@ -35,7 +35,7 @@
 	bDeleted(false)
 }*/
 
-EveClientSession::EveClientSession(uint32 userId, std::string name, EveClientSocket *sock ) : _socket(sock), _userId(userId), _accountName(name), _client(NULL), bDeleted(false)
+EveClientSession::EveClientSession(uint32 userId, std::string name, EveClientSocket *sock ) : _socket(sock), _userId(userId), _accountName(name), bDeleted(false)
 {
 	Handlers[0] = &EveClientSession::_ProcessNone;
 	Handlers[1] = &EveClientSession::_ProcessNone;
@@ -60,7 +60,7 @@ EveClientSession::EveClientSession(uint32 userId, std::string name, EveClientSoc
 	Handlers[20] = &EveClientSession::_ProcessPingRequest;
 	Handlers[21] = &EveClientSession::_ProcessPingResponce;
 
-	_client = new Client(this);
+	//_client = new Client(this);
 
 	// crap.... check comments in the header..
 	/*Handlers = {
@@ -150,8 +150,9 @@ int EveClientSession::Update()
 	while (packet = _recvQueue.Pop())
 	{
 		ASSERT(packet && "EveClientSession packet dispatcher crash");
-
-		MACHONETMSG_TYPE _type = packet->type;
+		
+		// this fucked... hack.....
+		MACHONETMSG_TYPE _type = MACHONETMSG_TYPE_AUTHENTICATION_REQ;//packet->type;
 		if ( _type < MACHONETMSG_TYPE_MAX )
 		{
 			(this->*Handlers[_type])(*packet);
@@ -169,34 +170,34 @@ int EveClientSession::Update()
 
 void EveClientSession::_ProcessNone(PyPacket& packet)
 {
-	Log.Debug("SessionPacketDispatcher", "'Unhandled' packet received, opcode:%d", packet.type);
+	//Log.Debug("SessionPacketDispatcher", "'Unhandled' packet received, opcode:%d", packet.type);
 }
 
 void EveClientSession::_ProcessCallRequest(PyPacket& packet)
 {
 	//Log.Debug("SessionPacketDispatcher", "ProcessCallRequest");
-	_client->_ProcessCallRequest(&packet);
+	//_client->_ProcessCallRequest(&packet);
 }
 
 void EveClientSession::_ProcessNotification(PyPacket& packet)
 {
 	//Log.Debug("SessionPacketDispatcher", "ProcessNotification");
-	_client->_ProcessNotification(&packet);
+	//_client->_ProcessNotification(&packet);
 }
 
 void EveClientSession::_ProcessPingRequest(PyPacket& packet)
 {
 	Log.Debug("SessionPacketDispatcher", /*"%s:*/ "'Unhandled' ping request.");//, GetName());
 
-	PyLogsysDump dumper(SERVICE__ERROR);
-	packet.Dump(SERVICE__ERROR,&dumper);
+	//PyLogsysDump dumper(SERVICE__ERROR);
+	//packet.Dump(SERVICE__ERROR,&dumper);
 
 	//PyRepChecksumedStream * pingPacket = new PyRepChecksumedStream;
 	//bool success = packet.Decode(pingPacket); // kinda assuming this returns true
 
 	//return(new PyRepInteger(Win32TimeNow()));
 
-	PyPacket ping_req(MACHONETMSG_TYPE_PING_RSP, "macho.PingRsp");
+	/*PyPacket ping_req(MACHONETMSG_TYPE_PING_RSP, "macho.PingRsp");
 	ping_req.source.type = PyAddress::Node;
 	ping_req.source.typeID = sPyServiceMgr.GetNodeID();
 	//ping_req.source.callID
@@ -228,7 +229,7 @@ void EveClientSession::_ProcessPingRequest(PyPacket& packet)
 
 	//ping_req.named_payload = new PyRepDict();
 
-	Send(&ping_req);
+	Send(&ping_req);*/
 
 	/*PyPacket *ping_req = new PyPacket(MACHONETMSG_TYPE_PING_REQ, "macho.PingReq");
 
@@ -258,9 +259,9 @@ void EveClientSession::_ProcessPingResponce(PyPacket& packet)
 /* not working atm... */
 void EveClientSession::_sendLoginFailed()
 {
-	PyRepPackedObject1 *e = new PyRepPackedObject1("exceptions.GPSTransportClosed");
-	e->args = new PyRepTuple(1);
-	e->args->items[0] = new PyRepString("LoginAuthFailed");
+	//PyRepPackedObject1 *e = new PyRepPackedObject1("exceptions.GPSTransportClosed");
+	//e->args = new PyRepTuple(1);
+	//e->args->items[0] = new PyRepString("LoginAuthFailed");
 
 	//throw(PyException(e));
 	//PyException* exp = new PyException(e);
@@ -270,7 +271,7 @@ void EveClientSession::_sendLoginFailed()
 void EveClientSession::_SendCallReturn(PyPacket *req, PyRep **return_value, const char *channel)
 {
 	//build the packet:
-	PyPacket packet(MACHONETMSG_TYPE_CALL_RSP, "macho.CallRsp");
+	/*PyPacket packet(MACHONETMSG_TYPE_CALL_RSP, "macho.CallRsp");
 
 	packet.source = req->dest;
 
@@ -296,7 +297,7 @@ void EveClientSession::_SendCallReturn(PyPacket *req, PyRep **return_value, cons
 	}
 
 	
-	Send(&packet);
+	Send(&packet);*/
 }
 
 /*	Note: this function needs some love.....
@@ -304,7 +305,7 @@ void EveClientSession::_SendCallReturn(PyPacket *req, PyRep **return_value, cons
 */
 bool EveClientSession::DoLogin(CryptoChallengePacket& requestPack)
 {
-	_client->Login(&requestPack);
+	//_client->Login(&requestPack);
 
 
 	// just a debug message

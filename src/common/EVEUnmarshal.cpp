@@ -411,7 +411,7 @@ static uint32 UnmarshalData(UnmarshalState *state, const byte *packet, uint32 le
 		
 		break; }
 	
-	case Op_PyByteString2: {	//SHORT_BINSTRING
+	case Op_PyShortString: {	//SHORT_BINSTRING
 		
 		if(len < 1) {
 			_log(NET__UNMARSHAL_ERROR, "Not enough data for string length (missing length and data)\n");
@@ -443,11 +443,11 @@ static uint32 UnmarshalData(UnmarshalState *state, const byte *packet, uint32 le
 		res = r;
 
 		if(ContainsNonPrintables(r->value.c_str())) {
-			_log(NET__UNMARSHAL_TRACE, "%s(0x%x)Op_PyByteString2(len=%d, <binary>)", pfx, opcode, str_len);
+			_log(NET__UNMARSHAL_TRACE, "%s(0x%x)Op_PyShortString(len=%d, <binary>)", pfx, opcode, str_len);
 			_log(NET__UNMARSHAL_BUFHEX, "%s  Buffer Contents:", pfx);
 			phex(NET__UNMARSHAL_BUFHEX, packet, str_len);
 		} else
-			_log(NET__UNMARSHAL_TRACE, "%s(0x%x)Op_PyByteString2(len=%d, \"%s\")", pfx, opcode, str_len, r->value.c_str());
+			_log(NET__UNMARSHAL_TRACE, "%s(0x%x)Op_PyShortString(len=%d, \"%s\")", pfx, opcode, str_len, r->value.c_str());
 		
 		packet += str_len;
 		len -= str_len;
@@ -1056,7 +1056,7 @@ static uint32 UnmarshalData(UnmarshalState *state, const byte *packet, uint32 le
 	*/
 		break; }
 	
-	case Op_PackedObject1:
+	case Op_NewObject1:
 		{
 		_log(NET__UNMARSHAL_TRACE, "%s(0x%x)Op_PackedObject1", pfx, opcode);
 
@@ -1179,7 +1179,7 @@ static uint32 UnmarshalData(UnmarshalState *state, const byte *packet, uint32 le
 	*/
 		break; }
 	
-	case Op_PackedObject2: {
+	case Op_NewObject2: {
 		_log(NET__UNMARSHAL_TRACE, "%s(0x%x)Op_PackedObject2", pfx, opcode);
 
 		PyRep *rep;

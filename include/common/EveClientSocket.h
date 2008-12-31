@@ -29,6 +29,7 @@
 #define CLIENTSOCKET_SENDBUF_SIZE 0xF4240
 #define CLIENTOCKET_RECVBUF_SIZE 0xF4240
 
+
 /* outPacket queue system, part of a reliable packet sending system */
 enum OUTPACKET_RESULT
 {
@@ -51,6 +52,11 @@ enum EVE_AUTH_STATE
 	EVE_AUTH_STATE_DONE,				// old AcceptingPackets						| finished authorization
 };
 
+
+class PyRep;
+class EVENetPacket;
+class CryptoChallengePacket;
+
 class EveClientSession;
 class EveClientSocket : public Socket
 {
@@ -68,6 +74,52 @@ public:
 
 	/* Basic PyRep send function */
 	ASCENT_INLINE void OutPacket(PyRep * packet);
+
+	void SendStream(PyTupleStream* packet )
+	{
+		sFileLogger.logPacket(packet);
+
+		// ignore return for now...
+		SendRaw(packet->content(), packet->size());
+	}
+
+	OUTPACKET_RESULT SendRaw(const uint8* data, const size_t len)
+	{
+		//ByteBuffer packetcheck;
+		//packetcheck.append(packet->data, packet->length);
+
+		//printf("\nsend:\n");
+		//packetcheck.LogBuffer();
+
+		if(IsConnected() == false)
+			return OUTPACKET_RESULT_NOT_CONNECTED;
+
+		BurstBegin();
+		if( GetWriteBuffer().GetSpace() < (len+4) )
+		{
+			BurstEnd();
+			return OUTPACKET_RESULT_NO_ROOM_IN_BUFFER;
+		}
+
+		// Packet logger :)
+		//sSpaceLog.LogBuffer((uint32)len, opcode, (const uint8*)data, 1);
+
+		// Pass the size of the packet to our send buffer
+		bool rv = BurstSend((const uint8*)&len, 4);
+
+		// Pass the rest of the packet to our send buffer (if there is any)
+		if(len > 0 && rv == true)
+		{
+			rv = BurstSend(data, (uint32)len);
+		}
+
+		if(rv == true)
+		{
+			BurstPush();
+		}
+		BurstEnd();
+		return rv ? OUTPACKET_RESULT_SUCCESS : OUTPACKET_RESULT_SOCKET_ERROR;
+	}
 
 	/* set the sessions socket */
 	void SetSession(EveClientSession* session) { mSession = session; }
@@ -102,7 +154,7 @@ protected:
 
 private:
 	/* Crypt challenge cache */
-	CryptoChallengePacket* mRequest;
+	//CryptoChallengePacket* mRequest;
 
 	/* Session of this socket */
 	EveClientSession* mSession;
