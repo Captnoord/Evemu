@@ -81,7 +81,7 @@ void EveClientSocket::_sendHandShake()
 {
 	uint32 authCount = (uint32)sSpace.GetAuthorizedCount();
 
-	/* version responce packet */
+	/* version response packet */
 	PyTupleStream packet(45);
 	packet << EveBirthday;
 	packet << MachoNetVersion;

@@ -54,6 +54,7 @@ int main(int argc, char *argv[])
 #endif//WIN32
 
 	new FileLogger("packet_log.txt");
+	sFileLogger.enable();// developer warning....:D
 
 	/* start the 'threadpool', this needs to be in front of things that uses the 'threadpool' */
 	ThreadPool.Startup();

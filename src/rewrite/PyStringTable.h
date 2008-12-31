@@ -73,7 +73,7 @@ public:
 	 *
 	 * no long description
 	 *
-	 * @param[in] index is the index of the string that needs to be lookup ed.
+	 * @param[in] index is the index of the string that needs to be lookup'ed.
 	 * @param[out] str is the string that we have looked up if successful.
 	 * @return true if the index is valid and false if its beyond the range.
 	 */
@@ -319,4 +319,3 @@ static const char *StringTableData[] =
 #define sPyStringTable PyMarshalStringTable::getSingleton()
 
 #endif//PY_STRING_TABLE_H
-

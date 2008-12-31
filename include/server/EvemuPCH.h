@@ -26,9 +26,9 @@ class PyPacket
 };
 
 #include "EVEMarshalOpcodes.h"
-#include "../src/PyStringTable.h"
-#include "../src/PyStream.h"
-#include "../src/FileLogger.h"
+#include "PyStringTable.h"
+#include "PyStream.h"
+#include "FileLogger.h"
 
 #include "../common/packet_types.h"
 #include "../common/EVEVersion.h"

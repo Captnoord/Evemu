@@ -51,6 +51,9 @@ public:
 		fclose(fouttxt);
 	}
 
+	void enable() {mEnableFileWrite = true;}
+	void disable() {mEnableFileWrite = false;}
+
 	/**
 	 * @brief logPacket is a function that dumps a PyTupleStream to a file.
 	 *
