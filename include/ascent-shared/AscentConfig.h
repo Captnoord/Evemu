@@ -24,28 +24,43 @@
 #define __ASCENTCONFIG_H
 
 /**
- * DATABASE LAYER SET UP
+ * @brief DATABASE LAYER SET UP
+ *
+ * Enables the database layer.
+ *
  */
 
 /**
- * Enable/disable database backends.
+ * Enable/disable database backend's.
  * Currently supported, MySQL, (under development): PostgreSQL, SQLite
  */
-#define NO_DBLAYER_SQL
+//#define NO_DBLAYER_SQL
 #if !defined(NO_DBLAYER_SQL)
-	//#define ENABLE_DATABASE_MYSQL 1
+	#define ENABLE_DATABASE_MYSQL 1
 	//#define ENABLE_DATABASE_POSTGRES 1
 	//#define ENABLE_DATABASE_SQLITE 1
 #endif
 
 /**
-* OPENSSL SET UP
-*/
-
+ * @brief OPENSSL SET UP
+ *
+ * Enable support for OpenSSL
+ * - enables sha1.
+ * - enables MD5.
+ * - enables BigNumber class.
+ *
+ */
 //#define ASCENT_FRAMEWORK_ENABLE_OPENSSL
 
 // broken atm
 // TODO fix this
+
+/**
+ * @brief ASCENT_FRAMEWORK_ENABLE_CRASH_HANDLER
+ *
+ * enables the ascent default crash handler.
+ * #note seems to be broken.
+ */
 //define ASCENT_FRAMEWORK_ENABLE_CRASH_HANDLER
 
 /**

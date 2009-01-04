@@ -17,9 +17,10 @@
  *
  */
 
+#include "AscentConfig.h"
 #ifdef ASCENT_FRAMEWORK_ENABLE_OPENSSL
 
-#include "Sha1.h"
+#include "auth/Sha1.h"
 #include <stdarg.h>
 
 Sha1Hash::Sha1Hash()
@@ -40,6 +41,11 @@ void Sha1Hash::UpdateData(const uint8 *dta, int len)
 void Sha1Hash::UpdateData(const std::string &str)
 {
 	UpdateData((uint8 *)str.c_str(), (int)str.length());
+}
+
+void Sha1Hash::UpdateData(const std::wstring &str)
+{
+	UpdateData((uint8 *)str.c_str(), (int)str.size());
 }
 
 void Sha1Hash::UpdateBigNumbers(BigNumber *bn0, ...)

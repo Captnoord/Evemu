@@ -48,7 +48,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm250 /MP"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;..\..\include\ascent-shared\Threading&quot;;&quot;..\..\include\ascent-shared&quot;;..\..\include\common;..\..\include\server;..\..\src\rewrite;..\..\3rdparty\zlib;..\..\3rdparty\;..\..\dep\include;..\"
+				AdditionalIncludeDirectories="&quot;..\..\include\ascent-shared\Threading&quot;;&quot;..\..\include\ascent-shared&quot;;..\..\include\common;..\..\include\server;..\..\src\rewrite;..\..\3rdparty\zlib;..\..\3rdparty\;..\..\dep\include;..\;D:\Dev\Python2_6\Include;d:\Dev\Python2_6\PC"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS=1;_CRT_SECURE_NO_DEPRECATE=1;_CRT_SECURE_COPP_OVERLOAD_STANDARD_NAMES=1"
 				GeneratePreprocessedFile="0"
 				MinimalRebuild="false"
@@ -80,10 +80,10 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/IGNORE:4099"
-				AdditionalDependencies="wsock32.lib zlib.lib Advapi32.lib user32.lib ws2_32.lib ascent-sharedd.lib evemu-commond.lib"
+				AdditionalDependencies="wsock32.lib zlib.lib Advapi32.lib user32.lib ws2_32.lib ascent-sharedd.lib libmysql.lib"
 				OutputFile=".\..\..\bin\$(ConfigurationName)\$(ProjectName).exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;..\..\3rdparty\ascent-framework\lib\$(ConfigurationName)\&quot;;..\..\3rdparty\mysql\lib\debug;&quot;..\..\lib\$(ConfigurationName)\&quot;;..\..\lib"
+				AdditionalLibraryDirectories="&quot;..\..\3rdparty\ascent-framework\lib\$(ConfigurationName)\&quot;;..\..\3rdparty\mysql\lib\debug;&quot;..\..\lib\$(ConfigurationName)\&quot;;..\..\dep\lib32;..\..\lib;D:\Dev\Python2_6\PCbuild"
 				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -221,8 +221,16 @@
 	</References>
 	<Files>
 		<Filter
-			Name="server"
+			Name="Server"
 			>
+			<File
+				RelativePath="..\..\src\rewrite\AccountMgr.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\rewrite\AccountMgr.h"
+				>
+			</File>
 			<File
 				RelativePath="..\..\src\common\EveClientSession.cpp"
 				>
@@ -237,14 +245,6 @@
 			</File>
 			<File
 				RelativePath="..\..\include\common\EveClientSocket.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\server\EvemuPCH.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\MarshalStream.h"
 				>
 			</File>
 			<File
@@ -265,7 +265,7 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="communication"
+			Name="Communication"
 			>
 			<File
 				RelativePath="..\..\include\common\packet_types.h"
@@ -289,10 +289,34 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="utilities"
+			Name="Utilities"
 			>
 			<File
 				RelativePath="..\..\src\rewrite\FileLogger.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Auth"
+			>
+			<File
+				RelativePath="..\..\src\rewrite\PasswordModule.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\rewrite\PasswordModule.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\rewrite\ShaModule.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="PCH"
+			>
+			<File
+				RelativePath="..\..\include\server\EvemuPCH.h"
 				>
 			</File>
 		</Filter>

@@ -25,16 +25,6 @@
 
 #include "EvemuPCH.h"
 
-/*EveClientSession::EveClientSession(EveClientSession* session)
-{
-	Handlers = session->Handlers;
-	_socket(sock)
-	_userId(userId)
-	_accountName(name)
-	_client(NULL)
-	bDeleted(false)
-}*/
-
 EveClientSession::EveClientSession(uint32 userId, std::string name, EveClientSocket *sock ) : _socket(sock), _userId(userId), _accountName(name), bDeleted(false)
 {
 	Handlers[0] = &EveClientSession::_ProcessNone;
@@ -94,7 +84,7 @@ EveClientSession::~EveClientSession()
 {
 	_deleteMutex.Acquire();
 
-	PyPacket *packet;
+	PyNetworkStream *packet;
 	while((packet = _recvQueue.Pop()))
 	{
 		SafeDelete(packet);
@@ -112,11 +102,11 @@ void EveClientSession::Delete()
 }
 
 /* enqueue a packet to be processed in the packet dispatcher */
-void EveClientSession::QueuePacket(PyPacket* packet)
+/*void EveClientSession::QueuePacket(PyNetworkStream* packet)
 {
 	//m_lastPing = (uint32)UNIXTIME;
 	_recvQueue.Push(packet);
-}
+}*/
 
 /* returns the socket */
 EveClientSocket* EveClientSession::GetSocket()
@@ -146,7 +136,7 @@ int EveClientSession::Update()
 	if (_recvQueue.GetSize() == 0)
 		return 0;
 
-	PyPacket *packet;
+	PyNetworkStream *packet;
 	while (packet = _recvQueue.Pop())
 	{
 		ASSERT(packet && "EveClientSession packet dispatcher crash");
@@ -168,24 +158,24 @@ int EveClientSession::Update()
 	return 0;
 }
 
-void EveClientSession::_ProcessNone(PyPacket& packet)
+void EveClientSession::_ProcessNone(PyNetworkStream& packet)
 {
 	//Log.Debug("SessionPacketDispatcher", "'Unhandled' packet received, opcode:%d", packet.type);
 }
 
-void EveClientSession::_ProcessCallRequest(PyPacket& packet)
+void EveClientSession::_ProcessCallRequest(PyNetworkStream& packet)
 {
 	//Log.Debug("SessionPacketDispatcher", "ProcessCallRequest");
 	//_client->_ProcessCallRequest(&packet);
 }
 
-void EveClientSession::_ProcessNotification(PyPacket& packet)
+void EveClientSession::_ProcessNotification(PyNetworkStream& packet)
 {
 	//Log.Debug("SessionPacketDispatcher", "ProcessNotification");
 	//_client->_ProcessNotification(&packet);
 }
 
-void EveClientSession::_ProcessPingRequest(PyPacket& packet)
+void EveClientSession::_ProcessPingRequest(PyNetworkStream& packet)
 {
 	Log.Debug("SessionPacketDispatcher", /*"%s:*/ "'Unhandled' ping request.");//, GetName());
 
@@ -197,7 +187,7 @@ void EveClientSession::_ProcessPingRequest(PyPacket& packet)
 
 	//return(new PyRepInteger(Win32TimeNow()));
 
-	/*PyPacket ping_req(MACHONETMSG_TYPE_PING_RSP, "macho.PingRsp");
+	/*PyNetworkStream ping_req(MACHONETMSG_TYPE_PING_RSP, "macho.PingRsp");
 	ping_req.source.type = PyAddress::Node;
 	ping_req.source.typeID = sPyServiceMgr.GetNodeID();
 	//ping_req.source.callID
@@ -231,7 +221,7 @@ void EveClientSession::_ProcessPingRequest(PyPacket& packet)
 
 	Send(&ping_req);*/
 
-	/*PyPacket *ping_req = new PyPacket(MACHONETMSG_TYPE_PING_REQ, "macho.PingReq");
+	/*PyNetworkStream *ping_req = new PyPacket(MACHONETMSG_TYPE_PING_REQ, "macho.PingReq");
 
 	ping_req->source.type = PyAddress::Node;
 	ping_req->source.typeID = m_services->GetNodeID();
@@ -251,7 +241,7 @@ void EveClientSession::_ProcessPingRequest(PyPacket& packet)
 	FastQueuePacket(&ping_req);*/
 }
 
-void EveClientSession::_ProcessPingResponce(PyPacket& packet)
+void EveClientSession::_ProcessPingResponce(PyNetworkStream& packet)
 {
 	Log.Debug("SessionPacketDispatcher", /*"%s:*/ "Received ping response.");//, GetName());
 }
@@ -268,8 +258,8 @@ void EveClientSession::_sendLoginFailed()
 	//OutPacket(exp->ssException.get());
 }
 
-void EveClientSession::_SendCallReturn(PyPacket *req, PyRep **return_value, const char *channel)
-{
+//void EveClientSession::_SendCallReturn(PyNetworkStream *req, PyRep **return_value, const char *channel)
+//{
 	//build the packet:
 	/*PyPacket packet(MACHONETMSG_TYPE_CALL_RSP, "macho.CallRsp");
 
@@ -298,7 +288,7 @@ void EveClientSession::_SendCallReturn(PyPacket *req, PyRep **return_value, cons
 
 	
 	Send(&packet);*/
-}
+//}
 
 /*	Note: this function needs some love.....
 

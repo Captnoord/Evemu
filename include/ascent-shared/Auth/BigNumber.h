@@ -20,12 +20,12 @@
 #ifndef _AUTH_BIGNUMBER_H
 #define _AUTH_BIGNUMBER_H
 
-#ifdef ASCENT_FRAMEWORK_ENABLE_OPENSSL
-
 #include "Common.h"
 #include "ByteBuffer.h"
 
-//#include "openssl/bn.h"
+#ifdef ASCENT_FRAMEWORK_ENABLE_OPENSSL
+
+#include "openssl/bn.h"
 struct bignum_st;
 
 class BigNumber

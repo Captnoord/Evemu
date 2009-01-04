@@ -20,11 +20,11 @@
 #ifndef _MD5_H
 #define _MD5_H
 
+#include <stdlib.h>
+#include "Common.h"
 #ifdef ASCENT_FRAMEWORK_ENABLE_OPENSSL
 
-#include <stdlib.h>
 #include <openssl/md5.h>
-#include "Common.h"
 
 class MD5Hash
 {

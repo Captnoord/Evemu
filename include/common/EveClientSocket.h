@@ -62,7 +62,7 @@ class EveClientSocket : public Socket
 {
 public:
 	// state machine function pointer typedef
-	typedef void (EveClientSocket::*stateProc)(PyRep*);
+	typedef void (EveClientSocket::*stateProc)(PyNetworkStream&);
 
 	EveClientSocket(SOCKET fd);
 	~EveClientSocket();
@@ -75,13 +75,23 @@ public:
 	/* Basic PyRep send function */
 	ASCENT_INLINE void OutPacket(PyRep * packet);
 
-	void SendStream(PyTupleStream* packet )
+	/*void SendStream(PyTupleStream* packet )
 	{
-		sFileLogger.logPacket(packet);
+		sFileLogger.logPacket(packet, 1);
 
 		// ignore return for now...
 		SendRaw(packet->content(), packet->size());
+	}*/
+
+	template <typename T>
+	void SendStream(T& packet )
+	{
+		sFileLogger.logPacket(packet.content(), packet.size(), 1);
+
+		// ignore return for now...
+		SendRaw(packet.content(), packet.size());
 	}
+
 
 	OUTPACKET_RESULT SendRaw(const uint8* data, const size_t len)
 	{
@@ -141,13 +151,13 @@ protected:
 	/************************************************************************/
 	/* Authorization state machine                                          */
 	/************************************************************************/
-	void _authStateHandshake(PyRep* packet);
-	void _authStateQueueCommand(PyRep* packet);
-	void _authStateNoCrypto(PyRep* packet);
-	void _authStateCryptoChallenge(PyRep* packet);
-	void _authStateHandshakeSend(PyRep* packet);
-	void _authStateDone(PyRep* packet);
-	void _authStateException(PyRep* packet);
+	void _authStateHandshake(PyNetworkStream& packet);
+	void _authStateQueueCommand(PyNetworkStream& packet);
+	void _authStateNoCrypto(PyNetworkStream& packet);
+	void _authStateCryptoChallenge(PyNetworkStream& packet);
+	void _authStateHandshakeSend(PyNetworkStream& packet);
+	void _authStateDone(PyNetworkStream& packet);
+	void _authStateException(PyNetworkStream& packet);
 
 	// current state function pointer
 	stateProc mCurrentStateMachine;

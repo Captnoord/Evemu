@@ -24,8 +24,9 @@
 */
 
 #include "EvemuPCH.h"
-
 #include "ByteBuffer.h"
+//#include "ShaModule.h"
+#include "PasswordModule.h"
 
 // Dummy authorization handshake function
 static const uint8 handshakeFunc[] = {
@@ -40,7 +41,6 @@ EveClientSocket::EveClientSocket(SOCKET fd) : Socket(fd, CLIENTSOCKET_SENDBUF_SI
 
 	mRemaining = 0;
 
-//	mRequest = NULL;
 	mSession = NULL;
 
 	mCurrentStateMachine = &EveClientSocket::_authStateHandshake;
@@ -68,8 +68,9 @@ EveClientSocket::~EveClientSocket()
 
 void EveClientSocket::OnDisconnect()
 {
-	sSpace.mAcceptedConnections--;
-	if(mSession)
+	sSpace.OnClientDisconnect();
+	
+	if(mSession != NULL)
 	{
 		mSession->SetSocket(0);
 		mSession = NULL;
@@ -90,15 +91,15 @@ void EveClientSocket::_sendHandShake()
 	packet << EveBuildVersion;
 	packet << EveProjectVersion;
 
-	SendStream(&packet);
+	SendStream(packet);
 }
 
 //send position in queue
 void EveClientSocket::_sendQueuePos( int queuePos )
 {
 	// send a python integer back as a response on the queue query
-	//PyRepInteger packet(queuePos);
-	//OutPacket(&packet);
+	PyIntStream out(queuePos);
+	SendStream(out);
 }
 
 // 'auth' commands
@@ -109,15 +110,15 @@ void EveClientSocket::_sendQueuePos( int queuePos )
 /* send handshake accept */
 void EveClientSocket::_sendAccept()
 {
-	//PyRepString packet("OK CC"); // doesn't seem to matter what we send... (at this point)
-	//OutPacket(&packet);
+	PyStringStream out("OK CC"); // doesn't seem to matter what we send... (at this point)
+	SendStream(out);
 }
 
 /* send a python integer as a response on the password type query */
 void EveClientSocket::_sendRequirePasswordType(int passwordType)
 {
-	//PyRepInteger packet(passwordType);
-	//OutPacket(&packet);
+	PyIntStream out(passwordType);
+	SendStream(out);
 }
 
 /* low level packet sending, uses burst */
@@ -173,7 +174,7 @@ void EveClientSocket::OutPacket(PyRep * packet )
 
 void EveClientSocket::OnConnect()
 {
-	sSpace.mAcceptedConnections++;
+	sSpace.OnClientConnect();
 	//_latency = getMSTime();
 
 	/* send initial 'auth' handshake */
@@ -208,23 +209,23 @@ void EveClientSocket::OnRead()
 			}
 		}
 
-		ByteBuffer * packet = NULL;
+		//ByteBuffer * packet = NULL;
+		PyNetworkStream * packet = NULL;
 
 		/* TODO we can skip this new ByteBuffer by feeding the circular buffer into the 'unmarshal' function
 		 * requires to redesign the 'unmarshal' function
 		 */
 		if(mRemaining > 0)
 		{
-			packet = new ByteBuffer;
-			packet->resize(mRemaining);
+			packet = new PyNetworkStream(mRemaining);
 
 			// Copy from packet buffer into our actual buffer.
-			GetReadBuffer().Read(packet->data(), mRemaining);
+			GetReadBuffer().Read(packet->content(), mRemaining);
 			mRemaining = 0;
 		}
 
 		// packet log
-		//sWorldLog.LogBuffer(mSize, mOpcode, mSize ? Packet->contents() : NULL, 0);
+		sFileLogger.logPacket(packet->content(), packet->size(), 0);
 
 		/* IMPORTANT TODO, InflateAndUnmarshal should not be in the socket, as when receiving big packets this could block the
 		 * network core. So move it somehow to the session class, also as its recursive it can run forever.
@@ -236,6 +237,7 @@ void EveClientSocket::OnRead()
 
 		// the state machine magic
 		//(this->*mCurrentStateMachine)(recvPyPacket);
+		(this->*mCurrentStateMachine)(*packet);
 
 		// this is the end of the road for the used read buffer
 		if ( packet != NULL)
@@ -248,10 +250,28 @@ void EveClientSocket::OnRead()
 
 /* the client sends back its server info...
  * we should compare this with our own to make sure we can block unsupported clients.
- * I gues that would never happen unless you have a modified client. And even than its possible.
+ * I guess that would never happen unless you have a modified client. And even than its possible.
  */
-void EveClientSocket::_authStateHandshake(PyRep* packet)
+void EveClientSocket::_authStateHandshake(PyNetworkStream& packet)
 {
+	Log.Debug(__FUNCTION__, "hand shaking...");
+
+	PyTupleNetStream data(packet);
+
+	uint16 MachoVersion;
+	double VersionNr;
+	uint32 BuildVersion;
+	std::string Projectversion;
+	uint32 Birthday;
+	uint32 usercount; // what we send the client....
+
+	data >> Birthday;
+	data >> MachoVersion;
+	data >> usercount;
+	data >> VersionNr;
+	data >> BuildVersion;
+	data >> Projectversion;
+	
 	/*VersionExchange data;
 	if(data.Decode(&packet) == false)
 	{
@@ -294,72 +314,44 @@ void EveClientSocket::_authStateHandshake(PyRep* packet)
 	mCurrentStateMachine = &EveClientSocket::_authStateQueueCommand;
 }
 
-void EveClientSocket::_authStateQueueCommand(PyRep* packet)
+void EveClientSocket::_authStateQueueCommand(PyNetworkStream& packet)
 {
-	//check if it actually is tuple
-	/*if(packet->CheckType(PyRep::Tuple) == false)
+	PyTupleNetStream data(packet);
+
+//	loginprogress::connecting
+//	loginprogress::authenticating
+
+	if (data.size() == 3)
 	{
-		//sLog.Debug("%s: Invalid packet during waiting for command (tuple expected).", GetRemoteIP().c_str());
-		Disconnect();
-		return;
-	}
-	PyRepTuple *tuple = (PyRepTuple *)packet;
-	
-	//decode
-	if(tuple->items.size() == 2)			//GetLogonQueuePosition
-	{
-		//QC = Queue Check
-		NetCommand_QC cmd;
-		if(cmd.Decode(&tuple) == false)
-		{
-			//sLog.Debug("%s: Failed to decode 2-arg command.", GetRemoteIP().c_str());
-			Disconnect();
-			return;
-		}
-
-		if(cmd.command != "QC")
-		{
-			//sLog.Debug("%s: Unknown 2-arg command '%s'.", GetRemoteIP().c_str(), cmd.command.c_str());
-			Disconnect();
-			return;
-		}
-		sLog.Debug("%s: Got Queue Check command.", GetRemoteIP().c_str());
-		
-
-		// Send the position 1 or 0  the queue, which is 1 for now until we implemented a real login queue
-		 // Send 100 and the client tells you that the queue is 100
-		_sendQueuePos(1);
-
-		//now act like client just connected
-		//send out handshake again
-		_sendHandShake();
-
-		//and set proper state
-		Log.Debug("AuthStateMachine","State changed into StateHandshake");
-		mCurrentStateMachine = &EveClientSocket::_authStateHandshake;
-		return;
-	} 
-	else if(tuple->items.size() == 3)
-	{
-		//this is sent when client is logging in
-		NetCommand_VK cmd;
-		if(cmd.Decode(&tuple) == false)
-		{
-			//sLog.Debug("%s: Failed to decode 3-arg command.", GetRemoteIP().c_str());
-			Disconnect();
-			return;
-		}
-		// VK == VIP mode
-		if(cmd.command != "VK")
-		{
-			//sLog.Debug("%s: Unknown 3-arg command '%s'.", GetRemoteIP().c_str(), cmd.command.c_str());
-			Disconnect();
-			return;
-		}
-		//sLog.Debug("%s: Got VK command, vipKey=%s.", GetRemoteIP().c_str(), cmd.vipKey.c_str());
 		Log.Debug("AuthStateMachine","State changed into StateStateNoCrypto");
 		mCurrentStateMachine = &EveClientSocket::_authStateNoCrypto;
 		return;
+	}
+	else if (data.size() == 2) //GetLogonQueuePosition
+	{
+		std::string unk;
+		std::string command;
+
+		data >> unk;		// in normal situations this should be a None object
+		data >> command;	// in normal situations this should be a text command.
+
+		ASCENT_ASSERT(command == "QC");
+
+		// a check just to make sure
+		if (command == "QC")
+		{
+			// Send the position 1 or 0  the queue, which is 1 for now until we implemented a real login queue
+			// Send 100 and the client tells you that the queue is 100
+			_sendQueuePos(1);
+
+			//now act like client just connected
+			//send out handshake again
+			_sendHandShake();
+
+			//and set proper state
+			Log.Debug("AuthStateMachine","State changed into StateHandshake");
+			mCurrentStateMachine = &EveClientSocket::_authStateHandshake;
+		}
 	}
 	else 
 	{
@@ -367,14 +359,32 @@ void EveClientSocket::_authStateQueueCommand(PyRep* packet)
 		sLog.Debug("%s: Received invalid command packet:", GetRemoteIP().c_str());
 		Disconnect();
 	}
-*/
 	/* If we get here.... it means that the authorization failed in some way, also we didn't handle the exceptions yet.
 	 *
 	 */
 }
 
-void EveClientSocket::_authStateNoCrypto(PyRep* packet)
+void EveClientSocket::_authStateNoCrypto(PyNetworkStream& packet)
 {
+	PyTupleNetStream data(packet);
+
+	std::string keyVersion;
+	data >> keyVersion;
+
+	if(keyVersion == "placebo")
+	{
+		//sLog.Debug("%s: Received Placebo 'crypto' request, accepting.", GetRemoteIP().c_str());
+		Log.Debug("AuthStateMachine","State changed into StateCryptoChallenge");
+		mCurrentStateMachine = &EveClientSocket::_authStateCryptoChallenge;
+
+		_sendAccept();
+	}
+	else
+	{
+		sLog.Debug("Received invalid 'crypto' request!");
+		Disconnect();
+	}
+
 	/*CryptoRequestPacket cryptoRequest;
 
 	PyRep * data = packet;
@@ -411,11 +421,41 @@ void EveClientSocket::_authStateNoCrypto(PyRep* packet)
 	}*/
 }
 
-void EveClientSocket::_authStateCryptoChallenge(PyRep* packet)
+void EveClientSocket::_authStateCryptoChallenge(PyNetworkStream& packet)
 {
+	PyTupleNetStream data(packet);
+	PyDictNetStream testDict;
+
+	std::string unkHashOrSalt;
+	data >> unkHashOrSalt;
+	data >> testDict;
+
+	uint16 machoTest;
+	testDict["macho_version"] >> machoTest;
+
+	std::wstring UserName;
+	std::wstring UserPass;
+	std::string UserPasswordHash;
+	int UserAffiliateId;
+	testDict["user_name"] >> UserName;
+	testDict["user_password"] >> UserPass;
+	testDict["user_password_hash"] >> UserPasswordHash;
+	testDict["user_affiliateid"] >> UserAffiliateId;
+
+	/* now do the account lookup and get the password from it. */
+
+	std::string calcPassHash;
+	std::wstring tempPass = L"syst33m";
+	PasswordModule::GeneratePassHash(UserName, tempPass, calcPassHash);
+
+
+
+	
 	// just to be sure
 	/*if(mRequest != NULL)
 		delete mRequest;
+
+	
 
 	mRequest = new CryptoChallengePacket;
 
@@ -466,7 +506,7 @@ void EveClientSocket::_authStateCryptoChallenge(PyRep* packet)
 	mCurrentStateMachine = &EveClientSocket::_authStateHandshakeSend;
 }
 
-void EveClientSocket::_authStateHandshakeSend(PyRep* packet)
+void EveClientSocket::_authStateHandshakeSend(PyNetworkStream& packet)
 {
 	/*CryptoHandshakeResult handshakeResult;
 	PyRep * data = packet;
@@ -577,9 +617,9 @@ void EveClientSocket::_authStateHandshakeSend(PyRep* packet)
    - in game packet aren't 'PackedObject1' as it seems ( assumption based on the old code )
 
 */
-void EveClientSocket::_authStateDone(PyRep* packet)
+void EveClientSocket::_authStateDone(PyNetworkStream& packet)
 {
-	//Log.Debug("ClientSocket","received packet 'whooo' we passed authorization");
+	Log.Debug("ClientSocket","received packet 'whooo' we passed authorization");
 
 	// small hack to manage to handle the unexpected stuff..
 	// and of course is this not the correct way 'todo' this
@@ -609,7 +649,7 @@ void EveClientSocket::_authStateDone(PyRep* packet)
 	mSession->QueuePacket(pyPacket);*/
 }
 
-void EveClientSocket::_authStateException(PyRep* packet)
+void EveClientSocket::_authStateException(PyNetworkStream& packet)
 {
 	Log.Debug("AuthStateMachine","Processing Exception");
 

@@ -76,8 +76,25 @@ public:
 	ASCENT_INLINE uint32 GetStartTime(void) { return mStartTime; }
 	std::string GetUptimeString();
 
-	size_t mAcceptedConnections;
-	size_t mAuthorizedConnections;
+	
+
+	/**
+	 * @brief OnClientDisconnect is triggered when a socket is disconnected from the server.
+	 *
+	 * 
+	 *
+	 * @note this function is purely for server statistics.
+	 */
+	void OnClientDisconnect();
+
+	/**
+	 * @brief OnClientConnect is triggered when a client is authorized successfully.
+	 *
+	 * 
+	 *
+	 * @note this function is purely for server statistics.
+	 */
+	void OnClientConnect();
 
 private:
 	
@@ -85,6 +102,9 @@ private:
 	RWLock m_sessionlock;
 
 protected:
+	size_t mAcceptedConnections;
+	size_t mAuthorizedConnections;
+
 	Mutex SessionsMutex;//FOR GLOBAL !
 	SessionSet Sessions;
 

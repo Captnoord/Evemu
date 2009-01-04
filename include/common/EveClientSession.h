@@ -26,7 +26,7 @@
 #ifndef __EVECLIENTSESSION_H
 #define __EVECLIENTSESSION_H
 
-typedef void (EveClientSession::*packetHandler)(PyPacket&);
+typedef void (EveClientSession::*packetHandler)(PyNetworkStream&);
 
 class SERVER_DECL EveClientSession
 {
@@ -50,13 +50,13 @@ public:
 	void OutPacket(PyRep* packet) {if(_socket) _socket->OutPacket(packet);}
 
 	// this needs to be optimized.... 'outpacket'.... and ->encode can be combined.... and should be because it doesn't require a delete
-	void Send(PyPacket* packet)
-	{
+	//void Send(PyPacket* packet)
+	//{
 		/*PyRep* raw = packet->Encode();
 		if(_socket)
 			_socket->OutPacket(raw);
 		SafeDelete(raw);*/
-	}
+	//}
 
 	void SendPyRep(PyRep* packet)
 	{
@@ -69,7 +69,7 @@ public:
 			_socket->OutPacket(packet);
 	}
 
-	ASCENT_INLINE void QueuePacket(PyPacket* packet);
+	//ASCENT_INLINE void QueuePacket(PyPacket* packet);
 
 	ASCENT_INLINE EveClientSocket* GetSocket();
 	void SetSocket(EveClientSocket* sock);
@@ -83,11 +83,11 @@ public:
 	// returns true if successful and false if its not.
 	bool DoLogin(CryptoChallengePacket& requestPack);
 
-	void _ProcessNone(PyPacket& packet);
-	void _ProcessCallRequest(PyPacket& packet);
-	void _ProcessNotification(PyPacket& packet);
-	void _ProcessPingRequest(PyPacket& packet);
-	void _ProcessPingResponce(PyPacket& packet);
+	void _ProcessNone(PyNetworkStream& packet);
+	void _ProcessCallRequest(PyNetworkStream& packet);
+	void _ProcessNotification(PyNetworkStream& packet);
+	void _ProcessPingRequest(PyNetworkStream& packet);
+	void _ProcessPingResponce(PyNetworkStream& packet);
 
 	uint32 GetUserId() { return _userId;}
 
@@ -97,7 +97,7 @@ public:
 
 	void _sendLoginFailed();
 
-	void _SendCallReturn(PyPacket *req, PyRep **return_value, const char *channel = NULL);
+	//void _SendCallReturn(PyPacket *req, PyRep **return_value, const char *channel = NULL);
 	//void _SendException(PyPacket *req, MACHONETERR_TYPE type, PyRep **payload);
 	void _CheckSessionChange();
 
@@ -113,7 +113,7 @@ private:
 	EveClientSocket *_socket;
 	
 
-	FastQueue<PyPacket*, Mutex> _recvQueue;
+	FastQueue<PyNetworkStream*, Mutex> _recvQueue;
 
 	// this of course will result in a lookup table for every player..... 84 bytes on a 32 bits machine 168 byts on a 64 bits machine..
 	packetHandler Handlers[MACHONETMSG_TYPE_MAX];

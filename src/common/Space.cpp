@@ -148,3 +148,22 @@ void Space::UpdateSessions(time_t diff)
 		//session->_client->Update();
 	}
 }
+
+/************************************************************************/
+/* Server statistics                                                    */
+/************************************************************************/
+void Space::OnClientDisconnect()
+{
+	if (mAcceptedConnections > 0)
+	{
+		mAcceptedConnections--;
+		return;
+	}
+
+	ASCENT_ASSERT(mAcceptedConnections > 0);
+}
+
+void Space::OnClientConnect()
+{
+	mAcceptedConnections++;
+}

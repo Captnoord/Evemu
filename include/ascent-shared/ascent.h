@@ -55,3 +55,4 @@
 #include "Database/SQLiteDatabase.h"
 #endif
 
+#include "Auth/Sha1.h"

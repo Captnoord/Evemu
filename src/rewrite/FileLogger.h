@@ -61,7 +61,7 @@ public:
 	 *
 	 * @param[in] packet is the stream that needs to be dumped.
 	 */
-	void logPacket(PyTupleStream* packet)
+	void logPacket(PyTupleStream* packet, int direction)
 	{
 		if (mEnableFileWrite == false)
 			return;
@@ -69,11 +69,8 @@ public:
 		if (packet == NULL)
 			return;
 
-		logPacket(packet->content(), packet->size(), 0);
-		fflush(fouttxt); // terrible inefficient on a high performance aimed system like this.... debug purposes...
+		logPacket(packet->content(), packet->size(), direction);
 	}
-
-private:
 
 #define ENDING_WINDOWS "\r\n"
 #define ENDING_UNIX "\n"

@@ -26,10 +26,22 @@
 #include "EvemuPCH.h"
 
 /************************************************************************/
-/* PyStream class                                                       */
+/* Begin PyStream implementation                                        */
 /************************************************************************/
+PyStream::PyStream() : mWriteIndex(0) {}
 PyStream::PyStream(size_t size) : mWriteIndex(0) { mData.resize(size); }
 PyStream::~PyStream() {}
+
+// please don't use this often..
+PyStream::PyStream(const PyStream& data)
+{
+#pragma message(__FILE__""__FUNCTION__": slow copy constructor used, use this one with care young padawa!!\n")
+
+	this->mWriteIndex = data.mWriteIndex;
+
+	mData.resize(data.mData.size());
+	memcpy(&this->mData[0], &data.mData[0], data.mData.size());
+}
 
 PyStream &PyStream::operator<<(bool value)
 {
@@ -58,122 +70,74 @@ PyStream &PyStream::operator<<(const double& value)
 
 PyStream &PyStream::operator<<(const uint8& value)
 {
-	WriteInteger(value);
+	_writeInteger(value);
 	OnObjectWrite();
 	return *this;
 }
 
 PyStream &PyStream::operator<<(const uint32& value)
 {
-	WriteInteger(value);
+	_writeInteger(value);
 	OnObjectWrite();
 	return *this;
 }
 
-/*PyStream &PyStream::operator<<(uint64& value)
+PyStream &PyStream::operator<<(const int value)
 {
-	WriteInteger(value);
+	_writeInteger(value);
 	OnObjectWrite();
 	return *this;
-}*/	
+}
 
 PyStream &PyStream::operator<<(const char* const str)
 {
 	size_t len = strlen(str);
-	WriteString(str, len);
+	_writeString(str, len);
 	OnObjectWrite();
 	return *this;
 }
 
 PyStream &PyStream::operator<<(std::string& str)
 {
-	WriteString(str.c_str(), str.size());
+	_writeString(str.c_str(), str.size());
 	OnObjectWrite();
 	return *this;
 }
 
-template <typename T>
-void PyStream::_push8(T & value)
+void PyStream::_pushStream(PyStream & stream)
 {
-	_validateBufferSize(8);
-	mData[mWriteIndex++] = ((const_uc*)&value)[0];
-	mData[mWriteIndex++] = ((const_uc*)&value)[1];
-	mData[mWriteIndex++] = ((const_uc*)&value)[2];
-	mData[mWriteIndex++] = ((const_uc*)&value)[3];
-	mData[mWriteIndex++] = ((const_uc*)&value)[4];
-	mData[mWriteIndex++] = ((const_uc*)&value)[5];
-	mData[mWriteIndex++] = ((const_uc*)&value)[6];
-	mData[mWriteIndex++] = ((const_uc*)&value)[7];
+	size_t len = stream.size();
+	_validateBufferSize(len);
+
+	memcpy(&mData[mWriteIndex], stream.content(), len);
+	mWriteIndex+=len;
 }
 
-
-template <typename T>
-void PyStream::_push4(T value)
+void PyStream::_pushStream(PyStream & stream, size_t len, size_t offset)
 {
-	_validateBufferSize(4);
-	mData[mWriteIndex++] = ((const_uc*)&value)[0];
-	mData[mWriteIndex++] = ((const_uc*)&value)[1];
-	mData[mWriteIndex++] = ((const_uc*)&value)[2];
-	mData[mWriteIndex++] = ((const_uc*)&value)[3];
-}
+	assert(stream.size() >= len); // make sure we can read the damn thing
+	if (offset != -1)
+		assert(stream.size() > offset);
 
-template <typename T>
-void PyStream::_push2(T value)
-{
-	_validateBufferSize(2);
-	mData[mWriteIndex++] = ((const_uc*)&value)[0];
-	mData[mWriteIndex++] = ((const_uc*)&value)[1];
-}
+	_validateBufferSize(len);
 
-template <typename T>
-void PyStream::_push1(T value)
-{
-	_validateBufferSize(1);
-	mData[mWriteIndex++] = ((const_uc*)&value)[0];
-}
-
-template <typename T>
-void PyStream::WriteInteger(T & value)
-{
-	if (value == 0)
-	{
-		_pushOpcode(Op_PyZeroInteger);
-	}
-	else if(value == 1)
-	{
-		_pushOpcode(Op_PyOneInteger);
-	}
-	else if ( value + 0x80u > 0xFF )
-	{
-		if ( value + 0x8000u > 0xFFFF )
-		{
-			if (value + 0x800000u > 0xFFFFFFFF)
-			{
-				assert(false); // don't support very large integers
-				//_PyRepInteger_AsByteArray(rep);
-			}
-			else
-			{
-				_pushOpcode(Op_PyLong);
-				_push4(value);
-			}				
-		}
-		else
-		{
-			_pushOpcode(Op_PySignedShort);
-			_push2(value);
-		}
-	}
+	if (offset != -1)
+		memcpy(&mData[mWriteIndex], &stream.content()[offset], len);
 	else
-	{
-		_pushOpcode(Op_PyByte);
-		_push1(value);
-	}
+		memcpy(&mData[mWriteIndex], &stream.content()[6], len);
+
+	mWriteIndex+=len;
 }
 
-void PyStream::WriteString(const char* str, size_t len)
+void PyStream::_writeString(const char* str, size_t len)
 {
-	if (len == 0)
+	if (str == NULL)
+	{
+		// add empty string or PyNone?
+		_pushOpcode(Op_PyEmptyString);
+		return;
+	}
+	else if (len == 0)
 	{
 		_pushOpcode(Op_PyEmptyString);
 		return;
@@ -236,9 +200,34 @@ void PyStream::_validateBufferSize(size_t size)
 	}
 }
 
+/************************************************************************/
+/* End of PyStream implementation                                       */
+/************************************************************************/
 
 /************************************************************************/
-/* PyTupleStream class                                                  */
+/* Begin of PyStringStream implementation                               */
+/************************************************************************/
+PyStringStream::PyStringStream(const char* str) : PyStream(6 + strlen(str))
+{
+	/*  */
+	_push1('~');
+	_push4(0);
+	_writeString(str, strlen(str));
+}
+
+PyStringStream::PyStringStream(std::string & str) : PyStream(6 + str.size())
+{
+	/*  */
+	_push1('~');
+	_push4(0);
+	_writeString(str.c_str(), str.size());
+}
+/************************************************************************/
+/* End of PyStringStream implementation                                 */
+/************************************************************************/
+
+/************************************************************************/
+/* Begin PyTupleStream implementation                                   */
 /************************************************************************/
 PyTupleStream::PyTupleStream(size_t size) : PyStream(size + 6)
 {
@@ -253,3 +242,226 @@ void PyTupleStream::OnObjectWrite()
 {
 	(content()[6])++;
 }
+/************************************************************************/
+/* End PyTupleStream implementation                                     */
+/************************************************************************/
+
+/************************************************************************/
+/* Begin PyNetworkStream implementation                                 */
+/************************************************************************/
+PyNetworkStream::PyNetworkStream(): mReadIndex(0) {}
+PyNetworkStream::PyNetworkStream(const char * data, size_t size) : PyStream(size), mReadIndex(0)
+{
+	memcpy(&mData[0], data, size);
+}
+
+PyNetworkStream::PyNetworkStream(size_t size) : PyStream(size), mReadIndex(5)
+{
+	// this is a hack...
+	mWriteIndex = size;
+}
+
+PyStream &PyNetworkStream::operator>>(bool &value) {
+	PyRepOpcodes opcode = _popOpcode();
+	assert(opcode == Op_PyTrue || opcode == Op_PyFalse); // hehe...
+	if (opcode == Op_PyTrue)
+		value = true;
+	else
+		value = false;
+	return *this;
+}
+
+PyStream &PyNetworkStream::operator>>(uint8 &value) {
+	value = _readInteger<uint8>();
+	return *this;
+}
+
+PyStream &PyNetworkStream::operator>>(uint16 &value) {
+	value = _readInteger<uint16>();
+	return *this;
+}
+
+PyStream &PyNetworkStream::operator>>(int &value) {
+	value = _readInteger<int>();
+	return *this;
+}
+
+PyStream &PyNetworkStream::operator>>(uint32 &value) {
+	value = _readInteger<uint32>();
+	return *this;
+}
+
+PyStream &PyNetworkStream::operator>>(uint64 &value) {
+	value = _readInteger<uint64>();
+	return *this;
+}
+
+PyStream &PyNetworkStream::operator>>(double &value) {
+	PyRepOpcodes opcode = _popOpcode();
+	assert(opcode == Op_PyReal || opcode == Op_PyZeroReal);
+	value = _pop8<double>();
+	return *this;
+}
+
+PyStream &PyNetworkStream::operator>>(std::wstring &value) {
+	PyRepOpcodes opcode = _popOpcode();
+	switch (opcode)
+	{
+		// mainly here for compatibility reasons.
+	case Op_PyNone:
+		{
+			value.clear();
+		} break;
+
+	case Op_PyUnicodeString:
+		{
+			size_t size = (size_t)_pop1<uint32>();
+			if (size == 0xFF)
+				size = (size_t)_pop4<uint32>();
+			_readString(value, size);
+		} break;
+
+	case Op_PyEmptyUnicodeString:
+		{
+			value.clear();
+		} break;
+
+	case Op_PyUnicodeCharString:
+		{
+			value  = _pop2<wchar_t>();
+		} break;
+
+	case Op_PyUnicodeByteString:
+		{
+			size_t size = (size_t)_pop1<uint32>();
+			_readString(value, size);
+		} break;
+
+		// todo implement this one...
+		/*case Op_PyStringTableItem:
+		{
+		uint8 stringIndex = _pop1<uint8>();
+
+		sPyStringTable.LookupString(stringIndex, value);
+		assert(value != "");
+		} break;*/
+	}
+
+	return *this;
+}
+
+PyStream &PyNetworkStream::operator>>(std::string &value) {
+	PyRepOpcodes opcode = _popOpcode();
+
+	switch (opcode)
+	{
+		// mainly here for compatibility reasons.
+	case Op_PyNone:
+		{
+			value.clear();
+		} break;
+
+	case Op_PyBuffer:
+		{
+			size_t size = (size_t)_pop1<uint32>();
+			if (size == 0xFF)
+				size = (size_t)_pop4<uint32>();
+			_readString(value, size);
+		} break;
+
+	case Op_PyEmptyString:
+		{
+			value.clear();
+		} break;
+
+	case Op_PyCharString:
+		{
+			value = _pop1<char>();
+		} break;
+
+	case Op_PyShortString:
+		{
+			size_t size = (size_t)_pop1<uint32>();
+			_readString(value, size);
+		} break;
+
+	case Op_PyStringTableItem:
+		{
+			uint8 stringIndex = _pop1<uint8>();
+
+			sPyStringTable.LookupString(stringIndex, value);
+			assert(value != "");
+		} break;
+	}
+	return *this;
+}
+
+PyRepOpcodes PyNetworkStream::_popOpcode() {
+	uint8 opcode = mData[mReadIndex++];
+	return static_cast<PyRepOpcodes>(opcode);
+}
+
+// a method to seek tough a stream in c style
+void PyNetworkStream::_seek(size_t offset, streamSeek rule)
+{
+	switch (rule)
+	{
+		case STREAM_SEEK_SET:
+		{
+			if (offset < size())
+				mReadIndex = offset;
+			else
+				mReadIndex = -1;
+		} break;
+		
+		case STREAM_SEEK_CUR:
+		{
+			if (mReadIndex + offset < size())
+				mReadIndex+=offset;
+			else
+				mReadIndex = -1;
+		} break;
+		
+		case STREAM_SEEK_END:
+		{
+			if (size() - offset >= 0)
+				mReadIndex = size() - offset;
+			else
+				mReadIndex = -1;
+		} break;
+		
+		default:
+		{
+			assert(false);
+		} break;
+	}
+}
+
+// get the current offset
+size_t PyNetworkStream::_tell()
+{
+	return mReadIndex;
+}
+
+void PyNetworkStream::_readString(std::string & str, size_t len)
+{
+	str.clear();
+	str.resize(len);
+	memcpy(&str[0], &mData[mReadIndex], len);
+	mReadIndex+=len;
+	str[len] = '\0';
+}
+
+void PyNetworkStream::_readString(std::wstring & str, size_t len)
+{
+	str.clear();
+	str.resize(len);
+
+	size_t parsedLen = mbstowcs(&str[0], (const char*)&mData[mReadIndex], len);
+	assert(parsedLen == len);
+
+	mReadIndex+=len;
+}
+/************************************************************************/
+/* End PyNetworkStream implementation                                   */
+/************************************************************************/

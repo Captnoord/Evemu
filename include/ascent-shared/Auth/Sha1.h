@@ -20,10 +20,9 @@
 #ifndef _AUTH_SHA1_H
 #define _AUTH_SHA1_H
 
-#ifdef ASCENT_FRAMEWORK_ENABLE_OPENSSL
-
 #include <stdlib.h>
 #include "Common.h"
+#ifdef ASCENT_FRAMEWORK_ENABLE_OPENSSL
 #include <openssl/sha.h>
 #include "Auth/BigNumber.h"
 
@@ -38,6 +37,7 @@ class Sha1Hash
 
 		void UpdateData(const uint8 *dta, int len);
 		void UpdateData(const std::string &str);
+		void UpdateData(const std::wstring &str);
 
 		void Initialize();
 		void Finalize();

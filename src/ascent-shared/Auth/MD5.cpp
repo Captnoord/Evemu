@@ -17,6 +17,7 @@
  *
  */
 
+#include "AscentConfig.h"
 #ifdef ASCENT_FRAMEWORK_ENABLE_OPENSSL
 
 #include "MD5.h"

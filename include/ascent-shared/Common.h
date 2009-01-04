@@ -133,11 +133,11 @@ enum MsTimeVariables
 #define UNIX_FLAVOUR_OSX 4
 
 #if defined( __WIN32__ ) || defined( WIN32 ) || defined( _WIN32 )
-#  define PLATFORM PLATFORM_WIN32
+#  define ASCENT_PLATFORM PLATFORM_WIN32
 #elif defined( __APPLE_CC__ )
-#  define PLATFORM PLATFORM_APPLE
+#  define ASCENT_PLATFORM PLATFORM_APPLE
 #else
-#  define PLATFORM PLATFORM_UNIX
+#  define ASCENT_PLATFORM PLATFORM_UNIX
 #endif
 
 #define COMPILER_MICROSOFT 0
@@ -145,16 +145,16 @@ enum MsTimeVariables
 #define COMPILER_BORLAND   2
 
 #ifdef _MSC_VER
-#  define COMPILER COMPILER_MICROSOFT
+#  define ASCENT_COMPILER COMPILER_MICROSOFT
 #elif defined( __BORLANDC__ )
-#  define COMPILER COMPILER_BORLAND
+#  define ASCENT_COMPILER COMPILER_BORLAND
 #elif defined( __GNUC__ )
-#  define COMPILER COMPILER_GNU
+#  define ASCENT_COMPILER COMPILER_GNU
 #else
 #  pragma error "FATAL ERROR: Unknown compiler."
 #endif
 
-#if PLATFORM == PLATFORM_UNIX || PLATFORM == PLATFORM_APPLE
+#if ASCENT_PLATFORM == PLATFORM_UNIX || ASCENT_PLATFORM == PLATFORM_APPLE
 #  ifdef HAVE_DARWIN
 #    define PLATFORM_TEXT "MacOSX"
 #    define UNIX_FLAVOUR UNIX_FLAVOUR_OSX
@@ -174,7 +174,7 @@ enum MsTimeVariables
 #  endif
 #endif
 
-#if PLATFORM == PLATFORM_WIN32
+#if ASCENT_PLATFORM == PLATFORM_WIN32
 #  define PLATFORM_TEXT "Win32"
 #endif
 
@@ -190,7 +190,7 @@ enum MsTimeVariables
 #  define ARCH "X86"
 #endif
 
-#if PLATFORM == PLATFORM_WIN32
+#if ASCENT_PLATFORM == PLATFORM_WIN32
 #  ifdef X64
 #    define PLATFORM_AND_ARCH_TEXT "Win64"
 #  else
@@ -200,7 +200,7 @@ enum MsTimeVariables
 #  define PLATFORM_AND_ARCH_TEXT PLATFORM_TEXT"/"ARCH
 #endif
 
-/*#if COMPILER == COMPILER_MICROSOFT
+/*#if ASCENT_COMPILER == COMPILER_MICROSOFT
 #  pragma warning( disable : 4267 ) // conversion from 'size_t' to 'int', possible loss of data
 #  pragma warning( disable : 4311 ) // 'type cast': pointer truncation from HMODULE to uint32
 #  pragma warning( disable : 4786 ) // identifier was truncated to '255' characters in the debug information
@@ -209,13 +209,13 @@ enum MsTimeVariables
 #endif*/
 
 /* TODO check out why this here */
-#if PLATFORM == PLATFORM_WIN32
+#if ASCENT_PLATFORM == PLATFORM_WIN32
 #  define STRCASECMP stricmp
 #else
 #  define STRCASECMP strcasecmp
 #endif
 
-#if PLATFORM == PLATFORM_WIN32
+#if ASCENT_PLATFORM == PLATFORM_WIN32
 #  define ASYNC_NET
 #endif
 
@@ -283,7 +283,7 @@ enum MsTimeVariables
 #  endif
 #endif
 
-#if COMPILER == COMPILER_GNU && __GNUC__ >= 3
+#if ASCENT_COMPILER == COMPILER_GNU && __GNUC__ >= 3
 #  include <ext/hash_map>
 #  include <ext/hash_set>
 #else
@@ -295,7 +295,7 @@ enum MsTimeVariables
 #  define HM_NAMESPACE std
    using std::hash_map;
    using std::hash_set;
-#elif COMPILER == COMPILER_MICROSOFT && _MSC_VER >= 1300
+#elif ASCENT_COMPILER == COMPILER_MICROSOFT && _MSC_VER >= 1300
 #  define HM_NAMESPACE stdext
    using stdext::hash_map;
    using stdext::hash_set;
@@ -305,11 +305,11 @@ enum MsTimeVariables
 #  define snprintf _snprintf
 #  define vsnprintf _vsnprintf
 #  define strtok_r strtok_s
-#elif COMPILER == COMPILER_INTEL
+#elif ASCENT_COMPILER == COMPILER_INTEL
 #  define HM_NAMESPACE std
    using std::hash_map;
    using std::hash_set;
-#elif COMPILER == COMPILER_GNU && __GNUC__ >= 3
+#elif ASCENT_COMPILER == COMPILER_GNU && __GNUC__ >= 3
 #  define HM_NAMESPACE __gnu_cxx
    using __gnu_cxx::hash_map;
    using __gnu_cxx::hash_set;
@@ -332,7 +332,7 @@ namespace __gnu_cxx
 #endif
 
 /* Use correct types for x64 platforms, too */
-#if COMPILER != COMPILER_GNU
+#if ASCENT_COMPILER != COMPILER_GNU
   typedef signed __int64 int64;
   typedef signed __int32 int32;
   typedef signed __int16 int16;
@@ -379,7 +379,7 @@ Scripting system exports/imports
 // specific macro utilities
 #include "MacroUtil.h"
 
-#if COMPILER == COMPILER_MICROSOFT
+#if ASCENT_COMPILER == COMPILER_MICROSOFT
 #  define I64FMT "%016I64X"
 #  define I64FMTD "%I64u"
 #  define SI64FMTD "%I64d"
@@ -403,14 +403,14 @@ Scripting system exports/imports
 
 #define STRINGIZE(a) #a
 
-#if COMPILER == COMPILER_MICROSOFT
+#if ASCENT_COMPILER == COMPILER_MICROSOFT
 #  if _MSC_VER >= 1400
 #    pragma float_control(push)
 #    pragma float_control(precise, on)
 #  elif (_MSC_VER < 1300)   // MSVC 6 should be < 1300 | TODO if possible double check if only vc6 has this
 #    define for if(true)for // fix buggy MSVC's for variable scoping to be reliable =S
 #  endif//_MSC_VER
-#endif//COMPILER
+#endif//ASCENT_COMPILER
 
 // fast int abs
 static ASCENT_FORCEINLINE int int32abs( const int value )
@@ -427,7 +427,7 @@ static ASCENT_FORCEINLINE uint32 int32abs2uint32( const int value )
 /// Fastest Method of float2int32
 static ASCENT_FORCEINLINE int float2int32(const float value)
 {
-#if !defined(X64) && COMPILER == COMPILER_MICROSOFT 
+#if !defined(X64) && ASCENT_COMPILER == COMPILER_MICROSOFT 
 	int i;
 	__asm {
 		fld value
@@ -446,7 +446,7 @@ static ASCENT_FORCEINLINE int float2int32(const float value)
 /// Fastest Method of double2int32
 static ASCENT_FORCEINLINE int double2int32(const double value)
 {
-#if !defined(X64) && COMPILER == COMPILER_MICROSOFT
+#if !defined(X64) && ASCENT_COMPILER == COMPILER_MICROSOFT
 	int i;
 	__asm {
 		fld value
@@ -461,7 +461,7 @@ static ASCENT_FORCEINLINE int double2int32(const double value)
 #endif
 }
 
-#if COMPILER == COMPILER_MICROSOFT && _MSC_VER >= 1400
+#if ASCENT_COMPILER == COMPILER_MICROSOFT && _MSC_VER >= 1400
 #  pragma float_control(pop)
 #endif
 
@@ -528,5 +528,7 @@ ASCENT_FORCEINLINE void ASCENT_TOUPPER(std::string& str)
 #  define __LOC__ __FILE__ "("__STR1__(__LINE__)") : Warning Msg: "
 #  define __LOC2__ __FILE__ "("__STR1__(__LINE__)") : "
 #endif//WIN32
+
+#include "Errors.h"
 
 #endif

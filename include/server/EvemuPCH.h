@@ -20,10 +20,7 @@
 
 #include "ascent.h"
 
-class PyPacket
-{
-	PyPacket() {}
-};
+#include <algorithm>
 
 #include "EVEMarshalOpcodes.h"
 #include "PyStringTable.h"
@@ -34,6 +31,7 @@ class PyPacket
 #include "../common/EVEVersion.h"
 
 /* Ascent new stuff */
+#include "AccountMgr.h"
 #include "../common/EveClientSocket.h"
 #include "../common/EveClientSession.h"
 #include "../common/Space.h"
@@ -41,11 +39,14 @@ class PyPacket
 
 #include "../server/ClientSession.h"
 
+/*Database handles*/
+extern Database* Database_dynamic;
+extern Database* Database_static;
 
+// for static/read only data.
+#define StaticDatabase (*Database_dynamic)
 
-/* db stuff */
-extern Database * Database_Generic;
-
-#define GenericDatabase (*Database_Generic)
+// for dynamic saving/loading server related data.
+#define DynamicDatabase (*Database_static)
 
 #endif//__EVEPCH_H

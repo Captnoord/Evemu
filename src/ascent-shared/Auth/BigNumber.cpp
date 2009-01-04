@@ -17,9 +17,17 @@
  *
  */
 
+#include "AscentConfig.h"
+#include "Auth/BigNumber.h"
+
 #ifdef ASCENT_FRAMEWORK_ENABLE_OPENSSL
 
-#include "BigNumber.h"
+/* only lib include entity so watch out in the future.. */
+#ifdef WIN32
+#  pragma(lib,"libeay32.lib")
+#  pragma(lib,"ssleay32.lib")
+#endif//WIN32
+
 #include <openssl/bn.h>
 #include <algorithm>
 

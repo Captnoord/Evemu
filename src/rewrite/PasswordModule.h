@@ -23,55 +23,43 @@
 	Author:		Captnoord
 */
 
-#include "PyStringTable.h"
+#ifndef _PASSWORD_MODULE_H
+#define _PASSWORD_MODULE_H
 
-createFileSingleton(PyMarshalStringTable);
+/**
+ * \class PasswordModule
+ *
+ * @brief simple class to handle password hash generation
+ *
+ * this class mainly acts like a shell for the password hash stuff.
+ *
+ * @author Captnoord
+ * @date January 2009
+ * @note these function's aren't MT compatible ATM.
+ */
 
-PyMarshalStringTable::PyMarshalStringTable()
+/* small hack, should be easy to fix */
+#define SHA_DIGEST_SIZE 20
+static uint8 mDigest[SHA_DIGEST_SIZE];
+
+class PasswordModule
 {
-	for (size_t i = 0; i < StringTableSize; i++)
-	{
-		uint32 hashValue = hash(StringTableData[i]);
-		mStringTable[hashValue] = static_cast<uint8>(i);
-	}
-}
+public:
+	/**
+	 * @brief this functions converts a username and password into a Sha1 hash.
+	 *
+	 * 
+	 *
+	 * @param[in] userName Unicode username string representation.
+	 * @param[in] passWord Unicode password string representation.
+	 * @param[out] passWordHash return parameter, returning the Sha1 hash of the userName and passWord
+	 * @note this is a relative slow function, so I recommend not to use it to calculate the hashes on the fly.
+	 */
+	static void GeneratePassHash(/*in*/std::wstring &userName, /*in*/std::wstring &passWord, /*out*/std::string &passWordHash);
+	static void GeneratePassHash(/*in*/const wchar_t *userName, /*in*/const wchar_t *passWord, /*out*/std::string &passWordHash);
 
-PyMarshalStringTable::~PyMarshalStringTable(){}
+	// utility function.
+	static std::string GenerateHexString(const std::string & str);
+};
 
-/* lookup a index using a string */
-size_t PyMarshalStringTable::LookupIndex(std::string &str)
-{
-	mLock.Acquire();
-	uint32 hashValue = hash(str);
-	StringMapConstItr Itr = mStringTable.find(hashValue);
-	if (Itr != mStringTable.end())
-	{
-		mLock.Release();
-		return Itr->second;
-	}
-	mLock.Release();
-	return -1;
-}
-
-/* lookup a index using a string */
-size_t PyMarshalStringTable::LookupIndex(const char* str)
-{
-	// I am lazy... so I do it this way
-	std::string _str(str);
-	return LookupIndex(_str);
-}
-
-bool PyMarshalStringTable::LookupString(uint8 index, std::string &str)
-{
-	mLock.Acquire();
-	if (index > StringTableSize)
-	{
-		str = "";
-		mLock.Release();
-		return false;
-	}
-
-	str = StringTableData[index];
-	mLock.Release();
-	return true;
-}
+#endif//_PASSWORD_MODULE_H

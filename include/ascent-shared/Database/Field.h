@@ -27,7 +27,8 @@ public:
 	ASCENT_INLINE void SetValue(char* value) { mValue = value; }
 
 	ASCENT_INLINE const char *GetString() { return mValue; }
-	ASCENT_INLINE float GetFloat() { return mValue ? static_cast<float>(atof(mValue)) : 0; }
+	ASCENT_INLINE const wchar_t *GetWString() { return (wchar_t*)mValue; }
+	ASCENT_INLINE float GetFloat() { return mValue ? static_cast<float>(atof(mValue)) : 0.0f; }
 	ASCENT_INLINE bool GetBool() { return mValue ? atoi(mValue) > 0 : false; }
 	ASCENT_INLINE uint8 GetUInt8() { return mValue ? static_cast<uint8>(atol(mValue)) : 0; }
 	ASCENT_INLINE int8 GetInt8() { return mValue ? static_cast<int8>(atol(mValue)) : 0; }
@@ -54,4 +55,4 @@ private:
 		char *mValue;
 };
 
-#endif
+#endif//FIELD_H

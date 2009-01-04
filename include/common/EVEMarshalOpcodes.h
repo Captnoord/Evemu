@@ -76,7 +76,8 @@ typedef enum
 	Op_PackedTerminator		= 0x2D,
 	Op_PyUnicodeString		= 0x2E,
 	Op_PyVarInteger			= 0x2F, // variable length integer field??? // PyLong from Byte array
-	PyRepOpcodeMask			= 0x3F
+	PyRepOpcodeMask			= 0x3F,
+	PyOpcodePadding			= 0xFF, // make sure the compiler doesn't do strange tricks with this.
 } PyRepOpcodes;	//6 bits
 
 static const uint8 PyRepSaveMask = 0x40;
