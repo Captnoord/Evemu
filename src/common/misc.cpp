@@ -18,12 +18,12 @@
 
 
 #include "common.h"
-#include <string>
+#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <map>
 #include <iostream>
-#include <zlib/zlib.h>
+#include <zlib.h>
 #ifndef WIN32
 #include <sys/time.h>
 #include <sys/stat.h>

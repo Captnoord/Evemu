@@ -25,7 +25,7 @@
 #include "logsys.h"
 #include <stdio.h>
 #include <string>
-#include <zlib/zlib.h>
+#include <zlib.h>
 
 class MarshalVisitor : public PyVisitor
 {

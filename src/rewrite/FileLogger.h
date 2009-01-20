@@ -304,6 +304,5 @@ protected:
 };
 
 #define sFileLogger FileLogger::getSingleton()
-initialiseSingleton(FileLogger);
 
 #endif//FILE_LOGGER_H

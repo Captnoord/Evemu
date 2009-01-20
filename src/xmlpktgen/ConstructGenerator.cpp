@@ -22,8 +22,9 @@
 	------------------------------------------------------------------------------------
 */
 
-#include "../xmlpktgen/ConstructGenerator.h"
-#include "../common/logsys.h"
+#include "common.h"
+#include "ConstructGenerator.h"
+#include "logsys.h"
 
 ClassConstructGenerator::ClassConstructGenerator() {
 	AllProcFMaps(ClassConstructGenerator);

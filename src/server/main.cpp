@@ -27,6 +27,7 @@
 #include <signal.h>
 
 static volatile bool m_stopEvent;
+initialiseSingleton(FileLogger);
 
 /* basic prototypes */
 bool _DBStartup(std::string _hostname, uint32 _port, std::string _username, std::string _password, std::string _database, std::string _databaseDynamic);

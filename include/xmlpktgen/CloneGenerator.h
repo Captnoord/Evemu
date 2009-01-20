@@ -27,6 +27,7 @@
 
 ////#include "Generator.h"
 
+
 class ClassCloneGenerator : public TmplGenerator<ClassCloneGenerator> {
 public:
 	ClassCloneGenerator();

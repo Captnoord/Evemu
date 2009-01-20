@@ -1,4 +1,4 @@
-INCLUDES += -I$(srcdir)/../common/
+INCLUDES += -I$(srcdir)/../../include/common/
 
 BUILT_DISTS = \
 	ObjectCaching.xmlp \

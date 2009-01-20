@@ -254,8 +254,14 @@ enum MsTimeVariables
 #include <queue>
 #include <sstream>
 #include <algorithm>
+
+#ifdef WIN32
 #include <unordered_map>
 #include <unordered_set>
+#else
+#include <tr1/unordered_map>
+#include <tr1/unordered_set>
+#endif
 
 #if defined (__GNUC__)
 #  define GCC_VERSION (__GNUC__ * 10000 \
@@ -284,9 +290,9 @@ enum MsTimeVariables
 #endif
 
 #if ASCENT_COMPILER == COMPILER_GNU && __GNUC__ >= 3
-#  include <ext/hash_map>
-#  include <ext/hash_set>
-#else
+//#  include <ext/hash_map>
+//#  include <ext/hash_set>
+//#else
 #  include <hash_map>
 #  include <hash_set>
 #endif

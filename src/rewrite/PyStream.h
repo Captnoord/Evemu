@@ -26,8 +26,8 @@
 #ifndef PY_STREAM_H
 #define PY_STREAM_H
 
-#include "Common.h"
-#include "EVEMarshalOpcodes.h"
+//#include "EvemuPCH.h"
+//#include "EVEMarshalOpcodes.h"
 
 /* how the client marshals objects */
 /*
@@ -369,7 +369,7 @@ protected:
 class PyTupleStream : public PyStream
 {
 public:
-	friend PyStream;
+	//friend PyStream;
 
 	/**
 	 * @brief Tuple constructor.
@@ -402,7 +402,7 @@ private:
  */
 class PyIntStream : public PyStream
 {
-	friend PyStream;
+	//friend PyStream;
 public:
 
 	/**
@@ -435,7 +435,7 @@ public:
  */
 class PyStringStream : public PyStream
 {
-	friend PyStream;
+	//friend PyStream;
 public:
 
 	/**

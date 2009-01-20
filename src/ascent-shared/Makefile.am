@@ -22,7 +22,6 @@ libascent_a_SOURCES = \
 	Auth/BigNumber.cpp \
 	Auth/MD5.cpp \
 	Auth/Sha1.cpp \
-	Auth/WowCrypt.cpp \
 	Config/Config.cpp \
 	Database/CreateInterface.cpp \
 	Database/Database.cpp \

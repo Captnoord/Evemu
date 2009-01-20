@@ -17,7 +17,7 @@
 
 #include "NGLog.h" // ascent logging stuff
 #include <string.h>
-#include <zlib/zlib.h>
+#include <zlib.h>
 
 #include "../common/common.h"
 #include "../common/logsys.h"

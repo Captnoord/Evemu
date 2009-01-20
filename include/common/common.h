@@ -60,7 +60,6 @@
 	#define strncasecmp	_strnicmp
 	#define strcasecmp	_stricmp
 	#include <process.h>
-
 #else
 	#include "unix.h"
 	#include <pthread.h>
@@ -73,6 +72,7 @@
 	#include <fcntl.h>
 	#define INVALID_SOCKET -1
 	#define SOCKET_ERROR -1
+	#define INT_MAX 0x7FFFFFFF
 #endif
 
 #include <stdio.h>

@@ -147,15 +147,10 @@ AC_CONFIG_FILES([
 	Makefile
 	3rdparty/Makefile
 	3rdparty/tinyxml/Makefile
-	3rdparty/ascent-framework/Makefile
-	3rdparty/ascent-framework/src/Makefile
-	3rdparty/ascent-framework/src/ascent-shared/Makefile
-	common/Makefile
-	xmlpktgen/Makefile
-	packets/Makefile
-	collector/Makefile
-	evetool/Makefile
-	server/Makefile
+	src/ascent-shared/Makefile
+	src/common/Makefile
+	src/rewrite/Makefile
+	src/server/Makefile
 ])
 
 AC_OUTPUT

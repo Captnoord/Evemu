@@ -23,6 +23,8 @@
 #ifndef _MAPUPDATER_H
 #define _MAPUPDATER_H
 
+#include "Threading/ThreadStarter.h"
+
 enum SERVER_DECL CThreadState
 {
 	THREADSTATE_TERMINATE = 0,

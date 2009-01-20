@@ -22,8 +22,9 @@
 	------------------------------------------------------------------------------------
 */
 
-#include "../xmlpktgen/CloneGenerator.h"
-#include "../common/logsys.h"
+#include "common.h"
+#include "CloneGenerator.h"
+#include "logsys.h"
 
 ClassCloneGenerator::ClassCloneGenerator() {
 	AllProcFMaps(ClassCloneGenerator);

@@ -137,9 +137,9 @@ bool XMLPacketGen::GenPackets(
 		"#include <string>\n"
 		"#include <vector>\n"
 		"#include <map>\n"
-		"#include \"../common/common.h\"\n"
-		"#include \"../common/logsys.h\"\n"
-		"#include \"../common/PyRep.h\"\n"
+		"#include \"common.h\"\n"
+		"#include \"logsys.h\"\n"
+		"#include \"PyRep.h\"\n"
 		"\n"
 		"\n"
 		"",
@@ -164,7 +164,7 @@ bool XMLPacketGen::GenPackets(
 		"%s\n"
 		"#include <string>\n"
 		"#include \"%s\"\n"
-		"#include \"../common/PyRep.h\"\n"
+		"#include \"PyRep.h\"\n"
 		"\n",
 		GenFileComment, out_h
 	);
