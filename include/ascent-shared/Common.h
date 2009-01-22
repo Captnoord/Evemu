@@ -302,9 +302,9 @@ enum MsTimeVariables
    using std::hash_map;
    using std::hash_set;
 #elif ASCENT_COMPILER == COMPILER_MICROSOFT && _MSC_VER >= 1300
-#  define HM_NAMESPACE stdext
-   using stdext::hash_map;
-   using stdext::hash_set;
+#  define HM_NAMESPACE std::tr1
+//   using HM_NAMESPACE::unordered_map;
+//   using HM_NAMESPACE::unordered_set;
 #  define ENABLE_SHITTY_STL_HACKS 1
 
    // hacky stuff for vc++
