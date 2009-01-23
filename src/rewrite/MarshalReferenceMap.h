@@ -55,7 +55,7 @@ public:
 	UnmarshalReferenceMap(const uint32 objectCount) : expectedObjectsCount(objectCount), storedObjectCount(0), storeObjectIndex(0)
 	{
 		assert(expectedObjectsCount < 0x100); // kinda normal..... 256 referenced objects otherwise crash
-		mReferenceObjects = new PyRep*[expectedObjectsCount];
+		mReferenceObjects = new void*[expectedObjectsCount];
 	}
 
 	/**
@@ -63,7 +63,7 @@ public:
 	 * @param location is the index number of the referenced object.
 	 * @return A referenced PyRep base Object.
 	 */
-	ASCENT_INLINE PyRep* GetStoredObject(uint32 location)
+	ASCENT_INLINE void* GetStoredObject(uint32 location)
 	{
 		if (location == 0 || location > storedObjectCount )
 			return NULL;
@@ -74,7 +74,7 @@ public:
 	 * Stores a referenced Object.
 	 * @param object is the object that is marked as a object that has many references.
 	 */
-	ASCENT_INLINE void StoreReferencedObject(PyRep * object)
+	ASCENT_INLINE void StoreReferencedObject(void* object)
 	{
 		assert(storeObjectIndex < expectedObjectsCount); // crash when we are storing more objects than we expect
 		mReferenceObjects[storeObjectIndex] = object;
@@ -122,7 +122,7 @@ protected:
 	 * pointer container to keep track of the pointers...
 	 * and of course: "we do not own the pointers in this list"
 	 */
-	PyRep** mReferenceObjects;
+	void** mReferenceObjects;
 };
 
 #endif//UNMARSHAL_REFERENCE_MAP_H
