@@ -13,8 +13,6 @@ typedef enum _memStreamOrigin
 
 #define DEFAULT_MEM_STREAM_SIZE 0x1000
 
-#define SafeFree(x) {ASCENT_FREE(x); x = NULL;}
-
 /**
  * \class memStream
  *

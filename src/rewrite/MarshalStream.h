@@ -14,7 +14,7 @@ class MarshalStream
 public:
 	MarshalStream();
 	~MarshalStream();
-	void load(PyReadStream & stream);
+	PyObject* load(PyReadStream & stream);
 	void save(PyObject * object);
 
 	
@@ -39,20 +39,31 @@ protected:
 private:
 	PyObject* unmarshal(PyReadStream & stream);
 
-	void* readNewObject1(PyReadStream & stream, bool shared);
-	void* readNewObject2(PyReadStream & stream, bool shared);
-
-	PyObject* readVarInteger(PyReadStream & stream, bool shared);
-
-	PyString* ReadBuffer(PyReadStream & stream);
-
-	template<typename T>
-	PyObject* return_fixer(T * object)
-	{
-		return (PyObject*)object;
-	}
+	PyObject* ReadBuffer(PyReadStream & stream);
 
 	bool ReadMarshalHeader(PyReadStream & stream);
+
+	/**
+	 * @brief ReadClassString
+	 *
+	 * needs some love
+	 *
+	 * @param[in]
+	 * @param[out]
+	 * @return
+	 */
+	PyObject* ReadClassString(PyReadStream & stream, BOOL shared);
+	PyObject* ReadClass(PyReadStream & stream, BOOL shared);
+	PyObject* ReadNewObject1(PyReadStream & stream, BOOL shared);
+	PyObject* ReadNewObject2(PyReadStream & stream, BOOL shared);
+	PyObject* ReadPackedRow(PyReadStream & stream);
+	PyObject* ReadSubStream(PyReadStream & stream);
+	PyObject* ReadVarInteger(PyReadStream & stream, BOOL shared);
+
+	//////////////////////////////////////////////////////////////
+
+	/* small internal function to do some easy reading */
+	PyObject* _ReadPyStringFromStringAndSize(PyReadStream & stream);	
 
 	//PyStream	marshalStream;			// container for keeping a marshaled stream
 	PyObject*	unmarshalObjects;		// container for keeping the unmarshalled objects

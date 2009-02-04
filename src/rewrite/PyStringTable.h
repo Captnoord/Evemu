@@ -89,7 +89,7 @@ public:
 	 * @param[out] str is the PyString that we have looked up if successful.
 	 * @return true if the index is valid and false if its beyond the range.
 	 */
-	bool LookupPyString(uint8 index, PyString *str);
+	bool LookupPyString(uint8 index, PyString *&str);
 
 #define STRING_TABLE_ERROR -1
 	

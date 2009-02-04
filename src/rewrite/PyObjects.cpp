@@ -108,6 +108,7 @@ PyString::PyString(const char* str) : type(PyTypeString)
 
 	mStr = (char*)malloc(len+1);
 	strncpy(mStr, str, len);
+	mStr[len] = '\0';
 }
 
 PyString::PyString(const char* str, size_t len) : type(PyTypeString)
@@ -120,6 +121,7 @@ PyString::PyString(const char* str, size_t len) : type(PyTypeString)
 
 	mStr = (char*)malloc(len+1);
 	strncpy(mStr, str, len);
+	mStr[len] = '\0';
 }
 
 PyString::PyString(std::string& str) : type(PyTypeString)
@@ -129,6 +131,7 @@ PyString::PyString(std::string& str) : type(PyTypeString)
 
 	mStr = (char*)malloc(str.size()+1);
 	strncpy(mStr, str.c_str(), str.size());
+	mStr[str.size()] = '\0';
 }
 
 PyString::~PyString()
@@ -136,6 +139,7 @@ PyString::~PyString()
 	if (mStr != NULL)
 		free(mStr);
 	mStr = NULL;
+	type = PyTypeDeleted;
 }
 
 bool PyString::set(const char* str, size_t len)
@@ -152,6 +156,7 @@ bool PyString::set(const char* str, size_t len)
 		return false;
 
 	strncpy(mStr, str, len);
+	mStr[len] = '\0';
 	return true;
 }
 
@@ -171,7 +176,10 @@ PyUnicodeUCS2::PyUnicodeUCS2(const wchar_t* str) : type(PyTypeUnicode)
 PyUnicodeUCS2::PyUnicodeUCS2(const wchar_t* str, size_t len) : type(PyTypeUnicode)
 {
 	if (str == NULL || len == 0)
+	{
+		mStr = NULL;
 		return;
+	}
 
 	mStr = (wchar_t*)malloc((len+1) * 2);
 	memcpy(mStr, str, (len+1)*2);
@@ -188,6 +196,7 @@ PyUnicodeUCS2::~PyUnicodeUCS2()
 	if (mStr != NULL)
 		free(mStr);
 	mStr = NULL;
+	type = PyTypeDeleted;
 }
 
 bool PyUnicodeUCS2::set(const char* str, size_t len)

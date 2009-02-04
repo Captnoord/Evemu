@@ -976,6 +976,17 @@ public:
 		return value;
 	}
 
+	bool readBuffer(uint8 ** num, size_t len)
+	{
+		if (mReadIndex + len > size())
+			return false;
+
+		// whoo hacky:P
+		*num = (uint8*)&content()[mReadIndex];
+		mReadIndex+=len;
+		return true;
+	}
+
 	bool readString(char ** num, size_t len)
 	{
 		if (mReadIndex + len > size())
@@ -983,7 +994,7 @@ public:
 
 		// whoo hacky:P
 		*num = (char*)&content()[mReadIndex];
-		mReadIndex+=len;		
+		mReadIndex+=len;
 		return true;
 	}
 
@@ -994,7 +1005,7 @@ public:
 
 		// whoo hacky:P
 		*num = (wchar_t*)&content()[mReadIndex];
-		mReadIndex+=len;		
+		mReadIndex+=len;
 		return true;
 	}
 

@@ -12,6 +12,9 @@ enum PyType
 	PyTypeDict,
 	PyTypeTuple,
 	PyTypeList,
+	PyTypeSubStream,
+	PyTypeClass,
+	PyTypeDeleted, // must be last
 };
 
 class PyInt;
@@ -42,6 +45,7 @@ class PyBaseNone
 {
 public:
 	PyBaseNone() : type(PyTypeNone) {}
+	~PyBaseNone(){type = PyTypeDeleted;}
 	uint8 gettype(){return type;}
 private:
 	uint8 type;
@@ -59,6 +63,7 @@ class PyObject
 {
 public:
 	uint8 gettype(){return type;}
+	~PyObject(){ASCENT_ASSERT(false);}
 private:
 	uint8 type;
 };
@@ -87,6 +92,8 @@ public:
 		number = num;
 	}
 
+	~PyInt(){type = PyTypeDeleted;}
+
 	uint8 gettype(){return type;}
 	bool IsInfinite() {return isInfinite;}
 private:
@@ -109,6 +116,7 @@ class PyChameleon
 {
 public:
 	PyChameleon();
+	~PyChameleon(){mType = PyTypeDeleted;}
 
 	uint8 gettype(){return mType;}
 	bool isempty(){return mIsEmpty;}
@@ -167,10 +175,8 @@ private:
 class PyErrorChameleon : public PyChameleon
 {
 public:
-	PyErrorChameleon() : PyChameleon()
-	{
-	}
-
+	PyErrorChameleon() : PyChameleon() {}
+	
 	template<typename T>
 	PyErrorChameleon &operator=(T& str)
 	{
@@ -185,6 +191,7 @@ class PyLong
 {
 public:
 	PyLong(int64 & num) : number(num), type(PyTypeInt){}
+	~PyLong(){type = PyTypeDeleted;}
 	uint8 gettype(){return type;}
 	int64 getnumber() {return number;}
 
@@ -199,6 +206,7 @@ public:
 	PyFloat() : type(PyTypeReal){}
 	PyFloat(float num) : number(num), type(PyTypeReal) {}
 	PyFloat(double & num) : number(num), type(PyTypeReal) {}
+	~PyFloat(){type = PyTypeDeleted;}
 	uint8 gettype(){return type;}
 private:
 	uint8 type;
@@ -242,6 +250,7 @@ class PyBool
 {
 public:
 	PyBool(bool check) : type(PyTypeBool), mCheck(check) {}
+	~PyBool(){type = PyTypeDeleted;}
 	uint8 gettype(){return type;}
 private:
 	uint8 type;
@@ -260,6 +269,8 @@ public:
 			Log.Error("PyTuple", "constructor is requested to allocate a stupid amount of elements: %d", elementCount);
 		mTuple.resize(elementCount);
 	}
+
+	~PyTuple(){type = PyTypeDeleted;} //should it contain delete all stuff?????
 
 	PyChameleon &operator[](const int index) {
 		if (index < 0)
@@ -287,6 +298,8 @@ public:
 		mList.resize(elementCount);
 	}
 
+	~PyList(){type = PyTypeDeleted;}
+
 	PyChameleon &operator[](const int index) {
 		if (index < 0)
 			return PyErrorIterator;
@@ -308,6 +321,8 @@ public:
 	PyDict() : type(PyTypeDict) {}
 	uint8 gettype(){return type;}
 
+	~PyDict(){type = PyTypeDeleted;}
+
 	PyChameleon &operator[](const char* keyName) {
 		if (keyName == NULL || *keyName == '\0')
 			return PyErrorIterator;
@@ -318,6 +333,101 @@ public:
 private:
 	uint8 type;
 	string_map<PyChameleon> mDict;
+};
+
+/**
+ * \class PySubStream
+ *
+ * @brief totally unclear if its needed
+ *
+ * this class only keeps track of the pointer to the sub stream.
+ * we also do not own external pointers so we do a memcpy
+ *
+ * @author Captnoord
+ * @date February 2009
+ */
+class PySubStream
+{
+public:
+
+	PySubStream() : type(PyTypeSubStream), mData(NULL), mLen(0) {}
+	PySubStream(uint8* data, size_t len) : type(PyTypeSubStream), mData(NULL), mLen(0)
+	{
+		if (data == NULL)
+			return;
+
+		if (len == 0)
+			return;
+
+		mLen = len;
+
+		mData = ASCENT_MALLOC(mLen);
+		ASCENT_MEMCPY(mData, data, mLen);
+	}
+
+	~PySubStream()
+	{
+		if (mData != NULL)
+			SafeFree(mData);
+
+		mLen = 0;
+		type = PyTypeDeleted;
+	}
+
+	uint8 gettype(){return type;}
+	uint8* content(){return (uint8*)mData;}
+
+	bool set(uint8 * data, size_t len)
+	{
+		mLen = len;
+		if (mData != NULL)
+			mData = ASCENT_REALLOC(mData, mLen);
+		else
+			mData = ASCENT_MALLOC(mLen);
+
+		if (mData == NULL)
+			return false;
+
+		ASCENT_MEMCPY(mData, data, mLen);
+		return true;
+	}
+
+private:
+	uint8 type;
+	void* mData;
+	size_t mLen;
+};
+
+/**
+ * \class PyClassObject
+ *
+ * @brief a class object similar to the python one
+ *
+ * blaat I dono what I am doing....
+ *
+ * @author Captnoord
+ * @date February 2009
+ */
+class PyClassObject
+{
+public:
+	PyClassObject() : type(PyTypeClass), mDict(NULL), mName(NULL) {}
+	uint8 gettype(){return type;}
+
+	bool setname(PyString* name) {mName = name;}
+	bool setdict(PyDict* dict) {mDict = dict;}
+
+private:
+	uint8 type;
+
+	//PyTuple		*mBases;/* A tuple of class objects */
+	PyDict		*mDict;	/* A dictionary */
+	PyString	*mName;	/* A string */
+	
+	/* The following three are functions or NULL */
+	//PyObject	*mGgetattr;
+	//PyObject	*mSetattr;
+	//PyObject	*mDelattr;
 };
 
 /************************************************************************/
@@ -411,17 +521,19 @@ static PyUnicodeUCS2* PyUnicodeUCS2_FromWideChar(const wchar_t* str, size_t len)
  */
 static PyUnicodeUCS2* PyUnicodeUCS2_DecodeUTF8(const char* str, size_t len)
 {
-	ASCENT_HARDWARE_BREAKPOINT;	//test breakpoint only....
 	// implementation like these sucks....
-	size_t nlen = (strlen(str)+1) * 2;
+	size_t nlen = len;//(strlen(str)+1) * 2;
 	
-	PyUnicodeUCS2 * retstr = new PyUnicodeUCS2(0,0);
+	PyUnicodeUCS2 * retstr = new PyUnicodeUCS2();
 	retstr->resize(nlen);
 	size_t newSize = mbstowcs(retstr->content(), str, nlen);
+	retstr->content()[nlen] = '\0';
 
-	// I think this is correct....
 	if (newSize != nlen)
+	{
+		SafeDelete(retstr);
 		return NULL;
+	}
 
 	return retstr;
 }
@@ -539,16 +651,17 @@ static PyLong* _ByteArray_AsPyLong(const uint8* buffer, size_t size)
 	if (buffer == NULL)
 		return false;
 
-	if (size == 0)
+	// sanity checks
+	if (size == 0 || size > 8)
 		return 0;
 
-	uint8 len = buffer[0];
+	//uint8 len = buffer[0];
 
 	// I consider this as a error
-	if (len == 0 || len > 8)
-		return NULL;
+	//if (len == 0 || len > 8)
+	//	return NULL;
 
-	int64 intval = (1LL << (8 * len)) - 1;
+	int64 intval = (1LL << (8 * size)) - 1;
 	intval &= *((const uint64 *) buffer);
 
 	return new PyLong(intval);
