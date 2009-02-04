@@ -3,7 +3,7 @@
 	LICENSE:
 	------------------------------------------------------------------------------------
 	This file is part of EVEmu: EVE Online Server Emulator
-	Copyright 2006 - 2008 The EVEmu Team
+	Copyright 2006 - 2009 The EVEmu Team
 	For the latest information visit http://evemu.mmoforge.org
 	------------------------------------------------------------------------------------
 	This program is free software; you can redistribute it and/or modify it under
@@ -33,7 +33,7 @@ struct AccountInfo
 	wchar_t *	AccountName;
 	wchar_t *	AccountPassWord;
 	uint8		AccountShaHash[20];
-	uint32		AccountRole; // actually is a 64 bits value, but mainly no normal user will ever get to the point he gets that flag.
+	uint32		AccountRole;		/* actually is a 64 bits value, but mainly no normal user will ever get to the point he gets that flag. */
 };
 
 /**
@@ -53,14 +53,16 @@ class AccountMgr : public Singleton<AccountMgr>
 public:
 	AccountMgr();
 	~AccountMgr();
-	
+
 	AccountInfo* lookupAccount(std::wstring & userName);
 
 private:
 	// go through all the accounts that don't have a pass generated or has the changed flag on.
+	void OnAccountEvent();
 	ASCENT_INLINE void _updateAccountInfo();
 	ASCENT_INLINE void _addAccountInfo(const uint32 accountId, const wchar_t * accountName, const wchar_t * accountPassWord, const uint8 *shaHash/*size 20 byts*/, const uint32 accountRole, bool changed);
 	ASCENT_INLINE void _updateAccountHash(const wchar_t * accountName, const wchar_t * accountPassWord, const std::string &shaHash);
+
 
 	typedef std::tr1::unordered_map<uint32, AccountInfo*>	AccountInfoMap;
 	typedef AccountInfoMap::iterator						AccountInfoMapItr;

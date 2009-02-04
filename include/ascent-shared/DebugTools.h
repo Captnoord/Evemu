@@ -23,16 +23,19 @@
 	Author:		Captnoord
 */
 
-#ifndef __SPACERUNNABLE_H
-#define __SPACERUNNABLE_H
+#ifndef _DEBUGTOOLS_H
+#define _DEBUGTOOLS_H
 
-/* server update thread */
+/* a small macro to add some evil debug options to some situations */
+#ifdef WIN32
+#  define ASCENT_HARDWARE_BREAKPOINT {sLog.Debug("hardware breakpoint"); __asm{int 3}}
+#else
+#  define ASCENT_HARDWARE_BREAKPOINT
+#endif//WIN32
 
-class SpaceRunnable : public ThreadContext
-{
-public:
-	SpaceRunnable();
-	bool run();
-};
+#define ASCENT_MALLOC malloc
+#define ASCENT_FREE free
+#define ASCENT_REALLOC realloc
+#define ASCENT_MEMCPY memcpy
 
-#endif//__SPACERUNNABLE_H
+#endif //_DEBUGTOOLS_H

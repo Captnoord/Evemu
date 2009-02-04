@@ -177,12 +177,18 @@ bool MySQLDatabase::_HandleError(MySQLDatabaseConnection * con, uint32 ErrorNumb
 MySQLQueryResult::MySQLQueryResult(MYSQL_RES* res, uint32 FieldCount, uint32 RowCount) : QueryResult(FieldCount, RowCount), mResult( res )
 {
 	mCurrentRow = new Field[FieldCount];
+	//#ifdef ENABLE_FIELD_NAMES
+	mFieldExtendedInfo = new FieldExtendedInfo[FieldCount];
+	//#endif//ENABLE_FIELD_NAMES
 }
 
 MySQLQueryResult::~MySQLQueryResult()
 {
 	mysql_free_result(mResult);
 	SafeDeleteArray(mCurrentRow);
+//#ifdef ENABLE_FIELD_NAMES
+	SafeDeleteArray(mFieldExtendedInfo);
+//#endif//ENABLE_FIELD_NAMES
 }
 
 bool MySQLQueryResult::NextRow()
@@ -197,6 +203,21 @@ bool MySQLQueryResult::NextRow()
 	return true;
 }
 
+//#ifdef ENABLE_FIELD_NAMES
+bool MySQLQueryResult::GetExtendedFieldInfo()
+{
+	MYSQL_FIELD* field = NULL;
+	for(uint32 i = 0; i < mFieldCount; ++i)
+	{
+		field = mysql_fetch_field(mResult);
+		ASSERT(field != NULL);
+		mFieldExtendedInfo[i].SetExtendedInfo(field->name, (const int)field->type, field->flags);
+	}
+	return true;
+
+}
+//#endif//ENABLE_FIELD_NAMES
+
 QueryResult * MySQLDatabase::_StoreQueryResult(DatabaseConnection * con)
 {
 	MySQLQueryResult * res;
@@ -205,7 +226,7 @@ QueryResult * MySQLDatabase::_StoreQueryResult(DatabaseConnection * con)
 	uint32 uRows = (uint32)mysql_affected_rows( db->MySql );
 	uint32 uFields = (uint32)mysql_field_count( db->MySql );
 
-	if( uRows == 0 || uFields == 0 || pRes == 0 )
+	if( uRows == 0 || uFields == 0 || pRes == NULL )
 	{
 		if( pRes != NULL )
 			mysql_free_result( pRes );
@@ -215,6 +236,7 @@ QueryResult * MySQLDatabase::_StoreQueryResult(DatabaseConnection * con)
 
 	res = new MySQLQueryResult( pRes, uFields, uRows );
 	res->NextRow();
+	res->GetExtendedFieldInfo();
 
 	return res;
 }

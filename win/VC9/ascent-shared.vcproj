@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/MP"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;..\..\include\ascent-shared&quot;;..\..\dep\include"
+				AdditionalIncludeDirectories="&quot;..\..\include\ascent-shared&quot;;..\..\dep\include\mysql"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="false"
 				ExceptionHandling="1"
@@ -370,6 +370,10 @@
 		<Filter
 			Name="Netalloc_todo"
 			>
+			<File
+				RelativePath="..\..\src\ascent-shared\New Folder\CustomMemAllocaterWrapper.cpp"
+				>
+			</File>
 		</Filter>
 		<File
 			RelativePath="..\..\include\ascent-shared\ascent.h"
@@ -437,6 +441,10 @@
 		</File>
 		<File
 			RelativePath="..\..\include\ascent-shared\crc32.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\include\ascent-shared\DebugTools.h"
 			>
 		</File>
 		<File
@@ -529,6 +537,10 @@
 		</File>
 		<File
 			RelativePath="..\..\include\ascent-shared\Storage.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\include\ascent-shared\string_map.h"
 			>
 		</File>
 		<File

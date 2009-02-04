@@ -3,7 +3,7 @@
 	LICENSE:
 	------------------------------------------------------------------------------------
 	This file is part of EVEmu: EVE Online Server Emulator
-	Copyright 2006 - 2008 The EVEmu Team
+	Copyright 2006 - 2009 The EVEmu Team
 	For the latest information visit http://evemu.mmoforge.org
 	------------------------------------------------------------------------------------
 	This program is free software; you can redistribute it and/or modify it under
@@ -27,6 +27,7 @@
 #define PY_STRING_TABLE_H
 
 #include "ascent.h"
+#include "PyObjects.h"
 
 /**
  * \class PyMarshalStringTable
@@ -73,15 +74,25 @@ public:
 	 *
 	 * no long description
 	 *
-	 * @param[in] index is the index of the string that needs to be lookup'ed.
+	 * @param[in] index is the index of the string that needs to be looked up.
 	 * @param[out] str is the string that we have looked up if successful.
 	 * @return true if the index is valid and false if its beyond the range.
 	 */
 	bool LookupString(uint8 index, std::string &str);
 
+	/**
+	 * @brief lookup a PyString object using a index
+	 *
+	 * no long description
+	 *
+	 * @param[in] index is the index of the string that needs to be looked up.
+	 * @param[out] str is the PyString that we have looked up if successful.
+	 * @return true if the index is valid and false if its beyond the range.
+	 */
+	bool LookupPyString(uint8 index, PyString *str);
+
 #define STRING_TABLE_ERROR -1
 	
-
 private:
 	/**
 	 * @brief djb2 algorithm taken from http://www.cse.yorku.ca/~oz/hash.html slightly modified
@@ -111,6 +122,7 @@ private:
 
 	StringMap	mStringTable;
 	Mutex		mLock; // only for now..
+	PyString	mPyStringTable[195];
 };
 
 /* the current string count of the string table */

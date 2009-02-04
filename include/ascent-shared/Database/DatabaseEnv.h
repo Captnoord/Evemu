@@ -25,6 +25,9 @@
 #include "Singleton.h"
 #include "Log.h"
 
+// hack thingy to get the fields names
+#define ENABLE_FIELD_NAMES
+
 //! Our own includes.
 #include "Database/Field.h"
 #include "Database/Database.h"

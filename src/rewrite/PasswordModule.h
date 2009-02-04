@@ -3,7 +3,7 @@
 	LICENSE:
 	------------------------------------------------------------------------------------
 	This file is part of EVEmu: EVE Online Server Emulator
-	Copyright 2006 - 2008 The EVEmu Team
+	Copyright 2006 - 2009 The EVEmu Team
 	For the latest information visit http://evemu.mmoforge.org
 	------------------------------------------------------------------------------------
 	This program is free software; you can redistribute it and/or modify it under
@@ -56,9 +56,28 @@ public:
 	 * @note this is a relative slow function, so I recommend not to use it to calculate the hashes on the fly.
 	 */
 	static void GeneratePassHash(/*in*/std::wstring &userName, /*in*/std::wstring &passWord, /*out*/std::string &passWordHash);
+
+	/**
+	 * @brief this functions converts a username and password into a Sha1 hash.
+	 *
+	 * 
+	 *
+	 * @param[in] userName Unicode username wchar_t string representation.
+	 * @param[in] passWord Unicode password wchar_t string representation.
+	 * @param[out] passWordHash return parameter, returning the Sha1 hash of the userName and passWord
+	 * @note this is a relative slow function, so I recommend not to use it to calculate the hashes on the fly.
+	 */
 	static void GeneratePassHash(/*in*/const wchar_t *userName, /*in*/const wchar_t *passWord, /*out*/std::string &passWordHash);
 
-	// utility function.
+	/**
+	 * @brief GenerateHexString generates a hex string from a normal string.
+	 *
+	 * GenerateHexString generates a hex string from a normal string, which
+	 * makes reading non strings easier to read.
+	 *
+	 * @param[in] str is the object that needs to be "hexified".
+	 * @return the hexadecimal representation of str. 
+	 */
 	static std::string GenerateHexString(const std::string & str);
 };
 

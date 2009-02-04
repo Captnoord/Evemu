@@ -3,7 +3,7 @@
 	LICENSE:
 	------------------------------------------------------------------------------------
 	This file is part of EVEmu: EVE Online Server Emulator
-	Copyright 2006 - 2008 The EVEmu Team
+	Copyright 2006 - 2009 The EVEmu Team
 	For the latest information visit http://evemu.mmoforge.org
 	------------------------------------------------------------------------------------
 	This program is free software; you can redistribute it and/or modify it under
@@ -33,6 +33,7 @@ PyMarshalStringTable::PyMarshalStringTable()
 	{
 		uint32 hashValue = hash(StringTableData[i]);
 		mStringTable[hashValue] = static_cast<uint8>(i);
+		mPyStringTable[i].set(StringTableData[i], strlen(StringTableData[i]));
 	}
 }
 
@@ -72,6 +73,21 @@ bool PyMarshalStringTable::LookupString(uint8 index, std::string &str)
 	}
 
 	str = StringTableData[index];
+	mLock.Release();
+	return true;
+}
+
+bool PyMarshalStringTable::LookupPyString(uint8 index, PyString *str)
+{
+	mLock.Acquire();
+	if (index > StringTableSize)
+	{
+		*str = "";
+		mLock.Release();
+		return false;
+	}
+
+	str = &mPyStringTable[index];
 	mLock.Release();
 	return true;
 }

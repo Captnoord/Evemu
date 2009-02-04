@@ -253,7 +253,7 @@ public:
 	void InitPool(uint32 cnt) { _pool.Init( cnt ); }
 #endif
 
-	typename HM_NAMESPACE::hash_map<uint32, T*> _map;
+	typename std::tr1::unordered_map<uint32, T*> _map;
 
 	/** Returns an iterator currently referencing the start of the container
 	 */
@@ -263,7 +263,7 @@ public:
 	 */
 	~HashMapStorageContainer()
 	{
-		for(typename HM_NAMESPACE::hash_map<uint32, T*>::iterator itr = _map.begin(); itr != _map.end(); ++itr)
+		for(typename std::tr1::unordered_map<uint32, T*>::iterator itr = _map.begin(); itr != _map.end(); ++itr)
 			delete itr->second;
 	}
 

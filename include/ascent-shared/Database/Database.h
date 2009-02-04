@@ -161,20 +161,31 @@ protected:
 class SERVER_DECL QueryResult
 {
 public:
-	QueryResult(uint32 fields, uint32 rows) : mFieldCount(fields), mRowCount(rows), mCurrentRow(NULL) {}
+//#ifdef ENABLE_FIELD_NAMES
+	QueryResult(uint32 fields, uint32 rows) : mFieldCount(fields), mRowCount(rows), mCurrentRow(NULL), mFieldExtendedInfo(NULL) {}
+//#else
+	//QueryResult(uint32 fields, uint32 rows) : mFieldCount(fields), mRowCount(rows), mCurrentRow(NULL) {}
+//#endif
+
 	virtual ~QueryResult() {}
 
 	virtual bool NextRow() = 0;
 	void Delete() { delete this; }
 
-	ASCENT_INLINE Field* Fetch() { return mCurrentRow; }
-	ASCENT_INLINE uint32 GetFieldCount() const { return mFieldCount; }
-	ASCENT_INLINE uint32 GetRowCount() const { return mRowCount; }
+	Field* Fetch() { return mCurrentRow; }
+//#ifdef ENABLE_FIELD_NAMES
+	FieldExtendedInfo* FetchExtendedInfo() { return mFieldExtendedInfo; }
+//#endif//ENABLE_FIELD_NAMES
+	uint32 GetFieldCount() const { return mFieldCount; }
+	uint32 GetRowCount() const { return mRowCount; }
 
 protected:
 	uint32 mFieldCount;
 	uint32 mRowCount;
-        Field *mCurrentRow;
+    Field *mCurrentRow;
+//#ifdef ENABLE_FIELD_NAMES
+	FieldExtendedInfo *mFieldExtendedInfo;
+//#endif//ENABLE_FIELD_NAMES
 };
 
 class SERVER_DECL QueryThread : public ThreadContext
@@ -187,4 +198,4 @@ public:
 	bool run();
 };
 
-#endif
+#endif//_DATABASE_H

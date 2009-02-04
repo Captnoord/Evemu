@@ -3,7 +3,7 @@
 	LICENSE:
 	------------------------------------------------------------------------------------
 	This file is part of EVEmu: EVE Online Server Emulator
-	Copyright 2006 - 2008 The EVEmu Team
+	Copyright 2006 - 2009 The EVEmu Team
 	For the latest information visit http://evemu.mmoforge.org
 	------------------------------------------------------------------------------------
 	This program is free software; you can redistribute it and/or modify it under
@@ -30,9 +30,9 @@
 void PasswordModule::GeneratePassHash(std::wstring &userName, std::wstring &passWord, std::string &passWordHash)
 {
 	std::wstring salt = userName;
-
-	StringUtils::trim(salt, true, true);		// comparable to the ".strip" function in python.
-	StringUtils::toLowerCase(salt);
+	
+	Utils::Strings::trim(salt, true, true);		// comparable to the ".strip" function in python.
+	Utils::Strings::toLowerCase(salt);
 
 	int saltLen = (int)salt.size() * 2;
 	uint8 * saltChar = (uint8*)&salt[0];
@@ -70,8 +70,8 @@ void PasswordModule::GeneratePassHash(const wchar_t *userName, const wchar_t *pa
 {
 	std::wstring salt(userName);
 
-	StringUtils::trim(salt, true, true);		// comparable to the ".strip" function in python.
-	StringUtils::toLowerCase(salt);
+	Utils::Strings::trim(salt, true, true);		// comparable to the ".strip" function in python.
+	Utils::Strings::toLowerCase(salt);
 
 	int saltLen = (int)salt.size() * 2;
 	uint8 * saltChar = (uint8*)&salt[0];

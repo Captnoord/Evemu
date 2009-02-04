@@ -67,6 +67,9 @@ public:
 	~MySQLQueryResult();
 
 	bool NextRow();
+//#ifdef ENABLE_FIELD_NAMES
+	bool GetExtendedFieldInfo();
+//#endif//ENABLE_FIELD_NAMES
 
 protected:
 	MYSQL_RES* mResult;

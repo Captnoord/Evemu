@@ -48,7 +48,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm250 /MP"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;..\..\include\ascent-shared\Threading&quot;;&quot;..\..\include\ascent-shared&quot;;..\..\include\common;..\..\include\server;..\..\src\rewrite;..\..\3rdparty\zlib;..\..\3rdparty\;..\..\dep\include;..\;D:\Dev\Python2_6\Include;d:\Dev\Python2_6\PC"
+				AdditionalIncludeDirectories="&quot;..\..\include\ascent-shared\Threading&quot;;&quot;..\..\include\ascent-shared&quot;;..\..\include\common;..\..\include\server;..\..\src\rewrite;..\..\3rdparty\zlib;..\..\3rdparty\;..\..\dep\include;..\..\dep\include\mysql;..\;D:\Dev\Python2_6\Include;d:\Dev\Python2_6\PC"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS=1;_CRT_SECURE_NO_DEPRECATE=1;_CRT_SECURE_COPP_OVERLOAD_STANDARD_NAMES=1"
 				GeneratePreprocessedFile="0"
 				MinimalRebuild="false"
@@ -65,7 +65,6 @@
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
 				CallingConvention="0"
-				DisableSpecificWarnings="4355"
 				ShowIncludes="false"
 			/>
 			<Tool
@@ -263,10 +262,42 @@
 				RelativePath="..\..\include\common\SpaceRunnable.h"
 				>
 			</File>
+			<Filter
+				Name="Session"
+				>
+				<File
+					RelativePath="..\..\src\rewrite\EveSession.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\rewrite\EveSession.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\rewrite\EveSessionMgr.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Communication"
 			>
+			<File
+				RelativePath="..\..\include\common\EveMarshalOpcodes.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\rewrite\MarshalReferenceMap.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\rewrite\MarshalStream.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\rewrite\MarshalStream.h"
+				>
+			</File>
 			<File
 				RelativePath="..\..\include\common\packet_types.h"
 				>
@@ -292,13 +323,29 @@
 			Name="Utilities"
 			>
 			<File
+				RelativePath="..\..\src\rewrite\DBRow.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\rewrite\FileLogger.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\rewrite\memStream.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\rewrite\memStream.h"
 				>
 			</File>
 		</Filter>
 		<Filter
 			Name="Auth"
 			>
+			<File
+				RelativePath="..\..\src\rewrite\BinAsciiModule.h"
+				>
+			</File>
 			<File
 				RelativePath="..\..\src\rewrite\PasswordModule.cpp"
 				>
@@ -317,6 +364,30 @@
 			>
 			<File
 				RelativePath="..\..\include\server\EvemuPCH.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="TestCases"
+			>
+			<File
+				RelativePath="..\..\src\rewrite\TestCaseMain.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\rewrite\TestCaseMarshal.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="PythonObjects"
+			>
+			<File
+				RelativePath="..\..\src\rewrite\PyObjects.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\rewrite\PyObjects.h"
 				>
 			</File>
 		</Filter>

@@ -94,7 +94,9 @@
 	Author:		Lars Wesselius
 	*/
 
-class StringUtils
+namespace Utils
+{
+class Strings
 {
 public:
 	/* trim
@@ -203,9 +205,18 @@ public:
 	 *
 	 * Transforms a string into lower case characters.
 	 *
-	 * @param TString[in][out] - The string to convert.
+	 * @param[in][out] TString - The string to convert.
 	 */
 	static void						toLowerCase(std::wstring& TString);
+
+	/**
+	 * @brief a function to convert numbers to std strings
+	 *
+	 * 
+	 *
+	 * @param[in] the number that needs a representatively in a character array.
+	 */
+	static std::string				toString(uint32 number);
 };
 	/************************************************************************/
 	/* end of the OpenFrag project header                                   */
@@ -221,7 +232,7 @@ public:
  * @author Captnoord.
  * @date January 2009
  */
-class HashUtil
+class Hash
 {
 public:
 	/**
@@ -293,7 +304,7 @@ public:
 	*/
 	static uint32 djb2_hash(const std::wstring& oStr)
 	{
-		const char * str = (const char*)oStr.c_str();
+		const wchar_t * str = oStr.c_str();
 
 		uint32 hash = 5381;
 		int c;
@@ -323,7 +334,26 @@ public:
 
 		return hash;
 	}
-};
 
+	/**
+	 * @brief sdbm algorithm taken from http://www.cse.yorku.ca/~oz/hash.html slightly modified
+	 *
+	 * 
+	 *
+	 * @param[in] oStr string that needs to be hashed.
+	 * @return sdbm hash of the string.
+	 */
+	static uint32 sdbm_hash(const char *str)
+	{
+		uint32 hash = 0;
+		int c;
+
+		while (c = *str++)
+			hash = c + (hash << 6) + (hash << 16) - hash;
+
+		return hash;
+	}
+};
+}// namespace Utils
 
 #endif//_UTIL_H

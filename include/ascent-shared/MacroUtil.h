@@ -25,7 +25,6 @@
  *
  */
 
-
 /* Basic programming tips
  * URL: http://nedprod.com/programs/index.html
  * Note: always nullify pointers after deletion

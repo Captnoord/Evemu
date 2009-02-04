@@ -3,7 +3,7 @@
 	LICENSE:
 	------------------------------------------------------------------------------------
 	This file is part of EVEmu: EVE Online Server Emulator
-	Copyright 2006 - 2008 The EVEmu Team
+	Copyright 2006 - 2009 The EVEmu Team
 	For the latest information visit http://evemu.mmoforge.org
 	------------------------------------------------------------------------------------
 	This program is free software; you can redistribute it and/or modify it under
@@ -25,6 +25,9 @@
 
 #include "EvemuPCH.h"
 #include <signal.h>
+
+#include "TestCaseMain.h"
+#include "TestCaseMarshal.h"
 
 static volatile bool m_stopEvent;
 initialiseSingleton(FileLogger);
@@ -66,6 +69,12 @@ int main(int argc, char *argv[])
 	printf( "The key combination <Ctrl-C> will safely shut down the server at any time.\n" );
 	Log.Line();
 
+	uint32 henk = Utils::Hash::djb2_hash("henk is fokking lelijk");
+	uint32 henk2 = Utils::Hash::sdbm_hash("henk is fokking lelijk");
+
+	string_map<uint32> test;
+	test.insert("henk", 1);
+
 #ifndef WIN32
 	if(geteuid() == 0 || getegid() == 0)
 	{
@@ -86,6 +95,8 @@ int main(int argc, char *argv[])
 		Log.Error("Database", "Unable to connect to the db");
 		return 1;
 	}
+
+	TestCast::DoTests();
 
 
 	// Startup banner

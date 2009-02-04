@@ -47,6 +47,11 @@ class UnmarshalReferenceMap
 {
 public:
 
+	UnmarshalReferenceMap() : expectedObjectsCount(0), storedObjectCount(0), storeObjectIndex(0)
+	{
+		mReferenceObjects = NULL;
+	}
+
 	/**
 	 * Constructor that sets the expected object count of referenced objects.
 	 * @param objectCount is the number of expected referenced objects within the marshal stream, its also known in the client as as MapCount.
@@ -62,31 +67,36 @@ public:
 	 * @param location is the index number of the referenced object.
 	 * @return A referenced PyRep base Object.
 	 */
-	ASCENT_INLINE void* GetStoredObject(uint32 location)
+	bool GetStoredObject(uint32 location, void** object)
 	{
 		if (location == 0 || location > storedObjectCount )
-			return NULL;
-		return mReferenceObjects[location-1];
+			return false;
+
+		*object = mReferenceObjects[location-1];
+		return true;
 	}
 
 	/**
 	 * Stores a referenced Object.
 	 * @param object is the object that is marked as a object that has many references.
 	 */
-	ASCENT_INLINE void StoreReferencedObject(void* object)
+	bool StoreReferencedObject(void* object)
 	{
-		assert(storeObjectIndex < expectedObjectsCount); // crash when we are storing more objects than we expect
+		if (storeObjectIndex < expectedObjectsCount)
+			return false;
+		
 		mReferenceObjects[storeObjectIndex] = object;
 		storeObjectIndex++;
 
 		storedObjectCount = storeObjectIndex;
+		return true;
 	}
 
 	/**
 	 * Get the current stored objects.
 	 * @return A unsigned integer that represents the amount of referenced Objects stored.
 	 */
-	ASCENT_INLINE uint32 GetStoredCount()
+	uint32 GetStoredCount()
 	{
 		return storedObjectCount;
 	}
@@ -95,9 +105,26 @@ public:
 	 * Get the expected referenced object count.
 	 * @return A unsigned integer that represents the expected object count.
 	 */
-	ASCENT_INLINE uint32 GetMaxStoredCount()
+	uint32 GetMaxStoredCount()
 	{
 		return expectedObjectsCount;
+	}
+
+	/**
+	 * @brief Set the amount of shared objects
+	 *
+	 * 
+	 *
+	 * @param[in]
+	 */
+	void SetSharedObjectCount(uint32 sharedObjectCount)
+	{
+		// this shouldn't happen and if it does.. this prop will generate a crash...
+		if(mReferenceObjects != NULL)
+			SafeDeleteArray(mReferenceObjects);
+
+		mReferenceObjects = new void*[expectedObjectsCount];
+		expectedObjectsCount = sharedObjectCount;
 	}
 
 protected:
@@ -115,7 +142,7 @@ protected:
 	 * max amount of objects that are referenced objects in this stream
 	 * this value is supplied by the client (regarding the 'unmarshal' process).
 	 */
-	const uint32 expectedObjectsCount;
+	uint32 expectedObjectsCount;
 
 	/**
 	 * pointer container to keep track of the pointers...

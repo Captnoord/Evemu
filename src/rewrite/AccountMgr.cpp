@@ -3,7 +3,7 @@
 	LICENSE:
 	------------------------------------------------------------------------------------
 	This file is part of EVEmu: EVE Online Server Emulator
-	Copyright 2006 - 2008 The EVEmu Team
+	Copyright 2006 - 2009 The EVEmu Team
 	For the latest information visit http://evemu.mmoforge.org
 	------------------------------------------------------------------------------------
 	This program is free software; you can redistribute it and/or modify it under
@@ -61,7 +61,7 @@ void AccountMgr::_updateAccountInfo()
 		return;
 	}
 
-	do 
+	do
 	{
 		Field *field = result->Fetch();
 		uint32 accountId			= field[0].GetUInt32();
@@ -120,7 +120,9 @@ void AccountMgr::_addAccountInfo(const uint32 accountId, const wchar_t * account
 		memcpy(accountEntry->AccountShaHash, hash.c_str(), aShaHashLen);
 	}
 
-	uint32 hashValue = HashUtil::djb2_hash(accountName);
+	uint32 hashValue = Utils::Hash::djb2_hash(accountName);
+
+	// add check for hash collision.
 
 	mAccountContainer.insert(std::make_pair(hashValue, accountEntry));
 }
@@ -130,16 +132,19 @@ void AccountMgr::_updateAccountHash(const wchar_t * accountName, const wchar_t *
 	std::string hexHash = shaHash;
 	hexHash = DynamicDatabase.EscapeString(hexHash);
 	bool success = DynamicDatabase.WaitExecute("UPDATE account SET hash = '%s' WHERE username = '%ls' AND password = '%ls'", hexHash.c_str(), accountName, accountPassWord);
-	
+
 	if (success == false)
 		sLog.Error("AccountMgr", "Failed query: 'UPDATE account SET hash = '%s' WHERE username = '%s' AND password = '%s''", hexHash.c_str(), accountName, accountPassWord);
 }
 
-/* todo change this mutex into a read lock */
+/* todo change this mutex into a read lock
+    or even better change it so its a queue request.... async stuff....
+    for now this is good anough...
+*/
 AccountInfo* AccountMgr::lookupAccount(std::wstring & userName)
 {
 	mLock.Acquire();
-	uint32 hashValue = HashUtil::djb2_hash(userName);
+	uint32 hashValue = Utils::Hash::djb2_hash(userName);
 
 	AccountInfoMapConstItr Itr = mAccountContainer.find(hashValue);
 	if (Itr != mAccountContainer.end())
@@ -149,4 +154,45 @@ AccountInfo* AccountMgr::lookupAccount(std::wstring & userName)
 	}
 	mLock.Release();
 	return NULL;
+}
+
+// should be triggert every 1 minutes or so..... I guess....
+void AccountMgr::OnAccountEvent()
+{
+    return;
+    //_updateAccountHash
+   	QueryResult *result = DynamicDatabase.Query("SELECT * FROM account where changed <> '0'");
+	if(!result)
+	{
+		sLog.String("Query failed: SELECT * FROM account where changed <> '0'");
+		return;
+	}
+
+	do
+	{
+		Field *field = result->Fetch();
+		uint32 accountId			= field[0].GetUInt32();
+		const char *accountName		= field[1].GetString();
+		const char *accountPass		= field[2].GetString();
+		const char* accountShaHash	= field[3].GetString();
+		uint32 accountRole			= field[4].GetUInt32();
+		const bool changed			= field[6].GetBool();
+
+		size_t nameLen = strlen(accountName);
+		size_t passLen = strlen(accountPass);
+
+		wchar_t * uAccountName = new wchar_t[nameLen+1];
+		wchar_t * uAccountPass = new wchar_t[passLen+1];
+
+		mbstowcs(uAccountName, accountName, nameLen); uAccountName[nameLen] = '\0';
+		mbstowcs(uAccountPass, accountPass, passLen); uAccountPass[passLen] = '\0';
+
+		//_addAccountInfo(accountId, uAccountName, uAccountPass, (uint8*)accountShaHash, accountRole, changed);
+
+		SafeDeleteArray(uAccountName);
+		SafeDeleteArray(uAccountPass);
+
+	} while(result->NextRow());
+
+	delete result;
 }

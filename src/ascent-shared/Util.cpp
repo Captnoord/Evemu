@@ -613,7 +613,9 @@ SERVER_DECL bool CheckIPs(const char* szIPList)
 /************************************************************************/
 /* Start of OpenFrag borrowed code                                      */
 /************************************************************************/
-std::string StringUtils::trim(const std::string& str, bool left, bool right)
+namespace Utils
+{
+std::string Strings::trim(const std::string& str, bool left, bool right)
 {
 	size_t lspaces, rspaces, len = str.length(), i;
 
@@ -636,7 +638,7 @@ std::string StringUtils::trim(const std::string& str, bool left, bool right)
 	return str.substr(lspaces, len-lspaces-rspaces);
 }
 
-void StringUtils::trim(std::string& str, bool left, bool right)
+void Strings::trim(std::string& str, bool left, bool right)
 {
 	size_t lspaces, rspaces, len = str.length(), i;
 
@@ -660,7 +662,7 @@ void StringUtils::trim(std::string& str, bool left, bool right)
 	str = str.substr(lspaces, len-lspaces-rspaces);
 }
 
-std::wstring StringUtils::trim(const std::wstring& str, bool left, bool right)
+std::wstring Strings::trim(const std::wstring& str, bool left, bool right)
 {
 	size_t lspaces, rspaces, len = str.length(), i;
 
@@ -683,7 +685,7 @@ std::wstring StringUtils::trim(const std::wstring& str, bool left, bool right)
 	return str.substr(lspaces, len-lspaces-rspaces);
 }
 
-void StringUtils::trim(std::wstring& str, bool left, bool right)
+void Strings::trim(std::wstring& str, bool left, bool right)
 {
 	size_t lspaces, rspaces, len = str.length(), i;
 
@@ -707,53 +709,62 @@ void StringUtils::trim(std::wstring& str, bool left, bool right)
 	str = str.substr(lspaces, len-lspaces-rspaces);
 }
 
-std::string StringUtils::toUpperCase(const std::string& TString)
+std::string Strings::toUpperCase(const std::string& TString)
 {
 	std::string retval(TString);
 	std::transform(retval.begin(), retval.end(), retval.begin(), static_cast<int(*)(int)>(::toupper));
 	return retval;
 }
 
-void StringUtils::toUpperCase(std::string& TString)
+void Strings::toUpperCase(std::string& TString)
 {
 	std::transform(TString.begin(), TString.end(), TString.begin(), static_cast<int(*)(int)>(::toupper));
 }
 
-std::wstring StringUtils::toUpperCase(const std::wstring& TString) 
+std::wstring Strings::toUpperCase(const std::wstring& TString) 
 {
 	std::wstring retval(TString);
 	std::transform(retval.begin(), retval.end(), retval.begin(), static_cast<int(*)(int)>(::toupper));
 	return retval;
 }
 
-void StringUtils::toUpperCase(std::wstring& TString)
+void Strings::toUpperCase(std::wstring& TString)
 {
 	std::transform(TString.begin(), TString.end(), TString.begin(), static_cast<int(*)(int)>(::toupper));
 }
 
-std::string StringUtils::toLowerCase(const std::string& TString) 
+std::string Strings::toLowerCase(const std::string& TString) 
 {
 	std::string retval(TString);
 	std::transform(retval.begin(), retval.end(), retval.begin(), static_cast<int(*)(int)>(::tolower));
 	return retval;
 }
 
-void StringUtils::toLowerCase(std::string& TString)
+void Strings::toLowerCase(std::string& TString)
 {
 	std::transform(TString.begin(), TString.end(), TString.begin(), static_cast<int(*)(int)>(::tolower));
 }
 
-std::wstring StringUtils::toLowerCase(const std::wstring& TString) 
+std::wstring Strings::toLowerCase(const std::wstring& TString) 
 {
 	std::wstring retval(TString);
 	std::transform(retval.begin(), retval.end(), retval.begin(), static_cast<int(*)(int)>(::tolower));
 	return retval;
 }
 
-void StringUtils::toLowerCase(std::wstring& TString)
+void Strings::toLowerCase(std::wstring& TString)
 {
 	std::transform(TString.begin(), TString.end(), TString.begin(), static_cast<int(*)(int)>(::tolower));
 }
+
+std::string Strings::toString(uint32 number)
+{
+	// a unsigned 32 bits value has a max string representative of 10 characters.
+	char tArray[10];
+	_itoa(number, tArray, 10);
+	return tArray;
+}
+}//namespace Utils
 /************************************************************************/
 /* End of OpenFrag borrowed code                                        */
 /************************************************************************/

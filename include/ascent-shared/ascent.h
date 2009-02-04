@@ -21,6 +21,7 @@
 
 #include "AscentConfig.h"
 #include "Common.h"
+#include "DebugTools.h"
 
 #include "Singleton.h"
 
@@ -31,6 +32,8 @@
 
 // util fast queue
 #include "FastQueue.h"
+#include "ByteBuffer.h"
+#include "string_map.h"
 
 // threading
 #include "Threading/Threading.h"

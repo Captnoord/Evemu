@@ -27,33 +27,34 @@
 #include "PyStringTable.h"
 #include "PyStream.h"
 #include "FileLogger.h"
-#include "DBRow.h"
+//#include "DBRow.h"
 
 #include "PyObjects.h"
 #include "MarshalStream.h"
 
 
-#include "../common/packet_types.h"
-#include "../common/EVEVersion.h"
+//#include "../common/packet_types.h"
+#include "packet_types.h"
+//#include "../common/EVEVersion.h"
 
 /* Ascent new stuff */
-#include "AccountMgr.h"
-#include "EveSession.h"
-#include "../common/EveClientSocket.h"
-#include "../common/EveClientSession.h"
-#include "../common/Space.h"
-#include "../common/SpaceRunnable.h"
+//#include "AccountMgr.h"
+//#include "EveSession.h"
+//#include "../common/EveClientSocket.h"
+//#include "../common/EveClientSession.h"
+//#include "../common/Space.h"
+//#include "../common/SpaceRunnable.h"
 
-#include "../server/ClientSession.h"
+//#include "../server/ClientSession.h"
 
 /*Database handles*/
-extern Database* Database_dynamic;
-extern Database* Database_static;
+//extern Database* Database_dynamic;
+//extern Database* Database_static;
 
 // for static/read only data.
-#define StaticDatabase (*Database_static)
+//#define StaticDatabase (*Database_static)
 
 // for dynamic saving/loading server related data.
-#define DynamicDatabase (*Database_dynamic)
+//#define DynamicDatabase (*Database_dynamic)
 
 #endif//__EVEPCH_H

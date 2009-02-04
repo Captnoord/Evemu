@@ -3,7 +3,7 @@
 	LICENSE:
 	------------------------------------------------------------------------------------
 	This file is part of EVEmu: EVE Online Server Emulator
-	Copyright 2006 - 2008 The EVEmu Team
+	Copyright 2006 - 2009 The EVEmu Team
 	For the latest information visit http://evemu.mmoforge.org
 	------------------------------------------------------------------------------------
 	This program is free software; you can redistribute it and/or modify it under
@@ -26,8 +26,8 @@
 #ifndef PY_STREAM_H
 #define PY_STREAM_H
 
-//#include "EvemuPCH.h"
-//#include "EVEMarshalOpcodes.h"
+#include "Common.h"
+#include "EveMarshalOpcodes.h"
 
 /* how the client marshals objects */
 /*
@@ -47,6 +47,37 @@ enum streamSeek
 	STREAM_SEEK_CUR = 1,
 	STREAM_SEEK_END = 2,
 };
+
+/**
+ * \class PyNone
+ *
+ * @brief this "empty" class represents a none object.
+ *
+ * 
+ *
+ * @author Captnoord
+ * @date January 2009
+ */
+class PyNoneBase
+{
+public:
+	PyNoneBase(){}
+	~PyNoneBase(){}
+};
+
+// this object represents (should be a singleton) instance of a PyNoneBase.
+static PyNoneBase PyStreamNone;
+
+// class mentions..
+class PyListStream;
+class PyDictStream;
+class PyTupleStream;
+class PyStringStream;
+class PyBufferStream;
+
+
+
+
 
 /**
  * \class PyStream
@@ -140,6 +171,70 @@ public:
 	PyStream &operator<<(std::string& str);
 
 	/**
+	 * @brief operator overload for std::string objects.
+	 *
+	 * 
+	 *
+	 * @param[in] str is the string that needs to be added to the stream.
+	 * @return we return the reference to the stream.
+	 */
+	PyStream &operator<<(std::wstring& str);
+
+	/**
+	 * @brief add a none object to a stream.
+	 *
+	 * 
+	 *
+	 * @param[in] obj is a temp copy of a PyNone object.
+	 */
+	PyStream &operator<<(PyNoneBase obj);
+
+	/**
+	 * @brief add a PyBufferStream object to a stream.
+	 *
+	 * 
+	 *
+	 * @param[in] obj is object that needs to be added to the stream.
+	 */
+	PyStream &operator<<(PyBufferStream& obj);	
+
+	/**
+	 * @brief add a PyTupleStream object to a stream.
+	 *
+	 * 
+	 *
+	 * @param[in] obj is object that needs to be added to the stream.
+	 */
+	PyStream &operator<<(PyTupleStream& obj);
+
+	/**
+	 * @brief add a PyTupleStream object to a stream.
+	 *
+	 * 
+	 *
+	 * @param[in] obj is object that needs to be added to the stream.
+	 */
+	PyStream &operator<<(PyDictStream& obj);
+
+	/**
+	 * @brief add a PyListStream object to a stream.
+	 *
+	 * 
+	 *
+	 * @param[in] obj is object that needs to be added to the stream.
+	 */
+	PyStream &operator<<(PyListStream& obj);
+
+	/**
+	 * @brief add a PyListStream object to a stream.
+	 *
+	 * 
+	 *
+	 * @param[in] obj is object that needs to be added to the stream.
+	 */
+	PyStream &operator<<(PyStringStream& obj);
+
+	/**
 	 * @brief appends a existing stream to our stream.
 	 *
 	 * 
@@ -159,7 +254,16 @@ public:
 	 */
 	void _pushStream(PyStream & stream, size_t len, size_t offset = -1);
 
-protected:
+	/**
+	 * @brief resize resizes the PyStream length to the given length.
+	 *
+	 * 
+	 *
+	 * @param[in] len is the new size the stream should resize to, data loss guarantied when using this in a stupid way.
+	 */
+	void resize(size_t len);
+
+//protected:
 
 	/* typedef to make the code a bit more readable */
 	typedef const unsigned char const_uc;
@@ -235,6 +339,15 @@ protected:
 	 * @param[in] string is the std::string that contains the string data.
 	 */
 	void _pushString(const std::string & string);
+
+	/**
+	 * @brief adds a string to the stream.
+	 *
+	 * 
+	 *
+	 * @param[in] string is the std::string that contains the string data.
+	 */
+	void _pushWString(const std::wstring & string);
 	
 	/**
 	 * @brief adds a opcode byte to the stream
@@ -244,6 +357,25 @@ protected:
 	 * @param[in] opcode the opcode of the object that is going in the stream
 	 */
 	void _pushOpcode(PyRepOpcodes opcode);
+
+	/**
+	 * @brief adds a extended size compatible chunk to the stream
+	 *
+	 * 
+	 *
+	 * @param[in] size is the size chunk that needs to be added.
+	 */
+	void _pushExSize(uint32 size);
+
+	/**
+	 * @brief adds a raw buffer to the stream.
+	 *
+	 * void/spam/hell
+	 *
+	 * @param[in] buffer is the uint8 array that contains the data
+ 	 * @param[in] len is the length of the buffer.
+	 */
+	void _pushBuffer(const uint8 * buffer, size_t len);
 
 	/**
 	 * @brief templated version of the integer marshal function.
@@ -300,9 +432,39 @@ protected:
 	 *
 	 * @param[in] str the string that needs to be streamed to the data stream.
 	 * @param[in] len is the length of the string that is marshaled.
+	 * @param[in] noLookup makes sure it doesn't use the string lookup.
 	 */
-	void _writeString(const char* str, size_t len);
-		
+	void _writeString(const char* str, size_t len, bool noLookup = false);
+
+	/**
+	* @brief WriteString does the marshal part for the string
+	*
+	* 
+	*
+	* @param[in] str the string that needs to be streamed to the data stream.
+	* @param[in] len is the length of the string that is marshaled.
+	* @param[in] noLookup makes sure it doesn't use the string lookup.
+	*/
+	void _writeWString(const wchar_t* str, size_t len, bool noLookup = false);
+
+	/**
+	 * @brief WriteString does the marshal part for the string
+	 *
+	 * 
+	 *
+	 * @param[in] str the string that needs to be streamed to the data stream.
+	 */
+	void _writeString(const std::string & str, bool noLookup);
+
+	/**
+	 * @brief WriteString does the marshal part for the string
+	 *
+	 * 
+	 *
+	 * @param[in] str the string that needs to be streamed to the data stream.
+	 */
+	void _writeWString(const std::wstring & str, bool noLookup);
+
 	/**
 	 * @brief check if the stream buffer has enough free memory.
 	 *
@@ -321,7 +483,7 @@ protected:
 	 *
 	 */
 	//virtual void OnObjectWrite() = 0;
-	virtual void OnObjectWrite() {}; // I still think this should be a pure virtual function.
+	virtual void OnObjectWrite(size_t size = 0) {}; // I still think this should be a pure virtual function.
 
 	/**
 	 * @brief pure virtual function that acts like a event trigger when the length of the buffer has changed.
@@ -351,8 +513,18 @@ public:
 	 */
 	uint8* content() {return &mData[0];}
 
+	/**
+	 * @brief resets the packet so it can be re-used.
+	 *
+	 * 
+	 *
+	 */
+	void reset() {mWriteIndex = 0;}
+
 protected:
 	std::vector<uint8> mData;
+	typedef std::vector<uint8>::iterator DataItr;
+
 	size_t mWriteIndex;
 };
 
@@ -372,6 +544,14 @@ public:
 	//friend PyStream;
 
 	/**
+	* @brief Tuple constructor.
+	*
+	* nothing special about this constructor.
+	*
+	*/
+	PyTupleStream();
+
+	/**
 	 * @brief Tuple constructor.
 	 *
 	 * nothing special about this constructor.
@@ -387,18 +567,21 @@ private:
 	 * 
 	 *
 	 */
-	void OnObjectWrite();
+	void OnObjectWrite(size_t size);
+	uint8 mElementCount;
+	bool mSizeInjected;
 };
 
 /**
  * \class PyIntStream
  *
- * @brief a class for a single/simple integer communication packet.
+ * @brief a wrapper class for a single/simple integer communication packet.
  *
  * 
  *
  * @author Captnoord
  * @date January 2009
+ * @note these type of wrapper class may look inefficient, and they are. But for new I would like to keep things clear.
  */
 class PyIntStream : public PyStream
 {
@@ -416,9 +599,6 @@ public:
 	template<typename T>
 	PyIntStream(T value) : PyStream(14)
 	{
-		/* write marshal header + marshal int */
-		_push1('~');
-		_push4(0);
 		_writeInteger(value);
 	}
 };
@@ -476,67 +656,21 @@ public:
  *
  * @author Captnoord
  * @date January 2009
- * @note WARNING NOT FINISHED DOESN'T WORK AS INTENDED.
- * @todo rewrite, finish, test, move code to cpp file.
+ * @todo rewrite this as its not as efficient as it could be.
  */
 class PyDictStream : public PyStream
 {
 public:
-	PyDictStream() : PyStream(6)
-	{
-		assert(false);
-		/*  */
-		_push1('~');
-		_push4(0);
-		_pushOpcode(Op_PyDict);
-	}
+	PyDictStream();	
 
-	PyStream &operator[](const char* str)
-	{
-		assert(false);
-		std::string keyName(str);
-		DictMapItr Itr = m_Dict.find(keyName);
-		if (Itr != m_Dict.end())
-		{
-			return *((PyStream*)&Itr->second);
-
-		}
-		else
-		{
-			// slow..... VERY SLOW...
-			PyStream entry(0);
-			m_Dict[keyName] = entry;
-			return m_Dict[keyName];
-		}
-	}
-
+	PyStream &operator[](const char* str);
+	
 	// we can increase object count with this...
-	void OnObjectWrite()
-	{
-		assert(false);
-	}
+	void OnObjectWrite(size_t size)	{}
 
-	void finish()
-	{
-		assert(false);
-		uint32 count = (uint32)m_Dict.size();
-		if (count < 0xFF)
-		{
-			_push1(count);
-		}
-		else
-		{
-			_push1(0xFF);
-			_push4(count);
-		}
+	void finish();	
 
-		DictMapItr Itr = m_Dict.begin();
-		for (; Itr != m_Dict.end(); Itr++)
-		{
-			_pushStream(Itr->second);
-			_pushString(Itr->first);
-		}
-	}
+	size_t elementCount() {return m_Dict.size();}
 
 private:
 	typedef std::tr1::unordered_map<std::string, PyStream>	DictMap;
@@ -546,7 +680,154 @@ private:
 };
 
 /**
- * \class PyNetworkStream
+ * \class PyListStream
+ *
+ * @brief a single PyList object marshaled.
+ *
+ * 
+ *
+ * @author Captnoord
+ * @date January 2009
+ */
+class PyListStream : public PyStream
+{
+public:
+	/**
+	 * @brief empty list
+	 *
+	 * 
+	 *
+	 */
+	PyListStream();
+
+
+	/**
+	 * @brief list with predefined size.
+	 *
+	 * 
+	 *
+	 * @param[in] size the predefined list size.
+	 */
+	PyListStream(size_t size);
+
+	void OnObjectWrite(size_t size = 0);
+private:
+	uint32 mEntryCount;
+	uint32 mPreDefinedEntryCount;
+
+	bool mSetExtended;
+};
+
+/**
+ * \class PyBufferStream
+ *
+ * @brief a create only buffer class.
+ *
+ * this needs a bit more love to be complete. I first intended as a fully dynamic stream class. But that complicated the class
+ * and that is not my intention. I want to keep it as simple as possible.
+ *
+ * @author Captnoord
+ * @date January 2009
+ */
+class PyBufferStream : public PyStream
+{
+public:
+
+	/**
+	 * @brief PyBufferStream constructor
+	 *
+	 * this constructor create a empty buffer the size of len
+	 *
+	 * @param[in] len is the size of the empty buffer that needs to be created
+	 * @note i'm not sure this actualy is a good idea.
+	 */
+	PyBufferStream(size_t len) : PyStream(len), mLoaded(false)
+	{
+		if (len <= 0)
+			return;
+
+		_pushOpcode(Op_PyBuffer);
+
+		if (len > 0xFE)
+		{
+			_push1<uint8>(0xFF);
+			_push4<size_t>(len);
+		}
+		else
+		{
+			_push1<size_t>(len);
+		}
+
+		_pushBuffer(NULL, len);
+		mLoaded = true;
+	}
+
+	PyBufferStream(const char* data, size_t len) : PyStream(len), mLoaded(false)
+	{
+		if (len <= 0)
+			return;
+
+		// make sure we have enough room
+		if (len > 0xFE)
+			_validateBufferSize(len + 6);
+		else
+			_validateBufferSize(len + 2);
+
+		if (len > 0xFE)
+		{
+			_pushOpcode(Op_PyBuffer);
+			_push1<uint8>(0xFF);
+			_push4<size_t>(len);
+		}
+		else
+		{
+			_pushOpcode(Op_PyShortString);
+			_push1<size_t>(len);
+		}
+
+		_pushBuffer((uint8*)data, len);
+		mLoaded = true;
+	}
+
+	PyBufferStream(const uint8* data, size_t len) : PyStream(len), mLoaded(false)
+	{
+		if (len <= 0)
+			return;
+			
+		// make sure we have enough room
+		if (len > 0xFE)
+			_validateBufferSize(len + 6);
+		else
+			_validateBufferSize(len + 2);
+
+		_pushOpcode(Op_PyBuffer);
+
+		if (len > 0xFE)
+		{
+			_push1<uint8>(0xFF);
+			_push4<size_t>(len);
+		}
+		else
+		{
+			_push1<size_t>(len);
+		}
+
+		_pushBuffer(data, len);
+		mLoaded = true;
+	}
+
+	// does this disable the << operator for this class??? I dono...
+	template <typename T>
+	PyBufferStream &operator<<(T& str)
+	{
+		assert(false); // crash....
+	}
+private:
+	bool mLoaded;
+};
+
+/**
+ * \class PyReadStream
  *
  * @brief first try to make a generic network stream class for reading.
  *
@@ -554,10 +835,9 @@ private:
  *
  * @author Captnoord
  * @date January 2009
- * @todo change the class its name into something like PyReadStream.
  * @todo merge this class with the PyStream class which in his turn should be called PyWriteStream.
  */
-class PyNetworkStream : public PyStream
+class PyReadStream : public PyStream
 {
 public:
 
@@ -570,7 +850,7 @@ public:
 	 * @param[out]
 	 * @return
 	 */
-	PyNetworkStream();
+	PyReadStream();
 
 	/**
 	 * @brief 
@@ -581,7 +861,7 @@ public:
 	 * @param[out]
 	 * @return
 	 */
-	PyNetworkStream(const char * data, size_t size);
+	PyReadStream(const char * data, size_t size);
 
 	/**
 	 * @brief 
@@ -592,7 +872,7 @@ public:
 	 * @param[out]
 	 * @return
 	 */
-	PyNetworkStream(size_t size);
+	PyReadStream(size_t size);
 
 	/**
 	 * @brief 
@@ -632,6 +912,9 @@ public:
 	template <typename T>
 	T _pop8()
 	{
+		if (_validateReadSize(8) == false)
+			return static_cast<T>(0);
+
 		T value;
 		ZeroVar(value);
 
@@ -650,6 +933,9 @@ public:
 	template <typename T>
 	T _pop4()
 	{
+		if (_validateReadSize(4) == false)
+			return static_cast<T>(0);
+
 		T value;
 		ZeroVar(value);
 
@@ -664,6 +950,9 @@ public:
 	template <typename T>
 	T _pop2()
 	{
+		if (_validateReadSize(2) == false)
+			return static_cast<T>(0);
+
 		T value;
 		ZeroVar(value);
 
@@ -676,6 +965,9 @@ public:
 	template <typename T>
 	T _pop1()
 	{
+		if (_validateReadSize(1) == false)
+			return static_cast<T>(0);
+
 		T value;
 		ZeroVar(value);
 
@@ -684,13 +976,164 @@ public:
 		return value;
 	}
 
+	bool readString(char ** num, size_t len)
+	{
+		if (mReadIndex + len > size())
+			return false;
+
+		// whoo hacky:P
+		*num = (char*)&content()[mReadIndex];
+		mReadIndex+=len;		
+		return true;
+	}
+
+	bool readWstring(wchar_t ** num, size_t len)
+	{
+		if (mReadIndex + len > size())
+			return false;
+
+		// whoo hacky:P
+		*num = (wchar_t*)&content()[mReadIndex];
+		mReadIndex+=len;		
+		return true;
+	}
+
+	bool readExSize(uint32 * len)
+	{
+		if (mReadIndex + 1 > size())
+			return false;
+		*len = _pop1<uint32>();
+		if (*len == 0xFF)
+		{
+			if (mReadIndex + 4 > size())
+				return false;
+			*len = _pop4<uint32>();
+		}
+		return true;
+	}
+
+	bool readInt1(uint32 * num)
+	{
+		if (mReadIndex + 1 > size())
+			return false;
+		*num = _pop1<uint32>();
+		return true;
+	}
+
+	bool readInt1(uint8 * num)
+	{
+		if (mReadIndex + 1 > size())
+			return false;
+		*num = _pop1<int8>();
+		return true;
+	}
+
+	bool readInt1(int8 * num)
+	{
+		if (mReadIndex + 1 > size())
+			return false;
+		*num = _pop1<int8>();
+		return true;
+	}
+
+	bool readInt2(int16 * num)
+	{
+		if (mReadIndex + 2 > size())
+			return false;
+		*num = _pop2<int16>();
+		return true;
+	}
+
+	bool readInt4(uint32 * num)
+	{
+		if (mReadIndex + 4 > size())
+			return false;
+		*num = _pop4<uint32>();
+		return true;
+	}
+
+	bool readInt4(uint32 & num)
+	{
+		if (mReadIndex + 4 > size())
+			return false;
+		num = _pop4<uint32>();
+		return true;
+	}
+
+	bool readInt4(int32 * num)
+	{
+		if (mReadIndex + 4 > size())
+			return false;
+		*num = _pop4<int32>();
+		return true;
+	}
+
+	bool readInt4(int32 & num)
+	{
+		if (mReadIndex + 4 > size())
+			return false;
+		num = _pop4<int32>();
+		return true;
+	}
+
+	bool readInt8(int64 * num)
+	{
+		if (mReadIndex + 8 > size())
+			return false;
+		*num = _pop8<int64>();
+		return true;
+	}
+
+	bool readChar(char * num)
+	{
+		if (mReadIndex + 1 > size())
+			return false;
+		*num = _pop1<char>();
+		return true;
+	}
+
+	bool readChar(char & num)
+	{
+		if (mReadIndex + 1 > size())
+			return false;
+		num = _pop1<char>();
+		return true;
+	}
+
+	bool readWchar(wchar_t * num)
+	{
+		if (mReadIndex + 2 > size())
+			return false;
+		*num = _pop2<wchar_t>();
+		return true;
+	}
+
+	bool readDouble8(double * num)
+	{
+		if (mReadIndex + 8 > size())
+			return false;
+		*num = _pop8<double>();
+		return true;
+	}
+
 	PyRepOpcodes _popOpcode();
 
 	// a method to seek tough a stream in c style
-	void _seek(size_t offset, streamSeek rule);
+	void seek(size_t offset, streamSeek rule);
 
 	// get the current offset
-	size_t _tell();	
+	size_t tell();
+
+	/**
+	 * @brief check if we can read a chunk from the buffer.
+	 *
+	 * void/spam/hell
+	 *
+	 * @param[in] size the size of the chunk that is pending to be read.
+	 */
+	bool _validateReadSize(size_t size);
+
+
 	void _readString(std::string & str, size_t len);
 	void _readString(std::wstring & str, size_t len);
 
@@ -823,16 +1266,16 @@ public:
 	PyStreamItr() : chunkSize(0){}
 
 	// the purpose of the constructor is to grasp a "item" from the stream and store it for later use.
-	PyStreamItr(PyNetworkStream & stream) : chunkSize(0)
+	PyStreamItr(PyReadStream & stream) : chunkSize(0)
 	{
 		ExtractItr(stream, chunk);
 	}
 
 	// extract a itr item by the marshal rules
-	void ExtractItr(PyNetworkStream& in, PyNetworkStream & out)
+	void ExtractItr(PyReadStream& in, PyReadStream & out)
 	{
 		chunkSize = 1;
-		size_t curOffset = in._tell();
+		size_t curOffset = in.tell();
 		PyRepOpcodes opcode = in._pop1<PyRepOpcodes>();
 
 		// check if we aren't fucked up
@@ -864,9 +1307,9 @@ public:
 		}
 
 		// the best generic code I have ever seen.
-		in._seek(curOffset, STREAM_SEEK_SET);
-		out._pushStream(in, chunkSize, in._tell());
-		in._seek(chunkSize, STREAM_SEEK_CUR);
+		in.seek(curOffset, STREAM_SEEK_SET);
+		out._pushStream(in, chunkSize, in.tell());
+		in.seek(chunkSize, STREAM_SEEK_CUR);
 	}
 
 	// fake function crap thingy
@@ -880,13 +1323,13 @@ public:
 	size_t size() {return chunkSize;}
 
 private:
-	PyNetworkStream chunk;
+	PyReadStream chunk;
 	size_t chunkSize;
 };
 
 static PyStreamItr ErrorItr;
 
-//universal container for n number of 
+//universal container for n number of
 class PyDictNetStream
 {
 public:
@@ -894,7 +1337,7 @@ public:
 	PyDictNetStream()
 	{
 	}
-	PyDictNetStream(PyNetworkStream & packet)
+	PyDictNetStream(PyReadStream & packet)
 	{
 		insertStream(packet);
 	}
@@ -908,7 +1351,7 @@ public:
 	}
 
 
-	void insertStream(PyNetworkStream & packet)
+	void insertStream(PyReadStream & packet)
 	{
 		PyRepOpcodes opcode = packet._pop1<PyRepOpcodes>();
 		ASCENT_ASSERT(opcode == Op_PyDict);
@@ -939,8 +1382,6 @@ public:
 		return ErrorItr;
 	}
 
-
-
 protected:
 	typedef std::tr1::unordered_map<std::string, PyStreamItr*>		DictMap;
 	typedef DictMap::iterator										DictMapItr;
@@ -951,7 +1392,7 @@ protected:
 class PyTupleNetStream
 {
 public:
-	PyTupleNetStream(PyNetworkStream & packet) : tupleObjectCount(0), stream(packet)
+	PyTupleNetStream(PyReadStream & packet) : tupleObjectCount(0), stream(packet)
 	{
 		PyRepOpcodes opcode = packet._pop1<PyRepOpcodes>();
 		if (opcode == Op_PyTuple)
@@ -985,7 +1426,7 @@ public:
 
 protected:
 	
-	PyNetworkStream & stream;
+	PyReadStream & stream;
 	uint8 tupleObjectCount;
 	uint8 tupleReadIndex;
 };

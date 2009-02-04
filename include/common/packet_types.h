@@ -3,7 +3,7 @@
 	LICENSE:
 	------------------------------------------------------------------------------------
 	This file is part of EVEmu: EVE Online Server Emulator
-	Copyright 2006 - 2008 The EVEmu Team
+	Copyright 2006 - 2009 The EVEmu Team
 	For the latest information visit http://evemu.mmoforge.org
 	------------------------------------------------------------------------------------
 	This program is free software; you can redistribute it and/or modify it under
@@ -323,6 +323,7 @@ typedef enum {	//chrStandingChanges.eventTypeID
 
 
 enum {
+	ROLE_NONE = 0L,
 	ROLE_LOGIN = 1L,
 	ROLE_PLAYER = 2L,
 	ROLE_GDNPC = 4L,
@@ -557,12 +558,6 @@ typedef enum {
 	dgmEffOnline = 4,
 } EffectCategories;
 
-
-
-
-
-
-
 #pragma pack(1)
 
 struct PacketHeader {
@@ -571,19 +566,20 @@ struct PacketHeader {
 };
 
 #pragma pack()
-/*
- *0x10 = "DBTYPE_I1"
-0x11 = "DBTYPE_UI1"
-0x0B = "DBTYPE_BOOL"
+
+/**
 0x02 = "DBTYPE_I2"
-0x12 = "DBTYPE_UI2"
 0x03 = "DBTYPE_I4"
-0x13 = "DBTYPE_UI4"
 0x04 = "DBTYPE_R4"
-0x14 = "DBTYPE_I8"
 0x05 = "DBTYPE_R8"
-0x15 = "DBTYPE_UI8"
 0x06 = "DBTYPE_CY"
+0x0B = "DBTYPE_BOOL"
+0x10 = "DBTYPE_I1"
+0x11 = "DBTYPE_UI1"
+0x12 = "DBTYPE_UI2"
+0x13 = "DBTYPE_UI4"
+0x14 = "DBTYPE_I8"
+0x15 = "DBTYPE_UI8"
 0x40 = "DBTYPE_FILETIME"
 0x80 = "DBTYPE_BYTES"
 0x81 = "DBTYPE_STR"
@@ -591,24 +587,24 @@ struct PacketHeader {
 */
 
 typedef enum {
-	DBTYPE_I1 = 0x10,
-	DBTYPE_UI1 = 0x11,
-	DBTYPE_BOOL = 0x0B,
-	DBTYPE_I2 = 0x02,
-	DBTYPE_UI2 = 0x12,
-	DBTYPE_I4 = 0x03,
-	DBTYPE_UI4 = 0x13,
-	DBTYPE_R4 = 0x04,
-	DBTYPE_I8 = 0x14,
-	DBTYPE_R8 = 0x05,
-	DBTYPE_UI8 = 0x15,
-	DBTYPE_CY = 0x06,	//money
+	DBTYPE_I1		= 0x10,
+	DBTYPE_UI1		= 0x11,
+	DBTYPE_BOOL		= 0x0B,
+	DBTYPE_I2		= 0x02,
+	DBTYPE_UI2		= 0x12,
+	DBTYPE_I4		= 0x03,
+	DBTYPE_UI4		= 0x13,
+	DBTYPE_R4		= 0x04,
+	DBTYPE_I8		= 0x14,
+	DBTYPE_R8		= 0x05,
+	DBTYPE_UI8		= 0x15,
+	DBTYPE_CY		= 0x06,	//money
 	DBTYPE_FILETIME = 0x40,	//64
-	DBTYPE_BYTES = 0x80,
-	DBTYPE_STR = 0x81,
-	DBTYPE_WSTR = 0x82
+	DBTYPE_BYTES	= 0x80,
+	DBTYPE_STR		= 0x81,
+	DBTYPE_WSTR		= 0x82,
+	DBTYPE_ERROR	= 0xFF,
 } DBTYPE;
-
 
 /*
  *
@@ -728,18 +724,12 @@ def IsAlliance(ownerID):
 def IsJunkLocation(locationID):
     if (locationID >= 2000):
         return 0
-    elif (locationID in [6,
-     8,
-     10,
-     23,
-     25]):
+    elif (locationID in [6, 8, 10, 23, 25]):
         return 1
     elif ((locationID > 1000) and (locationID < 2000)):
         return 1
     else:
         return 0
-
-
 */
 
 #define IsAgent(itemID) \

@@ -3,7 +3,7 @@
 	LICENSE:
 	------------------------------------------------------------------------------------
 	This file is part of EVEmu: EVE Online Server Emulator
-	Copyright 2006 - 2008 The EVEmu Team
+	Copyright 2006 - 2009 The EVEmu Team
 	For the latest information visit http://evemu.mmoforge.org
 	------------------------------------------------------------------------------------
 	This program is free software; you can redistribute it and/or modify it under
@@ -52,17 +52,15 @@ enum EVE_AUTH_STATE
 	EVE_AUTH_STATE_DONE,				// old AcceptingPackets						| finished authorization
 };
 
-
-class PyRep;
-class EVENetPacket;
-class CryptoChallengePacket;
+static const uint8 DefaultSimpleStreamHeader[] = {'~', 0, 0, 0, 0};
+static const size_t DefaultSimpleStreamHeaderSize = 5;
 
 class EveClientSession;
 class EveClientSocket : public Socket
 {
 public:
 	// state machine function pointer typedef
-	typedef void (EveClientSocket::*stateProc)(PyNetworkStream&);
+	typedef void (EveClientSocket::*stateProc)(PyReadStream&);
 
 	EveClientSocket(SOCKET fd);
 	~EveClientSocket();
@@ -72,38 +70,32 @@ public:
 	void OnConnect();
 	void OnDisconnect();
 
-	/* Basic PyRep send function */
-	ASCENT_INLINE void OutPacket(PyRep * packet);
-
-	/*void SendStream(PyTupleStream* packet )
-	{
-		sFileLogger.logPacket(packet, 1);
-
-		// ignore return for now...
-		SendRaw(packet->content(), packet->size());
-	}*/
-
+	/* sending small / medium streams */
 	template <typename T>
 	void SendStream(T& packet )
 	{
-		sFileLogger.logPacket(packet.content(), packet.size(), 1);
-
 		// ignore return for now...
 		SendRaw(packet.content(), packet.size());
 	}
 
-
-	OUTPACKET_RESULT SendRaw(const uint8* data, const size_t len)
+	/** SPECIAL FUNCTION FOR SINGLE OBJECT STREAMS
+	 */
+	template <typename T>
+	void SendSimpleStream(T& packet )
 	{
-		//ByteBuffer packetcheck;
-		//packetcheck.append(packet->data, packet->length);
+		SendRawSimpleStream(packet.content(), packet.size());
+	}
 
-		//printf("\nsend:\n");
-		//packetcheck.LogBuffer();
-
+	// function to send single object streams...
+	// don't use this one for normal objects... or streams...
+	OUTPACKET_RESULT SendRawSimpleStream(const uint8* data, /*const*/ size_t len)
+	{
 		if(IsConnected() == false)
 			return OUTPACKET_RESULT_NOT_CONNECTED;
 
+		// this is a hack.. so we can send single object streams
+		size_t netLen = len + DefaultSimpleStreamHeaderSize;
+		
 		BurstBegin();
 		if( GetWriteBuffer().GetSpace() < (len+4) )
 		{
@@ -111,8 +103,42 @@ public:
 			return OUTPACKET_RESULT_NO_ROOM_IN_BUFFER;
 		}
 
-		// Packet logger :)
-		//sSpaceLog.LogBuffer((uint32)len, opcode, (const uint8*)data, 1);
+		sFileLogger.logSimplePacket(data, len, 1);
+
+		// Pass the size of the packet to our send buffer
+		bool rv = BurstSend((const uint8*)&netLen, 4);
+
+		// Pass the rest of the packet to our send buffer (if there is any)
+		if(len > 0 && rv == true)
+		{
+			rv = BurstSend(DefaultSimpleStreamHeader, (uint32)DefaultSimpleStreamHeaderSize); // add marshal header to the stream...
+			rv |= BurstSend(data, (uint32)len);
+		}
+
+		if(rv == true)
+		{
+			BurstPush();
+		}
+		BurstEnd();
+		return rv ? OUTPACKET_RESULT_SUCCESS : OUTPACKET_RESULT_SOCKET_ERROR;
+
+	}
+
+	// function to send RAW data.
+	OUTPACKET_RESULT SendRaw(const uint8* data, const size_t len)
+	{
+		if(IsConnected() == false)
+			return OUTPACKET_RESULT_NOT_CONNECTED;
+
+		BurstBegin();
+		if( GetWriteBuffer().GetSpace() < (len + 4) )
+		{
+			BurstEnd();
+			return OUTPACKET_RESULT_NO_ROOM_IN_BUFFER;
+		}
+
+		// packet logger :D
+		sFileLogger.logPacket(data, len, 1);
 
 		// Pass the size of the packet to our send buffer
 		bool rv = BurstSend((const uint8*)&len, 4);
@@ -144,30 +170,26 @@ protected:
 	ASCENT_INLINE void _sendRequirePasswordType(int passwordType);
 
 	/************************************************************************/
-	/* raw Python packet send function                                      */
-	/************************************************************************/
-	ASCENT_INLINE OUTPACKET_RESULT _outPacket(EVENetPacket* packet);
-
-	/************************************************************************/
 	/* Authorization state machine                                          */
 	/************************************************************************/
-	void _authStateHandshake(PyNetworkStream& packet);
-	void _authStateQueueCommand(PyNetworkStream& packet);
-	void _authStateNoCrypto(PyNetworkStream& packet);
-	void _authStateCryptoChallenge(PyNetworkStream& packet);
-	void _authStateHandshakeSend(PyNetworkStream& packet);
-	void _authStateDone(PyNetworkStream& packet);
-	void _authStateException(PyNetworkStream& packet);
+	void _authStateHandshake(PyReadStream& packet);
+	void _authStateQueueCommand(PyReadStream& packet);
+	void _authStateNoCrypto(PyReadStream& packet);
+	void _authStateCryptoChallenge(PyReadStream& packet);
+	void _authStateHandshakeSend(PyReadStream& packet);
+	void _authStateDone(PyReadStream& packet);
+	void _authStateException(PyReadStream& packet);
 
 	// current state function pointer
 	stateProc mCurrentStateMachine;
 
 private:
-	/* Crypt challenge cache */
-	//CryptoChallengePacket* mRequest;
 
 	/* Session of this socket */
 	EveClientSession* mSession;
+
+	/* User account info */
+	AccountInfo* mAccountInfo;
 
 	/* connection/login is queued */
 	bool mQueued;
@@ -180,9 +202,6 @@ private:
 
 	/* User name cache */
 	std::string mUserName;
-
-	/* User id cache */
-	uint32 mUserid;
 
 	/* OnRead remaining size */
 	uint32 mRemaining;

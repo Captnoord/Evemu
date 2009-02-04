@@ -3,7 +3,7 @@
 	LICENSE:
 	------------------------------------------------------------------------------------
 	This file is part of EVEmu: EVE Online Server Emulator
-	Copyright 2006 - 2008 The EVEmu Team
+	Copyright 2006 - 2009 The EVEmu Team
 	For the latest information visit http://evemu.mmoforge.org
 	------------------------------------------------------------------------------------
 	This program is free software; you can redistribute it and/or modify it under
@@ -34,7 +34,7 @@ typedef std::set<EveClientSession*>							SessionSet;
 typedef SessionSet::iterator								SessionSetItr;
 typedef SessionSet::const_iterator							SessionSetConstItr;
 
-typedef HM_NAMESPACE::unordered_map<uint32, EveClientSession*>	SessionMap;
+typedef HM_NAMESPACE::unordered_map<uint32, EveClientSession*>SessionMap;
 typedef SessionMap::iterator								SessionMapItr;
 typedef SessionMap::const_iterator							SessionMapConstItr;
 
@@ -52,7 +52,6 @@ public:
 
 	/* update sessions and dispatch the queued packets */
 	void UpdateSessions(time_t diff);
-
 
 	EveClientSession* FindSession(uint32 userid);
 	EveClientSession* FindSessionByName(const char *);
@@ -76,8 +75,6 @@ public:
 	ASCENT_INLINE uint32 GetStartTime(void) { return mStartTime; }
 	std::string GetUptimeString();
 
-	
-
 	/**
 	 * @brief OnClientDisconnect is triggered when a socket is disconnected from the server.
 	 *
@@ -96,6 +93,16 @@ public:
 	 */
 	void OnClientConnect();
 
+	/**
+	 * @brief a function to generate user id's.
+	 *
+	 * 
+	 *
+	 * @return a freshly generated userid.
+	 * @note this is so fucked up.... lol..... I hope that because of its natural overrun it will be safe.... lol.... but it isn't safe... (for clients hehe)
+	 */
+	uint32 GenerateUserId() { return mUserIdGeneratorNumber++; }
+
 private:
 	
 	SessionMap m_sessions;
@@ -104,6 +111,8 @@ private:
 protected:
 	size_t mAcceptedConnections;
 	size_t mAuthorizedConnections;
+
+	uint32 mUserIdGeneratorNumber;
 
 	Mutex SessionsMutex;//FOR GLOBAL !
 	SessionSet Sessions;
