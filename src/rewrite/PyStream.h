@@ -1023,6 +1023,25 @@ public:
 		return true;
 	}
 
+	// small function to peek in a stream...
+	bool peekInt1(uint8 * num)
+	{
+		if (mReadIndex + 1 > size())
+			return false;
+		*num = _pop1<uint8>();
+		mReadIndex--;
+		return true;
+	}
+
+	bool peekInt1(char * num)
+	{
+		if (mReadIndex + 1 > size())
+			return false;
+		*num = _pop1<char>();
+		mReadIndex--;
+		return true;
+	}
+
 	bool readInt1(uint32 * num)
 	{
 		if (mReadIndex + 1 > size())
@@ -1147,6 +1166,12 @@ public:
 
 	void _readString(std::string & str, size_t len);
 	void _readString(std::wstring & str, size_t len);
+
+	void setsize(size_t newsize)
+	{
+		resize(newsize);
+		mWriteIndex = newsize;
+	}
 
 	template<typename T>
 	T _readInteger()

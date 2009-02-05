@@ -17,9 +17,6 @@ public:
 	PyObject* load(PyReadStream & stream);
 	void save(PyObject * object);
 
-	
-
-
 protected:
 
 	PyInt PyIntZero;
@@ -69,6 +66,19 @@ private:
 	PyObject*	unmarshalObjects;		// container for keeping the unmarshalled objects
 
 	bool _deleted;
+
+	bool _ReadNewObjList(PyReadStream & stream, PyClass & obj);
+	bool _ReadNewObjDict(PyReadStream & stream, PyClass & obj);
+
+	/**
+	 * @brief checkAndInflate is a temp function to handle the possibility that a packets is zipped
+	 *
+	 * this should really be done somewhere else.
+	 *
+	 * @return true is check is successfully.. false means something went wrong...
+	 */
+	bool checkAndInflate( PyReadStream & stream );
+	uint8 zlibworkbuffer[100000];
 };
 
 #endif //_MARSHALSTREAM_H

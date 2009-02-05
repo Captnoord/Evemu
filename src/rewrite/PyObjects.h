@@ -81,18 +81,9 @@ private:
 class PyInt
 {
 public:
-	PyInt(int32 num, bool infinite = false) : isInfinite(isInfinite)
-	{
-		type = PyTypeInt;
-		number = num;
-	}
-
-	PyInt &operator=(const int num)
-	{
-		number = num;
-	}
-
-	~PyInt(){type = PyTypeDeleted;}
+	PyInt(int32 num, bool infinite = false);
+	PyInt &operator=(const int num);
+	~PyInt();
 
 	uint8 gettype(){return type;}
 	bool IsInfinite() {return isInfinite;}
@@ -116,10 +107,10 @@ class PyChameleon
 {
 public:
 	PyChameleon();
-	~PyChameleon(){mType = PyTypeDeleted;}
+	~PyChameleon();
 
-	uint8 gettype(){return mType;}
-	bool isempty(){return mIsEmpty;}
+	uint8 gettype();
+	bool isempty();
 
 	/**
 	 * @brief 
@@ -148,11 +139,8 @@ public:
 
 protected:
 
-	void _settype(uint8 type)
-	{
-		assert(mType == PyTypeNone); // O we don't want to reuse the object so only 1 thingy...
-		mType = type;
-	}
+	void _settype(uint8 type);
+	bool OnDelete();
 
 private:
 	uint8 mType;
@@ -190,10 +178,10 @@ static PyErrorChameleon PyErrorIterator;
 class PyLong
 {
 public:
-	PyLong(int64 & num) : number(num), type(PyTypeInt){}
-	~PyLong(){type = PyTypeDeleted;}
-	uint8 gettype(){return type;}
-	int64 getnumber() {return number;}
+	PyLong(int64 & num);
+	~PyLong();
+	uint8 gettype();
+	int64 getnumber();
 
 private:
 	uint8 type;
@@ -203,11 +191,11 @@ private:
 class PyFloat
 {
 public:
-	PyFloat() : type(PyTypeReal){}
-	PyFloat(float num) : number(num), type(PyTypeReal) {}
-	PyFloat(double & num) : number(num), type(PyTypeReal) {}
-	~PyFloat(){type = PyTypeDeleted;}
-	uint8 gettype(){return type;}
+	PyFloat();
+	PyFloat(float num);
+	PyFloat(double & num);
+	~PyFloat();
+	uint8 gettype();
 private:
 	uint8 type;
 	double number;
@@ -221,7 +209,7 @@ public:
 	PyString(const char* str, size_t len);
 	PyString(std::string& str);
 	~PyString();
-	uint8 gettype(){return type;}
+	uint8 gettype();
 	bool set(const char* str, size_t len);
 	const char* content();
 private:
@@ -237,7 +225,7 @@ public:
 	PyUnicodeUCS2(const wchar_t* str, size_t len);
 	PyUnicodeUCS2(std::wstring& str);
 	~PyUnicodeUCS2();
-	uint8 gettype(){return type;}
+	uint8 gettype();
 	bool set(const char* str, size_t len);
 	bool resize(size_t newsize);
 	wchar_t * content();
@@ -249,9 +237,9 @@ private:
 class PyBool
 {
 public:
-	PyBool(bool check) : type(PyTypeBool), mCheck(check) {}
-	~PyBool(){type = PyTypeDeleted;}
-	uint8 gettype(){return type;}
+	PyBool(bool check);
+	~PyBool();
+	uint8 gettype();
 private:
 	uint8 type;
 	bool mCheck;
@@ -262,28 +250,15 @@ class PyTuple
 {
 #define PY_TUPLE_ELEMENT_MAX 1000
 public:
-	PyTuple() : type(PyTypeTuple) {}
-	PyTuple(int elementCount) : type(PyTypeTuple)
-	{
-		if (elementCount > PY_TUPLE_ELEMENT_MAX)
-			Log.Error("PyTuple", "constructor is requested to allocate a stupid amount of elements: %d", elementCount);
-		mTuple.resize(elementCount);
-	}
+	PyTuple();
+	PyTuple(int elementCount);
+	~PyTuple(); //should it contain delete all stuff?????
+	uint8 gettype();
 
-	~PyTuple(){type = PyTypeDeleted;} //should it contain delete all stuff?????
+	PyChameleon &operator[](const int index);
 
-	PyChameleon &operator[](const int index) {
-		if (index < 0)
-			return PyErrorIterator;
-		if (index > (int)mTuple.size())
-			mTuple.resize(index);
-		return mTuple[index];
-	}
-
-	// returs the element count
-	size_t size() {return mTuple.size();}
-
-	uint8 gettype(){return type;}
+	// returns the element count
+	size_t size();
 private:
 	uint8 type;
 	std::vector<PyChameleon> mTuple;
@@ -292,43 +267,26 @@ private:
 class PyList
 {
 public:
-	PyList() : type(PyTypeList) {}
-	PyList(int elementCount) : type(PyTypeList)
-	{
-		mList.resize(elementCount);
-	}
+	PyList();
+	PyList(int elementCount);
+	~PyList();
 
-	~PyList(){type = PyTypeDeleted;}
+	PyChameleon &operator[](const int index);
 
-	PyChameleon &operator[](const int index) {
-		if (index < 0)
-			return PyErrorIterator;
-		if (index > (int)mList.size())
-			mList.resize(index);
-		return mList[index];
-	}
-
-	uint8 gettype(){return type;}
+	uint8 gettype();
 private:
 	uint8 type;
-	//std::list<PyChameleon> mList;
 	std::vector<PyChameleon> mList;
 };
 
 class PyDict
 {
 public:
-	PyDict() : type(PyTypeDict) {}
-	uint8 gettype(){return type;}
+	PyDict();
+	~PyDict();
+	uint8 gettype();
 
-	~PyDict(){type = PyTypeDeleted;}
-
-	PyChameleon &operator[](const char* keyName) {
-		if (keyName == NULL || *keyName == '\0')
-			return PyErrorIterator;
-
-		return mDict[keyName];
-	}
+	PyChameleon &operator[](const char* keyName);
 
 private:
 	uint8 type;
@@ -350,47 +308,13 @@ class PySubStream
 {
 public:
 
-	PySubStream() : type(PyTypeSubStream), mData(NULL), mLen(0) {}
-	PySubStream(uint8* data, size_t len) : type(PyTypeSubStream), mData(NULL), mLen(0)
-	{
-		if (data == NULL)
-			return;
+	PySubStream();
+	PySubStream(uint8* data, size_t len);
+	~PySubStream();
 
-		if (len == 0)
-			return;
-
-		mLen = len;
-
-		mData = ASCENT_MALLOC(mLen);
-		ASCENT_MEMCPY(mData, data, mLen);
-	}
-
-	~PySubStream()
-	{
-		if (mData != NULL)
-			SafeFree(mData);
-
-		mLen = 0;
-		type = PyTypeDeleted;
-	}
-
-	uint8 gettype(){return type;}
-	uint8* content(){return (uint8*)mData;}
-
-	bool set(uint8 * data, size_t len)
-	{
-		mLen = len;
-		if (mData != NULL)
-			mData = ASCENT_REALLOC(mData, mLen);
-		else
-			mData = ASCENT_MALLOC(mLen);
-
-		if (mData == NULL)
-			return false;
-
-		ASCENT_MEMCPY(mData, data, mLen);
-		return true;
-	}
+	uint8 gettype();
+	uint8* content();
+	bool set(uint8 * data, size_t len);
 
 private:
 	uint8 type;
@@ -408,34 +332,37 @@ private:
  * @author Captnoord
  * @date February 2009
  */
-class PyClassObject
+class PyClass
 {
 public:
-	PyClassObject() : type(PyTypeClass), mDict(NULL), mName(NULL) {}
-	uint8 gettype(){return type;}
+	PyClass();
+	~PyClass();
 
-	bool setname(PyString* name) {mName = name;}
-	bool setdict(PyDict* dict) {mDict = dict;}
+	uint8 gettype();
+	bool setname(PyString* name);
+	bool setbases(PyTuple* tuple);
+	bool setdict(PyDict* dict);
+	bool setDirList(PyList * list);
+	bool setDirDict(PyDict * dict);
 
 private:
 	uint8 type;
 
-	//PyTuple		*mBases;/* A tuple of class objects */
+	PyTuple		*mBases;/* A tuple of class objects */
 	PyDict		*mDict;	/* A dictionary */
 	PyString	*mName;	/* A string */
 	
-	/* The following three are functions or NULL */
-	//PyObject	*mGgetattr;
-	//PyObject	*mSetattr;
-	//PyObject	*mDelattr;
+
+	// derived object call info...
+	PyList		*mDirivedCallList;
+	PyDict		*mDirivedCallDict;
 };
 
 /************************************************************************/
-/* Small portion of the Python API so we are able to handle variouse    */
+/* Small portion of the Python API so we are able to handle various    */
 /* tasks better and a bit cleaner.                                      */
 /* @note we don't aim to mimic the python API perfectly.                */
 /************************************************************************/
-
 static int64 _PyLong_AsInt64(PyLong& number);
 
 /**

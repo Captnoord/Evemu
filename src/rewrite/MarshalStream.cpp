@@ -13,14 +13,15 @@
 #  define MARSHALSTREAM_RETURN_NULL {ASCENT_HARDWARE_BREAKPOINT; return NULL;}
 #  define MARSHALSTREAM_RETURN(p) {PyObject * x = ((PyObject*)p); assert(x != NULL); return x;}
 #else
-#  define MARSHALSTREAM_RETURN_NULL {return NULL;}
-#  define MARSHALSTREAM_RETURN(p) return (PyObject*)p;
+#  define MARSHALSTREAM_RETURN_NULL {sLog.String(__FUNCTION__" :returning NULL"); return NULL;}
+#  define MARSHALSTREAM_RETURN(p) { PyObject * x = ((PyObject*)p); if (x == NULL) {sLog.Error(__FUNCTION__" :returning NULL");} return x; }
 #endif//_DEBUG
 
 #ifdef _DEBUG
-#define unmarshalState(x, y) {sLog.String("State:"#x"\toffset:0x%X", y.tell());}
+//#define unmarshalState(x, y) {sLog.String("State:"#x"\toffset:0x%X", y.tell());}
+#define unmarshalState(x, y) /*{x, y}*/
 #else
-#define unmarshalState(x, y) //x, y
+#define unmarshalState(x, y) /*{x, y}*/
 #endif
 
 
@@ -34,10 +35,16 @@ MarshalStream::~MarshalStream()
 
 PyObject* MarshalStream::load(PyReadStream & stream)
 {
+	if (!checkAndInflate(stream))
+	{
+		MARSHALSTREAM_RETURN_NULL;
+	}
+
 	if (!ReadMarshalHeader(stream))
 	{
 		Log.Error("MarshalStream", "[load] Unable to read and initialize the packet header");
-		MARSHALSTREAM_RETURN_NULL;
+		//MARSHALSTREAM_RETURN_NULL;
+		return NULL;
 	}
 
 	PyObject* unmarshaledData = unmarshal(stream);
@@ -311,7 +318,6 @@ PyObject* MarshalStream::unmarshal(PyReadStream & stream)
 			case Op_PyOneTuple:
 			{
 				unmarshalState(Op_PyOneTuple, stream);
-				ASCENT_HARDWARE_BREAKPOINT;
 				PyTuple& tuple = *PyTuple_New(1);
 				if ((opcode & 0x40) != 0)
 				{
@@ -568,33 +574,70 @@ PyObject* MarshalStream::ReadClass( PyReadStream & stream, BOOL shared )
 {
 	/* bla bla bla do shared object stuff here..... */
 
-	PyClassObject * classObj = new PyClassObject();
+	PyClass * classObj = new PyClass();
 
 	PyString * command = (PyString *)unmarshal(stream);
-	ASCENT_ASSERT(command->type() == PyTypeString);
 
-	PyDict * argument = (PyDict*)unmarshal(stream);
-	ASCENT_ASSERT(command->type() == PyTypeDict);
+	bool test = command->gettype() == PyTypeString;
+	ASCENT_ASSERT(test == true);
+
+	PyTuple * bases = (PyTuple*)unmarshal(stream);
+
+	//PyDict * dict = (PyDict*)unmarshal(stream);
+
+	//test = dict->gettype() == PyTypeDict;
+	//ASCENT_ASSERT(test == true);
 
 	classObj->setname(command);
-	classObj->setdict(argument);
-
+	classObj->setbases(bases);	
+	//classObj->setdict(dict);
 	MARSHALSTREAM_RETURN(classObj);
 }
 
 PyObject* MarshalStream::ReadNewObject1( PyReadStream & stream, BOOL shared )
 {
-	return NULL;
+	PyClass * classObj = new PyClass();
+
+	PyTuple * bases = (PyTuple *)unmarshal(stream);
+
+	//bool test = command->gettype() == PyTypeString;
+	//ASCENT_ASSERT(test == true);
+
+	//PyTuple * bases = (PyTuple*)unmarshal(stream);
+
+
+	//classObj->setname(command);
+	classObj->setbases(bases);
+
+	_ReadNewObjList(stream, *classObj);
+	_ReadNewObjDict(stream, *classObj);
+
+	MARSHALSTREAM_RETURN(classObj);
 }
 
 PyObject* MarshalStream::ReadNewObject2( PyReadStream & stream, BOOL shared )
 {
-	return NULL;
+	PyClass * classObj = new PyClass();
+
+	PyString * command = (PyString *)unmarshal(stream);
+
+	bool test = command->gettype() == PyTypeString;
+	ASCENT_ASSERT(test == true);
+
+	PyTuple * bases = (PyTuple*)unmarshal(stream);
+
+	classObj->setname(command);
+	classObj->setbases(bases);
+
+	_ReadNewObjList(stream, *classObj);
+	_ReadNewObjDict(stream, *classObj);
+
+	MARSHALSTREAM_RETURN(classObj);
 }
 
 PyObject* MarshalStream::ReadPackedRow( PyReadStream & stream )
 {
-	return NULL;
+	MARSHALSTREAM_RETURN_NULL;
 }
 
 PyObject* MarshalStream::ReadSubStream( PyReadStream & stream )
@@ -656,6 +699,96 @@ PyObject* MarshalStream::_ReadPyStringFromStringAndSize( PyReadStream & stream )
 	}
 
 	MARSHALSTREAM_RETURN(PyString_FromStringAndSize(buffer, size));
+}
+
+bool MarshalStream::checkAndInflate( PyReadStream & stream )
+{
+	uint8 firstChar;
+	if (!stream.peekInt1(&firstChar))
+	{
+		Log.Error("MarshalStream", "Unable to peek 1 byte of the stream and check if its compressed");
+		return false;
+	}
+
+	// fucked up
+	char idChar = *((char*)&firstChar);
+
+	// check if its compressed
+	if (idChar != '~' )
+	{
+		if (firstChar != 0x78)
+		{
+			Log.Error("MarshalStream", "unknown idChar something fishy is going on..... panic");
+			return false;
+		}
+		else
+		{
+			u_long  sourcelen = stream.size();
+			Bytef * source = stream.content();
+			u_long outSize = 100000;
+			
+			if(uncompress(zlibworkbuffer, &outSize, source, sourcelen) != Z_OK)
+			{
+				Log.Error("MarshalStream", "uncompress went wrong ... PANIC!!!!!!");
+				return NULL;
+			}
+
+			// if we get here it usually means uncompress was successful.
+
+			// resize the stream... so we can copy stuff to it...
+			stream.setsize(outSize);
+			memcpy(stream.content(), zlibworkbuffer, outSize); // HAAAACCCKKKKKK!!!!!!!!!!
+		}
+	}	
+
+	return true;
+}
+
+bool MarshalStream::_ReadNewObjList( PyReadStream & stream, PyClass & obj )
+{
+	char thingy;
+	if (!stream.peekInt1(&thingy))
+	{
+		Log.Error("MarshalStream","unable to read ID thingy in "__FUNCTION__);
+		return false;
+	}
+
+	if (thingy != '-')
+	{
+		PyList * list = (PyList *)unmarshal(stream);
+		// call function.... bla bla bla....
+		obj.setDirList(list);
+	}
+	else
+	{
+		stream.seek(1, STREAM_SEEK_CUR); // skip one...
+	}
+
+	return true;
+}
+
+bool MarshalStream::_ReadNewObjDict( PyReadStream & stream, PyClass & obj )
+{
+	char thingy;
+	if (!stream.peekInt1(&thingy))
+	{
+		Log.Error("MarshalStream","unable to read ID thingy in "__FUNCTION__);
+		return false;
+	}
+
+	if (thingy != '-')
+	{
+		PyDict * dict = (PyDict *)unmarshal(stream);
+		// call function.... bla bla bla....
+		obj.setDirDict(dict);
+	}
+	else
+	{
+		stream.seek(1, STREAM_SEEK_CUR); // skip one...
+	}
+
+
+	return true;
 }
 
 // undef our return null macro.
