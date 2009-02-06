@@ -20,21 +20,79 @@
 	Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 	http://www.gnu.org/copyleft/lesser.txt.
 	------------------------------------------------------------------------------------
-	Author:
+	Author:		mmcs
 */
 
-#ifndef __EVE_VERSION_H
-#define __EVE_VERSION_H
+#ifndef __SPACEFORM_H
+#define __SPACEFORM_H
 
-//supported client is the Quantum Rise client build 69477
+struct Constellation;
+struct SolarSystem;
 
-static const uint8 MachoNetVersion = 203;
-static const double EveVersionNumber = 5.20;
-static const uint32 EveBuildVersion = 72263;
-static const char *const EveProjectCodename = "EVE-EVE-RELEASE";
-static const char *const EveProjectRegion = "ccp";
-static const char *const EveProjectVersion = "EVE-EVE-RELEASE@ccp";
+struct Region {
+	uint32 regionID;
 
-static const uint32 EveBirthday = 170472;
+	std::wstring regionName;
 
-#endif//__EVE_VERSION_H
+    float x,y,z;
+    float xMin,yMin,zMin;
+    float xMax,yMax,zMax;
+    float radius;
+    
+    uint32 factionID;	
+    
+	uint32 constellationSize;
+	Constellation *constellations;
+}
+
+struct Constellation {
+	uint32 constellationID;
+	uint32 regionID;
+
+	std::wstring constellationName;
+
+    float x,y,z;
+    float xMin,yMin,zMin;
+    float xMax,yMax,zMax;
+    float radius;
+    
+    uint32 factionID;
+
+	// the tasty stuff
+	uint32 solarsystemSize;
+	SolarSystem *solarsystems;	
+}
+
+struct SolarSystem {
+	uint32 solarsystemID;
+	uint32 regionID;
+  	uint32 constellationID;
+
+    std::wstring solarSystemName;
+
+	// stuff...
+    float x,y,z;
+    float xMin,yMin,zMin;
+    float xMax,yMax,zMax;
+    float radius;
+    
+    float luminosity;
+    
+    uint32 border;
+    uint32 fringe;
+  	uint32 corridor;
+  	uint32 hub;
+  	uint32 international;
+    uint32 regional;
+    uint32 constellation;
+    
+    float security;
+    uint32 factionID;
+
+    uint32 sunTypeID;
+    char securityClass[2];
+    
+    // octreeObject; weeeeeee
+}
+
+#endif//__SPACEFORM_H

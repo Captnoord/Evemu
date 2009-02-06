@@ -278,12 +278,32 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="Space"
+				>
+				<File
+					RelativePath="..\..\src\rewrite\RegionMapManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\rewrite\RegionMapManager.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\rewrite\SpaceForm.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Communication"
 			>
 			<File
 				RelativePath="..\..\include\common\EveMarshalOpcodes.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\Communication\EVEVersion.h"
 				>
 			</File>
 			<File

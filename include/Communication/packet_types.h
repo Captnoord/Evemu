@@ -183,8 +183,8 @@ enum EVEContainerTypes {
 };
 
 
-//#include "tables/invCategories.h"
-//typedef EVEDB::invCategories::invCategories EVEItemCategories;
+#include "tables/invCategories.h"
+typedef EVEDB::invCategories::invCategories EVEItemCategories;
 
 
 typedef enum EVEItemFlags {	//from eveFlags DB table
