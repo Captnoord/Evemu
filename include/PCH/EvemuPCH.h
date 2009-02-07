@@ -46,7 +46,8 @@
 #include "../server/Space/SpaceRunnable.h"
 #include "../server/Space/RegionMapManager.h"
 
-#include "../server/ClientSession.h"
+/* this one is evil.... */
+//#include "../server/ClientSession.h"
 
 #include "../TestCases/TestCaseMarshal.h"
 

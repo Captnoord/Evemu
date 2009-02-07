@@ -723,7 +723,7 @@ bool MarshalStream::checkAndInflate( PyReadStream & stream )
 		}
 		else
 		{
-			u_long  sourcelen = stream.size();
+			u_long  sourcelen = (u_long)stream.size();
 			Bytef * source = stream.content();
 			u_long outSize = 100000;
 			

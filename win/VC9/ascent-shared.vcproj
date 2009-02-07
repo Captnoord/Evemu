@@ -373,6 +373,14 @@
 			<File
 				RelativePath="..\..\src\ascent-shared\New Folder\CustomMemAllocaterWrapper.cpp"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 		</Filter>
 		<File

@@ -80,7 +80,7 @@ static void testmarshal(PyStream * packet, uint32 depth = -1)
 			TestLog("PyNone");
 		} break;
 
-	case Op_PyByteString:
+	case Op_PyClassString:
 		{
 			uint32 strlen = readExSize();
 			std::string str = readString(strlen);
@@ -197,7 +197,7 @@ static void testmarshal(PyStream * packet, uint32 depth = -1)
 
 		} break;
 
-	case Op_PyObject:
+	case Op_PyClassObject:
 		{
 
 		} break;
@@ -334,7 +334,7 @@ static void testmarshal(PyStream * packet, uint32 depth = -1)
 			assert(false);
 		} break;
 	}
-}
+};
 /************************************************************************/
 /* End marshal packet testing                                           */
 /************************************************************************/

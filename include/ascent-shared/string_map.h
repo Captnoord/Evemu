@@ -38,13 +38,14 @@ public:
 	}
 
 	/**
-	 * @brief insert a element with a string keyname.
+	 * @brief insert a element with a string key name.
 	 *
 	 * 
 	 *
-	 * @param[in]
+	 * @param[in] str is the to hash string.
+	 * @param[in] element is the element that needs to be stored under the hash.
 	 */
-	void insert(const char *str, T item)
+	void insert(const char *str, T element)
 	{
 		uint32 _hash = (*hash)(str);
 		// check if there is a collision
@@ -55,20 +56,18 @@ public:
 		}
 
 		// if there's not insert it.
-		mContainer.insert(std::make_pair(_hash, item));
+		mContainer.insert(std::make_pair(_hash, element));
 	}
 
-	/* a find function with a bug:P */
-
 	/**
-	 * @brief 
+	 * @brief searches the hash table for a key name.
 	 *
 	 * 
 	 *
-	 * @param[in]
-	 * @return
+	 * @param[in] str the key name of the element that we are searching.
+	 * @return we return the element or NULL if we haven't found anything.
 	 */
-	T find(const char* str)
+	T &find(const char* str)
 	{
 		uint32 _hash = (*hash)(str);
 		_StringMap::iterator Itr = mContainer.find(_hash);
@@ -84,9 +83,8 @@ public:
 	 *
 	 * 
 	 *
-	 * @param[in]
-	 * @param[out]
-	 * @return
+	 * @param[in] str is the to hash string.
+	 * @return a found element or a new element.
 	 */
 	T &operator[](const char* str) {
 		uint32 _hash = (*hash)(str);
@@ -94,11 +92,11 @@ public:
 	}
 
 	/**
-	 * @brief 
+	 * @brief returns the size of the string map.
 	 *
 	 * 
 	 *
-	 * @return
+	 * @return the amount of elements in the map.
 	 */
 	size_t size() {return mContainer.size();}
 
@@ -126,13 +124,11 @@ private:
 	}
 
 private:
-	typedef std::map<uint32, T>		_StringMap;
-	//typedef std::map<uint32, T>::iterator	_StringMapItr;
-
+	typedef std::map<uint32, T>			_StringMap;
+	
 	_StringMap mContainer;
 	// function pointer
 	uint32 (*hash)(const char*);
 };
 
 #endif //_STRINGMAP_H
-

@@ -51,8 +51,7 @@ public:
 	
 	void SpawnWorkerThreads();
 
-}
-
+};
 
 #endif//__REGIONMAPMANAGER_H
 
