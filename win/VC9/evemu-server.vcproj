@@ -13,11 +13,6 @@
 			Name="Win32"
 		/>
 	</Platforms>
-	<ToolFiles>
-		<ToolFile
-			RelativePath=".\xmlpkt.rules"
-		/>
-	</ToolFiles>
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
@@ -223,58 +218,42 @@
 			Name="Server"
 			>
 			<File
-				RelativePath="..\..\src\rewrite\AccountMgr.cpp"
+				RelativePath="..\..\src\server\AccountMgr.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\rewrite\AccountMgr.h"
+				RelativePath="..\..\include\server\AccountMgr.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\EveClientSession.cpp"
+				RelativePath="..\..\src\server\EveClientSession.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\common\EveClientSession.h"
+				RelativePath="..\..\include\server\EveClientSession.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\EveClientSocket.cpp"
+				RelativePath="..\..\src\server\EveClientSocket.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\common\EveClientSocket.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\common\Space.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\common\Space.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\common\SpaceRunnable.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\common\SpaceRunnable.h"
+				RelativePath="..\..\include\server\EveClientSocket.h"
 				>
 			</File>
 			<Filter
 				Name="Session"
 				>
 				<File
-					RelativePath="..\..\src\rewrite\EveSession.cpp"
+					RelativePath="..\..\src\server\Session\EveSession.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\rewrite\EveSession.h"
+					RelativePath="..\..\include\server\Session\EveSession.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\rewrite\EveSessionMgr.h"
+					RelativePath="..\..\include\server\Session\EveSessionMgr.h"
 					>
 				</File>
 			</Filter>
@@ -282,15 +261,31 @@
 				Name="Space"
 				>
 				<File
-					RelativePath="..\..\src\rewrite\RegionMapManager.cpp"
+					RelativePath="..\..\src\server\Space\RegionMapManager.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\rewrite\RegionMapManager.h"
+					RelativePath="..\..\include\server\Space\RegionMapManager.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\rewrite\SpaceForm.h"
+					RelativePath="..\..\include\server\Space\SpaceForm.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\server\Space\Space.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\include\server\Space\Space.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\server\Space\SpaceRunnable.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\include\server\Space\SpaceRunnable.h"
 					>
 				</File>
 			</Filter>
@@ -299,7 +294,7 @@
 			Name="Communication"
 			>
 			<File
-				RelativePath="..\..\include\common\EveMarshalOpcodes.h"
+				RelativePath="..\..\include\Communication\EveMarshalOpcodes.h"
 				>
 			</File>
 			<File
@@ -307,35 +302,35 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\rewrite\MarshalReferenceMap.h"
+				RelativePath="..\..\include\Communication\MarshalReferenceMap.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\rewrite\MarshalStream.cpp"
+				RelativePath="..\..\src\Communication\MarshalStream.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\rewrite\MarshalStream.h"
+				RelativePath="..\..\include\Communication\MarshalStream.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\common\packet_types.h"
+				RelativePath="..\..\include\Communication\packet_types.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\rewrite\PyStream.cpp"
+				RelativePath="..\..\src\Communication\PyStream.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\rewrite\PyStream.h"
+				RelativePath="..\..\include\Communication\PyStream.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\rewrite\PyStringTable.cpp"
+				RelativePath="..\..\src\Communication\PyStringTable.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\rewrite\PyStringTable.h"
+				RelativePath="..\..\include\Communication\PyStringTable.h"
 				>
 			</File>
 		</Filter>
@@ -343,19 +338,19 @@
 			Name="Utilities"
 			>
 			<File
-				RelativePath="..\..\src\rewrite\DBRow.h"
+				RelativePath="..\..\include\Utilities\DBRow.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\rewrite\FileLogger.h"
+				RelativePath="..\..\include\Utilities\FileLogger.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\rewrite\memStream.cpp"
+				RelativePath="..\..\src\Utilities\memStream.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\rewrite\memStream.h"
+				RelativePath="..\..\include\Utilities\memStream.h"
 				>
 			</File>
 		</Filter>
@@ -363,19 +358,19 @@
 			Name="Auth"
 			>
 			<File
-				RelativePath="..\..\src\rewrite\BinAsciiModule.h"
+				RelativePath="..\..\include\Auth\BinAsciiModule.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\rewrite\PasswordModule.cpp"
+				RelativePath="..\..\src\Auth\PasswordModule.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\rewrite\PasswordModule.h"
+				RelativePath="..\..\include\Auth\PasswordModule.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\rewrite\ShaModule.h"
+				RelativePath="..\..\include\Auth\ShaModule.h"
 				>
 			</File>
 		</Filter>
@@ -383,7 +378,7 @@
 			Name="PCH"
 			>
 			<File
-				RelativePath="..\..\include\server\EvemuPCH.h"
+				RelativePath="..\..\include\PCH\EvemuPCH.h"
 				>
 			</File>
 		</Filter>
@@ -391,11 +386,11 @@
 			Name="TestCases"
 			>
 			<File
-				RelativePath="..\..\src\rewrite\TestCaseMain.h"
+				RelativePath="..\..\include\TestCases\TestCaseMain.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\rewrite\TestCaseMarshal.h"
+				RelativePath="..\..\include\TestCases\TestCaseMarshal.h"
 				>
 			</File>
 		</Filter>
@@ -403,16 +398,16 @@
 			Name="PythonObjects"
 			>
 			<File
-				RelativePath="..\..\src\rewrite\PyObjects.cpp"
+				RelativePath="..\..\src\PythonObjects\PyObjects.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\rewrite\PyObjects.h"
+				RelativePath="..\..\include\PythonObjects\PyObjects.h"
 				>
 			</File>
 		</Filter>
 		<File
-			RelativePath="..\..\src\server\main.cpp"
+			RelativePath="..\..\src\main.cpp"
 			>
 		</File>
 	</Files>
