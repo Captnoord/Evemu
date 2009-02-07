@@ -13,6 +13,8 @@
 			Name="Win32"
 		/>
 	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
@@ -28,9 +30,6 @@
 				Name="VCCustomBuildTool"
 			/>
 			<Tool
-				Name="XMLPkt"
-			/>
-			<Tool
 				Name="VCXMLDataGeneratorTool"
 			/>
 			<Tool
@@ -43,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm250 /MP"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;..\..\include\ascent-shared\Threading&quot;;&quot;..\..\include\ascent-shared&quot;;..\..\include\common;..\..\include\server;..\..\src\rewrite;..\..\3rdparty\zlib;..\..\3rdparty\;..\..\dep\include;..\..\dep\include\mysql;..\;D:\Dev\Python2_6\Include;d:\Dev\Python2_6\PC"
+				AdditionalIncludeDirectories="&quot;..\..\include\ascent-shared\Threading&quot;;&quot;..\..\include\ascent-shared&quot;;..\..\include\server;..\..\include\server\Session;..\..\include\server\Space\Space;..\..\include\PCH;..\..\include\Auth;..\..\include\Communication;..\..\include\PythonObjects;..\..\include\TestCases;..\..\include\Utilities;..\..\3rdparty\zlib;..\..\3rdparty\;..\..\dep\include;..\..\dep\include\mysql;..\;D:\Dev\Python2_6\Include;d:\Dev\Python2_6\PC"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS=1;_CRT_SECURE_NO_DEPRECATE=1;_CRT_SECURE_COPP_OVERLOAD_STANDARD_NAMES=1"
 				GeneratePreprocessedFile="0"
 				MinimalRebuild="false"
@@ -121,9 +120,6 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="XMLPkt"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -269,15 +265,15 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\include\server\Space\SpaceForm.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\src\server\Space\Space.cpp"
 					>
 				</File>
 				<File
 					RelativePath="..\..\include\server\Space\Space.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\include\server\Space\SpaceForm.h"
 					>
 				</File>
 				<File
@@ -299,10 +295,6 @@
 			</File>
 			<File
 				RelativePath="..\..\include\Communication\EVEVersion.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\Communication\MarshalReferenceMap.h"
 				>
 			</File>
 			<File
@@ -359,6 +351,10 @@
 			>
 			<File
 				RelativePath="..\..\include\Auth\BinAsciiModule.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\Auth\MarshalReferenceMap.h"
 				>
 			</File>
 			<File

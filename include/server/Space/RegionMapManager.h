@@ -31,7 +31,7 @@
 class RegionMapWorkerThread : public ThreadContext
 {
 public:
-	RegionMapThreadWorker();
+	RegionMapWorkerThread();
 	bool run();
 };
 

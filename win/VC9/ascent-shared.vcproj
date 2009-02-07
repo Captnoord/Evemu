@@ -420,14 +420,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\ascent-shared\CoreMemoryAllocator.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\ascent-shared\CoreMemoryAllocator_Core.cpp"
-			>
-		</File>
-		<File
 			RelativePath="..\..\src\ascent-shared\CrashHandler.cpp"
 			>
 		</File>
