@@ -100,6 +100,17 @@ public:
 	 */
 	size_t size() {return mContainer.size();}
 
+	/**
+	 * @brief 
+	 *
+	 * 
+	 *
+	 * @param[in]
+	 * @param[out]
+	 * @return
+	 */
+	void clear() {mContainer.clear();}
+
 private:
 	/**
 	 * @brief small function to detect hash collisions

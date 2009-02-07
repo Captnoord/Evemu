@@ -1,6 +1,7 @@
 #include "Common.h"
 #include "ascent.h"
 #include "PyObjects.h"
+#include "MarshalReadStream.h"
 #include "MarshalStream.h"
 #include "EveMarshalOpcodes.h"
 #include "PyStream.h"
@@ -33,7 +34,7 @@ MarshalStream::~MarshalStream()
 	_deleted = true;
 }
 
-PyObject* MarshalStream::load(PyReadStream & stream)
+PyObject* MarshalStream::load(MarshalReadStream & stream)
 {
 	if (!checkAndInflate(stream))
 	{
@@ -52,10 +53,10 @@ PyObject* MarshalStream::load(PyReadStream & stream)
 	MARSHALSTREAM_RETURN(unmarshaledData);
 }
 
-bool MarshalStream::ReadMarshalHeader(PyReadStream & stream)
+bool MarshalStream::ReadMarshalHeader( MarshalReadStream & stream )
 {
 	char marshalTilde;
-	if (!stream.readChar(marshalTilde))
+	if (!stream.readInt1(marshalTilde))
 	{
 		Log.Error("MarshalStream", "[ReadMarshalHeader]Can't read %d elements of %d bytes, only have %d bytes left", 1, 1, stream.size() - stream.tell());
 		return false;
@@ -105,12 +106,12 @@ bool MarshalStream::ReadMarshalHeader(PyReadStream & stream)
 	return false;
 }
 
-PyObject* MarshalStream::unmarshal(PyReadStream & stream)
+PyObject* MarshalStream::unmarshal( MarshalReadStream & stream )
 {
 	if (stream.size() - stream.tell() >= 1)
 	{
 		uint8 opcode;
-		stream.readInt1(&opcode);
+		stream.readInt1(opcode);
 		switch ( opcode & 0x3F )
 		{
 			case Op_PyNone:
@@ -129,7 +130,7 @@ PyObject* MarshalStream::unmarshal(PyReadStream & stream)
 			{
 				unmarshalState(Op_PyLongLong, stream);
 				int64 number;
-				if (!stream.readInt8(&number))
+				if (!stream.readInt8(number))
 					MARSHALSTREAM_RETURN_NULL;
 				MARSHALSTREAM_RETURN(PyLong_FromLongLong(number));
 			}
@@ -138,7 +139,7 @@ PyObject* MarshalStream::unmarshal(PyReadStream & stream)
 			{
 				unmarshalState(Op_PyLong, stream);
 				int32 number;
-				if (!stream.readInt4(&number))
+				if (!stream.readInt4(number))
 					MARSHALSTREAM_RETURN_NULL;
 				MARSHALSTREAM_RETURN(PyInt_FromLong(number));
 			}
@@ -147,7 +148,7 @@ PyObject* MarshalStream::unmarshal(PyReadStream & stream)
 			{
 				unmarshalState(Op_PySignedShort, stream);
 				int16 number;
-				if (!stream.readInt2(&number))
+				if (!stream.readInt2(number))
 					MARSHALSTREAM_RETURN_NULL;
 				MARSHALSTREAM_RETURN(PyInt_FromLong(number));
 			}
@@ -156,7 +157,7 @@ PyObject* MarshalStream::unmarshal(PyReadStream & stream)
 			{
 				unmarshalState(Op_PyByte, stream);
 				int8 number;
-				if (!stream.readInt1(&number))
+				if (!stream.readInt1(number))
 					MARSHALSTREAM_RETURN_NULL;
 				MARSHALSTREAM_RETURN(PyInt_FromLong(number));
 			}
@@ -184,7 +185,7 @@ PyObject* MarshalStream::unmarshal(PyReadStream & stream)
 			{
 				unmarshalState(Op_PyFloat, stream);
 				double number;
-				if (!stream.readDouble8(&number))
+				if (!stream.readInt8(number))
 					MARSHALSTREAM_RETURN_NULL;
 				MARSHALSTREAM_RETURN(PyFloat_FromDouble(number));
 			}
@@ -223,7 +224,7 @@ PyObject* MarshalStream::unmarshal(PyReadStream & stream)
 			{
 				unmarshalState(Op_PyCharString, stream);
 				char CharString;
-				if (!stream.readChar(&CharString))
+				if (!stream.readInt1(CharString))
 					MARSHALSTREAM_RETURN_NULL;
 				MARSHALSTREAM_RETURN(PyString_FromStringAndSize(&CharString, 1));
 			}
@@ -233,7 +234,7 @@ PyObject* MarshalStream::unmarshal(PyReadStream & stream)
 				unmarshalState(Op_PyShortString, stream);
 				uint8 strlen;
 				char* strptr;
-				if (!stream.readInt1(&strlen))
+				if (!stream.readInt1(strlen))
 					MARSHALSTREAM_RETURN_NULL;
 				if (!stream.readString(&strptr, strlen))
 					MARSHALSTREAM_RETURN_NULL;
@@ -244,7 +245,7 @@ PyObject* MarshalStream::unmarshal(PyReadStream & stream)
 			{
 				unmarshalState(Op_PyStringTableItem, stream);
 				uint8 index;
-				if (!stream.readInt1(&index))
+				if (!stream.readInt1(index))
 					MARSHALSTREAM_RETURN_NULL;
 	
 				PyString * ret = NULL;
@@ -262,7 +263,7 @@ PyObject* MarshalStream::unmarshal(PyReadStream & stream)
 				unmarshalState(Op_PyUnicodeByteString, stream);
 				uint8 strlen;
 				wchar_t* strptr;
-				if (!stream.readInt1(&strlen))
+				if (!stream.readInt1(strlen))
 					MARSHALSTREAM_RETURN_NULL;
 	
 				if (!stream.readWstring(&strptr, strlen))
@@ -281,7 +282,7 @@ PyObject* MarshalStream::unmarshal(PyReadStream & stream)
 			{
 				unmarshalState(Op_PyUnicodeCharString, stream);
 				wchar_t singleWChar;
-				if (!stream.readWchar(&singleWChar))
+				if (!stream.readInt2(singleWChar))
 					MARSHALSTREAM_RETURN_NULL;
 				MARSHALSTREAM_RETURN(PyUnicodeUCS2_FromWideChar(&singleWChar, 1));
 			}
@@ -291,7 +292,7 @@ PyObject* MarshalStream::unmarshal(PyReadStream & stream)
 				unmarshalState(Op_PyUnicodeString, stream);
 				uint32 strlen;
 				char* strptr;
-				if (!stream.readExSize(&strlen))
+				if (!stream.readExSize(strlen))
 					MARSHALSTREAM_RETURN_NULL;
 	
 				if (!stream.readString(&strptr, strlen))
@@ -352,7 +353,7 @@ PyObject* MarshalStream::unmarshal(PyReadStream & stream)
 			{
 				unmarshalState(Op_PyTuple, stream);
 				uint32 elementCount;
-				if (!stream.readExSize(&elementCount))
+				if (!stream.readExSize(elementCount))
 					MARSHALSTREAM_RETURN_NULL;
 	
 				PyTuple& tuple = *PyTuple_New(elementCount);
@@ -398,7 +399,7 @@ PyObject* MarshalStream::unmarshal(PyReadStream & stream)
 			{
 				unmarshalState(Op_PyList, stream);
 				uint32 elementCount;
-				if (!stream.readExSize(&elementCount))
+				if (!stream.readExSize(elementCount))
 					MARSHALSTREAM_RETURN_NULL;
 	
 				PyList &list = *PyList_New(elementCount);
@@ -424,7 +425,7 @@ PyObject* MarshalStream::unmarshal(PyReadStream & stream)
 			{
 				unmarshalState(Op_PyDict, stream);
 				uint32 elementCount;
-				if (!stream.readExSize(&elementCount))
+				if (!stream.readExSize(elementCount))
 					MARSHALSTREAM_RETURN_NULL;
 	
 				PyDict & dict = *PyDict_New();
@@ -448,6 +449,7 @@ PyObject* MarshalStream::unmarshal(PyReadStream & stream)
 	
 					// EVIL HACKY SOLLUTION WARNING!!!!!!!!!!!!!!!!!!!!!!!
 					dict[keyName->content()] = keyPayload;
+					SafeDelete(keyName);
 				}
 				MARSHALSTREAM_RETURN(&dict);
 			}
@@ -491,7 +493,7 @@ PyObject* MarshalStream::unmarshal(PyReadStream & stream)
 			{
 				unmarshalState(Op_PySavedStreamElement, stream);
 				uint32 index;
-				if (!stream.readExSize(&index))
+				if (!stream.readExSize(index))
 					MARSHALSTREAM_RETURN_NULL;
 				void* obj;
 				if (!sharedObjectsMap.GetStoredObject(index,&obj))
@@ -507,7 +509,7 @@ PyObject* MarshalStream::unmarshal(PyReadStream & stream)
 			{
 				unmarshalState(Op_PyChecksumedStream, stream);
 				uint32 clientHash;
-				if (!stream.readInt4(&clientHash))
+				if (!stream.readInt4(clientHash))
 					MARSHALSTREAM_RETURN_NULL;
 
 				Bytef* data = &stream.content()[stream.tell()];
@@ -558,19 +560,19 @@ PyObject* MarshalStream::unmarshal(PyReadStream & stream)
 	MARSHALSTREAM_RETURN_NULL;
 }
 
-PyObject* MarshalStream::ReadBuffer( PyReadStream & stream )
+PyObject* MarshalStream::ReadBuffer( MarshalReadStream & stream )
 {
 	uint32 size;
-	if (!stream.readExSize(&size))
+	if (!stream.readExSize(size))
 		MARSHALSTREAM_RETURN_NULL;
 
 	// doing the creating of the object in 1 evil try
 	PyString* ret = PyString_FromStringAndSize((const char*)stream.content()[stream.tell()], size);
-	stream.seek(size, STREAM_SEEK_CUR);
+	stream.seek(size, SEEK_CUR);
 	MARSHALSTREAM_RETURN(ret);
 }
 
-PyObject* MarshalStream::ReadClass( PyReadStream & stream, BOOL shared )
+PyObject* MarshalStream::ReadClass( MarshalReadStream & stream, BOOL shared )
 {
 	/* bla bla bla do shared object stuff here..... */
 
@@ -594,7 +596,7 @@ PyObject* MarshalStream::ReadClass( PyReadStream & stream, BOOL shared )
 	MARSHALSTREAM_RETURN(classObj);
 }
 
-PyObject* MarshalStream::ReadNewObject1( PyReadStream & stream, BOOL shared )
+PyObject* MarshalStream::ReadNewObject1( MarshalReadStream & stream, BOOL shared )
 {
 	PyClass * classObj = new PyClass();
 
@@ -615,7 +617,7 @@ PyObject* MarshalStream::ReadNewObject1( PyReadStream & stream, BOOL shared )
 	MARSHALSTREAM_RETURN(classObj);
 }
 
-PyObject* MarshalStream::ReadNewObject2( PyReadStream & stream, BOOL shared )
+PyObject* MarshalStream::ReadNewObject2( MarshalReadStream & stream, BOOL shared )
 {
 	PyClass * classObj = new PyClass();
 
@@ -635,15 +637,15 @@ PyObject* MarshalStream::ReadNewObject2( PyReadStream & stream, BOOL shared )
 	MARSHALSTREAM_RETURN(classObj);
 }
 
-PyObject* MarshalStream::ReadPackedRow( PyReadStream & stream )
+PyObject* MarshalStream::ReadPackedRow( MarshalReadStream & stream )
 {
 	MARSHALSTREAM_RETURN_NULL;
 }
 
-PyObject* MarshalStream::ReadSubStream( PyReadStream & stream )
+PyObject* MarshalStream::ReadSubStream( MarshalReadStream & stream )
 {
 	uint32 size = 0;
-	if (!stream.readExSize(&size))
+	if (!stream.readExSize(size))
 		MARSHALSTREAM_RETURN_NULL;
 
 	PySubStream* object = new PySubStream();
@@ -663,10 +665,10 @@ PyObject* MarshalStream::ReadSubStream( PyReadStream & stream )
 	MARSHALSTREAM_RETURN(object);
 }
 
-PyObject* MarshalStream::ReadVarInteger( PyReadStream & stream, BOOL shared )
+PyObject* MarshalStream::ReadVarInteger( MarshalReadStream & stream, BOOL shared )
 {
 	uint8 len;
-	if(!stream.readInt1(&len))
+	if(!stream.readInt1(len))
 		MARSHALSTREAM_RETURN_NULL;
 
 	uint8 *buffer;
@@ -676,7 +678,7 @@ PyObject* MarshalStream::ReadVarInteger( PyReadStream & stream, BOOL shared )
 	MARSHALSTREAM_RETURN(_ByteArray_AsPyLong(buffer, len));
 }
 
-PyObject* MarshalStream::ReadClassString( PyReadStream & stream, BOOL shared )
+PyObject* MarshalStream::ReadClassString( MarshalReadStream & stream, BOOL shared )
 {
 	PyObject* objectName = _ReadPyStringFromStringAndSize(stream);
 	//PyString_FromStringAndSize
@@ -684,10 +686,10 @@ PyObject* MarshalStream::ReadClassString( PyReadStream & stream, BOOL shared )
 	MARSHALSTREAM_RETURN(objectName);
 }
 
-PyObject* MarshalStream::_ReadPyStringFromStringAndSize( PyReadStream & stream )
+PyObject* MarshalStream::_ReadPyStringFromStringAndSize( MarshalReadStream & stream )
 {
 	uint32 size;
-	if (!stream.readExSize(&size))
+	if (!stream.readExSize(size))
 	{
 		MARSHALSTREAM_RETURN_NULL;
 	}
@@ -701,22 +703,19 @@ PyObject* MarshalStream::_ReadPyStringFromStringAndSize( PyReadStream & stream )
 	MARSHALSTREAM_RETURN(PyString_FromStringAndSize(buffer, size));
 }
 
-bool MarshalStream::checkAndInflate( PyReadStream & stream )
+bool MarshalStream::checkAndInflate( MarshalReadStream & stream )
 {
-	uint8 firstChar;
-	if (!stream.peekInt1(&firstChar))
+	char idChar;
+	if (!stream.peekInt1(idChar))
 	{
 		Log.Error("MarshalStream", "Unable to peek 1 byte of the stream and check if its compressed");
 		return false;
 	}
 
-	// fucked up
-	char idChar = *((char*)&firstChar);
-
 	// check if its compressed
 	if (idChar != '~' )
 	{
-		if (firstChar != 0x78)
+		if (idChar != char(0x78))
 		{
 			Log.Error("MarshalStream", "unknown idChar something fishy is going on..... panic");
 			return false;
@@ -736,18 +735,17 @@ bool MarshalStream::checkAndInflate( PyReadStream & stream )
 			// if we get here it usually means uncompress was successful.
 
 			// resize the stream... so we can copy stuff to it...
-			stream.setsize(outSize);
-			memcpy(stream.content(), zlibworkbuffer, outSize); // HAAAACCCKKKKKK!!!!!!!!!!
+			stream.set(zlibworkbuffer, outSize);
 		}
 	}	
 
 	return true;
 }
 
-bool MarshalStream::_ReadNewObjList( PyReadStream & stream, PyClass & obj )
+bool MarshalStream::_ReadNewObjList( MarshalReadStream & stream, PyClass & obj )
 {
 	char thingy;
-	if (!stream.peekInt1(&thingy))
+	if (!stream.peekInt1(thingy))
 	{
 		Log.Error("MarshalStream","unable to read ID thingy in "__FUNCTION__);
 		return false;
@@ -761,16 +759,16 @@ bool MarshalStream::_ReadNewObjList( PyReadStream & stream, PyClass & obj )
 	}
 	else
 	{
-		stream.seek(1, STREAM_SEEK_CUR); // skip one...
+		stream.seek(1, SEEK_CUR); // skip one...
 	}
 
 	return true;
 }
 
-bool MarshalStream::_ReadNewObjDict( PyReadStream & stream, PyClass & obj )
+bool MarshalStream::_ReadNewObjDict( MarshalReadStream & stream, PyClass & obj )
 {
 	char thingy;
-	if (!stream.peekInt1(&thingy))
+	if (!stream.peekInt1(thingy))
 	{
 		Log.Error("MarshalStream","unable to read ID thingy in "__FUNCTION__);
 		return false;
@@ -784,7 +782,7 @@ bool MarshalStream::_ReadNewObjDict( PyReadStream & stream, PyClass & obj )
 	}
 	else
 	{
-		stream.seek(1, STREAM_SEEK_CUR); // skip one...
+		stream.seek(1, SEEK_CUR); // skip one...
 	}
 
 

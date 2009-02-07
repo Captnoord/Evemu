@@ -298,11 +298,31 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\Communication\MarshalReadStream.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\Communication\MarshalReadStream.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\Communication\MarshalReferenceMap.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\Communication\MarshalStream.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\include\Communication\MarshalStream.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\Communication\MarshalWriteStream.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\Communication\MarshalWriteStream.h"
 				>
 			</File>
 			<File

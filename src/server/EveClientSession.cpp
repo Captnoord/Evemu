@@ -55,7 +55,7 @@ EveClientSession::~EveClientSession()
 {
 	_deleteMutex.Acquire();
 
-	PyReadStream *packet;
+	MarshalReadStream *packet;
 	while((packet = _recvQueue.Pop()))
 	{
 		SafeDelete(packet);
@@ -107,7 +107,7 @@ int EveClientSession::Update()
 	if (_recvQueue.GetSize() == 0)
 		return 0;
 
-	PyReadStream *packet;
+	MarshalReadStream *packet;
 	while (packet = _recvQueue.Pop())
 	{
 		ASSERT(packet && "EveClientSession packet dispatcher crash");
@@ -132,7 +132,7 @@ int EveClientSession::Update()
 }
 
 // whoo gonne act like python code.....
-void EveClientSession::_HandleMessage(PyReadStream& packet)
+void EveClientSession::_HandleMessage( MarshalReadStream& packet )
 {
 	MarshalStream stream;
 	stream.load(packet);
@@ -147,27 +147,27 @@ void EveClientSession::_HandleMessage(PyReadStream& packet)
 
 }
 
-void EveClientSession::_ProcessNone(PyReadStream& packet)
+void EveClientSession::_ProcessNone(MarshalReadStream& packet)
 {
 	//Log.Debug("SessionPacketDispatcher", "'Unhandled' packet received, opcode:%d", packet.type);
 }
 
-void EveClientSession::_ProcessCallRequest(PyReadStream& packet)
+void EveClientSession::_ProcessCallRequest(MarshalReadStream& packet)
 {
 	//Log.Debug("SessionPacketDispatcher", "ProcessCallRequest");
 }
 
-void EveClientSession::_ProcessNotification(PyReadStream& packet)
+void EveClientSession::_ProcessNotification(MarshalReadStream& packet)
 {
 	//Log.Debug("SessionPacketDispatcher", "ProcessNotification");
 }
 
-void EveClientSession::_ProcessPingRequest(PyReadStream& packet)
+void EveClientSession::_ProcessPingRequest(MarshalReadStream& packet)
 {
 	Log.Debug("SessionPacketDispatcher", /*"%s:*/ "'Unhandled' ping request.");//, GetName());
 }
 
-void EveClientSession::_ProcessPingResponce(PyReadStream& packet)
+void EveClientSession::_ProcessPingResponce(MarshalReadStream& packet)
 {
 	Log.Debug("SessionPacketDispatcher", /*"%s:*/ "Received ping response.");//, GetName());
 }

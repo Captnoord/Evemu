@@ -26,6 +26,7 @@
 
 #include "PyStringTable.h"
 #include "../Communication/PyStream.h"
+#include "../Communication/MarshalReadStream.h"
 #include "FileLogger.h"
 #include "DBRow.h"
 

@@ -26,7 +26,7 @@
 #ifndef __EVECLIENTSESSION_H
 #define __EVECLIENTSESSION_H
 
-typedef void (EveClientSession::*packetHandler)(PyReadStream&);
+typedef void (EveClientSession::*packetHandler)(MarshalReadStream&);
 
 /**
  * \class EveClientSession
@@ -64,15 +64,15 @@ public:
 
 	int Update();
 
-	void _ProcessNone(PyReadStream& packet);
-	void _ProcessCallRequest(PyReadStream& packet);
-	void _ProcessNotification(PyReadStream& packet);
-	void _ProcessPingRequest(PyReadStream& packet);
-	void _ProcessPingResponce(PyReadStream& packet);
+	void _ProcessNone(MarshalReadStream& packet);
+	void _ProcessCallRequest(MarshalReadStream& packet);
+	void _ProcessNotification(MarshalReadStream& packet);
+	void _ProcessPingRequest(MarshalReadStream& packet);
+	void _ProcessPingResponce(MarshalReadStream& packet);
 
 	uint32 GetUserId() { return _userId;}
 
-	void _HandleMessage(PyReadStream& packet);
+	void _HandleMessage(MarshalReadStream& packet);
 
 	//void _CheckSessionChange();
 
@@ -86,7 +86,7 @@ private:
 
 	EveClientSocket *_socket;
 	
-	FastQueue<PyReadStream*, Mutex> _recvQueue;
+	FastQueue<MarshalReadStream*, Mutex> _recvQueue;
 
 	// this of course will result in a lookup table for every player..... 84 bytes on a 32 bits machine 168 byts on a 64 bits machine..
 	packetHandler Handlers[MACHONETMSG_TYPE_MAX];

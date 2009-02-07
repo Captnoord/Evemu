@@ -3,7 +3,7 @@
 
 class PyObject;
 class PyStream;
-class PyReadStream;
+class MarshalReadStream;
 class UnmarshalReferenceMap;
 
 #include "MarshalReferenceMap.h"
@@ -14,7 +14,7 @@ class MarshalStream
 public:
 	MarshalStream();
 	~MarshalStream();
-	PyObject* load(PyReadStream & stream);
+	PyObject* load(MarshalReadStream & stream);
 	void save(PyObject * object);
 
 protected:
@@ -34,11 +34,11 @@ protected:
 #define sharedObjectsMap (sharedObjectsMapInternal)
 	
 private:
-	PyObject* unmarshal(PyReadStream & stream);
+	PyObject* unmarshal(MarshalReadStream & stream);
 
-	PyObject* ReadBuffer(PyReadStream & stream);
+	PyObject* ReadBuffer(MarshalReadStream & stream);
 
-	bool ReadMarshalHeader(PyReadStream & stream);
+	bool ReadMarshalHeader(MarshalReadStream & stream);
 
 	/**
 	 * @brief ReadClassString
@@ -49,26 +49,26 @@ private:
 	 * @param[out]
 	 * @return
 	 */
-	PyObject* ReadClassString(PyReadStream & stream, BOOL shared);
-	PyObject* ReadClass(PyReadStream & stream, BOOL shared);
-	PyObject* ReadNewObject1(PyReadStream & stream, BOOL shared);
-	PyObject* ReadNewObject2(PyReadStream & stream, BOOL shared);
-	PyObject* ReadPackedRow(PyReadStream & stream);
-	PyObject* ReadSubStream(PyReadStream & stream);
-	PyObject* ReadVarInteger(PyReadStream & stream, BOOL shared);
+	PyObject* ReadClassString(MarshalReadStream & stream, BOOL shared);
+	PyObject* ReadClass(MarshalReadStream & stream, BOOL shared);
+	PyObject* ReadNewObject1(MarshalReadStream & stream, BOOL shared);
+	PyObject* ReadNewObject2(MarshalReadStream & stream, BOOL shared);
+	PyObject* ReadPackedRow(MarshalReadStream & stream);
+	PyObject* ReadSubStream(MarshalReadStream & stream);
+	PyObject* ReadVarInteger(MarshalReadStream & stream, BOOL shared);
 
 	//////////////////////////////////////////////////////////////
 
 	/* small internal function to do some easy reading */
-	PyObject* _ReadPyStringFromStringAndSize(PyReadStream & stream);	
+	PyObject* _ReadPyStringFromStringAndSize(MarshalReadStream & stream);	
 
 	//PyStream	marshalStream;			// container for keeping a marshaled stream
 	PyObject*	unmarshalObjects;		// container for keeping the unmarshalled objects
 
 	bool _deleted;
 
-	bool _ReadNewObjList(PyReadStream & stream, PyClass & obj);
-	bool _ReadNewObjDict(PyReadStream & stream, PyClass & obj);
+	bool _ReadNewObjList(MarshalReadStream & stream, PyClass & obj);
+	bool _ReadNewObjDict(MarshalReadStream & stream, PyClass & obj);
 
 	/**
 	 * @brief checkAndInflate is a temp function to handle the possibility that a packets is zipped
@@ -77,7 +77,7 @@ private:
 	 *
 	 * @return true is check is successfully.. false means something went wrong...
 	 */
-	bool checkAndInflate( PyReadStream & stream );
+	bool checkAndInflate( MarshalReadStream & stream );
 	uint8 zlibworkbuffer[100000];
 };
 

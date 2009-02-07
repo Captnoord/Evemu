@@ -14,7 +14,13 @@ enum PyType
 	PyTypeList,
 	PyTypeSubStream,
 	PyTypeClass,
-	PyTypeDeleted, // must be last
+	PyTypeDeleted, // must be last, and can max be 16...
+};
+
+enum PyTypeIntFlags
+{
+	PyFlagLong = 0x80,	// b10000000
+	PyFlagMask = 0xF0,
 };
 
 class PyInt;
@@ -25,11 +31,8 @@ class PyPackedRow;
 class PyLong;
 class PyFloat;
 class PyBool;
-
-/*
-PyClass
-PyObject
-*/
+class PyClass;
+class PyObject;
 
 /**
  * \class PyBaseNone
@@ -81,11 +84,10 @@ private:
 class PyInt
 {
 public:
+	uint8 gettype(){return type;}
 	PyInt(int32 num, bool infinite = false);
 	PyInt &operator=(const int num);
-	~PyInt();
-
-	uint8 gettype(){return type;}
+	~PyInt();	
 	bool IsInfinite() {return isInfinite;}
 private:
 	uint8 type;
@@ -134,11 +136,10 @@ public:
 	PyChameleon &operator=(const PyList* pointer);
 	PyChameleon &operator=(const PyTuple* pointer);
 
-	PyChameleon &operator=(const PyObject* pointer);
+	PyChameleon &operator=(PyObject* pointer);
 	PyChameleon &operator=(PyObject& pointer);
 
 protected:
-
 	void _settype(uint8 type);
 	bool OnDelete();
 
@@ -178,11 +179,10 @@ static PyErrorChameleon PyErrorIterator;
 class PyLong
 {
 public:
+	uint8 gettype();
 	PyLong(int64 & num);
 	~PyLong();
-	uint8 gettype();
 	int64 getnumber();
-
 private:
 	uint8 type;
 	int64 number;
@@ -597,6 +597,51 @@ static PyLong* _ByteArray_AsPyLong(const uint8* buffer, size_t size)
 static int64 _PyLong_AsInt64(PyLong& number)
 {
 	return number.getnumber();
+}
+
+
+// lol maybe the only real FUCK up in my system lol
+static bool PyDelete(PyObject * obj)
+{
+	switch(obj->gettype())
+	{
+	//case PyTypeNone:
+	//	delete ((PyBaseNone*)obj);
+		return true;
+	case PyTypeBool:
+		delete ((PyBool*)obj);
+		return true;
+	case PyTypeInt:
+		delete ((PyInt*)obj);
+		return true;
+	case PyTypeReal:
+		delete ((PyFloat*)obj);
+		return true;
+	case PyTypeString:
+		delete ((PyString*)obj);
+		return true;
+	case PyTypeUnicode:
+		delete ((PyUnicodeUCS2*)obj);
+		return true;
+	case PyTypeDict:
+		delete ((PyDict*)obj);
+		return true;
+	case PyTypeTuple:
+		delete ((PyTuple*)obj);
+		return true;
+	case PyTypeList:
+		delete ((PyList*)obj);
+		return true;
+	case PyTypeSubStream:
+		delete ((PySubStream*)obj);
+		return true;
+	case PyTypeClass:
+		delete ((PyClass*)obj);
+		return true;
+	default:
+		return false;
+	}
+	return false;
 }
 
 #endif //_PYOBJECTS_H

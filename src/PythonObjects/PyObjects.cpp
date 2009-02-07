@@ -25,6 +25,7 @@ PyChameleon::~PyChameleon()
 
 PyChameleon &PyChameleon::operator=(const char* const str)
 {
+	assert(mIsEmpty == true);
 	_settype(PyTypeString);
 	mPayload = (void*)new PyString(str);
 	mIsNew = true;
@@ -34,6 +35,7 @@ PyChameleon &PyChameleon::operator=(const char* const str)
 
 PyChameleon &PyChameleon::operator=(const std::string &str)
 {
+	assert(mIsEmpty == true);
 	_settype(PyTypeString);
 	mPayload = (void*)new PyString(str.c_str(), str.size());
 	mIsNew = true;
@@ -43,6 +45,7 @@ PyChameleon &PyChameleon::operator=(const std::string &str)
 
 PyChameleon &PyChameleon::operator=(const uint32 number)
 {
+	assert(mIsEmpty == true);
 	_settype(PyTypeInt);
 	mPayload = (void*)new PyInt(number);
 	mIsNew = true;
@@ -52,6 +55,7 @@ PyChameleon &PyChameleon::operator=(const uint32 number)
 
 PyChameleon &PyChameleon::operator=(const int number)
 {
+	assert(mIsEmpty == true);
 	_settype(PyTypeInt);
 	mPayload = (void*)new PyInt(number);
 	mIsNew = true;
@@ -61,6 +65,7 @@ PyChameleon &PyChameleon::operator=(const int number)
 
 PyChameleon &PyChameleon::operator=(const float number)
 {
+	assert(mIsEmpty == true);
 	_settype(PyTypeReal);
 	mPayload = (void*)new PyFloat(number);
 	mIsNew = true;
@@ -70,6 +75,7 @@ PyChameleon &PyChameleon::operator=(const float number)
 
 PyChameleon &PyChameleon::operator=(const PyDict* pointer)
 {
+	assert(mIsEmpty == true);
 	_settype(PyTypeDict);
 	mPayload = (void*)pointer;
 	mIsEmpty = false;
@@ -78,6 +84,7 @@ PyChameleon &PyChameleon::operator=(const PyDict* pointer)
 
 PyChameleon &PyChameleon::operator=(const PyList* pointer)
 {
+	assert(mIsEmpty == true);
 	_settype(PyTypeDict);
 	mPayload = (void*)pointer;
 	mIsEmpty = false;
@@ -86,16 +93,24 @@ PyChameleon &PyChameleon::operator=(const PyList* pointer)
 
 PyChameleon &PyChameleon::operator=(const PyTuple* pointer)
 {
+	assert(mIsEmpty == true);
 	_settype(PyTypeTuple);
 	mPayload = (void*)pointer;
 	mIsEmpty = false;
 	return *this;
 }
 
-PyChameleon &PyChameleon::operator=(const PyObject* pointer)
+PyChameleon &PyChameleon::operator=(PyObject* pointer)
 {
-	PyObject *xxx = *((PyObject**)&pointer);
-	uint8 xtype = xxx->gettype();
+	assert(mIsEmpty == true);
+	//PyObject *xxx = *((PyObject**)&pointer);
+	uint8 xtype = pointer->gettype();
+	//assert(xtype != 2);
+	if (xtype == 2)
+	{
+		int henk = 3;
+		ASCENT_HARDWARE_BREAKPOINT;
+	}
 	_settype(xtype);
 	mPayload = (void*)pointer;
 	mIsEmpty = false;
@@ -104,6 +119,7 @@ PyChameleon &PyChameleon::operator=(const PyObject* pointer)
 
 PyChameleon &PyChameleon::operator=(PyObject& pointer)
 {
+	assert(mIsEmpty == true);
 	ASCENT_HARDWARE_BREAKPOINT;
 	mIsEmpty = false;
 	return *this;
@@ -111,43 +127,55 @@ PyChameleon &PyChameleon::operator=(PyObject& pointer)
 
 bool PyChameleon::OnDelete()
 {
-	if (mIsNew != true)
+	if (mIsEmpty == true)
 		return false;
 
-	switch(mType)
+	switch(mType & ~PyFlagMask)
 	{
 	case PyTypeNone:
-		delete ((PyBaseNone*)mPayload);
+		// we don't delete the PyNone object as its a static object.
+		//delete ((PyBaseNone*)mPayload);
 		return true;
 	case PyTypeBool:
-		delete ((PyBool*)mPayload);
+		delete ((PyBool*)mPayload); mPayload = NULL;
 		return true;
 	case PyTypeInt:
-		delete ((PyInt*)mPayload);
+		if ((mType & PyFlagLong) != 0)
+		{
+			PyLong* obj = (PyLong*)mPayload;
+			delete obj;
+			mPayload = NULL;
+		}
+		else
+		{
+			PyInt* obj = (PyInt*)mPayload;
+			delete obj;
+			mPayload = NULL;
+		}
 		return true;
 	case PyTypeReal:
-		delete ((PyFloat*)mPayload);
+		delete ((PyFloat*)mPayload); mPayload = NULL;
 		return true;
 	case PyTypeString:
-		delete ((PyString*)mPayload);
+		delete ((PyString*)mPayload); mPayload = NULL;
 		return true;
 	case PyTypeUnicode:
-		delete ((PyUnicodeUCS2*)mPayload);
+		delete ((PyUnicodeUCS2*)mPayload); mPayload = NULL;
 		return true;
 	case PyTypeDict:
-		delete ((PyDict*)mPayload);
+		delete ((PyDict*)mPayload); mPayload = NULL;
 		return true;
 	case PyTypeTuple:
-		delete ((PyTuple*)mPayload);
+		delete ((PyTuple*)mPayload); mPayload = NULL;
 		return true;
 	case PyTypeList:
-		delete ((PyList*)mPayload);
+		delete ((PyList*)mPayload); mPayload = NULL;
 		return true;
 	case PyTypeSubStream:
-		delete ((PySubStream*)mPayload);
+		delete ((PySubStream*)mPayload); mPayload = NULL;
 		return true;
 	case PyTypeClass:
-		delete ((PyClass*)mPayload);
+		delete ((PyClass*)mPayload); mPayload = NULL;
 		return true;
 	default:
 		return false;
@@ -317,7 +345,7 @@ uint8 PyUnicodeUCS2::gettype()
 {
 	return type;
 }
-PyInt::PyInt( int32 num, bool infinite /*= false*/ ) : isInfinite(isInfinite)
+PyInt::PyInt( int32 num, bool infinite /*= false*/ ) : isInfinite(infinite)
 {
 	type = PyTypeInt;
 	number = num;
@@ -326,6 +354,7 @@ PyInt::PyInt( int32 num, bool infinite /*= false*/ ) : isInfinite(isInfinite)
 PyInt & PyInt::operator=( const int num )
 {
 	number = num;
+	type = PyTypeInt;
 	return *this;
 }
 
@@ -337,7 +366,7 @@ PyInt::~PyInt()
 /************************************************************************/
 /* PyLong                                                               */
 /************************************************************************/
-PyLong::PyLong( int64 & num ) : number(num), type(PyTypeInt) {}
+PyLong::PyLong( int64 & num ) : number(num), type(PyTypeInt | PyFlagLong) {}
 PyLong::~PyLong() { type = PyTypeDeleted; }
 
 uint8 PyLong::gettype()
@@ -400,6 +429,7 @@ PyTuple::PyTuple( int elementCount ) : type(PyTypeTuple)
 
 PyTuple::~PyTuple()
 {
+	mTuple.clear();
 	type = PyTypeDeleted;
 }
 
@@ -433,6 +463,7 @@ PyList::PyList( int elementCount ) : type(PyTypeList)
 
 PyList::~PyList()
 {
+	mList.clear();
 	type = PyTypeDeleted;
 }
 
@@ -456,6 +487,7 @@ uint8 PyList::gettype()
 PyDict::PyDict() : type(PyTypeDict) {}
 PyDict::~PyDict()
 {
+	mDict.clear();
 	type = PyTypeDeleted;
 }
 
