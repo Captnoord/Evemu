@@ -26,8 +26,8 @@
 #ifndef PY_STREAM_H
 #define PY_STREAM_H
 
-#include "Common.h"
-#include "EveMarshalOpcodes.h"
+/*#include "Common.h"
+#include "EveMarshalOpcodes.h"*/
 
 /* how the client marshals objects */
 /*

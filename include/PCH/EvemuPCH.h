@@ -25,8 +25,9 @@
 #include <algorithm>
 
 #include "PyStringTable.h"
-#include "../Communication/PyStream.h"
-#include "../Communication/MarshalReadStream.h"
+#include "EVEMarshalOpcodes.h"
+#include "PyStream.h"
+#include "MarshalReadStream.h"
 #include "FileLogger.h"
 #include "DBRow.h"
 
@@ -34,23 +35,23 @@
 #include "MarshalStream.h"
 
 
-#include "../Communication/packet_types.h"
-#include "../Communication/EVEVersion.h"
+#include "packet_types.h"
+#include "EVEVersion.h"
 
 /* Ascent new stuff */
 #include "AccountMgr.h"
 #include "EveSession.h"
-#include "../server/EveClientSocket.h"
-#include "../server/EveClientSession.h"
+#include "EveClientSocket.h"
+#include "EveClientSession.h"
 
-#include "../server/Space/Space.h"
-#include "../server/Space/SpaceRunnable.h"
-#include "../server/Space/RegionMapManager.h"
+#include "Space.h"
+#include "SpaceRunnable.h"
+#include "RegionMapManager.h"
 
 /* this one is evil.... */
 //#include "../server/ClientSession.h"
 
-#include "../TestCases/TestCaseMarshal.h"
+#include "TestCaseMarshal.h"
 
 /*Database handles*/
 extern Database* Database_dynamic;

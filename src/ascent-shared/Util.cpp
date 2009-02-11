@@ -757,11 +757,56 @@ void Strings::toLowerCase(std::wstring& TString)
 	std::transform(TString.begin(), TString.end(), TString.begin(), static_cast<int(*)(int)>(::tolower));
 }
 
+#ifndef WIN32
+/**
+	
+ * C++ version char* style "itoa":
+	
+ */
+	
+char* itoa( int value, char* result, int base ) {
+	
+	// check that the base if valid
+	
+	if (base < 2 || base > 16) { *result = 0; return result; }
+		
+	char* out = result;
+	
+	int quotient = value;
+
+	do {
+	
+		*out = "0123456789abcdef"[ std::abs( quotient % base ) ];
+	
+		++out;
+	
+		quotient /= base;
+	
+	} while ( quotient );
+		
+	// Only apply negative sign for base 10
+	
+	if ( value < 0 && base == 10) *out++ = '-';
+	
+	std::reverse( result, out );
+	
+	*out = 0;
+	
+	return result;
+	
+}
+#endif
+
+
 std::string Strings::toString(uint32 number)
 {
 	// a unsigned 32 bits value has a max string representative of 10 characters.
 	char tArray[10];
-	_itoa(number, tArray, 10);
+	#ifndef WIN32
+		itoa(number, tArray, 10);
+	#else
+		_itoa(number, tArray, 10);
+	#endif
 	return tArray;
 }
 }//namespace Utils

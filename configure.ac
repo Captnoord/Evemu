@@ -148,9 +148,7 @@ AC_CONFIG_FILES([
 	3rdparty/Makefile
 	3rdparty/tinyxml/Makefile
 	src/ascent-shared/Makefile
-	src/common/Makefile
-	src/rewrite/Makefile
-	src/server/Makefile
+	src/Makefile
 ])
 
 AC_OUTPUT

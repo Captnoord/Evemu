@@ -1,4 +1,5 @@
-#include "Common.h"
+#include "EvemuPCH.h"
+/*#include "Common.h"
 #include "ascent.h"
 #include "PyObjects.h"
 #include "MarshalReadStream.h"
@@ -6,8 +7,9 @@
 #include "EveMarshalOpcodes.h"
 #include "PyStream.h"
 #include "PyStringTable.h"
-#include "MarshalReferenceMap.h"
-#include <zlib.h>
+#include "MarshalReferenceMap.h"*/
+
+//#include <zlib.h>
 
 // small macro's to catch those NULL pointers... they just shouldn't happen
 #ifdef _DEBUG
