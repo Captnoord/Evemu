@@ -223,7 +223,8 @@ void oLog::Color(uint32 colorcode, const char * str, ...)
 #ifdef WIN32
 	SetConsoleTextAttribute(stdout_handle, WORD(colorcode));
 #else
-	printf(colorstrings[colorcode]);
+	// TODO: check this
+	printf("%s",colorstrings[colorcode]);
 #endif
 	vprintf( str, ap );
 	fflush(stdout);

@@ -1,23 +1,38 @@
-#include "EvemuPCH.h"
-/*#include "Common.h"
-#include "ascent.h"
-#include "PyObjects.h"
-#include "MarshalReadStream.h"
-#include "MarshalStream.h"
-#include "EveMarshalOpcodes.h"
-#include "PyStream.h"
-#include "PyStringTable.h"
-#include "MarshalReferenceMap.h"*/
+/*
+	------------------------------------------------------------------------------------
+	LICENSE:
+	------------------------------------------------------------------------------------
+	This file is part of EVEmu: EVE Online Server Emulator
+	Copyright 2006 - 2009 The EVEmu Team
+	For the latest information visit http://evemu.mmoforge.org
+	------------------------------------------------------------------------------------
+	This program is free software; you can redistribute it and/or modify it under
+	the terms of the GNU Lesser General Public License as published by the Free Software
+	Foundation; either version 2 of the License, or (at your option) any later
+	version.
 
-//#include <zlib.h>
+	This program is distributed in the hope that it will be useful, but WITHOUT
+	ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+	FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+
+	You should have received a copy of the GNU Lesser General Public License along with
+	this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+	Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+	http://www.gnu.org/copyleft/lesser.txt.
+	------------------------------------------------------------------------------------
+	Author:		Captnoord
+*/
+#include <zlib.h>
+#include "EvemuPCH.h"
 
 // small macro's to catch those NULL pointers... they just shouldn't happen
 #ifdef _DEBUG
 #  define MARSHALSTREAM_RETURN_NULL {ASCENT_HARDWARE_BREAKPOINT; return NULL;}
 #  define MARSHALSTREAM_RETURN(p) {PyObject * x = ((PyObject*)p); assert(x != NULL); return x;}
 #else
-#  define MARSHALSTREAM_RETURN_NULL {sLog.String(__FUNCTION__" :returning NULL"); return NULL;}
-#  define MARSHALSTREAM_RETURN(p) { PyObject * x = ((PyObject*)p); if (x == NULL) {sLog.Error(__FUNCTION__" :returning NULL");} return x; }
+// __FUNCTION__ returns a const char* , so const char*" stuff..." no good...TODO FIX :D
+#  define MARSHALSTREAM_RETURN_NULL {/*sLog.String(__FUNCTION__" :returning NULL");*/ return NULL;}
+#  define MARSHALSTREAM_RETURN(p) { PyObject * x = ((PyObject*)p); /*if (x == NULL) {sLog.Error(__FUNCTION__" :returning NULL");}*/ return x; }
 #endif//_DEBUG
 
 #ifdef _DEBUG
@@ -28,8 +43,8 @@
 #endif
 
 
-MarshalStream::MarshalStream() : _deleted(false), PyIntZero(0), PyIntOne(1), PyIntMinOne(-1), PyFloatZero(0.0),PyIntInfinite(-1, true),
-	Py_TrueStruct(true), Py_ZeroStruct(false), sharedObjectsMapInternal(NULL) {}
+MarshalStream::MarshalStream() : PyIntZero(0), PyIntOne(1), PyIntMinOne(-1), PyIntInfinite(-1, true), PyFloatZero(0.0),
+	Py_TrueStruct(true), Py_ZeroStruct(false), sharedObjectsMapInternal(NULL), _deleted(false) {}
 
 MarshalStream::~MarshalStream()
 {
@@ -37,7 +52,7 @@ MarshalStream::~MarshalStream()
 }
 
 PyObject* MarshalStream::load(MarshalReadStream & stream)
-{
+{	
 	if (!checkAndInflate(stream))
 	{
 		MARSHALSTREAM_RETURN_NULL;
@@ -574,7 +589,7 @@ PyObject* MarshalStream::ReadBuffer( MarshalReadStream & stream )
 	MARSHALSTREAM_RETURN(ret);
 }
 
-PyObject* MarshalStream::ReadClass( MarshalReadStream & stream, BOOL shared )
+PyObject* MarshalStream::ReadClass( MarshalReadStream & stream, bool shared )
 {
 	/* bla bla bla do shared object stuff here..... */
 
@@ -598,7 +613,7 @@ PyObject* MarshalStream::ReadClass( MarshalReadStream & stream, BOOL shared )
 	MARSHALSTREAM_RETURN(classObj);
 }
 
-PyObject* MarshalStream::ReadNewObject1( MarshalReadStream & stream, BOOL shared )
+PyObject* MarshalStream::ReadNewObject1( MarshalReadStream & stream, bool shared )
 {
 	PyClass * classObj = new PyClass();
 
@@ -619,7 +634,7 @@ PyObject* MarshalStream::ReadNewObject1( MarshalReadStream & stream, BOOL shared
 	MARSHALSTREAM_RETURN(classObj);
 }
 
-PyObject* MarshalStream::ReadNewObject2( MarshalReadStream & stream, BOOL shared )
+PyObject* MarshalStream::ReadNewObject2( MarshalReadStream & stream, bool shared )
 {
 	PyClass * classObj = new PyClass();
 
@@ -667,7 +682,7 @@ PyObject* MarshalStream::ReadSubStream( MarshalReadStream & stream )
 	MARSHALSTREAM_RETURN(object);
 }
 
-PyObject* MarshalStream::ReadVarInteger( MarshalReadStream & stream, BOOL shared )
+PyObject* MarshalStream::ReadVarInteger( MarshalReadStream & stream, bool shared )
 {
 	uint8 len;
 	if(!stream.readInt1(len))
@@ -680,7 +695,7 @@ PyObject* MarshalStream::ReadVarInteger( MarshalReadStream & stream, BOOL shared
 	MARSHALSTREAM_RETURN(_ByteArray_AsPyLong(buffer, len));
 }
 
-PyObject* MarshalStream::ReadClassString( MarshalReadStream & stream, BOOL shared )
+PyObject* MarshalStream::ReadClassString( MarshalReadStream & stream, bool shared )
 {
 	PyObject* objectName = _ReadPyStringFromStringAndSize(stream);
 	//PyString_FromStringAndSize
@@ -749,7 +764,8 @@ bool MarshalStream::_ReadNewObjList( MarshalReadStream & stream, PyClass & obj )
 	char thingy;
 	if (!stream.peekInt1(thingy))
 	{
-		Log.Error("MarshalStream","unable to read ID thingy in "__FUNCTION__);
+		// TODO FIX: _FUNCTION__ is a const char*
+		// Log.Error("MarshalStream","unable to read ID thingy in "__FUNCTION__);
 		return false;
 	}
 
@@ -772,7 +788,8 @@ bool MarshalStream::_ReadNewObjDict( MarshalReadStream & stream, PyClass & obj )
 	char thingy;
 	if (!stream.peekInt1(thingy))
 	{
-		Log.Error("MarshalStream","unable to read ID thingy in "__FUNCTION__);
+		// TODO FIX: _FUNCTION__ is a const char*
+		//Log.Error("MarshalStream","unable to read ID thingy in "__FUNCTION__);
 		return false;
 	}
 

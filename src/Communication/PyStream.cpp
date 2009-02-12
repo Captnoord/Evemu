@@ -800,7 +800,12 @@ void PyListStream::OnObjectWrite(size_t /*size*/)
 		// check if its extended
 		if (mEntryCount > 0xFE)
 		{
-			__asm {int 3} // hardware breakpoint because I want to know when this happens even when we are running normal shit
+			#ifdef WIN32
+				__asm {int 3} // hardware breakpoint because I want to know when this happens even when we are running normal shit
+			#else
+				// TODO hardware breakpoint for linux
+			#endif
+			
 			// we change to extended size.
 			mSetExtended = true;
 			DataItr Itr = mData.begin();

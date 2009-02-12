@@ -133,7 +133,7 @@ public:
 
 	void LogSessionHistory(const char *reason, const char *details = NULL, bool noBlather = false);
 
-	bool IsMutating() {};
+	bool IsMutating();
 	bool IsChanging();
 	bool IsItSafe();
 	bool IsItSemiSafe();

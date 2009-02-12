@@ -376,9 +376,11 @@ void EveClientSocket::_authStateCryptoChallenge(PyReadStream& packet)
 
 		outPacket << "hi";			// this is crap... makes me think we can send like everything...
 			PyTupleStream tTuple;
-			tTuple << PyBufferStream(handshakeFunc, handshakeFuncSize); // marshaled PyNone object function taking no parameters
-			tTuple << false;			// 
-			tTuple << PyDictStream();	// empty dict
+			// FIX: no tuple operator << for PyBufferStream 
+			//tTuple << PyBufferStream(handshakeFunc, handshakeFuncSize); // marshaled PyNone object function taking no parameters
+			tTuple << false;			
+			// FIX: no PyTupleStream operator << for PyDictStream
+			//tTuple << PyDictStream();	// empty dict
 		outPacket << tTuple;
 
 		PyDictStream tDict;
@@ -388,7 +390,8 @@ void EveClientSocket::_authStateCryptoChallenge(PyReadStream& packet)
 			tDict["boot_region"] << EveProjectRegion;
 			tDict["cluster_usercount"] << 10;
 			tDict["user_logonqueueposition"] << 1;
-			tDict["challenge_responsehash"] << PyStringStream("654", 3);//PyBufferStream(64);
+			// FIX: no PyDictStream operator << for PyStringStream
+			//tDict["challenge_responsehash"] << PyStringStream("654", 3);//PyBufferStream(64);
 			tDict["macho_version"] << MachoNetVersion;
 			tDict["boot_codename"] << EveProjectCodename;
 			tDict["boot_build"] << EveBuildVersion;
@@ -410,7 +413,8 @@ void EveClientSocket::_authStateHandshakeSend(PyReadStream& packet)
 
 	/* Server challenge response ack */
 	PyDictStream outDict;
-	outDict["live_updates"] << PyListStream(); // empty list
+	// FIX: no PyDictStream operator << for PyListStream
+	//outDict["live_updates"] << PyListStream(); // empty list
 
 		PyDictStream outSessionInit;
 
@@ -428,7 +432,8 @@ void EveClientSocket::_authStateHandshakeSend(PyReadStream& packet)
 		outSessionInit.finish();
 
 	outDict["session_init"] << outSessionInit;
-	outDict["client_hashes"] << PyListStream(); // empty list
+	// FIX: no PyDictStream operator << for PyListStream
+	//outDict["client_hashes"] << PyListStream(); // empty list
 	outDict["user_clientid"] << userClientId;//mUserClientId;
 	outDict.finish();
 

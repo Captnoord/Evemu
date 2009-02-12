@@ -560,7 +560,8 @@ SERVER_DECL bool CheckIPs(const char* szIPList)
 	char* ip_string = strdup(szIPList);
 	int count = get_tokens(ip_string, (char**)tokens, 30, ':');
 	int i, j;
-	DWORD len = 100;
+	// not used why?
+	//DWORD len = 100;
 	char* t;
 	bool pass = false;
 #ifdef WIN32

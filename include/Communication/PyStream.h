@@ -1244,7 +1244,7 @@ enum ItrRules
 	ITR_RULE_DYNAMIC	= -2,
 	ITR_RULE_COMPLEX	= -3,
 };
-static uint32 PyStreamItrLengthRules[] = {
+static int32 PyStreamItrLengthRules[] = {
 	ITR_RULE_NONE, 
 	ITR_RULE_NONE,		//Op_PyNone				= 0x01,
 	ITR_RULE_SIMPLE,	//Op_PyByteString		= 0x02,
@@ -1318,7 +1318,7 @@ public:
 		if (opcode == 0 || opcode > 0x2F)
 			return;
 
-		uint32 itrRule = PyStreamItrLengthRules[opcode];
+		int32 itrRule = PyStreamItrLengthRules[opcode];
 		
 		if (itrRule == ITR_RULE_SIMPLE)
 		{
@@ -1428,7 +1428,7 @@ protected:
 class PyTupleNetStream
 {
 public:
-	PyTupleNetStream(PyReadStream & packet) : tupleObjectCount(0), stream(packet)
+	PyTupleNetStream(PyReadStream & packet) : stream(packet), tupleObjectCount(0)
 	{
 		PyRepOpcodes opcode = packet._pop1<PyRepOpcodes>();
 		if (opcode == Op_PyTuple)

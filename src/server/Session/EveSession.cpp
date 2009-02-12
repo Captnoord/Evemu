@@ -87,7 +87,8 @@ PySessionAttribute EveSession::GetDefaultValueOfAttribute(const char *attribute)
 {
 	PySessionAttribute ret;
 
-	if (!strncmp(attribute, "role", 4))
+	// no operator for PySessionAttribute = ROLE_LOGIN
+	/*if (!strncmp(attribute, "role", 4))
 	{
 		ret = ROLE_LOGIN;
 		return ret;
@@ -97,7 +98,7 @@ PySessionAttribute EveSession::GetDefaultValueOfAttribute(const char *attribute)
 	{
 		ret = ROLE_LOGIN;
 		return ret;
-	}
+	}*/
 
 	ret = PyStreamNone;
 	return ret;

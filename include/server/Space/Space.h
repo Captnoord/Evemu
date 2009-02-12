@@ -34,7 +34,7 @@ typedef std::set<EveClientSession*>							SessionSet;
 typedef SessionSet::iterator								SessionSetItr;
 typedef SessionSet::const_iterator							SessionSetConstItr;
 
-typedef HM_NAMESPACE::unordered_map<uint32, EveClientSession*>SessionMap;
+typedef std::tr1::unordered_map<uint32, EveClientSession*>SessionMap;
 typedef SessionMap::iterator								SessionMapItr;
 typedef SessionMap::const_iterator							SessionMapConstItr;
 

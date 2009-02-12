@@ -69,12 +69,13 @@ public:
 	 */
 	T &find(const char* str)
 	{
-		uint32 _hash = (*hash)(str);
-		_StringMap::iterator Itr = mContainer.find(_hash);
+		const uint32 _hash = (*hash)(str);
+		// DISABLED FOR TEST
+		/*std::map<uint32, T>::const_iterator Itr = mContainer.find(_hash);
 		if (Itr != mContainer.end())
 		{
 			return Itr->second;
-		}
+		}*/
 		return NULL;
 	}
 
@@ -125,12 +126,12 @@ private:
 		// if there isn't anything in the container there can't be a hash collision.
 		if (mContainer.size() == 0)
 			return false;
-
-		_StringMap::iterator Itr = mContainer.find(hash);
+		// DISABLED FOR TEST
+		/*_StringMap::iterator Itr = mContainer.find(hash);
 		if (Itr != mContainer.end())
 		{
 			return true;
-		}
+		}*/
 		return false;
 	}
 

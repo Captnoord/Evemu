@@ -289,24 +289,12 @@ enum MsTimeVariables
 #  endif
 #endif
 
-#if ASCENT_COMPILER == COMPILER_GNU && __GNUC__ >= 3
-//#  include <ext/hash_map>
-//#  include <ext/hash_set>
-//#else
-#  include <hash_map>
-#  include <hash_set>
-#endif
-
 #ifdef _STLPORT_VERSION
 #  define HM_NAMESPACE std
    using std::hash_map;
    using std::hash_set;
 #elif ASCENT_COMPILER == COMPILER_MICROSOFT && _MSC_VER >= 1300
-#  define HM_NAMESPACE std::tr1
-//   using HM_NAMESPACE::unordered_map;
-//   using HM_NAMESPACE::unordered_set;
 #  define ENABLE_SHITTY_STL_HACKS 1
-
    // hacky stuff for vc++
 #  define snprintf _snprintf
 #  define vsnprintf _vsnprintf
@@ -315,7 +303,8 @@ enum MsTimeVariables
 #  define HM_NAMESPACE std
    using std::hash_map;
    using std::hash_set;
-#elif ASCENT_COMPILER == COMPILER_GNU && __GNUC__ >= 3
+#endif
+/*#elif ASCENT_COMPILER == COMPILER_GNU && __GNUC__ >= 3
 #  define HM_NAMESPACE __gnu_cxx
    using __gnu_cxx::hash_map;
    using __gnu_cxx::hash_set;
@@ -335,7 +324,7 @@ namespace __gnu_cxx
 #else
 #  define HM_NAMESPACE std
    using std::hash_map;
-#endif
+#endif*/
 
 /* Use correct types for x64 platforms, too */
 #if ASCENT_COMPILER != COMPILER_GNU

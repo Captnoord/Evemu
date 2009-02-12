@@ -461,7 +461,7 @@ public:
 		hex_digest = &retval[0];
 
 		/* Make hex version of the digest */
-		for(i=j=0; i<sizeof(digest); i++) {
+		for(i=j=0; i<(int)sizeof(digest); i++) {
 			char c;
 			c = (digest[i] >> 4) & 0xf;
 			c = (c>9) ? c+'a'-10 : c + '0';
