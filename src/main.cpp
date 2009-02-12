@@ -20,7 +20,7 @@
 	Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 	http://www.gnu.org/copyleft/lesser.txt.
 	------------------------------------------------------------------------------------
-	Author:		zhur
+	Author:		zhur, Captnoord, mmcs
 */
 
 #include "EvemuPCH.h"
@@ -47,8 +47,11 @@ void _UnhookSignals();
 
 #define ServerThreadPoolUpdateTest (ServerFrameworkMinute(1) / ServerFrameworkDelay)
 
-//#define ServerThreadPoolUpdate ServerThreadPoolUpdateRelease
-#define ServerThreadPoolUpdate ServerThreadPoolUpdateTest
+#ifdef _DEBUG
+#  define ServerThreadPoolUpdate ServerThreadPoolUpdateTest
+#else
+#  define ServerThreadPoolUpdate ServerThreadPoolUpdateRelease
+#endif//_DEBUG
 
 Database* Database_dynamic;
 Database* Database_static;
@@ -69,16 +72,10 @@ int main(int argc, char *argv[])
 	printf( "The key combination <Ctrl-C> will safely shut down the server at any time.\n" );
 	Log.Line();
 
-	uint32 henk = Utils::Hash::djb2_hash("henk is fokking lelijk");
-	uint32 henk2 = Utils::Hash::sdbm_hash("henk is fokking lelijk");
-
-	string_map<uint32> test;
-	test.insert("henk", 1);
-
 #ifndef WIN32
 	if(geteuid() == 0 || getegid() == 0)
 	{
-		Log.LargeErrorMessage( LARGERRORMESSAGE_WARNING, "You are running Evemu as root.", "This is not needed, and may be a possible security risk.", "It is advised to hit CTRL+C now and", "start as a non-privileged user.", NULL);
+		Log.LargeErrorMessage( LARGERRORMESSAGE_WARNING, "You are running evemu-server as root.", "This is not needed, and may be a possible security risk.", "It is advised to hit CTRL+C now and", "start as a non-privileged user.", NULL);
 	}
 #endif//WIN32
 
@@ -126,8 +123,6 @@ int main(int argc, char *argv[])
 	new SocketGarbageCollector;
 	
 	sSocketMgr.SpawnWorkerThreads();
-
-	
 
 	/* these settings are 'hardcoded' for now */
 	uint32 wsport = 26000;
