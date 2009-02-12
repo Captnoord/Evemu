@@ -182,7 +182,7 @@ private:
 		if (mContainer.size() == 0)
 			return false;
 
-		StringMap::iterator Itr = mContainer.find(hash);
+		StringMapItr Itr = mContainer.find(hash);
 		if (Itr != mContainer.end())
 		{
 			return true;

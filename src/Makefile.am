@@ -1,6 +1,6 @@
 INCLUDES += -I$(srcdir)/../3rdparty/
 INCLUDES += -I$(srcdir)/../include/ascent-shared/
-INCLUDES += -I$(srcdir)/../include/Auth/
+INCLUDES += -I$(srcdir)/../include/Authorization/
 INCLUDES += -I$(srcdir)/../include/Communication/
 INCLUDES += -I$(srcdir)/../include/PCH/
 INCLUDES += -I$(srcdir)/../include/PythonObjects/
@@ -15,7 +15,7 @@ INCLUDES += -I$(srcdir)/../include/Utilities/
 bin_PROGRAMS = evemuserver
 
 evemuserver_SOURCES = \
-	Auth/PasswordModule.cpp \
+    Authorization/PasswordModule.cpp \
 	Communication/MarshalReadStream.cpp \
 	Communication/MarshalStream.cpp \
 	Communication/MarshalWriteStream.cpp \

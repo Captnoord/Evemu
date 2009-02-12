@@ -92,7 +92,7 @@ struct SolarSystem {
     uint32 sunTypeID;
     char securityClass[2];
     
-    // octreeObject; weeeeeee
+    MapOctree solarSystemMapOctree;
 }
 
 #endif//__SPACEFORM_H

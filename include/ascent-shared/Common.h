@@ -304,27 +304,6 @@ enum MsTimeVariables
    using std::hash_map;
    using std::hash_set;
 #endif
-/*#elif ASCENT_COMPILER == COMPILER_GNU && __GNUC__ >= 3
-#  define HM_NAMESPACE __gnu_cxx
-   using __gnu_cxx::hash_map;
-   using __gnu_cxx::hash_set;
-
-namespace __gnu_cxx
-{
-	template<> struct hash<unsigned long long>
-	{
-		size_t operator()(const unsigned long long &__x) const { return (size_t)__x; }
-	};
-	template<typename T> struct hash<T *>
-	{
-		size_t operator()(T * const &__x) const { return (size_t)__x; }
-	};
-};
-
-#else
-#  define HM_NAMESPACE std
-   using std::hash_map;
-#endif*/
 
 /* Use correct types for x64 platforms, too */
 #if ASCENT_COMPILER != COMPILER_GNU

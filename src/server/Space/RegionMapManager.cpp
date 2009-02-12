@@ -26,14 +26,44 @@
 #include "EvemuPCH.h"
 #define SPACE_REGION_UPDATE_DELAY 50
 
+RegionMapMgr::RegionMapMgr(uint32 regionID,uint8 nrWorkers) :
+regionID(regionID), workers_size(nrWorkers)
+{
+	
+		
+	
+	
+	
+}
+	
+RegionMapMgr::~RegionMapMgr()
+{
+	
+	
+	
+	
+	
+	
+	
+	
+}
+
+void RegionMapMgr::SpawnWorkerThreads()
+{
+    for(uint8 i = 0; i < workers_size; ++i)
+        ThreadPool.ExecuteTask(new RegionMapWorkerThread());
+}
+
+
 RegionMapWorkerThread::RegionMapWorkerThread() : ThreadContext()
 {
+
 
 }
 
 bool RegionMapWorkerThread::run()
 {
-	SetThreadName("RegionMapWorkerThread");
+	/*SetThreadName("RegionMapWorkerThread");
 
 	Log.Notice("RegionMapWorkerThread","Booting...");
 
@@ -74,44 +104,15 @@ bool RegionMapWorkerThread::run()
 		if(execution_start > now)//overrun
 			diff = SPACE_REGION_UPDATE_DELAY - now;
 		else
-			diff = now - execution_start;//time used for updating 
+			diff = now - execution_start;//time used for updating */
 
 		/*This is execution time compensating system
 			if execution took more than default delay 
 			no need to make this sleep*/
-		if(diff < SPACE_REGION_UPDATE_DELAY)
+	/*	if(diff < SPACE_REGION_UPDATE_DELAY)
 			Sleep(SPACE_REGION_UPDATE_DELAY - diff);
 	}
 
-	//THREAD_HANDLE_CRASH2
+	//THREAD_HANDLE_CRASH2*/
 	return true;
-}
-
-
-RegionMapMgr::RegionMapMgr(uint32 regionID,uint8 nrWorkers) :
-regionID(regionID), workers_size(nrWorkers)
-{
-	
-		
-	
-	
-	
-}
-	
-RegionMapMgr::~RegionMapMgr()
-{
-	
-	
-	
-	
-	
-	
-	
-	
-}
-
-void RegionMapMgr::SpawnWorkerThreads()
-{
-    for(uint8 i = 0; i < workers_size; ++i)
-        ThreadPool.ExecuteTask(new SocketWorkerThread());
 }
