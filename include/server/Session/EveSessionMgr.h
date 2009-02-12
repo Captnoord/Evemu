@@ -89,6 +89,8 @@ OnSessionMutated
 /* Eve Session mgr notify events
 __notifyevents__ = ['ProcessInventoryChange', 'ProcessSessionChange', 'DoSessionChanging']
 */
+
+#if 0
 class EveSessionMgr
 {
 public:
@@ -121,3 +123,5 @@ private:
 	void GetSessionValuesFromItemID(uint32 itemID, Inventory &inventory2 = NULL, Item &theItem = NULL);
 	void GetInitialValuesFromCharID(uint32 charID);
 };
+
+#endif
