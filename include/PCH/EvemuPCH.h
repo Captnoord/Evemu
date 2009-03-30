@@ -34,13 +34,14 @@
 /* 'evemu-server' generic includes */
 #include "PyStringTable.h"
 #include "EVEMarshalOpcodes.h"
-//#include "PyStream.h"
+#include "MarshalReferenceMap.h"
 #include "ReadStream.h"
 #include "WriteStream.h"
 #include "FileLogger.h"
 #include "DBRow.h"
 
 #include "PyObjectDeleter.h"
+#include "PyChameleon.h"
 #include "PyObjects.h"
 #include "PyUnicodeUCS2.h"
 #include "MarshalStream.h"

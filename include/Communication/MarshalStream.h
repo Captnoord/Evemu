@@ -58,7 +58,7 @@ protected:
 	PyString PyStringEmpty;
 
 	/* container to keep track of the referenced objects */
-	//UnmarshalReferenceMap mReferencedObjectsMap;
+	UnmarshalReferenceMap mReferencedObjectsMap;
 
 private:
 	/**

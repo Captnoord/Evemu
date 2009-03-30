@@ -46,24 +46,42 @@
  *
  * @author Captnoord
  * @date December 2008
+ * @todo clean and stuff.
  */
 class UnmarshalReferenceMap
 {
 public:
 
-	UnmarshalReferenceMap() : expectedObjectsCount(0), storedObjectCount(0), storeObjectIndex(0)
-	{
-		mReferenceObjects = NULL;
-	}
+	UnmarshalReferenceMap() : mExpectedObjectsCount(0), mStoredObjectCount(0), mStoreObjectIndex(0), mReferenceObjects(NULL) {}
 
 	/**
 	 * Constructor that sets the expected object count of referenced objects.
 	 * @param objectCount is the number of expected referenced objects within the marshal stream, its also known in the client as as MapCount.
 	 */
-	UnmarshalReferenceMap(const uint32 objectCount) : expectedObjectsCount(objectCount), storedObjectCount(0), storeObjectIndex(0)
+	UnmarshalReferenceMap(const uint32 objectCount) : mExpectedObjectsCount(objectCount), mStoredObjectCount(0), mStoreObjectIndex(0), mReferenceObjects(NULL)
 	{
-		assert(expectedObjectsCount < 0x100); // kinda normal..... 256 referenced objects otherwise crash
-		mReferenceObjects = new void*[expectedObjectsCount];
+		assert(false);
+		//if (objectCount == 0)
+			//return;
+		//assert(expectedObjectsCount < 0x100); // kinda normal..... 256 referenced objects otherwise crash
+		//mReferenceObjects = new PyObject*[expectedObjectsCount];
+		//mReferenceObjects = (PyObject**)ASCENT_MALLOC(sizeof(PyObject*) * (expectedObjectsCount+1));
+	}
+
+	~UnmarshalReferenceMap()
+	{
+		for (uint32 i = 0; i < mExpectedObjectsCount; i++)
+		{
+			mReferenceObjects[i]->DecRef();
+		}
+
+		mReferenceObjects.clear();
+
+		//if (mReferenceObjects)
+		//	SafeFree(mReferenceObjects);
+		//SafeDeleteArray(mReferenceObjects);
+		//SafeDelete(mReferenceObjects);
+		//delete mReferenceObjects;
 	}
 
 	/**
@@ -71,9 +89,9 @@ public:
 	 * @param location is the index number of the referenced object.
 	 * @return A referenced PyRep base Object.
 	 */
-	bool GetStoredObject(uint32 location, void** object)
+	bool GetStoredObject(uint32 location, PyObject** object)
 	{
-		if (location == 0 || location > storedObjectCount )
+		if (location == 0 || (location-1) > mStoredObjectCount )
 			return false;
 
 		*object = mReferenceObjects[location-1];
@@ -84,15 +102,23 @@ public:
 	 * Stores a referenced Object.
 	 * @param object is the object that is marked as a object that has many references.
 	 */
-	bool StoreReferencedObject(void* object)
+	template<typename T>
+	bool StoreReferencedObject(T* object)
 	{
-		if (storeObjectIndex < expectedObjectsCount)
+		assert(mStoreObjectIndex < mExpectedObjectsCount);
+		if (mStoreObjectIndex > mExpectedObjectsCount)
 			return false;
 		
-		mReferenceObjects[storeObjectIndex] = object;
-		storeObjectIndex++;
 
-		storedObjectCount = storeObjectIndex;
+		uint32 objectloc = mOrderMap[mStoreObjectIndex] - 1;
+		assert(objectloc >= 0);
+
+		//printf("store referenced object: %d to %d\n", mStoreObjectIndex, objectloc);
+
+		mReferenceObjects[objectloc] = (PyObject*)object;
+		mStoreObjectIndex++;
+
+		mStoredObjectCount = mStoreObjectIndex;
 		return true;
 	}
 
@@ -102,7 +128,7 @@ public:
 	 */
 	uint32 GetStoredCount()
 	{
-		return storedObjectCount;
+		return mStoredObjectCount;
 	}
 
 	/**
@@ -111,7 +137,17 @@ public:
 	 */
 	uint32 GetMaxStoredCount()
 	{
-		return expectedObjectsCount;
+		return mExpectedObjectsCount;
+	}
+
+	void SetOrderMapSize(int size)
+	{
+		mOrderMap.resize(size);
+	}
+
+	void SetObjectOrder(int index, int order)
+	{
+		mOrderMap[index] = order;
 	}
 
 	/**
@@ -124,35 +160,42 @@ public:
 	void SetSharedObjectCount(uint32 sharedObjectCount)
 	{
 		// this shouldn't happen and if it does.. this prop will generate a crash...
-		if(mReferenceObjects != NULL)
-			SafeDeleteArray(mReferenceObjects);
+		//if(mReferenceObjects != NULL)
+		//	SafeFree(mReferenceObjects)
+			//SafeDeleteArray(mReferenceObjects);
 
-		mReferenceObjects = new void*[expectedObjectsCount];
-		expectedObjectsCount = sharedObjectCount;
+		assert(mReferenceObjects.size() == 0);
+		mReferenceObjects.resize(sharedObjectCount);
+
+		//mReferenceObjects = new PyObject*[expectedObjectsCount+1];
+		//mReferenceObjects = (PyObject**)ASCENT_MALLOC(sizeof(PyObject*) * (expectedObjectsCount+1));
+		mExpectedObjectsCount = sharedObjectCount;
 	}
 
 protected:
 	/** 
 	 * keeps track of the amount of objects that are actually stored
 	 */
-	uint32 storedObjectCount;
+	uint32 mStoredObjectCount;
 
 	/**
 	 * keeps track of the store index
 	 */
-	uint32 storeObjectIndex;
+	uint32 mStoreObjectIndex;
 
 	/**
 	 * max amount of objects that are referenced objects in this stream
 	 * this value is supplied by the client (regarding the 'unmarshal' process).
 	 */
-	uint32 expectedObjectsCount;
+	uint32 mExpectedObjectsCount;
 
 	/**
 	 * pointer container to keep track of the pointers...
 	 * and of course: "we do not own the pointers in this list"
 	 */
-	void** mReferenceObjects;
+	//PyObject** mReferenceObjects;
+	std::vector<PyObject*> mReferenceObjects;
+	std::vector<int> mOrderMap;
 };
 
 #endif//UNMARSHAL_REFERENCE_MAP_H

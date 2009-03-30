@@ -581,26 +581,6 @@ struct PacketHeader {
 0x82 = "DBTYPE_WSTR"
 */
 
-typedef enum {
-	DBTYPE_I1		= 0x10,
-	DBTYPE_UI1		= 0x11,
-	DBTYPE_BOOL		= 0x0B,
-	DBTYPE_I2		= 0x02,
-	DBTYPE_UI2		= 0x12,
-	DBTYPE_I4		= 0x03,
-	DBTYPE_UI4		= 0x13,
-	DBTYPE_R4		= 0x04,
-	DBTYPE_I8		= 0x14,
-	DBTYPE_R8		= 0x05,
-	DBTYPE_UI8		= 0x15,
-	DBTYPE_CY		= 0x06,	//money
-	DBTYPE_FILETIME = 0x40,	//64
-	DBTYPE_BYTES	= 0x80,
-	DBTYPE_STR		= 0x81,
-	DBTYPE_WSTR		= 0x82,
-	DBTYPE_ERROR	= 0xFF,
-} DBTYPE;
-
 /*
  *
 ENV_IDX_SELF = 0
