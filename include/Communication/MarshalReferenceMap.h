@@ -32,22 +32,26 @@
  * MarshalReferenceMap.h only implement the UnmarshalReferenceMap, the Marshal reference tech
  * isn't researched/implemented for the moment. a cpp file should be created from the code in
  * this header but for the moment this will do.
- * @note because we don't own the pointer / own the memory of the referenced objects. Its unclear when the refered object is deleted so
- * we have to eighter keep the Object here ( own the pointer ) or make sure that the referenced object know he is a referenced object so
+ * @note because we don't own the pointer / own the memory of the referenced objects. Its unclear when the referred object is deleted so
+ * we have to either keep the Object here ( own the pointer ) or make sure that the referenced object know he is a referenced object so
  * it isn't accidentally deleted.
  */
 
 /**
- * The UnmarshalReferenceMap class keeps track of referenced objects within
- * a marshal stream.
- * 
+ * \class UnmarshalReferenceMap
+ *
+ * @brief 
+ *
+ * the main idea is that if 1 objects has multiple references within a MarshalStream, there send like references.
+ *
  * @author Captnoord
+ * @date December 2008
  */
 class UnmarshalReferenceMap
 {
 public:
 
-	UnmarshalReferenceMap() : storedObjectCount(0), storeObjectIndex(0), expectedObjectsCount(0)
+	UnmarshalReferenceMap() : expectedObjectsCount(0), storedObjectCount(0), storeObjectIndex(0)
 	{
 		mReferenceObjects = NULL;
 	}
@@ -56,7 +60,7 @@ public:
 	 * Constructor that sets the expected object count of referenced objects.
 	 * @param objectCount is the number of expected referenced objects within the marshal stream, its also known in the client as as MapCount.
 	 */
-	UnmarshalReferenceMap(const uint32 objectCount) : storedObjectCount(0), storeObjectIndex(0), expectedObjectsCount(objectCount)
+	UnmarshalReferenceMap(const uint32 objectCount) : expectedObjectsCount(objectCount), storedObjectCount(0), storeObjectIndex(0)
 	{
 		assert(expectedObjectsCount < 0x100); // kinda normal..... 256 referenced objects otherwise crash
 		mReferenceObjects = new void*[expectedObjectsCount];
