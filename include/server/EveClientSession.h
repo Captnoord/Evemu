@@ -26,7 +26,7 @@
 #ifndef __EVECLIENTSESSION_H
 #define __EVECLIENTSESSION_H
 
-typedef void (EveClientSession::*packetHandler)(MarshalReadStream&);
+//typedef void (EveClientSession::*packetHandler)(MarshalReadStream&);
 
 /**
  * \class EveClientSession
@@ -64,7 +64,7 @@ public:
 
 	int Update();
 
-	void _ProcessNone(MarshalReadStream& packet);
+	/*void _ProcessNone(MarshalReadStream& packet);
 	void _ProcessCallRequest(MarshalReadStream& packet);
 	void _ProcessNotification(MarshalReadStream& packet);
 	void _ProcessPingRequest(MarshalReadStream& packet);
@@ -72,7 +72,7 @@ public:
 
 	uint32 GetUserId() { return _userId;}
 
-	void _HandleMessage(MarshalReadStream& packet);
+	void _HandleMessage(MarshalReadStream& packet);*/
 
 	//void _CheckSessionChange();
 
@@ -86,10 +86,10 @@ private:
 
 	EveClientSocket *_socket;
 	
-	FastQueue<MarshalReadStream*, Mutex> _recvQueue;
+	//FastQueue<MarshalReadStream*, Mutex> _recvQueue;
 
 	// this of course will result in a lookup table for every player..... 84 bytes on a 32 bits machine 168 byts on a 64 bits machine..
-	packetHandler Handlers[MACHONETMSG_TYPE_MAX];
+	//packetHandler Handlers[MACHONETMSG_TYPE_MAX];
 };
 
 #endif//__EVECLIENTSESSION_H

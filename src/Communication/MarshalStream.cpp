@@ -8,7 +8,7 @@
 
 #include <zlib.h>
 
-#include "DBRowModule.h"
+//#include "DBRowModule.h"
 
 /* macro's that help debugging exceptions */
 #define EVEMU_EXTRA_DEBUG
