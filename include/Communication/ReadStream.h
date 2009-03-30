@@ -27,25 +27,38 @@
 #define _MARSHALREADSTREAM_H
 
 /**
- * \class MarshalReadStream
+ * \class ReadStream
  *
- * @brief internal class for reading action in MarshalStream.
+ * @brief utility for read data from a buffer.
  *
- * 
+ * No long description.
  *
  * @author Captnoord
  * @date February 2009
- * @todo add compiletime size checks (if possible) for the templates..... so that you can't read a uint64 into a uint8
  */
-class MarshalReadStream
+class ReadStream
 {
 public:
-	MarshalReadStream();
-	MarshalReadStream(const char* buff, size_t size);
-	~MarshalReadStream();
+	/** 
+	 * Constructor.
+	 */
+	ReadStream();
 
+	/** 
+	 * Constructor.
+	 */
+	ReadStream(const char* buff, size_t size);
+
+	/** 
+	 * destructor.
+	 */
+	~ReadStream();
+
+	/**
+	 * 
+	 */
 	template<typename T>
-	bool peekInt1(T & dst)
+	bool peek1(T & dst)
 	{
 		if (mSize < mReadIndex + 1)
 			return false;
@@ -53,8 +66,35 @@ public:
 		return true;
 	}
 
+	/**
+	 * 
+	 */
 	template<typename T>
-	bool readInt1(T & dst)
+	bool peek2(T & dst)
+	{
+		if (mSize < mReadIndex + 2)
+			return false;
+		*((uint16*)&dst) = *((uint16*)&mBuffer[mReadIndex]);
+		return true;
+	}
+
+	/**
+	 * 
+	 */
+	template<typename T>
+	bool peek4(T & dst)
+	{
+		if (mSize < mReadIndex + 4)
+			return false;
+		*((uint32*)&dst) = *((uint32*)&mBuffer[mReadIndex]);
+		return true;
+	}
+
+	/**
+	 * template function to read 8 bits chunks from the stream.
+	 */
+	template<typename T>
+	bool read1(T & dst)
 	{
 		if (mSize < mReadIndex + 1)
 			return false;
@@ -62,48 +102,71 @@ public:
 		return true;
 	}
 
+	/**
+	 * template function to read 16 bits chunks from the stream.
+	 * @note possible heap corruption when doing read2(char)
+	 */
 	template<typename T>
-	bool readInt2(T & dst)
+	bool read2(T & dst)
 	{
 		if (mSize < mReadIndex + 2)
 			return false;
-		((uint8*)&dst)[0] = mBuffer[mReadIndex++];
-		((uint8*)&dst)[1] = mBuffer[mReadIndex++];
+
+		*((uint16*)&dst) = *((uint16*)&mBuffer[mReadIndex]);
+		mReadIndex+=2;
+
 		return true;
 	}
 
+	/**
+	 * template function to read 32 bits chunks from the stream.
+	 * @note possible heap corruption when doing read4(char)
+	 */
 	template<typename T>
-	bool readInt4(T & dst)
+	bool read4(T & dst)
 	{
 		if (mSize < mReadIndex + 4)
 			return false;
-		((uint8*)&dst)[0] = mBuffer[mReadIndex++];
-		((uint8*)&dst)[1] = mBuffer[mReadIndex++];
-		((uint8*)&dst)[2] = mBuffer[mReadIndex++];
-		((uint8*)&dst)[3] = mBuffer[mReadIndex++];
+		*((uint32*)&dst) = *((uint32*)&mBuffer[mReadIndex]);
+		mReadIndex+=4;
 		return true;
 	}
 
+	/**
+	 * template function to read 64 bits chunks from the stream.
+	 * @note possible heap corruption when doing read8(char)
+	 */
 	template<typename T>
-	bool readInt8(T & dst)
+	bool read8(T & dst)
 	{
 		if (mSize < mReadIndex + 8)
 			return false;
-		((uint8*)&dst)[0] = mBuffer[mReadIndex++];
-		((uint8*)&dst)[1] = mBuffer[mReadIndex++];
-		((uint8*)&dst)[2] = mBuffer[mReadIndex++];
-		((uint8*)&dst)[3] = mBuffer[mReadIndex++];
-		((uint8*)&dst)[4] = mBuffer[mReadIndex++];
-		((uint8*)&dst)[5] = mBuffer[mReadIndex++];
-		((uint8*)&dst)[6] = mBuffer[mReadIndex++];
-		((uint8*)&dst)[7] = mBuffer[mReadIndex++];
+
+		*((uint64*)&dst) = *((uint64*)&mBuffer[mReadIndex]);
+		mReadIndex+=8;
+
 		return true;
 	}
 
+	/**
+	 * reads a buffer from the stream.
+	 */
 	bool readBuffer(uint8 ** buffer, size_t len);
+
+	/**
+	 * reads a string from the stream.
+	 */
 	bool readString(char ** buffer, size_t len);
+
+	/**
+	 * reads a wide string from the stream.
+	 */
 	bool readWstring(wchar_t ** buffer, size_t len);
-	bool readExSize(size_t & size);
+
+	/**
+	 * reads a SizeEx from the stream.
+	 */
+	bool readSizeEx(size_t & size);
 
 	/**
 	 * @brief resizes the buffer
@@ -117,24 +180,74 @@ public:
 	bool resize(size_t newsize);
 
 	/**
-	 * @brief reset the readindex.
+	 * @brief reset the read index.
 	 *
-	 * 
+	 * resets the buffer read index to 0;
 	 *
 	 */
 	void reset();
+
+	/**
+	 * sets the payload of this stream.
+	 */
 	bool set( uint8* buff, size_t size );
 
+	/**
+	 * returns the size of the stream.
+	 */
 	size_t size();
-	size_t tell() {return mReadIndex;}
+
+	/**
+	 * returns the current read index.
+	 */
+	size_t tell();
+
+	/**
+	 * sets the current read index in a similar way as fseek works.
+	 */
 	bool seek(int32 offset, int origin);
-	uint8* content() {return mBuffer;}
+
+	/**
+	 * returns the data pointer.
+	 */
+	uint8* content();
+
+	/**
+	 * returns the buffer size of this stream.
+	 */
+	size_t buffersize();
+
+	/**
+	 * returns the payload size of the marshal stream.
+	 * @note this is kinda a hack, we need a proper solution for it.
+	 */
+	bool setpayloadsize(size_t size);
 
 private:
+	/**
+	 * the data buffer.
+	 */
 	uint8* mBuffer;
+
+	/**
+	 * the size of the data buffer.
+	 */
 	size_t mSize;
+
+	/**
+	 * the read index of the stream.
+	 */
 	size_t mReadIndex;
+
+	/**
+	 * the amount of allocated memory of this stream.
+	 */
 	size_t mAllocatedMem;
+
+	/**
+	 * the size of the marshal payload.
+	 */
+	size_t mPayloadSize;
 };
 
 #endif //_MARSHALREADSTREAM_H
