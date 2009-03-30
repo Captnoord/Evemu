@@ -169,7 +169,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/NODEFAULTLIB:MSVCRT"
-				AdditionalDependencies="wsock32.lib zlib.lib mysqlclient.lib Advapi32.lib user32.lib ascent-shared.lib ws2_32.lib EVECommon.lib"
+				AdditionalDependencies="wsock32.lib zlib.lib mysqlclient.lib Advapi32.lib user32.lib ascent-shared.lib ws2_32.lib"
 				OutputFile=".\..\..\bin\$(ConfigurationName)\$(ProjectName).exe"
 				LinkIncremental="0"
 				AdditionalLibraryDirectories="&quot;..\..\3rdparty\ascent-framework\lib\$(ConfigurationName)\&quot;;..\..\3rdparty\mysql\lib\opt;&quot;..\..\lib\$(ConfigurationName)\&quot;;..\..\lib"
@@ -290,6 +290,14 @@
 			Name="Communication"
 			>
 			<File
+				RelativePath="..\..\src\Communication\DBRowModule.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\Communication\DBRowModule.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\include\Communication\EVEMarshalOpcodes.h"
 				>
 			</File>
@@ -357,6 +365,14 @@
 				RelativePath="..\..\include\Utilities\memStream.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\src\Utilities\RleModule.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\Utilities\RleModule.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Authorization"
@@ -402,11 +418,51 @@
 			Name="PythonObjects"
 			>
 			<File
+				RelativePath="..\..\src\PythonObjects\PyChameleon.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\PythonObjects\PyChameleon.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\PythonObjects\PyDict.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\PythonObjects\PyList.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\PythonObjects\PyObjectDeleter.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\PythonObjects\PyObjects.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\include\PythonObjects\PyObjects.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\PythonObjects\PyString.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\PythonObjects\PyStringTable.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\PythonObjects\PyStringTable.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\PythonObjects\PyUnicodeUCS2.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\PythonObjects\PyUnicodeUCS2.h"
 				>
 			</File>
 		</Filter>

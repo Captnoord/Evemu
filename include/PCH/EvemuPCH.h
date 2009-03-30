@@ -31,6 +31,8 @@
 /* the 'common' ascent framework include */
 #include "ascent.h"
 
+#include "RleModule.h"
+
 /* 'evemu-server' generic includes */
 #include "PyStringTable.h"
 #include "EVEMarshalOpcodes.h"

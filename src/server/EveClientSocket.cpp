@@ -84,7 +84,7 @@ EveClientSocket::EveClientSocket(SOCKET fd) : Socket(fd, CLIENTSOCKET_SENDBUF_SI
 
 	mSession = NULL;
 
-	mCurrentStateMachine = &EveClientSocket::_authStateHandshake;
+	//mCurrentStateMachine = &EveClientSocket::_authStateHandshake;
 }
 
 EveClientSocket::~EveClientSocket()
@@ -124,7 +124,7 @@ void EveClientSocket::_sendHandShake()
 	uint32 authCount = (uint32)sSpace.GetAuthorizedCount();
 
 	/* version response packet */
-	PyTupleStream packet(45);
+	/*PyTupleStream packet(45);
 	packet << EveBirthday;
 	packet << MachoNetVersion;
 	packet << (authCount+10);
@@ -132,15 +132,15 @@ void EveClientSocket::_sendHandShake()
 	packet << EveBuildVersion;
 	packet << EveProjectVersion;
 
-	SendSimpleStream(packet);
+	SendSimpleStream(packet);*/
 }
 
 //send position in queue
 void EveClientSocket::_sendQueuePos( int queuePos )
 {
 	// send a python integer back as a response on the queue query
-	PyIntStream out(queuePos);
-	SendSimpleStream(out);
+	//PyIntStream out(queuePos);
+	//SendSimpleStream(out);
 }
 
 // 'auth' commands
@@ -151,15 +151,15 @@ void EveClientSocket::_sendQueuePos( int queuePos )
 /* send handshake accept */
 void EveClientSocket::_sendAccept()
 {
-	PyStringStream out("OK CC"); // doesn't seem to matter what we send... (at this point)
-	SendSimpleStream(out);
+	//PyStringStream out("OK CC"); // doesn't seem to matter what we send... (at this point)
+	//SendSimpleStream(out);
 }
 
 /* send a python integer as a response on the password type query */
 void EveClientSocket::_sendRequirePasswordType(int passwordType)
 {
-	PyIntStream out(passwordType);
-	SendSimpleStream(out);
+	//PyIntStream out(passwordType);
+	//SendSimpleStream(out);
 }
 
 void EveClientSocket::OnConnect()
@@ -200,37 +200,38 @@ void EveClientSocket::OnRead()
 		}
 
 		//ByteBuffer * packet = NULL;
-		PyReadStream * packet = NULL;
+		//PyReadStream * packet = NULL;
 
 		/* TODO we can skip this new ByteBuffer by feeding the circular buffer into the 'unmarshal' function
 		 * requires to redesign the 'unmarshal' function
 		 */
-		if(mRemaining > 0)
-		{
-			packet = new PyReadStream(mRemaining);
+		//if(mRemaining > 0)
+		//{
+		//	packet = new PyReadStream(mRemaining);
 
 			// Copy from packet buffer into our actual buffer.
-			GetReadBuffer().Read(packet->content(), mRemaining);
-			mRemaining = 0;
-		}
+		//	GetReadBuffer().Read(packet->content(), mRemaining);
+		//	mRemaining = 0;
+		//}
 
 		// packet log
-		sFileLogger.logPacket(packet->content(), packet->size(), 0);
+		//sFileLogger.logPacket(packet->content(), packet->size(), 0);
 
 		// printf("\nrecv packet with opcode:%d and Type:%s and size:%d\n", ((PyPacket*)recvPyPacket)->type, recvPyPacket->TypeString(), packet->size());
 		// packet->LogBuffer();
 
 		// the state machine magic
-		(this->*mCurrentStateMachine)(*packet);
+		//(this->*mCurrentStateMachine)(*packet);
 
 		// this is the end of the road for the used read buffer
-		if ( packet != NULL)
-		{
-			SafeDelete(packet);
-		}
+		//if ( packet != NULL)
+		//{
+		//	SafeDelete(packet);
+		//}
 	}
 }
 
+#if 0
 
 /* the client sends back its server info...
  * we should compare this with our own to make sure we can block unsupported clients.
@@ -506,3 +507,5 @@ void EveClientSocket::_authStateException(PyReadStream& packet)
 	SafeDelete(obj);
 	obj = NULL;*/
 }
+
+#endif

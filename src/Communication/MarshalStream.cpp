@@ -1488,7 +1488,6 @@ bool MarshalStream::marshal( PyObject * object, WriteStream & stream )
 		uint8 sjaak = object->gettype();
 		Log.Error("MarshalStream","marshalling unhandled tag[0x%X].... sometying borked..", sjaak);
 		
-		Dump(stdout, object, 0);
 		ASCENT_HARDWARE_BREAKPOINT;
 		break;
 	}

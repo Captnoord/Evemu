@@ -78,13 +78,13 @@ void EveSession::init(uint32 sid, uint32 role)
 	{
 		mSessionDict[EvePersistVars[i]] = GetDefaultValueOfAttribute(EvePersistVars[i]);
 	}
-	mSessionDict["locationid"] = GetDefaultValueOfAttribute("locationid");
-	mSessionDict["corprole"] = GetDefaultValueOfAttribute("corprole");
+	//mSessionDict["locationid"] = GetDefaultValueOfAttribute("locationid");
+	//mSessionDict["corprole"] = GetDefaultValueOfAttribute("corprole");
 
 	/* fill the rest of the session info */
 
 	/* small note: its unclear to me if are going to use all of this... */
-	mSessionDict["version"] = 1;
+	/*mSessionDict["version"] = 1;
 	mSessionDict["sid"] = sid;
 	mSessionDict["role"] = role;
 	mSessionDict["c2ooid"] = 1;
@@ -97,14 +97,14 @@ void EveSession::init(uint32 sid, uint32 role)
 	mSessionDict["lastRemoteCall"] = getMSTime();
 	mSessionDict["nextSessionChange"] = PyStreamNone;
 	mSessionDict["sessionChangeReason"] = "Initial State";
-	mSessionDict["callback"] = PyStreamNone;
+	mSessionDict["callback"] = PyStreamNone;*/
 	//mSessionDict["semaphore"] = 1;//uthread.SquidgySemaphore(('sessions', sid))
 	//mSessionDict["sessionhist"] = 1;
-	mSessionDict["hasproblems"] = 0;
+	/*mSessionDict["hasproblems"] = 0;
 	mSessionDict["mutating"] = 0;
 	mSessionDict["changing"] = PyStreamNone;
 
-	ChangeAttribute("role", role);
+	ChangeAttribute("role", role);*/
 	//self.LogSessionHistory('Session created')
 }
 
@@ -125,6 +125,6 @@ PySessionAttribute EveSession::GetDefaultValueOfAttribute(const char *attribute)
 		return ret;
 	}*/
 
-	ret = PyStreamNone;
+	//ret = PyStreamNone;
 	return ret;
 }

@@ -27,7 +27,7 @@
 
 EveClientSession::EveClientSession(uint32 userId, EveClientSocket *sock ) : _socket(sock), _userId(userId), bDeleted(false)
 {
-	Handlers[0] = &EveClientSession::_ProcessNone;
+/*	Handlers[0] = &EveClientSession::_ProcessNone;
 	Handlers[1] = &EveClientSession::_ProcessNone;
 	Handlers[2] = &EveClientSession::_ProcessNone;
 	Handlers[3] = &EveClientSession::_ProcessNone;
@@ -48,14 +48,14 @@ EveClientSession::EveClientSession(uint32 userId, EveClientSocket *sock ) : _soc
 	Handlers[18] = &EveClientSession::_ProcessNone;
 	Handlers[19] = &EveClientSession::_ProcessNone;
 	Handlers[20] = &EveClientSession::_ProcessPingRequest;
-	Handlers[21] = &EveClientSession::_ProcessPingResponce;
+	Handlers[21] = &EveClientSession::_ProcessPingResponce;*/
 }
 
 EveClientSession::~EveClientSession()
 {
 	_deleteMutex.Acquire();
 
-	MarshalReadStream *packet;
+	/*MarshalReadStream *packet;
 	while((packet = _recvQueue.Pop()))
 	{
 		//SafeDelete(packet);
@@ -63,7 +63,7 @@ EveClientSession::~EveClientSession()
 
 	if(_socket != NULL)
 		_socket->SetSession(NULL);
-	_deleteMutex.Release();
+	_deleteMutex.Release();*/
 }
 
 void EveClientSession::Delete()
@@ -104,14 +104,14 @@ int EveClientSession::Update()
 		bDeleted = true;
 		return 1;
 	}
-	if (_recvQueue.GetSize() == 0)
+/*	if (_recvQueue.GetSize() == 0)
 		return 0;
 
 	MarshalReadStream *packet;
 	while (packet = _recvQueue.Pop())
 	{
 		ASSERT(packet && "EveClientSession packet dispatcher crash");
-		
+		*/
 		// this fucked... hack.....
 		/*MACHONETMSG_TYPE _type = MACHONETMSG_TYPE_AUTHENTICATION_REQ;//packet->type;
 		if ( _type < MACHONETMSG_TYPE_MAX )
@@ -124,12 +124,14 @@ int EveClientSession::Update()
 			Log.Error("SessionPacketDispatcher","'Unhandled' packet with wrong opcode received, opcode:%d", _type);
 		}*/
 
-		_HandleMessage(*packet);
+		//_HandleMessage(*packet);
 
-		SafeDelete(packet);
-	}
+		//SafeDelete(packet);
+	//}
 	return 0;
 }
+
+#if 0
 
 // whoo gonne act like python code.....
 void EveClientSession::_HandleMessage( MarshalReadStream& packet )
@@ -171,3 +173,5 @@ void EveClientSession::_ProcessPingResponce(MarshalReadStream& packet)
 {
 	Log.Debug("SessionPacketDispatcher", /*"%s:*/ "Received ping response.");//, GetName());
 }
+
+#endif

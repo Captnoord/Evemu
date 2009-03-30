@@ -70,7 +70,7 @@ void Space::AddSession(EveClientSession* session)
 	m_sessionlock.AcquireWriteLock();
 
 	ASSERT(session);
-	m_sessions[session->GetUserId()] = session;
+	//m_sessions[session->GetUserId()] = session;
 
 	//if(m_sessions.size() >  PeakSessionCount)
 	//	PeakSessionCount = (uint32)m_sessions.size();
@@ -99,7 +99,7 @@ void Space::DeleteSession(EveClientSession *session)
 {
 	m_sessionlock.AcquireWriteLock();
 	// remove from big map
-	m_sessions.erase(session->GetUserId());
+	//m_sessions.erase(session->GetUserId());
 
 	m_sessionlock.ReleaseWriteLock();
 

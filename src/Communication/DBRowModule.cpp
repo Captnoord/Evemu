@@ -1,6 +1,5 @@
 #include "EvemuPCH.h"
 #include "DBRowModule.h"
-#include "PyObjectDumper.h"
 
 // experiment raw data
 
@@ -39,7 +38,6 @@ PyObject* DBRowModule::parseraw( MarshalStream& stream, PyObject* header, uint8 
 	if (bas->getbases() == NULL)
 	{
 		printf("hack stuff dbrowlist stuff \n");
-		Dump(stdout, (PyObject*)bas, 0);
 		return NULL;
 	}
 
