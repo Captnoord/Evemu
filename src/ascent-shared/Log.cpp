@@ -223,8 +223,7 @@ void oLog::Color(uint32 colorcode, const char * str, ...)
 #ifdef WIN32
 	SetConsoleTextAttribute(stdout_handle, WORD(colorcode));
 #else
-	// TODO: check this
-	printf("%s",colorstrings[colorcode]);
+	printf(colorstrings[colorcode]);
 #endif
 	vprintf( str, ap );
 	fflush(stdout);
@@ -267,7 +266,7 @@ void SessionLogWriter::Close()
 
 SessionLogWriter::SessionLogWriter(const char * filename, bool open)
 {
-	m_filename = strdup(filename);
+	m_filename = _strdup(filename);
 	m_file = NULL;
 	if( open == true )
 	{

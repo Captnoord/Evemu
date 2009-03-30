@@ -99,7 +99,7 @@ namespace Utils
 class Strings
 {
 public:
-	/** trim
+	/* trim
 	 *
 	 * Remove leading and trailing spaces from a string.
 	 *
@@ -110,7 +110,7 @@ public:
 	 */
 	static std::string				trim(const std::string& str, bool left, bool right);
 
-	/** trim
+	/* trim
 	 *
 	 * Remove leading and trailing spaces from a string.
 	 *
@@ -120,7 +120,7 @@ public:
 	 */
 	static void						trim(std::string& str, bool left, bool right);
 
-	/** trim
+	/* trim
 	 *
 	 * Remove leading and trailing spaces from a string.
 	 *
@@ -131,7 +131,7 @@ public:
 	 */
 	static std::wstring				trim(const std::wstring& str, bool left, bool right);
 
-	/** trim
+	/* trim
 	 *
 	 * Remove leading and trailing spaces from a string.
 	 *
@@ -141,7 +141,7 @@ public:
 	 */
 	static void						trim(std::wstring& str, bool left, bool right);
 
-	/** toUpperCase
+	/* toUpperCase
 	 *
 	 * Transforms a string into upper case characters.
 	 *
@@ -150,7 +150,7 @@ public:
 	 */
 	static std::string				toUpperCase(const std::string& TString);
 
-	/** toUpperCase
+	/* toUpperCase
 	 *
 	 * Transforms a string into upper case characters.
 	 *
@@ -158,7 +158,7 @@ public:
 	 */
 	static void						toUpperCase(std::string& TString);
 
-	/** toUpperCase
+	/* toUpperCase
 	 *
 	 * Transforms a string into upper case characters.
 	 *
@@ -167,7 +167,7 @@ public:
 	 */
 	static std::wstring				toUpperCase(const std::wstring& TString);
 
-	/** toUpperCase
+	/* toUpperCase
 	 *
 	 * Transforms a string into upper case characters.
 	 *
@@ -175,7 +175,7 @@ public:
 	 */
 	static void						toUpperCase(std::wstring& TString);
 
-	/** toLowerCase
+	/* toLowerCase
 	 *
 	 * Transforms a string into lower case characters.
 	 *
@@ -184,7 +184,7 @@ public:
 	 */
 	static std::string				toLowerCase(const std::string& TString);
 
-	/** toLowerCase
+	/* toLowerCase
 	 *
 	 * Transforms a string into lower case characters.
 	 *
@@ -192,7 +192,7 @@ public:
 	 */
 	static void						toLowerCase(std::string& TString);
 
-	/** toLowerCase
+	/* toLowerCase
 	 *
 	 * Transforms a string into lower case characters.
 	 *
@@ -201,7 +201,7 @@ public:
 	 */
 	static std::wstring				toLowerCase(const std::wstring& TString);
 
-	/** toLowerCase
+	/* toLowerCase
 	 *
 	 * Transforms a string into lower case characters.
 	 *
@@ -248,7 +248,7 @@ public:
 		uint32 hash = 5381;
 		int c;
 
-		while ((c = *str++))
+		while (c = *str++)
 			hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
 
 		return hash;
@@ -267,7 +267,7 @@ public:
 		uint32 hash = 5381;
 		int c;
 
-		while ((c = *str++))
+		while (c = *str++)
 			hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
 
 		return hash;
@@ -288,7 +288,7 @@ public:
 		uint32 hash = 5381;
 		int c;
 
-		while ((c = *str++))
+		while (c = *str++)
 			hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
 
 		return hash;
@@ -309,8 +309,31 @@ public:
 		uint32 hash = 5381;
 		int c;
 
-		while ((c = *str++))
+		while (c = *str++)
 			hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+
+		return hash;
+	}
+
+	/**
+	 * @brief djb2 algorithm taken from http://www.cse.yorku.ca/~oz/hash.html slightly modified
+	 *
+	 * 
+	 *
+	 * @param[in] str string that needs to be hashed.
+	 * @param[in] len the size of the string.
+	 * @return djb2 hash of the string.
+	 */
+	static uint32 djb2_hash(const char* str, int len)
+	{
+		uint32 hash = 5381;
+		int c, i;
+
+		for (i = 0; i < len; i++)
+		{
+			c = str[i];
+			hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+		}
 
 		return hash;
 	}
@@ -329,7 +352,7 @@ public:
 		uint32 hash = 0;
 		int c;
 
-		while ((c = *str++))
+		while (c = *str++)
 			hash = c + (hash << 6) + (hash << 16) - hash;
 
 		return hash;
@@ -348,8 +371,50 @@ public:
 		uint32 hash = 0;
 		int c;
 
-		while ((c = *str++))
+		while (c = *str++)
 			hash = c + (hash << 6) + (hash << 16) - hash;
+
+		return hash;
+	}
+
+	/**
+	* @brief sdbm algorithm taken from http://www.cse.yorku.ca/~oz/hash.html slightly modified
+	*
+	* 
+	*
+	* @param[in] oStr string that needs to be hashed.
+	* @return sdbm hash of the string.
+	*/
+	static uint32 sdbm_hash(const wchar_t *str)
+	{
+		uint32 hash = 0;
+		int c;
+
+		while (c = *str++)
+			hash = c + (hash << 6) + (hash << 16) - hash;
+
+		return hash;
+	}
+
+	/**
+	* @brief sdbm algorithm taken from http://www.cse.yorku.ca/~oz/hash.html slightly modified
+	*
+	* 
+	*
+	* @param[in] oStr string that needs to be hashed.
+	* @param[in] len length of the string that needs to be hashed.
+	* @return sdbm hash of the string.
+	*/
+	static uint32 sdbm_hash(const char *str, int len)
+	{
+		uint32 hash = 0;
+		int c;
+
+		for (int i = 0; i < len; i++)
+		{
+			c = str[i];
+			hash = c + (hash << 6) + (hash << 16) - hash;
+		}
 
 		return hash;
 	}

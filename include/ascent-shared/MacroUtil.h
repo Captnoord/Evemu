@@ -21,7 +21,18 @@
 #ifndef __MACRO_UTIL_H
 #define __MACRO_UTIL_H
 
-/* This is a collection of utility macro's, the functionality of these macro's may vary.
+
+/** Memory released macro's
+ *
+ */
+#define ASCENT_MALLOC(x) malloc(x)
+#define ASCENT_FREE(x) free(x)
+#define ASCENT_REALLOC(x,y) realloc(x,y)
+#define ASCENT_MEMCPY(x,y,z) memcpy(x,y,z)
+#define ASCENT_DELETE delete
+#define ASCENT_DELETE_ARRAY delete []
+
+/** This is a collection of utility macro's, the functionality of these macro's may vary.
  *
  */
 
@@ -31,19 +42,20 @@
  */
 #define ASCENT_ENABLE_SAFE_DELETE
 #define ASCENT_ENABLE_EXTRA_SAFE_DELETE
+
 #ifndef ASCENT_ENABLE_SAFE_DELETE
-#  define SafeDelete(p) { delete p; }
-#  define SafeDeleteArray(p) { delete [] p; }
-#  define SafeFree(p) { free(p); }
+#  define SafeDelete(p) { ASCENT_DELETE p; }
+#  define SafeDeleteArray(p) { ASCENT_DELETE_ARRAY p; }
+#  define SafeFree(x) { ASCENT_FREE(x); }
 #else
 #  ifndef ASCENT_ENABLE_EXTRA_SAFE_DELETE
-#    define SafeDelete(p) { delete p; p = NULL; }
-#    define SafeDeleteArray(p) { delete [] p; p = NULL; }
-#    define SafeFree(p) { free(p); p = NULL; }
+#    define SafeDelete(p) { ASCENT_DELETE p; p = NULL; }
+#    define SafeDeleteArray(p) { ASCENT_DELETE_ARRAY p; p = NULL; }
+#    define SafeFree(x) { ASCENT_FREE(x); x = NULL; }
 #  else
-#    define SafeDelete(p) { delete p; p = NULL; }
+#    define SafeDelete(p) { if (p != NULL){ delete p; p = NULL; } }
 #    define SafeDeleteArray(p) { if (p != NULL) { delete [] p; p = NULL; } }
-#    define SafeFree(p) { if(p != NULL) { free(p); p = NULL; } }
+#    define SafeFree(x) {if (x != NULL) {ASCENT_FREE(x); x = NULL; } }
 #  endif//ASCENT_ENABLE_EXTRA_SAFE_DELETE
 #endif//ASCENT_ENABLE_SAFE_DELETE
 
