@@ -26,9 +26,10 @@
 #ifndef _DBROW_H
 #define _DBROW_H
 
+#if 0
 #include "packet_types.h"
 
-#include "TestCaseMarshal.h"
+//#include "TestCaseMarshal.h"
 
 // header of the dbrow I think
 class DBRowDescriptor
@@ -57,9 +58,9 @@ class RowSet
 };
 
 // container that contains a raw RowSet packet
-class RowSetStream : public PyStream
+class RowSetStream// : public PyStream
 {
-	RowSetStream() : PyStream()
+	RowSetStream()// : PyStream()
 	{
 
 	}
@@ -115,14 +116,14 @@ public:
 	A new object means it isn't a divired Object.
 	*/
 
-	class PyDBRowDescriptor : public PyStream
+	class PyDBRowDescriptor// : public PyStream
 	{
-		PyDBRowDescriptor() : PyStream()
+		PyDBRowDescriptor()// : PyStream()
 		{
-			_pushOpcode(Op_PySubStream);
+			//_pushOpcode(Op_PySubStream);
 			
-			_push1<uint8>(SubStreamHeaderByte); // begin of stream
-			_push4<uint32>(0);					// we don't support shared objects for the moment
+			//_push1<uint8>(SubStreamHeaderByte); // begin of stream
+			//_push4<uint32>(0);					// we don't support shared objects for the moment
 		}
 	};
 
@@ -213,9 +214,9 @@ public:
 		MySQLQueryResult * workQuery = static_cast<MySQLQueryResult*>(queryResult);
 
 		/* hacky solution, resulting in copying the entire crap */
-		PyStream header;
-		PyListStream list;
-		PyDictStream dict;
+		//PyStream header;
+		//PyListStream list;
+		//PyDictStream dict;
 
 		// make sure we have data....
 		if (workQuery->GetFieldCount() == 0 || workQuery->GetRowCount() == 0)
@@ -230,7 +231,7 @@ public:
 		//"blue.DBRowDescriptor"
 
 		// hacking a bit, and using crap scopes to make it a bit easier for me ..... HEADACHE....
-		PyStream rowDescriptor(workQuery->GetFieldCount() * 64); // a rough estimate
+		/*PyStream rowDescriptor(workQuery->GetFieldCount() * 64); // a rough estimate
 		rowDescriptor._pushOpcode(Op_PyTwoTuple);
 		{
 			rowDescriptor << "blue.DBRowDescriptor";
@@ -245,25 +246,27 @@ public:
 					}
 		}
 
-		testmarshal(&rowDescriptor);
+		testmarshal(&rowDescriptor);*/
 
-		ByteBuffer dataCheck;
+		//ByteBuffer dataCheck;
 
-		dataCheck.append(rowDescriptor.content(), rowDescriptor.size());
-		dataCheck.LogBuffer();
+		//dataCheck.append(rowDescriptor.content(), rowDescriptor.size());
+		//dataCheck.LogBuffer();
 
 		
-		do
-		{
-			Field * rowResult = workQuery->Fetch();
+		//do
+		//{
+		//	Field * rowResult = workQuery->Fetch();
 
-		} while (workQuery->NextRow());
+		//} while (workQuery->NextRow());
 
 		SafeDelete(workQuery);
 		return NULL;
 	}
 	
 };
+
+#endif
 
 
 #endif//_DBROW_H

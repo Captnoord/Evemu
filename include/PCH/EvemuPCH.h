@@ -34,12 +34,15 @@
 /* 'evemu-server' generic includes */
 #include "PyStringTable.h"
 #include "EVEMarshalOpcodes.h"
-#include "PyStream.h"
-#include "MarshalReadStream.h"
+//#include "PyStream.h"
+#include "ReadStream.h"
+#include "WriteStream.h"
 #include "FileLogger.h"
 #include "DBRow.h"
 
+#include "PyObjectDeleter.h"
 #include "PyObjects.h"
+#include "PyUnicodeUCS2.h"
 #include "MarshalStream.h"
 
 #include "packet_types.h"
@@ -58,7 +61,7 @@
 //#include "../server/ClientSession.h"
 
 /* test cases */
-#include "TestCaseMarshal.h"
+//#include "TestCaseMarshal.h"
 
 /* Database handles */
 extern Database* Database_dynamic;

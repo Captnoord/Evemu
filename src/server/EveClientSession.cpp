@@ -58,7 +58,7 @@ EveClientSession::~EveClientSession()
 	MarshalReadStream *packet;
 	while((packet = _recvQueue.Pop()))
 	{
-		SafeDelete(packet);
+		//SafeDelete(packet);
 	}
 
 	if(_socket != NULL)

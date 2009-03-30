@@ -32,7 +32,6 @@
 
 #include "PyObjects.h"
 #include "PyChameleon.h"
-#include "PyObjectDumper.h"
 
 /************************************************************************/
 /* PyString code                                                        */

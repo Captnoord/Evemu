@@ -39,7 +39,7 @@
 class PySessionAttribute
 {
 public:
-	PySessionAttribute() : mEntry(10), mIsDirty() {}
+	/*PySessionAttribute() : mEntry(10), mIsDirty() {}
 
 	template<typename T>
 	PySessionAttribute &operator=(const T &value) {
@@ -67,7 +67,7 @@ public:
 	void reset() {mEntry.reset();}
 
 protected:
-	PyStream mEntry;
+	PyStream mEntry;*/
 	bool mIsDirty;
 };
 

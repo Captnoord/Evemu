@@ -26,8 +26,8 @@
 #include "EvemuPCH.h"
 #include <signal.h>
 
-#include "TestCaseMain.h"
-#include "TestCaseMarshal.h"
+//#include "TestCaseMain.h"
+//#include "TestCaseMarshal.h"
 
 static volatile bool m_stopEvent;
 initialiseSingleton(FileLogger);
@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	TestCast::DoTests();
+//	TestCast::DoTests();
 
 
 	// Startup banner

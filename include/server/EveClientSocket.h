@@ -60,7 +60,7 @@ class EveClientSocket : public Socket
 {
 public:
 	// state machine function pointer typedef
-	typedef void (EveClientSocket::*stateProc)(PyReadStream&);
+	//typedef void (EveClientSocket::*stateProc)(PyReadStream&);
 
 	EveClientSocket(SOCKET fd);
 	~EveClientSocket();
@@ -75,7 +75,7 @@ public:
 	void SendStream(T& packet )
 	{
 		// ignore return for now...
-		SendRaw(packet.content(), packet.size());
+		//SendRaw(packet.content(), packet.size());
 	}
 
 	/** SPECIAL FUNCTION FOR SINGLE OBJECT STREAMS
@@ -83,7 +83,7 @@ public:
 	template <typename T>
 	void SendSimpleStream(T& packet )
 	{
-		SendRawSimpleStream(packet.content(), packet.size());
+		//SendRawSimpleStream(packet.content(), packet.size());
 	}
 
 	// function to send single object streams...
@@ -172,16 +172,16 @@ protected:
 	/************************************************************************/
 	/* Authorization state machine                                          */
 	/************************************************************************/
-	void _authStateHandshake(PyReadStream& packet);
+	/*void _authStateHandshake(PyReadStream& packet);
 	void _authStateQueueCommand(PyReadStream& packet);
 	void _authStateNoCrypto(PyReadStream& packet);
 	void _authStateCryptoChallenge(PyReadStream& packet);
 	void _authStateHandshakeSend(PyReadStream& packet);
 	void _authStateDone(PyReadStream& packet);
-	void _authStateException(PyReadStream& packet);
+	void _authStateException(PyReadStream& packet);*/
 
 	// current state function pointer
-	stateProc mCurrentStateMachine;
+	//stateProc mCurrentStateMachine;
 
 private:
 

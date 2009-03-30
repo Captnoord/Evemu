@@ -51,10 +51,9 @@ static bool testCRowSet01()
 static bool testUnicodeFunctions()
 {
 	const char* testString = "Ome henk is een hele fijne vent, wel doet hij soms een beetje raar.\nOok houd hij erg van pinda rotsjes.\n";
-	PyUnicodeUCS2* str = PyUnicodeUCS2_DecodeUTF8(testString, strlen(testString));
+	//PyUnicodeUCS2* str = PyUnicodeUCS2_DecodeUTF8(testString, strlen(testString));
 
 }
-
 
 class TestCast
 {

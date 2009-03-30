@@ -1,52 +1,55 @@
-/*
-	------------------------------------------------------------------------------------
-	LICENSE:
-	------------------------------------------------------------------------------------
-	This file is part of EVEmu: EVE Online Server Emulator
-	Copyright 2006 - 2009 The EVEmu Team
-	For the latest information visit http://evemu.mmoforge.org
-	------------------------------------------------------------------------------------
-	This program is free software; you can redistribute it and/or modify it under
-	the terms of the GNU Lesser General Public License as published by the Free Software
-	Foundation; either version 2 of the License, or (at your option) any later
-	version.
-
-	This program is distributed in the hope that it will be useful, but WITHOUT
-	ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-	FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
-
-	You should have received a copy of the GNU Lesser General Public License along with
-	this program; if not, write to the Free Software Foundation, Inc., 59 Temple
-	Place - Suite 330, Boston, MA 02111-1307, USA, or go to
-	http://www.gnu.org/copyleft/lesser.txt.
-	------------------------------------------------------------------------------------
-	Author:		Captnoord
-*/
 #ifndef _MARSHALSTREAM_H
 #define _MARSHALSTREAM_H
 
-class PyObject;
-class PyStream;
-class MarshalReadStream;
-class UnmarshalReferenceMap;
-
-#include "MarshalReferenceMap.h"
-
-/* although I don't like it we need a marshal stream class.. */
+/**
+ * \class MarshalStream
+ *
+ * @brief this class is a wrapper for the serialization and deserialization of the python marshal protocol.
+ *
+ * This class is a wrapper for the serialization and deserialization of the python marshal protocol.
+ * For the moment the deserialization is quite complete but not perfect. The serialization still needs
+ * loads of love and care but eventually it will get there.
+ *
+ * @author Captnoord
+ * @date March 2009
+ */
 class MarshalStream
 {
 public:
 	MarshalStream();
 	~MarshalStream();
-	PyObject* load(MarshalReadStream & stream);
-	void save(PyObject * object);
+
+	/**
+	 * \brief load loads and deserializes a marshal stream into python objects.
+	 *
+	 * 
+	 *
+	 * @param[in] stream a data stream containing the serialized data.
+	 * @return the deserialized object or NULL when something went wrong.
+	 */
+	PyObject* load(ReadStream & stream);
+
+	/**
+	 * \brief save deserializes a PyObject into a marshal stream.
+	 *
+	 * 
+	 *
+	 * @param[in] object is the python object that requires to be serialized.
+	 * @param[out] stream is the data stream containing the serialized object.
+	 * @return true if successful and false when something went wrong.
+	 */
+	bool save(PyObject * object, WriteStream & stream);
+
+	/* common packet python variable that needs to be public, I think */
+	PyBaseNone PyNone;
 
 protected:
-
+	
+	/* common packet python variables */
 	PyInt PyIntZero;
 	PyInt PyIntOne;
 	PyInt PyIntMinOne;
-	PyInt PyIntInfinite;
+	PyInt PyIntMinusOne;
 
 	PyFloat PyFloatZero;
 	PyBool	Py_TrueStruct;
@@ -54,55 +57,187 @@ protected:
 
 	PyString PyStringEmpty;
 
-	UnmarshalReferenceMap sharedObjectsMapInternal;
-#define sharedObjectsMap (sharedObjectsMapInternal)
-	
+	/* container to keep track of the referenced objects */
+	UnmarshalReferenceMap mReferencedObjectsMap;
+
 private:
-	PyObject* unmarshal(MarshalReadStream & stream);
-
-	PyObject* ReadBuffer(MarshalReadStream & stream);
-
-	bool ReadMarshalHeader(MarshalReadStream & stream);
+	/**
+	 * \brief unmarshal this function deserializes the python stream.
+	 *
+	 * this functions parses the data to objects.
+	 *
+	 * @param[in] stream is the data read stream that contains the data and keeps info about read index and stream size.
+	 * @return returns the deserialized PyObject and if there was a error it returns NULL.
+	 */
+	PyObject* unmarshal(ReadStream & stream);
 
 	/**
-	 * @brief ReadClassString
+	 * \brief marshal this function attempts to serialize the python objects to a data stream.
 	 *
-	 * needs some love
+	 * 
+	 *
+	 * @param[in] object is the object that needs to be serialized.
+	 * @param[out] stream is the data stream that contains the serialized object.
+	 * @return true if successful and false if a error has happened.
+	 */
+	bool marshal(PyObject * object, WriteStream & stream);
+
+	/**
+	 * @brief checkAndInflate is a temp function to handle the possibility that a packets is zipped
+	 *
+	 * this should really be done different.
+	 *
+	 * @param[in] stream is the data stream that contains the data that needs to be checked and inflated.
+	 * @return true is check is successfully.. false means something went wrong...
+	 */
+	bool checkAndInflate( ReadStream & stream );
+
+	/**
+	 * \brief it seems that the server sends bytecode packets to every client.
+	 *
+	 * this function should check for the common signs and write them to a file.
+	 * important to know is that this isn't normal client behavure.
+	 *
+	 * @param[in] stream is the data stream that contains the data that needs to be checked for bytecode streams.
+	 */
+	bool checkForBytecode( ReadStream & stream );
+
+	/**
+	 * \brief ReadMarshalHeader is a internal function that reads the marshal header.
+	 *
+	 * ReadMarshalHeader is a internal function that reads the marshal header and parses the reference
+	 * object data. It also checks if the stream contains the required first tag.
+	 *
+	 * @param[in] stream is the data stream that contains the header that needs to be read.
+	 * @return returns true if successful and false if it wasn't
+	 */
+	bool ReadMarshalHeader(ReadStream & stream);
+
+	/**
+	 * @brief ReadClassString reads the interface string and returns its instance.
+	 * 
+	 * ReadClassString is actually a function that needs to read the string and find the
+	 * global interface instance and return it.
+	 *
+	 * @param[in] stream the data stream.
+	 * @param[in] shared is the object this is true, meaning it should be saved.
+	 * @return the deserialized object and NULL if it failed.
+	 */
+	ASCENT_INLINE PyObject* ReadClassString(ReadStream & stream, BOOL shared);
+
+	/**
+	 * \brief
+	 *
+	 * 
 	 *
 	 * @param[in]
 	 * @param[out]
 	 * @return
 	 */
-	PyObject* ReadClassString(MarshalReadStream & stream, bool shared);
-	PyObject* ReadClass(MarshalReadStream & stream, bool shared);
-	PyObject* ReadNewObject1(MarshalReadStream & stream, bool shared);
-	PyObject* ReadNewObject2(MarshalReadStream & stream, bool shared);
-	PyObject* ReadPackedRow(MarshalReadStream & stream);
-	PyObject* ReadSubStream(MarshalReadStream & stream);
-	PyObject* ReadVarInteger(MarshalReadStream & stream, bool shared);
-
-	//////////////////////////////////////////////////////////////
-
-	/* small internal function to do some easy reading */
-	PyObject* _ReadPyStringFromStringAndSize(MarshalReadStream & stream);	
-
-	//PyStream	marshalStream;			// container for keeping a marshaled stream
-	PyObject*	unmarshalObjects;		// container for keeping the unmarshalled objects
-
-	bool _deleted;
-
-	bool _ReadNewObjList(MarshalReadStream & stream, PyClass & obj);
-	bool _ReadNewObjDict(MarshalReadStream & stream, PyClass & obj);
+	ASCENT_INLINE PyObject* ReadClass(ReadStream & stream, BOOL shared);
 
 	/**
-	 * @brief checkAndInflate is a temp function to handle the possibility that a packets is zipped
+	 * \brief
 	 *
-	 * this should really be done somewhere else.
+	 * 
 	 *
-	 * @return true is check is successfully.. false means something went wrong...
+	 * @param[in]
+	 * @param[out]
+	 * @return
 	 */
-	bool checkAndInflate( MarshalReadStream & stream );
-	uint8 zlibworkbuffer[100000];
+	ASCENT_INLINE PyObject* ReadCallUpdateObject(ReadStream & stream, BOOL shared);
+
+	/**
+	 * \brief
+	 *
+	 * 
+	 *
+	 * @param[in]
+	 * @param[out]
+	 * @return
+	 */
+	ASCENT_INLINE PyObject* ReadCallObjectNew(ReadStream & stream, BOOL shared);
+
+	/**
+	 * \brief
+	 *
+	 * 
+	 *
+	 * @param[in]
+	 * @param[out]
+	 * @return
+	 */
+	ASCENT_INLINE PyObject* ReadPackedRow(ReadStream & stream);
+
+	/**
+	 * \brief
+	 *
+	 * 
+	 *
+	 * @param[in]
+	 * @param[out]
+	 * @return
+	 */
+	ASCENT_INLINE PyObject* ReadSubStream(ReadStream & stream);
+
+	/**
+	 * \brief
+	 *
+	 * 
+	 *
+	 * @param[in]
+	 * @param[out]
+	 * @return
+	 */
+	ASCENT_INLINE PyObject* ReadVarInteger(ReadStream & stream, BOOL shared);
+
+	/**
+	 * \brief ReadBuffer reads the SizeEx chunk of the stream and reads the string accordingly.
+	 *
+	 * 
+	 *
+	 * @param[in] 
+	 * @return a PyString pointer if successful and NULL if it wasn't.
+	 */
+	ASCENT_INLINE PyObject* ReadBuffer(ReadStream & stream);
+
+	/**
+	 * \brief
+	 *
+	 * 
+	 *
+	 * @param[in]
+	 * @param[out]
+	 * @return
+	 */
+	ASCENT_INLINE bool ReadNewObjList(ReadStream & stream, PyClass & obj);
+
+	/**
+	 * \brief
+	 *
+	 * 
+	 *
+	 * @param[in]
+	 * @param[out]
+	 * @return
+	 */
+	ASCENT_INLINE bool ReadNewObjDict(ReadStream & stream, PyClass & obj);
+
+
+	/**
+	 * \brief WriteVarInteger is a wrapper function to write a variable integer to the a stream.
+	 *
+	 * WriteVarInteger is a wrapper function to write a variable integer to the a stream.
+	 *
+	 * @param[in] stream is the buffer to be written to.
+	 * @param[in] number is the PyLong object that needs to be written to the stream.
+	 * @return true if successful and false if a error has happened.
+	 */
+	ASCENT_INLINE bool WriteVarInteger(WriteStream& stream, PyObject* number);
+
+	/** ZLIB utility buffer
+	 */
+	uint8 *zlibworkbuffer;
 };
 
 #endif //_MARSHALSTREAM_H

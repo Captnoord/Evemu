@@ -111,7 +111,7 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="&quot;..\..\include\ascent-shared\Network&quot;;&quot;..\..\include\ascent-shared\Database&quot;;&quot;..\..\include\ascent-shared\Config&quot;;&quot;..\..\include\ascent-shared\Auth&quot;;&quot;..\..\include\ascent-shared\Threading&quot;;&quot;..\..\include\ascent-shared&quot;;..\..\dep\include"
+				AdditionalIncludeDirectories="&quot;..\..\include\ascent-shared\Network&quot;;&quot;..\..\include\ascent-shared\Database&quot;;&quot;..\..\include\ascent-shared\Config&quot;;&quot;..\..\include\ascent-shared\Auth&quot;;&quot;..\..\include\ascent-shared\Threading&quot;;&quot;..\..\include\ascent-shared&quot;;..\..\dep\include;..\..\dep\include\mysql"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="false"

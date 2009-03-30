@@ -61,7 +61,7 @@ public:
 	 *
 	 * @param[in] packet is the stream that needs to be dumped.
 	 */
-	void logPacket(PyTupleStream* packet, int direction)
+/*	void logPacket(PyTupleStream* packet, int direction)
 	{
 		if (mEnableFileWrite == false)
 			return;
@@ -81,7 +81,7 @@ public:
 			return;
 
 		logSimplePacket(packet->content(), packet->size(), direction);
-	}
+	}*/
 
 #define ENDING_WINDOWS "\r\n"
 #define ENDING_UNIX "\n"

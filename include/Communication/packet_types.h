@@ -182,11 +182,6 @@ enum EVEContainerTypes {
 	containerCorpMarket			= 10012
 };
 
-
-#include "tables/invCategories.h"
-typedef EVEDB::invCategories::invCategories EVEItemCategories;
-
-
 typedef enum EVEItemFlags {	//from eveFlags DB table
 	flagAutoFit = 0,
 	flagWallet = 1,

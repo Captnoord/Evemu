@@ -33,9 +33,4 @@
 #  define ASCENT_HARDWARE_BREAKPOINT
 #endif//WIN32
 
-#define ASCENT_MALLOC malloc
-#define ASCENT_FREE free
-#define ASCENT_REALLOC realloc
-#define ASCENT_MEMCPY memcpy
-
 #endif //_DEBUGTOOLS_H

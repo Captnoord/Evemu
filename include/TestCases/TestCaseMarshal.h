@@ -137,7 +137,7 @@ static void testmarshal(PyStream * packet, uint32 depth = -1)
 			TestLogf("PyNumber: %u", pyshort);
 		} break;
 
-	case Op_PyInfinite:
+	case Op_PyMinusOne:
 		{ 
 			TestLog("PyNumber: infinite");
 		} break;
@@ -196,7 +196,7 @@ static void testmarshal(PyStream * packet, uint32 depth = -1)
 			TestLogf("PyString: %s", str.c_str());
 		} break;
 
-	case Op_PyUnicodeByteString:
+	case Op_PyUnicodeUTF8String:
 		{
 
 			TestLog("PyStringTableItem not supported atm");
@@ -222,14 +222,14 @@ static void testmarshal(PyStream * packet, uint32 depth = -1)
 
 		} break;
 
-	case Op_PyClassObject:
+	case Op_PyModuleInstance:
 		{
 
 		} break;
 
 
 		//stream custom data with callback method
-	case Op_PySubStruct:
+	case Op_PyClassInstance:
 		{
 			// This is really a remote object specification
 
@@ -254,8 +254,8 @@ static void testmarshal(PyStream * packet, uint32 depth = -1)
 		{	
 		} break;
 
-	case Op_NewObject1:
-	case Op_NewObject2:
+	case Op_NewObject:
+	case Op_UpdateObject:
 		{
 
 		} break;
@@ -281,7 +281,7 @@ static void testmarshal(PyStream * packet, uint32 depth = -1)
 
 		} break;
 
-	case Op_PyEmptyUnicodeString:
+	case Op_PyUnicodeEmptyString:
 		{
 		} break;
 
@@ -291,7 +291,7 @@ static void testmarshal(PyStream * packet, uint32 depth = -1)
 
 		} break;
 
-	case Op_PyPackedRow:
+	case Op_PyDBRow:
 		{
 
 		} break;
@@ -311,7 +311,7 @@ static void testmarshal(PyStream * packet, uint32 depth = -1)
 			}
 		} break;
 
-	case Op_PackedTerminator:
+	case Op_PyStopIter:
 		{
 
 		} break;
@@ -329,7 +329,7 @@ static void testmarshal(PyStream * packet, uint32 depth = -1)
 		/************************************************************************/
 		/* Unhandled Marshalled objects                                         */
 		/************************************************************************/
-	case 0x13: //19 // something related to PyBuffers and 
+	//case 0x13: //19 // something related to PyBuffers and 
 		{
 			assert(false);
 			printf("Unhandled opcode: %u\n", opcode & PyRepOpcodeMask);
