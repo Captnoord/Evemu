@@ -358,6 +358,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\Utilities\HexAsciiModule.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\Utilities\RleModule.cpp"
 				>
 			</File>

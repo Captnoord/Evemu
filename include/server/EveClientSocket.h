@@ -78,6 +78,9 @@ public:
 		//SendRaw(packet.content(), packet.size());
 	}
 
+	int MarshalSend(PyObject* object);
+
+
 	/** SPECIAL FUNCTION FOR SINGLE OBJECT STREAMS
 	 */
 	template <typename T>

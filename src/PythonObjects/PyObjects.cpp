@@ -384,7 +384,7 @@ PyFloat::PyFloat( float num ) : mType(PyTypeReal), mNumber(num), mRefcnt(1)
 	mHash = &PyFloat::_hash;
 }
 
-PyFloat::PyFloat( double & num ) : mType(PyTypeReal), mNumber(num), mRefcnt(1)
+PyFloat::PyFloat( double num ) : mType(PyTypeReal), mNumber(num), mRefcnt(1)
 {
 	mHash = &PyFloat::_hash;
 }

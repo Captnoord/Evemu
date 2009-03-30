@@ -32,6 +32,7 @@
 #include "ascent.h"
 
 #include "RleModule.h"
+#include "HexAsciiModule.h"
 
 /* 'evemu-server' generic includes */
 #include "PyStringTable.h"

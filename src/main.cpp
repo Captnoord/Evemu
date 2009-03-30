@@ -86,12 +86,12 @@ int main(int argc, char *argv[])
 	ThreadPool.Startup();
 
 	// connect the db system to the db
-	bool dbret = _DBStartup("localhost",3306, "padawa", "theforce", "evemu_rewrite_static", "evemu_rewrite_dynamic");
+	/*bool dbret = _DBStartup("localhost",3306, "padawa", "theforce", "evemu_rewrite_static", "evemu_rewrite_dynamic");
 	if(dbret == false)
 	{
 		Log.Error("Database", "Unable to connect to the db");
 		return 0;
-	}
+	}*/
 
 	// Startup banner
 	UNIXTIME = time(NULL);

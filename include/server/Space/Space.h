@@ -78,25 +78,25 @@ public:
 	/**
 	 * @brief OnClientDisconnect is triggered when a socket is disconnected from the server.
 	 *
-	 * 
+	 * no long description.
 	 *
 	 * @note this function is purely for server statistics.
 	 */
-	void OnClientDisconnect();
+	ASCENT_INLINE void OnClientDisconnect();
 
 	/**
 	 * @brief OnClientConnect is triggered when a client is authorized successfully.
 	 *
-	 * 
+	 * no long description.
 	 *
 	 * @note this function is purely for server statistics.
 	 */
-	void OnClientConnect();
+	ASCENT_INLINE void OnClientConnect();
 
 	/**
 	 * @brief a function to generate user id's.
 	 *
-	 * 
+	 * no long description.
 	 *
 	 * @return a freshly generated userid.
 	 * @note this is so fucked up.... lol..... I hope that because of its natural overrun it will be safe.... lol.... but it isn't safe... (for clients hehe)

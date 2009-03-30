@@ -39,10 +39,15 @@
 class ReadStream
 {
 public:
-	/** 
+	/**
 	 * Constructor.
 	 */
 	ReadStream();
+
+	/**
+	* Constructor.
+	*/
+	ReadStream(size_t size);
 
 	/** 
 	 * Constructor.

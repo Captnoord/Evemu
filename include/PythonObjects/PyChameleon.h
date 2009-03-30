@@ -85,6 +85,7 @@ public:
 	PyChameleon &operator=(const uint32 number);
 	PyChameleon &operator=(const int number);
 	PyChameleon &operator=(const float number);
+	PyChameleon &operator=(const double number);
 	PyChameleon &operator=(const PyDict* pointer);
 	PyChameleon &operator=(const PyList* pointer);
 	PyChameleon &operator=(const PyTuple* pointer);

@@ -32,7 +32,7 @@ initialiseSingleton( AccountMgr );
 AccountMgr::AccountMgr()
 {
 	Log.Notice("Account manager", "Initializing...");
-	_updateAccountInfo();
+	//_updateAccountInfo();
 }
 
 AccountMgr::~AccountMgr()

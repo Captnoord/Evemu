@@ -185,7 +185,7 @@ private:
 public:
 	explicit PyFloat();
 	explicit PyFloat(float num);
-	explicit PyFloat(double & num);
+	explicit PyFloat(double num);
 	~PyFloat();
 	double GetValue();
 private:

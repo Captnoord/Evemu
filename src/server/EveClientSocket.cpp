@@ -67,8 +67,6 @@ EveClientSocket::EveClientSocket(SOCKET fd) : Socket(fd, CLIENTSOCKET_SENDBUF_SI
 	mRemaining = 0;
 
 	mSession = NULL;
-
-	//mCurrentStateMachine = &EveClientSocket::_authStateHandshake;
 }
 
 EveClientSocket::~EveClientSocket()
@@ -107,6 +105,17 @@ void EveClientSocket::_sendHandShake()
 {
 	uint32 authCount = (uint32)sSpace.GetAuthorizedCount();
 
+	PyTuple tulpe(6);
+	tulpe[0] = EveBirthday;
+	tulpe[1] = MachoNetVersion;
+	tulpe[2] = (authCount+10);
+	tulpe[3] = EveVersionNumber;
+	tulpe[4] = EveBuildVersion;
+	tulpe[5] = EveProjectVersion;
+
+	MarshalSend((PyObject*)&tulpe);
+
+//EveBirthday
 	/* version response packet */
 	/*PyTupleStream packet(45);
 	packet << EveBirthday;
@@ -162,26 +171,40 @@ void EveClientSocket::OnRead()
 		//Check for the header if we don't have any bytes to wait for.
 		if(mRemaining == 0)
 		{
+			/* check if we at least have a header */
 			if(GetReadBuffer().GetSize() < 4)
-			{
-				// No header in the packet, let's wait.
 				return;
-			}
 
-			// copy the packet size from the buffer
+			/* copy the packet size from the buffer */
 			uint32 packetSize;
 			GetReadBuffer().Read((void*)&packetSize, 4);
 			mRemaining = packetSize;
 		}
 
+		ReadStream * packet = NULL;
 		if(mRemaining > 0)
 		{
+			/* check if we have a fragmented packet, if so wait until its completed */
 			if( GetReadBuffer().GetSize() < mRemaining )
-			{
-				// We have a fragmented packet. Wait for the complete one before proceeding.
 				return;
+
+			packet = new ReadStream(mRemaining);
+
+			if ( !GetReadBuffer().Read(packet->content(), mRemaining) )
+			{
+				Log.Error("ClientSocket","buffer read went wrong");
+				SafeDelete(packet);
 			}
+
+			HexAsciiModule::print_hexview(stdout, packet->content(), packet->size());
+
+			//sFileLogger.logRawPacket(packet->content(), packet->size(), 0);
+
+			PyInt queuePos(1);
+			MarshalSend((PyObject*)&queuePos);
 		}
+
+		
 
 		//ByteBuffer * packet = NULL;
 		//PyReadStream * packet = NULL;
@@ -213,6 +236,48 @@ void EveClientSocket::OnRead()
 		//	SafeDelete(packet);
 		//}
 	}
+}
+
+/* hacky hacky hack ^ 2 function */
+int EveClientSocket::MarshalSend( PyObject* object )
+{
+	MarshalStream marshal;
+	WriteStream stream(100);
+	marshal.save(object, stream);
+
+	if(IsConnected() == false)
+		return OUTPACKET_RESULT_NOT_CONNECTED;
+
+	size_t len = stream.size();
+	unsigned char* data = stream.content();
+
+	BurstBegin();
+	if( GetWriteBuffer().GetSpace() < (len + 4) )
+	{
+		BurstEnd();
+		return OUTPACKET_RESULT_NO_ROOM_IN_BUFFER;
+	}
+
+	// packet logger :D
+	sFileLogger.logPacket(data, len, 1);
+
+	// Pass the size of the packet to our send buffer
+	bool rv = BurstSend((const uint8*)&len, 4);
+
+	// Pass the rest of the packet to our send buffer (if there is any)
+	if(len > 0 && rv == true)
+	{
+		rv = BurstSend(data, (uint32)len);
+	}
+
+	if(rv == true)
+	{
+		BurstPush();
+	}
+	BurstEnd();
+
+	object->DecRef();
+	return rv ? OUTPACKET_RESULT_SUCCESS : OUTPACKET_RESULT_SOCKET_ERROR;
 }
 
 #if 0
@@ -492,4 +557,6 @@ void EveClientSocket::_authStateException(PyReadStream& packet)
 	obj = NULL;*/
 }
 
+
 #endif
+

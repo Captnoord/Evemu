@@ -197,6 +197,16 @@ PyChameleon &PyChameleon::operator=(PyObject& pointer)
 	return *this;
 }
 
+PyChameleon & PyChameleon::operator=( const double number )
+{
+	assert(mIsEmpty == true);
+	_settype(PyTypeReal);
+	assert(mPayload == NULL);
+	mPayload = (PyObject*)new PyFloat(number);
+	mIsEmpty = false;
+	return *this;
+}
+
 uint8 PyChameleon::gettype()
 {
 	return mType;

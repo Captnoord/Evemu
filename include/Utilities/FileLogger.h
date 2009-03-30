@@ -190,6 +190,19 @@ public:
 		fflush(fouttxt);
 	}
 
+	void logRawPacket(void* pData, size_t data_len, int direction)
+	{
+		if (foutraw <= NULL)
+			return;
+
+		if (pData == NULL || data_len == 0)
+			return;
+
+		fwrite(&direction, 1, 1, foutraw);
+		fwrite(&data_len, 4, 1, foutraw);
+		fwrite(pData, data_len, 1, foutraw);
+	}
+
 	// simple packets are streams we supply the header for its very slow... hehe
 	void logSimplePacket(const unsigned char* xdata, size_t size, unsigned int direction)
 	{
@@ -296,6 +309,7 @@ public:
 protected:
 
 	FILE * fouttxt;
+	FILE * foutraw;
 	bool mEnableFileWrite;
 
 #ifdef WIN32
