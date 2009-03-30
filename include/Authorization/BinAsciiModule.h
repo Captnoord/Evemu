@@ -95,6 +95,30 @@ public:
 
 		return crc;
 	}
+
+	/* Hexadecimal representation of binary data */
+	static void hexlify(const char* src, const size_t srclen, char* dst, size_t * dstlen, bool upper = false)
+	{
+		size_t i, j;
+		char ch = 'a';
+		if (upper == true)
+			ch = 'A';
+
+		if (srclen * 2 > *dstlen)
+			return;
+
+		/* make hex version of string, taken from shamodule.c */
+		for (i=j=0; i < srclen; i++) {
+			char c;
+			c = (src[i] >> 4) & 0xf;
+			c = (c>9) ? c+ch-10 : c + '0';
+			dst[j++] = c;
+			c = src[i] & 0xf;
+			c = (c>9) ? c+ch-10 : c + '0';
+			dst[j++] = c;
+		}
+		*dstlen = i;
+	}
 };
 
 #endif//BIN_ASCII_MODULE_H
