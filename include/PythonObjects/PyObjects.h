@@ -28,25 +28,27 @@
 
 enum PyType
 {
-	PyTypeNone,
-	PyTypeBool,
-	PyTypeInt,
-	PyTypeReal,
-	PyTypeString,
-	PyTypeUnicode,
-	PyTypeDict,
-	PyTypeTuple,
-	PyTypeList,
-	PyTypeSubStream,
-	PyTypeClass,
-	PyTypeDeleted, // must be last, and can max be 16...
+	PyTypeNone,			//0
+	PyTypeBool,			//1
+	PyTypeInt,			//2
+	PyTypeLong,			//3
+	PyTypeReal,			//4
+	PyTypeString,		//5
+	PyTypeUnicode,		//6
+	PyTypeDict,			//7
+	PyTypeTuple,		//8
+	PyTypeList,			//9
+	PyTypeSubStream,	//10
+	PyTypeClass,		//11
+	PyTypeModule,		//12
+	PyTypePackedRow,	//13
+	PyTypeSubStruct,	//14
+	PyTypeDeleted,		//15 // must be last, and can max be 16...
 };
 
-enum PyTypeIntFlags
-{
-	PyFlagLong = 0x80,	// b10000000
-	PyFlagMask = 0xF0,
-};
+// object hash function
+//#define hashfunc(x) uint32 (*x)(void);
+typedef uint32 (*hashfunc)(void);
 
 class PyInt;
 class PyDict;
@@ -58,6 +60,10 @@ class PyFloat;
 class PyBool;
 class PyClass;
 class PyObject;
+class PyChameleon;
+class PyUnicodeUCS2;
+
+#pragma pack(push,1)
 
 /**
  * \class PyBaseNone
@@ -72,15 +78,22 @@ class PyObject;
 class PyBaseNone
 {
 public:
-	PyBaseNone() : type(PyTypeNone) {}
-	~PyBaseNone(){type = PyTypeDeleted;}
-	uint8 gettype(){return type;}
+	uint8 gettype();
+	void IncRef();
+	void DecRef();
+	uint32 hash();
 private:
-	uint8 type;
+	uint8 mType;
+	size_t mRefcnt;
+	uint32 (PyBaseNone::*mHash)();
+public:
+	PyBaseNone();
+	~PyBaseNone();
+	uint32 _hash();
 };
 
 // a single global static declaration of the PyNone object
-static PyBaseNone PyNone;
+//static PyBaseNone PyNone;
 
 /* universal object to represent the a single unidentified object. */
 /* a universal type cast class to get the type of a object
@@ -90,10 +103,17 @@ static PyBaseNone PyNone;
 class PyObject
 {
 public:
-	uint8 gettype(){return type;}
-	~PyObject(){ASCENT_ASSERT(false);}
+	uint8 gettype();
+	void IncRef();
+	void DecRef();
+	uint32 hash();
 private:
-	uint8 type;
+	uint8 mType;
+	size_t mRefcnt;
+	uint32 (PyObject::*mHash)();
+public:
+	PyObject();
+	~PyObject();
 };
 
 /**
@@ -109,213 +129,280 @@ private:
 class PyInt
 {
 public:
-	uint8 gettype(){return type;}
-	PyInt(int32 num, bool infinite = false);
-	PyInt &operator=(const int num);
-	~PyInt();	
-	bool IsInfinite() {return isInfinite;}
-private:
-	uint8 type;
-	int32 number;
-	bool isInfinite;
-};
-
-/**
- * \class PyChameleon
- *
- * @brief the mythical lizard that can color to his surrounding.
- *
- * trys to be a universal objects for python types.
- *
- * @author Captnoord
- * @date January 2009
-  */
-class PyChameleon
-{
-public:
-	PyChameleon();
-	~PyChameleon();
-
 	uint8 gettype();
-	bool isempty();
-
-	/**
-	 * @brief 
-	 *
-	 * 
-	 *
-	 * @param[in]
-	 * @param[out]
-	 * @return
+	void IncRef();
+	void DecRef();
+	
+	/** simple hash function, atm this one is pretty weak.
 	 */
-	PyChameleon &operator=(const char* const str);
-	PyChameleon &operator=(const std::string &str);
-
-	PyChameleon &operator=(const wchar_t* const str);
-	PyChameleon &operator=(const std::wstring &str);
-
-	PyChameleon &operator=(const uint32 number);
-	PyChameleon &operator=(const int number);
-	PyChameleon &operator=(const float number);
-	PyChameleon &operator=(const PyDict* pointer);
-	PyChameleon &operator=(const PyList* pointer);
-	PyChameleon &operator=(const PyTuple* pointer);
-
-	PyChameleon &operator=(PyObject* pointer);
-	PyChameleon &operator=(PyObject& pointer);
-
-protected:
-	void _settype(uint8 type);
-	bool OnDelete();
-
+	uint32 hash();
 private:
 	uint8 mType;
-	void* mPayload;
-	bool mIsEmpty;		// indicates a non active PyChameleon
-	bool mIsNew;		// just debug stuff..
-};
-
-/**
- * \class PyErrorChameleon
- *
- * @brief the PyErrorChameleon class is a VERY important class related to error detection and checking.
- *
- * 
- *
- * @author Captnoord.
- * @date January 2009
- * @note should this be a singleton???
- */
-class PyErrorChameleon : public PyChameleon
-{
+	size_t mRefcnt;
+	uint32 (PyInt::*mHash)();
 public:
-	PyErrorChameleon() : PyChameleon() {}
-	
-	template<typename T>
-	PyErrorChameleon &operator=(T& str)
-	{
-		Log.Error("PyErrorChameleon", "Error we are used... thats not good... hmm.. there must have been something wrong...");
-		return *this;
-	}
+	explicit PyInt(int32 num );
+	PyInt &operator = (const int num);
+	~PyInt();
+	int32 GetValue();
+private:
+	int32 mNumber;
+	uint32 _hash();
 };
-
-static PyErrorChameleon PyErrorIterator;
 
 class PyLong
 {
 public:
 	uint8 gettype();
-	PyLong(int64 & num);
-	~PyLong();
-	int64 getnumber();
+	void IncRef();
+	void DecRef();
+	uint32 hash();
 private:
-	uint8 type;
-	int64 number;
+	uint8 mType;
+	size_t mRefcnt;
+	uint32 (PyLong::*mHash)();
+public:
+	explicit PyLong(int64 & num);
+	explicit PyLong(uint64 & num);
+	~PyLong();
+	int64 GetValue();
+private:
+	int64 mNumber;
+	uint32 _hash();
 };
 
 class PyFloat
 {
 public:
-	PyFloat();
-	PyFloat(float num);
-	PyFloat(double & num);
-	~PyFloat();
 	uint8 gettype();
+	void IncRef();
+	void DecRef();
+	uint32 hash();
 private:
-	uint8 type;
-	double number;
+	uint8 mType;
+	size_t mRefcnt;
+	uint32 (PyFloat::*mHash)();
+public:
+	explicit PyFloat();
+	explicit PyFloat(float num);
+	explicit PyFloat(double & num);
+	~PyFloat();
+	double GetValue();
+private:
+	double mNumber;
+	uint32 _hash();
 };
 
 class PyString
 {
 public:
-	PyString();
-	PyString(const char* str);
-	PyString(const char* str, size_t len);
-	PyString(std::string& str);
-	~PyString();
 	uint8 gettype();
+	void IncRef();
+	void DecRef();
+	uint32 hash();
+private:
+	uint8 mType;
+	size_t mRefcnt;
+	uint32 (PyString::*mHash)();
+public:
+	explicit PyString();
+	explicit PyString(const char* str);
+	explicit PyString(const char* str, size_t len);
+	explicit PyString(std::string& str);
+	~PyString();
 	bool set(const char* str, size_t len);
 	const char* content();
-private:
-	uint8 type;
-	char* mStr;
-};
+	const size_t length();
 
-class PyUnicodeUCS2
-{
-public:
-	PyUnicodeUCS2();
-	PyUnicodeUCS2(const wchar_t* str);
-	PyUnicodeUCS2(const wchar_t* str, size_t len);
-	PyUnicodeUCS2(std::wstring& str);
-	~PyUnicodeUCS2();
-	uint8 gettype();
-	bool set(const char* str, size_t len);
-	bool resize(size_t newsize);
-	wchar_t * content();
+	/**
+	 * \brief appends a string to the end of the PyString
+	 *
+	 * 
+	 *
+	 * @param[in] str the std string that should be appended to the PyString.
+	 * @return this function should return the "this" object.
+	 */
+	PyString& append ( const std::string& str );
+
+	/**
+	 * \brief appends a string to the end of the PyString
+	 *
+	 * 
+	 *
+	 * @param[in] str the std string that should be appended to the PyString.
+	 * @param[in] pos where the string should be appended.
+	 * @param[in] n how much of the string should be appended.
+	 * @return this function should return the "this" object.
+	 */
+	PyString& append ( const std::string& str, size_t pos, size_t n );
+
+	bool resize(size_t size);
+
+	bool operator==(const char *str1);
+	PyString &operator=(const char *str);
+	char &operator[](const int index);
 private:
-	uint8 type;
-	wchar_t* mStr;
+
+	char* mStr;
+	size_t mStrLen;
+	uint32 mHashValue;
+	uint32 _hash();
 };
 
 class PyBool
 {
 public:
-	PyBool(bool check);
-	~PyBool();
 	uint8 gettype();
+	void IncRef();
+	void DecRef();
+	uint32 hash();
 private:
-	uint8 type;
+	uint8 mType;
+	size_t mRefcnt;
+	uint32 (PyBool::*mHash)();
+public:
+	explicit PyBool(bool check);
+	~PyBool();
+	bool operator==(const bool check);
+private:
 	bool mCheck;
+	uint32 _hash();
 };
 
-// we take 20 elements as the maximum amount of elements...
+/**
+ * \class PyTuple
+ *
+ * @brief PyTuple is one of the most used objects within python. Its a object to store objects in.
+ *
+ * http://en.wikipedia.org/wiki/Tuple
+ *
+ * @note one of the design choices was to use a vector to store the pointers.
+ * @note this at first hand only cause big slowdowns when allocating a big amount of items.
+ * @author Captnoord
+ * @date March 2009
+ */
 class PyTuple
 {
+/* limit the tuple to 1000 items */
 #define PY_TUPLE_ELEMENT_MAX 1000
 public:
-	PyTuple();
-	PyTuple(int elementCount);
-	~PyTuple(); //should it contain delete all stuff?????
 	uint8 gettype();
+	void IncRef();
+	void DecRef();
+	uint32 hash();
+private:
+	uint8 mType;
+	size_t mRefcnt;
+	uint32 (PyTuple::*mHash)();
+public:
+	explicit PyTuple();
+	explicit PyTuple(size_t elementCount);
+	~PyTuple();
 
+	/**
+	 * \brief operator overload for easy object access and storage
+	 *
+	 * nothing much to tell about this function, it returns a PyChameleon object reference.
+	 *
+	 * @param[in] index is the location of the required object.
+	 * @return always returns a PyChameleon object even if there isn't a object stored (so it can be used to store objects).
+	 */
 	PyChameleon &operator[](const int index);
+	PyObject* GetItem(const int index);
 
 	// returns the element count
 	size_t size();
+
+	// clears the tuple from all objects
+	void clear();
+
+	bool resize(size_t elementCount);
 private:
-	uint8 type;
-	std::vector<PyChameleon> mTuple;
+	typedef std::vector<PyChameleon*> TupleVector;
+public:
+	typedef TupleVector::iterator iterator;
+	typedef TupleVector::const_iterator const_iterator;
+	iterator begin() {return mTuple.begin();}
+	iterator end() {return mTuple.end();}
+private:
+	TupleVector mTuple;
+
+	// tuple hash function
+	uint32 _hash();
 };
 
 class PyList
 {
 public:
-	PyList();
-	PyList(int elementCount);
-	~PyList();
-
-	PyChameleon &operator[](const int index);
-
 	uint8 gettype();
+	void IncRef();
+	void DecRef();
+	uint32 hash();
 private:
-	uint8 type;
-	std::vector<PyChameleon> mList;
+	uint8 mType;
+	size_t mRefcnt;
+	uint32 (PyList::*mHash)();
+public:
+	explicit PyList();
+	explicit PyList(int elementCount);
+	~PyList();
+	PyChameleon &operator[](const int index);
+	size_t size();
+	bool add(PyObject* obj);
+private:
+	std::vector<PyChameleon*> mList;
+	typedef std::vector<PyChameleon*>::iterator iterator;
+	uint32 _hash();
+};
+
+/* dictionary entry */
+struct PyDictEntry
+{
+	/* uint32 hashvalue; */
+	PyObject* key;
+	PyObject* obj;
 };
 
 class PyDict
 {
 public:
+	uint8 gettype();
+	void IncRef();
+	void DecRef();
+	uint32 hash();
+private:
+	uint8 mType;
+	size_t mRefcnt;
+	uint32 (PyDict::*mHash)();
+public:
 	PyDict();
 	~PyDict();
-	uint8 gettype();
+	PyChameleon operator[](const char* keyName);
 
-	PyChameleon &operator[](const char* keyName);
+	bool set_item(const char* key_name, PyObject* obj);
+	bool set_item(PyObject* key, PyObject* obj);
+	PyObject* get_item(PyObject* key);
+	PyObject* get_item(const char* key_name);
+
+	size_t size();
 
 private:
-	uint8 type;
-	string_map<PyChameleon> mDict;
+
+	typedef std::map<uint32, PyDictEntry*>	DictMap;
+	typedef DictMap::iterator				DictMapItr;
+public:
+	typedef DictMap::iterator				iterator;
+	iterator begin();
+	iterator end();
+private:
+
+	DictMap mDict;
+	/** mMappingMode makes it possible to simply store the objects
+	 */
+	bool	mMappingMode;
+	uint32	mMappingIndex;
+
+	uint32 _hash();
 };
 
 /**
@@ -329,22 +416,30 @@ private:
  * @author Captnoord
  * @date February 2009
  */
+
+static int SubStreamCounter = 0;
 class PySubStream
 {
 public:
-
+	uint8 gettype();
+	void IncRef();
+	void DecRef();
+	uint32 hash();
+private:
+	uint8 mType;
+	size_t mRefcnt;
+	uint32 (PySubStream::*mHash)();
+public:
 	PySubStream();
 	PySubStream(uint8* data, size_t len);
 	~PySubStream();
-
-	uint8 gettype();
 	uint8* content();
+	size_t size();
 	bool set(uint8 * data, size_t len);
-
 private:
-	uint8 type;
 	void* mData;
 	size_t mLen;
+	uint32 _hash();
 };
 
 /**
@@ -360,28 +455,180 @@ private:
 class PyClass
 {
 public:
+	uint8 gettype();
+	void IncRef();
+	void DecRef();
+	uint32 hash();
+private:
+	uint8 mType;
+	size_t mRefcnt;
+	uint32 (PyClass::*mHash)();
+public:
 	PyClass();
 	~PyClass();
-
-	uint8 gettype();
 	bool setname(PyString* name);
 	bool setbases(PyTuple* tuple);
 	bool setdict(PyDict* dict);
 	bool setDirList(PyList * list);
 	bool setDirDict(PyDict * dict);
 
+	PyString* getname();
+	PyTuple* getbases();
+	PyDict* getdict();
+	PyList * getDirList();
+	PyDict * getDirDict();
 private:
-	uint8 type;
-
 	PyTuple		*mBases;/* A tuple of class objects */
 	PyDict		*mDict;	/* A dictionary */
 	PyString	*mName;	/* A string */
-	
 
 	// derived object call info...
 	PyList		*mDirivedCallList;
 	PyDict		*mDirivedCallDict;
+	uint32 _hash();
 };
+
+/**
+* \class PyInstance
+*
+* @brief
+*
+* blaat I dono what I am doing.... part 2. :D
+*
+* @author Captnoord
+* @date March 2009
+*/
+class PyInstance
+{
+public:
+	uint8 gettype();
+	void IncRef();
+	void DecRef();
+	uint32 hash();
+private:
+	uint8 mType;
+	size_t mRefcnt;
+	uint32 (PyInstance::*mHash)();
+public:
+	PyInstance();
+	~PyInstance();
+private:
+	PyClass* mClass;
+	PyDict* mDict;
+	/* PyList weak reference list */
+	uint32 _hash();
+};
+
+/**
+ * \class PyModule
+ *
+ * @brief
+ *
+ * blaat I dono what I am doing.... part 2. :D
+ *
+ * @author Captnoord
+ * @date March 2009
+ */
+class PyModule
+{
+public:
+	uint8 gettype();
+	void IncRef();
+	void DecRef();
+	uint32 hash();
+private:
+	uint8 mType;
+	size_t mRefcnt;
+	uint32 (PyModule::*mHash)();
+public:
+	PyModule();
+	~PyModule();
+	PyString* mModuleName;
+private:
+	uint32 _hash();
+};
+
+
+
+/**
+ * \class PyPackedRow
+ *
+ * @brief this class represents a packet row... only for data parsing..
+ *
+ * @author Captnoord
+ * @date February 2009
+ */
+class PyPackedRow
+{
+public:
+	uint8 gettype();
+	void IncRef();
+	void DecRef();
+	uint32 hash();
+private:
+	uint8 mType;
+	size_t mRefcnt;
+	uint32 (PyPackedRow::*mHash)();
+
+public:
+	PyPackedRow();
+	~PyPackedRow();
+
+	/* raw data containing the normal field data fields */
+	uint8* mRawFieldData;			/* also known as 'blob' */
+	size_t mRawFieldDataLen;		/* also known as 'blob_length' */
+
+private:
+	PyClass * mHeader;
+	PyTuple* rawPayLoad;
+
+	// experimental stuff
+	std::map<uint32, PyChameleon*> flowers; // payload / virtual row set
+public:
+	typedef std::map<uint32, PyChameleon*>::iterator iterator;
+	iterator begin();
+	iterator end();
+	size_t size();
+
+	/* magical function */
+	bool init(PyObject* header);
+
+	bool setheader(PyClass * obj);
+	bool setRawPayLoad(PyObject* tuple);
+	PyObject* getRawPayLoad();
+
+	bool addleaf(PyObject* leaf);
+
+	PyClass*getheader();
+
+	// local hash function
+	uint32 _hash();
+};
+
+class PySubStruct
+{
+public:
+	uint8 gettype();
+	void IncRef();
+	void DecRef();
+	uint32 hash();
+private:
+	uint8 mType;
+	size_t mRefcnt;
+	uint32 (PySubStruct::*mHash)();
+public:
+	PySubStruct();
+	~PySubStruct();
+
+	PyObject * getPyObject();
+	bool setPyObject(PyObject* obj);
+	uint32 _hash();
+
+private:
+	PyObject* payload;
+};
+
+#pragma pack(pop)
 
 /************************************************************************/
 /* Small portion of the Python API so we are able to handle various    */
@@ -401,7 +648,8 @@ static int64 _PyLong_AsInt64(PyLong& number);
  */
 static PyLong* PyLong_FromLongLong(int64 & number)
 {
-	return new PyLong(number);
+	PyLong * num = new PyLong(number);
+	return num;
 }
 
 /**
@@ -415,7 +663,8 @@ static PyLong* PyLong_FromLongLong(int64 & number)
  */
 static PyInt* PyInt_FromLong(int32 number)
 {
-	return new PyInt(number);
+	PyInt * num = new PyInt(number);
+	return num;
 }
 
 /**
@@ -429,7 +678,8 @@ static PyInt* PyInt_FromLong(int32 number)
  */
 static PyFloat* PyFloat_FromDouble(double & number)
 {
-	return new PyFloat(number);
+	PyFloat * num = new PyFloat(number);
+	return num;
 }
 
 /**
@@ -443,7 +693,8 @@ static PyFloat* PyFloat_FromDouble(double & number)
  */
 static PyString* PyString_FromStringAndSize(const char* str, size_t len)
 {
-	return new PyString(str, len);
+	PyString * string = new PyString(str, len);
+	return string;
 }
 
 /**
@@ -455,53 +706,10 @@ static PyString* PyString_FromStringAndSize(const char* str, size_t len)
  * @param[out]
  * @return
  */
-static PyUnicodeUCS2* PyUnicodeUCS2_FromWideChar(const wchar_t* str, size_t len)
+static PyTuple* PyTuple_New(size_t elementCount)
 {
-	return new PyUnicodeUCS2(str, len);
-}
-
-/**
- * @brief Python API cloning, converting a UTF8 string to a unicode UCS2 string.
- *
- * 
- *
- * @note this isn't as close to the native python implementation... we will see how far this will get us.
- * @param[in] str is the const char string that is fed into the function.
- * @param[in] len is the length of the char string that is converted by this function.
- * @return a freshly generated PyUnicodeUCS2 object from the char string
- * @note yea I know this function lacks 1 parameter, which is "const char *errors"
- */
-static PyUnicodeUCS2* PyUnicodeUCS2_DecodeUTF8(const char* str, size_t len)
-{
-	// implementation like these sucks....
-	size_t nlen = len;//(strlen(str)+1) * 2;
-	
-	PyUnicodeUCS2 * retstr = new PyUnicodeUCS2();
-	retstr->resize(nlen);
-	size_t newSize = mbstowcs(retstr->content(), str, nlen);
-	retstr->content()[nlen] = '\0';
-
-	if (newSize != nlen)
-	{
-		SafeDelete(retstr);
-		return NULL;
-	}
-
-	return retstr;
-}
-
-/**
- * @brief 
- *
- * 
- *
- * @param[in]
- * @param[out]
- * @return
- */
-static PyTuple* PyTuple_New(int elementCount)
-{
-	return new PyTuple(elementCount);
+	PyTuple * tuple = new PyTuple(elementCount);
+	return tuple;
 }
 
 /**
@@ -515,7 +723,8 @@ static PyTuple* PyTuple_New(int elementCount)
  */
 static PyList* PyList_New(int elementCount)
 {
-	return new PyList(elementCount);
+	PyList * list = new PyList(elementCount);
+	return list;
 }
 
 /**
@@ -529,7 +738,8 @@ static PyList* PyList_New(int elementCount)
  */
 static PyDict* PyDict_New()
 {
-	return new PyDict();
+	PyDict * dict = new PyDict();
+	return dict;
 }
 
 /**
@@ -554,35 +764,24 @@ static bool _PyLong_AsByteArray(PyLong& number, const uint8* buffer, size_t* siz
 	if (*size == 0)
 		return 0;
 
-	int64 tempNumber = _PyLong_AsInt64(number);
-
+	int64 num = _PyLong_AsInt64(number);
+	
 	uint8 integerSize = 0;
-#define DoIntegerSizeCheck(x) if (((uint8*)&tempNumber)[x] != 0) integerSize = x + 1;
-	DoIntegerSizeCheck(0);
-	DoIntegerSizeCheck(1);
-	DoIntegerSizeCheck(2);
-	DoIntegerSizeCheck(3);
-	DoIntegerSizeCheck(4);
-	DoIntegerSizeCheck(5);
-	DoIntegerSizeCheck(6);
-	DoIntegerSizeCheck(7);
-#undef  DoIntegerSizeCheck
+	uint8* num_buff = (uint8*)&num;
+	for (int i = 7; i > 0; i--)
+	{
+		if (num_buff[i] != 0)
+		{
+			integerSize = i;
+			break;
+		}
+	}
 
 	if (*size < integerSize)
 		return false;
 
-	// just copy it into a temp var, its slower, but I don't want to open up the class.
-	
-	uint8* pCpy = (uint8*)ASCENT_MEMCPY((void*)buffer, (void*)&tempNumber, integerSize);
+	ASCENT_MEMCPY((void*)buffer, (void*)&num, integerSize);
 
-	ASCENT_HARDWARE_BREAKPOINT; // for debug purposes
-		
-	if (pCpy != buffer)
-	{
-		ASCENT_HARDWARE_BREAKPOINT; // for debug purposes
-		return false;
-	}
-	
 	*size = integerSize;
 
 	return true;
@@ -596,77 +795,46 @@ static bool _PyLong_AsByteArray(PyLong& number, const uint8* buffer, size_t* siz
  * @param[in]
  * @param[out]
  * @return
- * @note I feel so fucked up, mixing unmarshal code with the python api clone.
  */
 static PyLong* _ByteArray_AsPyLong(const uint8* buffer, size_t size)
 {
+	/* sanity checks */
 	if (buffer == NULL)
 		return false;
-
-	// sanity checks
+	
 	if (size == 0 || size > 8)
 		return 0;
-
-	//uint8 len = buffer[0];
-
-	// I consider this as a error
-	//if (len == 0 || len > 8)
-	//	return NULL;
 
 	int64 intval = (1LL << (8 * size)) - 1;
 	intval &= *((const uint64 *) buffer);
 
-	return new PyLong(intval);
+	PyLong * num = new PyLong(intval);
+	return num;
+}
+
+static PyLong* PyLong_FromLong(int64 number)
+{
+	return new PyLong(number);
+}
+
+static bool _PyLong_AsInt64(PyObject* number, int64& dst_num)
+{
+	if (number == NULL)
+		return false;
+
+	if (number->gettype() != PyTypeLong)
+		return false;
+	
+	dst_num = ((PyLong*)number)->GetValue();
+	return true;
 }
 
 static int64 _PyLong_AsInt64(PyLong& number)
 {
-	return number.getnumber();
+	return number.GetValue();
 }
 
-
-// lol maybe the only real FUCK up in my system lol
-static bool PyDelete(PyObject * obj)
-{
-	switch(obj->gettype())
-	{
-	//case PyTypeNone:
-	//	delete ((PyBaseNone*)obj);
-		return true;
-	case PyTypeBool:
-		delete ((PyBool*)obj);
-		return true;
-	case PyTypeInt:
-		delete ((PyInt*)obj);
-		return true;
-	case PyTypeReal:
-		delete ((PyFloat*)obj);
-		return true;
-	case PyTypeString:
-		delete ((PyString*)obj);
-		return true;
-	case PyTypeUnicode:
-		delete ((PyUnicodeUCS2*)obj);
-		return true;
-	case PyTypeDict:
-		delete ((PyDict*)obj);
-		return true;
-	case PyTypeTuple:
-		delete ((PyTuple*)obj);
-		return true;
-	case PyTypeList:
-		delete ((PyList*)obj);
-		return true;
-	case PyTypeSubStream:
-		delete ((PySubStream*)obj);
-		return true;
-	case PyTypeClass:
-		delete ((PyClass*)obj);
-		return true;
-	default:
-		return false;
-	}
-	return false;
-}
+// a wrapper for hashing "objects"
+uint32 PyObject_Hash(PyObject* obj);
 
 #endif //_PYOBJECTS_H
