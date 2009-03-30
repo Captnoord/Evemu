@@ -138,7 +138,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories="&quot;..\..\3rdparty\ascent-framework\include\ascent-shared/Threading&quot;;&quot;..\..\3rdparty\ascent-framework\include\ascent-shared&quot;;&quot;..\..\3rdparty\ascent-framework\include\&quot;;..\..\3rdparty\mysql\include;..\..\3rdparty\zlib;..\..\3rdparty\;..\..\common;..\..\server;..\"
+				AdditionalIncludeDirectories="&quot;..\..\include\ascent-shared\&quot;;&quot;..\..\include\ascent-shared\Threading\&quot;;..\..\include\server\;..\..\include\server\Session\;..\..\include\server\Space\;..\..\include\PCH\;..\..\include\Utilities\;..\..\include\TestCases\;..\..\include\Authorization\;..\..\include\Communication\;..\..\include\PythonObjects\;..\..\3rdparty\;..\..\dep\include\;..\..\dep\include\zlib\;..\..\dep\include\mysql\;..\"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS=1;_CRT_SECURE_NO_DEPRECATE=1;_CRT_SECURE_COPP_OVERLOAD_STANDARD_NAMES=1;_HAS_ITERATOR_DEBUGGING=0"
 				StringPooling="false"
 				ExceptionHandling="1"
