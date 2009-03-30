@@ -20,16 +20,14 @@
 #ifndef ASCENT_FRAMEWORK_TIMER_H
 #define ASCENT_FRAMEWORK_TIMER_H
 
-#ifdef WIN32
-__forceinline uint32 getMSTime() { return GetTickCount(); }
-#else
-ASCENT_INLINE uint32 getMSTime()
+/*#ifndef WIN32
+ASCENT_INLINE uint32 GetTickCount()
 {
 	struct timeval tv;
 	gettimeofday(&tv, NULL);
 	return (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
 }
-#endif//WIN32
+#endif//WIN32*/
 
 #endif//ASCENT_FRAMEWORK_TIMER_H
 

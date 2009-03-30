@@ -67,8 +67,8 @@ bool RegionMapWorkerThread::run()
 
 	Log.Notice("RegionMapWorkerThread","Booting...");
 
-	uint32 LastSpaceUpdate = getMSTime();
-	uint32 LastSessionsUpdate = getMSTime();
+	uint32 LastSpaceUpdate = GetTickCount();
+	uint32 LastSessionsUpdate = GetTickCount();
 
 	//THREAD_TRY_EXECUTION2
 
@@ -77,7 +77,7 @@ bool RegionMapWorkerThread::run()
 		uint32 diff;
 		//calculate time passed
 		uint32 now,execution_start;
-		now = getMSTime();
+		now = GetTickCount();
 		execution_start = now;
 
 		if( now < LastSpaceUpdate)//overrun
@@ -88,7 +88,7 @@ bool RegionMapWorkerThread::run()
 		LastSpaceUpdate = now;
 		sSpace.Update( diff );
 		
-		now = getMSTime();
+		now = GetTickCount();
 		
 		if( now < LastSessionsUpdate)//overrun
 			diff = SPACE_REGION_UPDATE_DELAY;
@@ -98,7 +98,7 @@ bool RegionMapWorkerThread::run()
 		LastSessionsUpdate = now;
 		sSpace.UpdateSessions( diff );
 		
-		now = getMSTime();
+		now = GetTickCount();
 		//we have to wait now 
 		
 		if(execution_start > now)//overrun

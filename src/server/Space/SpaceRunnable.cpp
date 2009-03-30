@@ -37,8 +37,8 @@ bool SpaceRunnable::run()
 
 	Log.Notice("SpaceRunnable","Booting...");
 
-	uint32 LastSpaceUpdate = getMSTime();
-	uint32 LastSessionsUpdate = getMSTime();
+	uint32 LastSpaceUpdate = GetTickCount();
+	uint32 LastSessionsUpdate = GetTickCount();
 
 	//THREAD_TRY_EXECUTION2
 
@@ -47,7 +47,7 @@ bool SpaceRunnable::run()
 		uint32 diff;
 		//calculate time passed
 		uint32 now,execution_start;
-		now = getMSTime();
+		now = GetTickCount();
 		execution_start = now;
 
 		if( now < LastSpaceUpdate)//overrun
@@ -58,7 +58,7 @@ bool SpaceRunnable::run()
 		LastSpaceUpdate = now;
 		sSpace.Update( diff );
 		
-		now = getMSTime();
+		now = GetTickCount();
 		
 		if( now < LastSessionsUpdate)//overrun
 			diff = SPACE_UPDATE_DELAY;
@@ -68,7 +68,7 @@ bool SpaceRunnable::run()
 		LastSessionsUpdate = now;
 		sSpace.UpdateSessions( diff );
 		
-		now = getMSTime();
+		now = GetTickCount();
 		//we have to wait now 
 		
 		if(execution_start > now)//overrun

@@ -28,22 +28,6 @@
 #include "PasswordModule.h"
 #include "BinAsciiModule.h"
 
-/** left over research
-
-VIPKEY value ==
-macho.CryptoHash(util.CaseFold((request['user_name']
-
-*/
-
-/*
-def CaseFold(s):
-s2 = s.upper().lower()
-if (s2 != s):
-return CaseFold(s2)
-return s2
-
-*/
-
 static std::string CaseFold(std::string & str)
 {
 	std::string s2 = str;
@@ -165,7 +149,7 @@ void EveClientSocket::_sendRequirePasswordType(int passwordType)
 void EveClientSocket::OnConnect()
 {
 	sSpace.OnClientConnect();
-	//_latency = getMSTime();
+	//_latency = GetTickCount();
 
 	/* send initial 'auth' handshake */
 	_sendHandShake();

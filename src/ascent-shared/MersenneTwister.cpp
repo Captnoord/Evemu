@@ -28,7 +28,7 @@ uint32 counter=0;
 
 uint32 generate_seed()
 {
-	uint32 mstime = getMSTime();
+	uint32 mstime = GetTickCount();
 	uint32 stime = (uint32)time(NULL);
 	uint32 rnd[2];
 	rnd[0] = rand()*rand()*rand();
@@ -41,7 +41,7 @@ uint32 generate_seed()
 
 void InitRandomNumberGenerators()
 {
-	srand(getMSTime());
+	srand(GetTickCount());
 	for(uint32 i = 0; i < NUMBER_OF_GENERATORS; ++i) {
 		m_generators[i] = new CRandomMersenne(generate_seed());
 		m_locks[i] = new Mutex();
@@ -49,7 +49,7 @@ void InitRandomNumberGenerators()
 }
 
 void CleanupRandomNumberGenerators()
-{	srand(getMSTime());
+{	srand(GetTickCount());
 	for(uint32 i = 0; i < NUMBER_OF_GENERATORS; ++i) {
 		SafeDelete(m_generators[i]);
 		SafeDelete(m_locks[i]);

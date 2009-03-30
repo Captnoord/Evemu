@@ -94,7 +94,7 @@ void EveSession::init(uint32 sid, uint32 role)
 	mSessionDict["machoObjectsByID"] = 1;
 	mSessionDict["machoObjectConnectionsByObjectID"] = 1;
 	mSessionDict["sessionVariables"] = 1;
-	mSessionDict["lastRemoteCall"] = getMSTime();
+	mSessionDict["lastRemoteCall"] = GetTickCount();
 	mSessionDict["nextSessionChange"] = PyStreamNone;
 	mSessionDict["sessionChangeReason"] = "Initial State";
 	mSessionDict["callback"] = PyStreamNone;*/

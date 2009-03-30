@@ -58,7 +58,7 @@ Database* Database_static;
 
 int main(int argc, char *argv[])
 {
-	printf("\nCopyright (C) 2006-2008 EVEmu Team. http://evemu.mmoforge.org\n");
+	printf("\nCopyright (C) 2006-2009 EVEmu Team. http://evemu.mmoforge.org\n");
 	printf("\nThis program is free software; you can redistribute it and/or modify");
 	printf("it under the terms of the GNU General Public License as published by");
 	printf("the Free Software Foundation; version 2 of the License.");
@@ -90,11 +90,8 @@ int main(int argc, char *argv[])
 	if(dbret == false)
 	{
 		Log.Error("Database", "Unable to connect to the db");
-		return 1;
+		return 0;
 	}
-
-//	TestCast::DoTests();
-
 
 	// Startup banner
 	UNIXTIME = time(NULL);
@@ -103,14 +100,14 @@ int main(int argc, char *argv[])
 	time_t curTime;
 
 	uint32 realCurrTime, realPrevTime;
-	realCurrTime = realPrevTime = getMSTime();
+	realCurrTime = realPrevTime = GetTickCount();
 
 	// Socket loop timing
 	uint32 start;
 	uint32 diff;
-	uint32 last_time = now();
+	uint32 last_time = GetTickCount();
 	uint32 etime;
-	uint32 next_printout = getMSTime(), next_send = getMSTime();
+	uint32 next_printout = GetTickCount(), next_send = GetTickCount();
 
 	new Space;
 	new AccountMgr;
@@ -147,7 +144,7 @@ int main(int argc, char *argv[])
 	/* main thread loop */
 	while( !m_stopEvent && listnersockcreate )
 	{
-		start = now();
+		start = GetTickCount();
 		diff = start - last_time;
 
 		if(! ((++loopcounter) % ServerThreadPoolUpdate) )		// 5mins
@@ -171,7 +168,7 @@ int main(int argc, char *argv[])
 		//services.Process();
 
 		/* UPDATE */
-		last_time = now();
+		last_time = GetTickCount();
 		etime = last_time - start;
 
 		// do the stuff for thread sleeping

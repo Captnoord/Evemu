@@ -440,19 +440,17 @@ static ASCENT_FORCEINLINE int double2int32(const double value)
 #endif
 
 #ifndef WIN32
-#  include <sys/timeb.h>
+#  include <sys/time.h>
 #endif
 
-ASCENT_FORCEINLINE uint32 now()
-{	
-#ifdef WIN32
-	return GetTickCount();
-#else
+#ifndef WIN32
+ASCENT_INLINE uint32 GetTickCount()
+{
 	struct timeval tv;
 	gettimeofday(&tv, NULL);
 	return (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
-#endif
 }
+#endif//!WIN32
 
 #ifndef WIN32
 #  define FALSE 0
