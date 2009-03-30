@@ -298,14 +298,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\Communication\MarshalReadStream.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\Communication\MarshalReadStream.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\include\Communication\MarshalReferenceMap.h"
 				>
 			</File>
@@ -315,14 +307,6 @@
 			</File>
 			<File
 				RelativePath="..\..\include\Communication\MarshalStream.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\Communication\MarshalWriteStream.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\Communication\MarshalWriteStream.h"
 				>
 			</File>
 			<File
@@ -343,6 +327,22 @@
 			</File>
 			<File
 				RelativePath="..\..\include\Communication\PyStringTable.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\Communication\ReadStream.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\Communication\ReadStream.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\Communication\WriteStream.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\Communication\WriteStream.h"
 				>
 			</File>
 		</Filter>
