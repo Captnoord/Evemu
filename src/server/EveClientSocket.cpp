@@ -191,9 +191,6 @@ void EveClientSocket::OnRead()
 			HexAsciiModule::print_hexview(stdout, packet->content(), packet->size());
 
 			//sFileLogger.logRawPacket(packet->content(), packet->size(), 0);
-
-			//PyInt queuePos(1);
-			//MarshalSend((PyObject*)&queuePos);
 		}
 
 		
@@ -290,7 +287,7 @@ void EveClientSocket::_authStateQueueCommand(PyObject* object)
 		mCurrentStateMachine = &EveClientSocket::_authStateNoCrypto;
 		return;
 	}
-	else if (queueCommand == "QC") // queueu command
+	else if (queueCommand == "QC") // queue command
 	{
 		/* send login queue */
 		SendInt(1);
@@ -301,17 +298,6 @@ void EveClientSocket::_authStateQueueCommand(PyObject* object)
 		mCurrentStateMachine = &EveClientSocket::_authStateHandshake;
 		return;
 	}
-
-	
-
-
-
-
-	//if (tuple->size() != 6)
-	//	return;
-
-	//ASCENT_HARDWARE_BREAKPOINT;
-	//PyTupleNetStream data(packet);
 
 //	loginprogress::connecting
 //	loginprogress::authenticating
@@ -422,7 +408,7 @@ void EveClientSocket::_authStateCryptoChallenge(PyObject* object)
 	int UserAffiliateId;
 	uint16 machoTest;
 
-	dict.get_smart("get_smart", "w", &UserName);
+	dict.get_smart("user_name", "u", &UserName);
 
 	/*PyTupleNetStream data(packet);
 	PyDictNetStream testDict;
