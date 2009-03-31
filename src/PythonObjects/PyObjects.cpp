@@ -931,6 +931,41 @@ PyDict::iterator PyDict::end()
 {
 	return mDict.end();
 }
+
+bool PyDict::get_smart( const char * keyName, const char* format, ... )
+{
+	va_list ap;
+	va_start(ap, format);
+
+	int henk = 3;
+	
+	va_end(ap);
+	return true;
+}
+
+void PyDict::update()
+{
+	if(mMappingMode == true)
+	{
+		ASCENT_HARDWARE_BREAKPOINT;
+		PyDictEntry * entry = NULL;
+		iterator itr = mDict.begin();
+		iterator dItr;
+		for (; itr != mDict.end(); itr++)
+		{
+			//std::pair<uint32, PyDictEntry> tempItr = itr;
+			entry = itr->second;
+
+			uint32 hsh = PyObject_Hash(entry->key);
+			dItr = itr;
+			mDict.erase(itr);
+			itr = dItr++;
+
+			mDict.insert(std::make_pair(hsh, entry));
+		}
+		mMappingMode = false;
+	}	
+}
 /************************************************************************/
 /* PySubStream                                                          */
 /************************************************************************/

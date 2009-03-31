@@ -391,7 +391,12 @@ public:
 	PyObject* get_item(PyObject* key);
 	PyObject* get_item(const char* key_name);
 
+	bool get_smart(const char * keyName, const char * format, ...);
+
 	size_t size();
+
+	/* atm only changing static mapped dict to hashed dict */
+	void update();
 
 private:
 

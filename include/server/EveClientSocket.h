@@ -70,6 +70,9 @@ public:
 	void OnConnect();
 	void OnDisconnect();
 
+	int SendInt(int number);
+	int SendPyNone();
+
 	/**
 	 * Function for sending easy packets
 	 */
