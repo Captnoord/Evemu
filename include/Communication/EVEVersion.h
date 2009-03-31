@@ -28,9 +28,9 @@
 
 //supported client is the Quantum Rise client build 69477
 
-static const uint8 MachoNetVersion = 203;
-static const double EveVersionNumber = 5.20;
-static const uint32 EveBuildVersion = 72263;
+static const uint8 MachoNetVersion = 206;
+static const double EveVersionNumber = 6.10;
+static const uint32 EveBuildVersion = 85476;
 static const char *const EveProjectCodename = "EVE-EVE-RELEASE";
 static const char *const EveProjectRegion = "ccp";
 static const char *const EveProjectVersion = "EVE-EVE-RELEASE@ccp";

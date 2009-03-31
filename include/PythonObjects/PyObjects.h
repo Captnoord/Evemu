@@ -310,6 +310,13 @@ public:
 	PyChameleon &operator[](const int index);
 	PyObject* GetItem(const int index);
 
+	int GetInt(const int index);
+	double GetFloat(const int index);
+	/**
+	 * Slow GetString function
+	 */
+	std::string GetString(const int index);
+
 	// returns the element count
 	size_t size();
 

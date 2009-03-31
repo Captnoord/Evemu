@@ -607,6 +607,51 @@ PyObject* PyTuple::GetItem( const int index )
 	PyChameleon * itr = mTuple[index];
 	return itr->getPyObject();
 }
+
+int PyTuple::GetInt( const int index )
+{
+	PyChameleon * itr = mTuple[index];
+	PyObject * object = itr->getPyObject();
+	if (object->gettype() != PyTypeInt)
+	{
+		Log.Error("PyTuple", "GetInt: trying to get int from a not int location");
+		return 0;
+	}
+
+	PyInt * intobj = (PyInt*)object;
+	return intobj->GetValue();
+}
+
+double PyTuple::GetFloat( const int index )
+{
+	PyChameleon * itr = mTuple[index];
+	PyObject * object = itr->getPyObject();
+	if (object->gettype() != PyTypeReal)
+	{
+		Log.Error("PyTuple", "GetFloat: trying to get float from a not float location");
+		return 0;
+	}
+
+	PyFloat * floatobj = (PyFloat*)object;
+	return floatobj->GetValue();
+
+}
+
+std::string PyTuple::GetString( const int index )
+{
+	PyChameleon * itr = mTuple[index];
+	PyObject * object = itr->getPyObject();
+	if (object->gettype() != PyTypeString)
+	{
+		Log.Error("PyTuple", "GetString: trying to get string from a not string location");
+		return 0;
+	}
+
+	PyString * strobj = (PyString*)object;
+	std::string str = strobj->content();
+	return str;
+}
+
 /************************************************************************/
 /* PyList                                                               */
 /************************************************************************/
@@ -709,6 +754,7 @@ PyDict::PyDict() : mType(PyTypeDict), mMappingMode(true), mMappingIndex(0), mRef
 }
 PyDict::~PyDict()
 {
+	int i = 0;
 	iterator itr = mDict.begin();
 	for (; itr != mDict.end(); itr++)
 	{
@@ -720,6 +766,7 @@ PyDict::~PyDict()
 		entry->key->DecRef();
 		entry->obj->DecRef();
 		SafeDelete(entry);
+		i++;
 	}
 
 	mDict.clear();

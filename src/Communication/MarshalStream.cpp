@@ -34,8 +34,8 @@
 
 /* macro's that help debugging exceptions */
 #ifdef _DEBUG
-//#  define unmarshalState(x, y) {sLog.String("State:"#x"\toffset:0x%X", y.tell());}
-#  define unmarshalState(x, y) /*{x, y}*/
+#  define unmarshalState(x, y) {sLog.String("State:"#x"\toffset:0x%X", y.tell());}
+//#  define unmarshalState(x, y) /*{x, y}*/
 #else
 #  define unmarshalState(x, y) /*{x, y}*/
 #endif//_DEBUG
@@ -496,6 +496,7 @@ PyObject* MarshalStream::unmarshal( ReadStream & stream )
 					dict.set_item(keyName, keyPayload);
 
 					keyName->DecRef();
+					keyPayload->DecRef();
 				}
 
 				MARSHALSTREAM_RETURN(&dict);

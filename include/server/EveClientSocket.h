@@ -60,7 +60,7 @@ class EveClientSocket : public Socket
 {
 public:
 	// state machine function pointer typedef
-	//typedef void (EveClientSocket::*stateProc)(PyReadStream&);
+	typedef void (EveClientSocket::*stateProc)(PyObject* object);
 
 	EveClientSocket(SOCKET fd);
 	~EveClientSocket();
@@ -70,24 +70,67 @@ public:
 	void OnConnect();
 	void OnDisconnect();
 
-	/* sending small / medium streams */
-	template <typename T>
-	void SendStream(T& packet )
-	{
-		// ignore return for now...
-		//SendRaw(packet.content(), packet.size());
-	}
-
-	int MarshalSend(PyObject* object);
-
-
-	/** SPECIAL FUNCTION FOR SINGLE OBJECT STREAMS
+	/**
+	 * Function for sending easy packets
 	 */
 	template <typename T>
-	void SendSimpleStream(T& packet )
+	int MarshalSend(T& object)
 	{
-		//SendRawSimpleStream(packet.content(), packet.size());
+		PyObject * sendObject = (PyObject*)&object;
+
+		/* some error checking.... but its not good enough */
+		if (sendObject == NULL)
+			return OUTPACKET_RESULT_SOCKET_ERROR;
+
+		if (sendObject->gettype() >= PyTypeDeleted)
+			return OUTPACKET_RESULT_SOCKET_ERROR;
+
+		/* marshal part.... need to be moved somewhere... */
+		WriteStream stream(100);
+		if(!mMarshal.save(sendObject, stream))
+		{
+			Log.Error("ClientSocket","object marshaling went wrong.... disregarding object");
+			sendObject->DecRef();
+			return OUTPACKET_RESULT_SOCKET_ERROR;
+		}
+
+		sendObject->DecRef();
+
+		if(IsConnected() == false)
+			return OUTPACKET_RESULT_NOT_CONNECTED;
+
+		size_t len = stream.size();
+		unsigned char* data = stream.content();
+
+		BurstBegin();
+		if( GetWriteBuffer().GetSpace() < (len + 4) )
+		{
+			BurstEnd();
+			return OUTPACKET_RESULT_NO_ROOM_IN_BUFFER;
+		}
+
+		// packet logger :D
+		sFileLogger.logPacket(data, len, 1);
+
+		// Pass the size of the packet to our send buffer
+		bool rv = BurstSend((const uint8*)&len, 4);
+
+		// Pass the rest of the packet to our send buffer (if there is any)
+		if(len > 0 && rv == true)
+		{
+			rv = BurstSend(data, (uint32)len);
+		}
+
+		if(rv == true)
+		{
+			BurstPush();
+		}
+		BurstEnd();
+
+		
+		return rv ? OUTPACKET_RESULT_SUCCESS : OUTPACKET_RESULT_SOCKET_ERROR;
 	}
+
 
 	// function to send single object streams...
 	// don't use this one for normal objects... or streams...
@@ -175,16 +218,16 @@ protected:
 	/************************************************************************/
 	/* Authorization state machine                                          */
 	/************************************************************************/
-	/*void _authStateHandshake(PyReadStream& packet);
-	void _authStateQueueCommand(PyReadStream& packet);
-	void _authStateNoCrypto(PyReadStream& packet);
-	void _authStateCryptoChallenge(PyReadStream& packet);
-	void _authStateHandshakeSend(PyReadStream& packet);
-	void _authStateDone(PyReadStream& packet);
-	void _authStateException(PyReadStream& packet);*/
+	void _authStateHandshake(PyObject* object);
+	void _authStateQueueCommand(PyObject* object);
+	void _authStateNoCrypto(PyObject* object);
+	void _authStateCryptoChallenge(PyObject* object);
+	void _authStateHandshakeSend(PyObject* object);
+	void _authStateDone(PyObject* object);
+	//void _authStateException(PyReadStream& packet);
 
 	// current state function pointer
-	//stateProc mCurrentStateMachine;
+	stateProc mCurrentStateMachine;
 
 private:
 
@@ -208,6 +251,8 @@ private:
 
 	/* OnRead remaining size */
 	uint32 mRemaining;
+
+	MarshalStream mMarshal;
 
 	/* send queue
 	 * currently not used

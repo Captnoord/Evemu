@@ -82,12 +82,14 @@ bool PyMarshalStringTable::LookupPyString( uint8 index, PyString *&str )
 	mLock.Acquire();
 	if (index > StringTableSize)
 	{
-		*str = ""; //this is a crasher...
+		//*str = ""; //this is a crasher...
+		str = NULL;
 		mLock.Release();
 		return false;
 	}
 
 	str = &mPyStringTable[index];
+	str->IncRef();
 	mLock.Release();
 	return true;
 }

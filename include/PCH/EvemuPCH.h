@@ -50,7 +50,6 @@
 #include "MarshalStream.h"
 
 #include "packet_types.h"
-#include "EVEVersion.h"
 
 #include "AccountMgr.h"
 #include "EveSession.h"

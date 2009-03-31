@@ -24,6 +24,7 @@
 */
 
 #include "EvemuPCH.h"
+#include "EVEVersion.h"
 #include <signal.h>
 
 //#include "TestCaseMain.h"
