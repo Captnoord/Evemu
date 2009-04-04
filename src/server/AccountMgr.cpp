@@ -32,7 +32,7 @@ initialiseSingleton( AccountMgr );
 AccountMgr::AccountMgr()
 {
 	Log.Notice("Account manager", "Initializing...");
-	//_updateAccountInfo();
+	_updateAccountInfo();
 }
 
 AccountMgr::~AccountMgr()
@@ -69,7 +69,7 @@ void AccountMgr::_updateAccountInfo()
 		const char *accountPass		= field[2].GetString();
 		const char* accountShaHash	= field[3].GetString();
 		uint32 accountRole			= field[4].GetUInt32();
-		const bool changed			= field[6].GetBool();
+		const bool changed			= field[5].GetBool();
 
 		size_t nameLen = strlen(accountName);
 		size_t passLen = strlen(accountPass);
@@ -139,7 +139,7 @@ void AccountMgr::_updateAccountHash(const wchar_t * accountName, const wchar_t *
 
 /* todo change this mutex into a read lock
     or even better change it so its a queue request.... async stuff....
-    for now this is good anough...
+    for now this is good enough...
 */
 AccountInfo* AccountMgr::lookupAccount(std::wstring & userName)
 {
@@ -176,7 +176,7 @@ void AccountMgr::OnAccountEvent()
 		const char *accountPass		= field[2].GetString();
 		const char* accountShaHash	= field[3].GetString();
 		uint32 accountRole			= field[4].GetUInt32();
-		const bool changed			= field[6].GetBool();
+		const bool changed			= field[5].GetBool();
 
 		size_t nameLen = strlen(accountName);
 		size_t passLen = strlen(accountPass);

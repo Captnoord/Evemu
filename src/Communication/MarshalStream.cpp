@@ -34,8 +34,8 @@
 
 /* macro's that help debugging exceptions */
 #ifdef _DEBUG
-#  define unmarshalState(x, y) {sLog.String("State:"#x"\toffset:0x%X", y.tell());}
-//#  define unmarshalState(x, y) /*{x, y}*/
+//#  define unmarshalState(x, y) {sLog.String("State:"#x"\toffset:0x%X", y.tell());}
+#  define unmarshalState(x, y) /*{x, y}*/
 #else
 #  define unmarshalState(x, y) /*{x, y}*/
 #endif//_DEBUG
@@ -1126,9 +1126,7 @@ bool MarshalStream::save( PyObject * object, WriteStream & stream )
 	uint32 refCountPlaceholder = 0;
 	stream.write4(refCountPlaceholder);
 
-	marshal(object, stream);
-
-	return true; // crap for now
+	return marshal(object, stream);
 }
 
 /* helper function for me fucking up */
@@ -1578,6 +1576,12 @@ ASCENT_INLINE bool MarshalStream::WriteVarInteger( WriteStream& stream, PyObject
 		return false;
 
 	return stream.write((char*)num_buff, integerSize);
+}
+
+PyBaseNone* MarshalStream::GetPyNone()
+{
+	PyNone.IncRef();
+	return &PyNone;
 }
 
 // undef our return null macro.

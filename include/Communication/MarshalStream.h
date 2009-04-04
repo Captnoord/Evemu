@@ -43,6 +43,9 @@ public:
 	/* common packet python variable that needs to be public, I think */
 	PyBaseNone PyNone;
 
+	/* utility function */
+	PyBaseNone* GetPyNone();
+
 protected:
 	
 	/* common packet python variables */

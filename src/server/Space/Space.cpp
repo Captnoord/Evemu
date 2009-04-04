@@ -32,7 +32,7 @@
 
 initialiseSingleton( Space );
 
-Space::Space() : mAcceptedConnections(0), mAuthorizedConnections(0), mStartTime(0), mUserIdGeneratorNumber(0) { }
+Space::Space() : mAcceptedConnections(0), mAuthorizedConnections(0), mStartTime(0), mUserIdGeneratorNumber(1) { }
 
 EveClientSession* Space::FindSession(uint32 id)
 {

@@ -47,6 +47,7 @@
 #include "PyChameleon.h"
 #include "PyObjects.h"
 #include "PyUnicodeUCS2.h"
+
 #include "MarshalStream.h"
 
 #include "packet_types.h"

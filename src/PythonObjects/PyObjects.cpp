@@ -791,6 +791,7 @@ PyChameleon PyDict::operator[]( const char* keyName )
 	{
 		entry = new PyDictEntry;
 		entry->key = (PyObject*)new PyString(keyName);
+		entry->obj = NULL;
 		mDict[hsh] = entry;
 	}
 
@@ -862,38 +863,6 @@ bool PyDict::set_item( PyObject* key, PyObject* obj )
 	return true;
 }
 
-bool PyDict::set_item( const char* key_name, PyObject* obj )
-{
-	ASCENT_HARDWARE_BREAKPOINT;
-	if (key_name == NULL || obj == NULL)
-	{
-		ASCENT_HARDWARE_BREAKPOINT;
-		return false;
-	}
-
-	if (mMappingMode == true)
-	{
-		/* create a new dictionary entry */
-		PyDictEntry * entry = new PyDictEntry;
-		entry->key = (PyObject*)new PyString(key_name);
-		entry->obj = obj;
-		mDict.insert(std::make_pair(mMappingIndex++, entry));
-		obj->IncRef();
-	}
-	else
-	{
-		/* do the same as the set_item function that takes a PyObject as a key, but do some tricks with it */
-
-		size_t str_len = strlen(key_name);
-
-		/* test this and check these */
-		uint32 hsh = Utils::Hash::sdbm_hash(key_name, (int)str_len);
-		uint32 hsh1 = Utils::Hash::sdbm_hash(key_name);
-	}
-
-	return true;
-}
-
 PyObject* PyDict::get_item( PyObject* key )
 {
 	ASCENT_HARDWARE_BREAKPOINT;
@@ -934,10 +903,46 @@ PyDict::iterator PyDict::end()
 
 bool PyDict::get_smart( const char * keyName, const char* format, ... )
 {
+	/* useless call.. because the dict need a lookup callback for this.... lol I actualy don't care.*/
+	update();
+
+	uint32 hsh = Utils::Hash::sdbm_hash(keyName);
+
+	PyDict::iterator fItr = mDict.find(hsh);
+	if (fItr == mDict.end())
+		return false;
+	
+	PyObject * foundObject = ((PyDictEntry *)fItr->second)->obj;
+
 	va_list ap;
 	va_start(ap, format);
 
-	int henk = 3;
+	//sum += i;
+	//count++;
+	//i = va_arg( ap, (void*));
+
+	void* pVar = NULL;
+	int formatIndex = 0;
+	//while (pVar != -1)
+	//{
+		pVar = va_arg( ap, void*);
+
+		char tag = format[formatIndex];
+		switch(tag)
+		{
+			/*unicode string*/
+		case 'u':
+			std::wstring * str = (std::wstring *)pVar;
+			str->clear();
+
+			size_t len = ((PyUnicodeUCS2*)foundObject)->length();
+			wchar_t * buff = ((PyUnicodeUCS2*)foundObject)->content();
+			str->append(buff, len);
+			break;
+		}
+
+		//formatIndex++;
+	//}
 	
 	va_end(ap);
 	return true;
@@ -947,25 +952,77 @@ void PyDict::update()
 {
 	if(mMappingMode == true)
 	{
-		ASCENT_HARDWARE_BREAKPOINT;
+		//ASCENT_HARDWARE_BREAKPOINT;
 		PyDictEntry * entry = NULL;
 		iterator itr = mDict.begin();
 		iterator dItr;
-		for (; itr != mDict.end(); itr++)
+
+		size_t dictSize = mDict.size();
+		for (size_t i = 0; i < dictSize; i++)
 		{
-			//std::pair<uint32, PyDictEntry> tempItr = itr;
 			entry = itr->second;
 
 			uint32 hsh = PyObject_Hash(entry->key);
-			dItr = itr;
-			mDict.erase(itr);
-			itr = dItr++;
+			dItr = itr++;
 
-			mDict.insert(std::make_pair(hsh, entry));
+			mDict.erase(dItr);
+			mDict.insert(mDict.end(), std::make_pair(hsh, entry));
 		}
 		mMappingMode = false;
 	}	
 }
+
+bool PyDict::get_buffer( const char * keyName, char* dst, size_t dst_len )
+{
+	if (keyName == NULL || dst == NULL || dst_len == 0)
+		return false;
+
+	update();
+
+	uint32 hsh = Utils::Hash::sdbm_hash(keyName);
+
+	PyDict::iterator fItr = mDict.find(hsh);
+	if (fItr == mDict.end())
+		return false;
+
+	PyObject * foundObject = ((PyDictEntry *)fItr->second)->obj;
+
+	if (foundObject == NULL)
+		return false;
+
+	if (foundObject->gettype() != PyTypeString)
+		return false;
+
+	PyString * str = (PyString *)foundObject;
+	
+	/* check if we have enough room to read the string / buffer */
+	if (str->length() > dst_len)
+		return false;
+
+	ASCENT_MEMCPY(dst, str->content(), str->length());
+	return true;
+}
+
+bool PyDict::set_int( const char * keyName, int number )
+{
+	return set_item(keyName, (PyObject *)new PyInt(number));
+}
+
+bool PyDict::set_double( const char * keyName, double number )
+{
+	return set_item(keyName, (PyObject *)new PyFloat(number));
+}
+
+bool PyDict::set_str( const char * keyName, const char* str )
+{
+	return set_item(keyName, (PyObject *)new PyString(str));
+}
+
+bool PyDict::set_bool( const char * keyName, bool check )
+{
+	return set_item(keyName, (PyObject *)new PyBool(check));
+}
+
 /************************************************************************/
 /* PySubStream                                                          */
 /************************************************************************/
@@ -1047,7 +1104,7 @@ uint32 PySubStream::hash()
 
 uint32 PySubStream::_hash()
 {
-	return Utils::Hash::sdbm_hash((char*)mData, mLen);
+	return Utils::Hash::sdbm_hash((char*)mData, (int)mLen);
 }
 
 /************************************************************************/

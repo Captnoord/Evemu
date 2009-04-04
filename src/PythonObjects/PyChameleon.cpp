@@ -207,6 +207,39 @@ PyChameleon & PyChameleon::operator=( const double number )
 	return *this;
 }
 
+PyChameleon & PyChameleon::operator=( PyString* str )
+{
+	assert(str != NULL);
+
+	assert(mIsEmpty == true);
+	this->_settype(str->gettype());
+	assert(mPayload == NULL);
+	mPayload = (PyObject*)str;
+	mIsEmpty = false;
+	return *this;
+}
+
+PyChameleon & PyChameleon::operator=( const PyBool* pointer )
+{
+	assert(pointer != NULL);
+	assert(mIsEmpty == true);
+	_settype(PyTypeBool);
+	assert(mPayload == NULL);
+	mPayload = (PyObject*)pointer;
+	mIsEmpty = false;
+	return *this;
+}
+
+PyChameleon & PyChameleon::operator=( const PySubStream* pointer )
+{
+	assert(pointer != NULL);
+	assert(mIsEmpty == true);
+	_settype(PyTypeSubStream);
+	assert(mPayload == NULL);
+	mPayload = (PyObject*)pointer;
+	mIsEmpty = false;
+	return *this;
+}
 uint8 PyChameleon::gettype()
 {
 	return mType;

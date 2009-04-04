@@ -3,9 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ascent-shared", "VC9\ascent-shared.vcproj", "{B0A489F8-0C45-49B5-967A-98272FA40A67}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "evemu-server", "VC9\evemu-server.vcproj", "{7EBEC2E7-7322-475E-B76C-769397DD23BB}"
-	ProjectSection(ProjectDependencies) = postProject
-		{B0A489F8-0C45-49B5-967A-98272FA40A67} = {B0A489F8-0C45-49B5-967A-98272FA40A67}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zlib", "VC9\zlib.vcproj", "{FA5AC1A0-2A35-48B1-AF36-ADF7E6ED2DD4}"
 EndProject

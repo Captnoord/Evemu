@@ -434,6 +434,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\PythonObjects\PyObjectDumper.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\PythonObjects\PyObjectDumper.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\PythonObjects\PyObjects.cpp"
 				>
 			</File>

@@ -29,6 +29,10 @@
 #include "BinAsciiModule.h"
 #include "EVEVersion.h"
 
+#ifdef OBJECT_DUMPER_SUPPORT
+#include "PyObjectDumper.h"
+#endif//OBJECT_DUMPER_SUPPORT
+
 static std::string CaseFold(std::string & str)
 {
 	std::string s2 = str;
@@ -110,7 +114,7 @@ void EveClientSocket::_sendHandShake()
 	PyTuple & tulpe = *new PyTuple(6);
 	tulpe[0] = EveBirthday;
 	tulpe[1] = MachoNetVersion;
-	tulpe[2] = (authCount+10);
+	tulpe[2] = authCount;
 	tulpe[3] = EveVersionNumber;
 	tulpe[4] = EveBuildVersion;
 	tulpe[5] = EveProjectVersion;
@@ -135,7 +139,7 @@ void EveClientSocket::_sendQueuePos( int queuePos )
 void EveClientSocket::_sendAccept()
 {
 	PyString * out = new PyString("OK CC");
-	MarshalSend(out);
+	MarshalSend(*out);
 }
 
 /* send a python integer as a response on the password type query */
@@ -188,27 +192,10 @@ void EveClientSocket::OnRead()
 
 			mRemaining = 0;
 
-			HexAsciiModule::print_hexview(stdout, packet->content(), packet->size());
+			//HexAsciiModule::print_hexview(stdout, packet->content(), packet->size());
 
 			//sFileLogger.logRawPacket(packet->content(), packet->size(), 0);
 		}
-
-		
-
-		//ByteBuffer * packet = NULL;
-		//PyReadStream * packet = NULL;
-
-		/* TODO we can skip this new ByteBuffer by feeding the circular buffer into the 'unmarshal' function
-		 * requires to redesign the 'unmarshal' function
-		 */
-		//if(mRemaining > 0)
-		//{
-		//	packet = new PyReadStream(mRemaining);
-
-			// Copy from packet buffer into our actual buffer.
-		//	GetReadBuffer().Read(packet->content(), mRemaining);
-		//	mRemaining = 0;
-		//}
 
 		// packet log
 		//sFileLogger.logPacket(packet->content(), packet->size(), 0);
@@ -216,8 +203,12 @@ void EveClientSocket::OnRead()
 		// printf("\nrecv packet with opcode:%d and Type:%s and size:%d\n", ((PyPacket*)recvPyPacket)->type, recvPyPacket->TypeString(), packet->size());
 		// packet->LogBuffer();
 
-		//packet->seek(4,SEEK_SET);
 		PyObject* object = mMarshal.load(*packet);
+#ifdef OBJECT_DUMPER_SUPPORT
+		printf("client packet:\n");
+		DumpObject(stdout, object);
+		printf("\n");
+#endif//OBJECT_DUMPER_SUPPORT
 		if (object == NULL)
 		{
 			SafeDelete(packet);
@@ -254,12 +245,12 @@ void EveClientSocket::_authStateHandshake(PyObject* object)
 	printf("EveClientSocket auth handshake version: \n\tbirthDay:%d\n\tmachoVersion:%d\n\tuserCount:%d\n\tversionNr:%f\n\tbuildVersion:%d\n\tprojectVersion:%s\n",
 		birthDay, machoVersion, userCount, versionNr, buildVersion, projectVersion.c_str());
 
-	/* do version checking here */
-	/* the client also does the version check but hey... hackers....:P */
+	/* do version checking here
+	   the client also does the version check but hey... hackers....:P */
 
 	/* send fake queue position */
-	//PyInt * queuePos = new PyInt(1);
-	//MarshalSend(*queuePos);
+	PyInt * queuePos = new PyInt(1);
+	MarshalSend(*queuePos);
 	
 	Log.Debug("AuthStateMachine","State changed into StateQueueCommand");
 	mCurrentStateMachine = &EveClientSocket::_authStateQueueCommand;
@@ -267,22 +258,21 @@ void EveClientSocket::_authStateHandshake(PyObject* object)
 
 void EveClientSocket::_authStateQueueCommand(PyObject* object)
 {
-	Log.Debug(__FUNCTION__, "queue stage...");
+	Log.Debug(__FUNCTION__, "_authStateQueueCommand");
 
+	/* we only want to be fed tuple's at this point */
 	if (object->gettype() != PyTypeTuple)
 		return;
 
 	PyTuple * tuple = (PyTuple*)object;
 
-	//std::string unk = tuple->GetString(0);
+	//std::string unk = tuple->GetString(0); /* return str(binascii.crc_hqx(blue.marshal.Save(args), 0)) */
 	std::string queueCommand = tuple->GetString(1);
 	printf("queue command: command: %s\n", queueCommand.c_str());
 
 	/* check if the user has special rights */
 	if (queueCommand == "VK") // vip key
 	{
-		//SendPyNone();
-		SendInt(1);
 		Log.Debug("AuthStateMachine","State changed into StateStateNoCrypto");
 		mCurrentStateMachine = &EveClientSocket::_authStateNoCrypto;
 		return;
@@ -298,48 +288,12 @@ void EveClientSocket::_authStateQueueCommand(PyObject* object)
 		mCurrentStateMachine = &EveClientSocket::_authStateHandshake;
 		return;
 	}
-
-//	loginprogress::connecting
-//	loginprogress::authenticating
-
-	/*if (data.size() == 3)
-	{
-		Log.Debug("AuthStateMachine","State changed into StateStateNoCrypto");
-		mCurrentStateMachine = &EveClientSocket::_authStateNoCrypto;
-		return;
-	}
-	else if (data.size() == 2) //GetLogonQueuePosition
-	{
-		std::string unk;
-		std::string command;
-
-		data >> unk;		// in normal situations this should be a None object
-		data >> command;	// in normal situations this should be a text command.
-
-		ASCENT_ASSERT(command == "QC");
-
-		// a check just to make sure
-		if (command == "QC")
-		{
-			// Send the position 1 or 0  the queue, which is 1 for now until we implemented a real login queue
-			// Send 100 and the client tells you that the queue is 100
-			_sendQueuePos(1);
-
-			//now act like client just connected
-			//send out handshake again
-			_sendHandShake();
-
-			//and set proper state
-			Log.Debug("AuthStateMachine","State changed into StateHandshake");
-			mCurrentStateMachine = &EveClientSocket::_authStateHandshake;
-		}
-	}
 	else 
 	{
 		//Log.Debug("EVE Socket","StateQueueCommand received a invalid packet");
 		sLog.Debug("%s: Received invalid command packet:", GetRemoteIP().c_str());
 		Disconnect();
-	}*/
+	}
 	/* If we get here.... it means that the authorization failed in some way, also we didn't handle the exceptions yet.
 	 *
 	 */
@@ -347,6 +301,7 @@ void EveClientSocket::_authStateQueueCommand(PyObject* object)
 
 void EveClientSocket::_authStateNoCrypto(PyObject* object)
 {
+	Log.Debug(__FUNCTION__, "_authStateNoCrypto");
 	if (object->gettype() != PyTypeTuple)
 		return;
 
@@ -367,31 +322,11 @@ void EveClientSocket::_authStateNoCrypto(PyObject* object)
 		sLog.Debug("Received invalid 'crypto' request!");
 		Disconnect();
 	}
-
-	/*PyTupleNetStream data(packet);
-
-	std::string keyVersion;
-	data >> keyVersion;
-
-	if(keyVersion == "placebo")
-	{
-		//sLog.Debug("%s: Received Placebo 'crypto' request, accepting.", GetRemoteIP().c_str());
-		Log.Debug("AuthStateMachine","State changed into StateCryptoChallenge");
-		mCurrentStateMachine = &EveClientSocket::_authStateCryptoChallenge;
-
-		_sendAccept();
-	}
-	else
-	{
-		sLog.Debug("Received invalid 'crypto' request!");
-		Disconnect();
-	}*/
 }
-
-
 
 void EveClientSocket::_authStateCryptoChallenge(PyObject* object)
 {
+	Log.Debug(__FUNCTION__, "_authStateCryptoChallenge");
 	if (object->gettype() != PyTypeTuple)
 		return;
 
@@ -399,44 +334,24 @@ void EveClientSocket::_authStateCryptoChallenge(PyObject* object)
 	if (tuple.size() != 2)
 		return;
 
-	PyString *authHash = (PyString *)tuple[0].getPyObject();
+	PyString *clientResponceHash = (PyString *)tuple[0].getPyObject(); // currently we are not using this.
 	PyDict &dict = *(PyDict *)tuple[1].getPyObject();
 
 	std::wstring UserName;
-	std::wstring UserPass;
-	std::string UserPasswordHash;
-	int UserAffiliateId;
-	uint16 machoTest;
+	char UserPasswordHash[20];
 
+	/* the only 2 things we actually need to know for now */
 	dict.get_smart("user_name", "u", &UserName);
+	dict.get_buffer("user_password_hash", (char*)UserPasswordHash, 20);
 
-	/*PyTupleNetStream data(packet);
-	PyDictNetStream testDict;
-
-	std::string clientResponceHash;
-	data >> clientResponceHash;
-	data >> testDict;
-
-	std::wstring UserName;
-	std::wstring UserPass;
-	std::string UserPasswordHash;
-	int UserAffiliateId;
-	uint16 machoTest;
-
-	testDict["macho_version"] >> machoTest;
-	testDict["user_name"] >> UserName;
-	testDict["user_password"] >> UserPass;
-	testDict["user_password_hash"] >> UserPasswordHash;
-	testDict["user_affiliateid"] >> UserAffiliateId;
-
-	// send password version. I think hehe..
-	PyIntStream out(2);
-	SendSimpleStream(out);
+	/* send password version, I think... */
+	SendInt(2);
+	//SendInt(0);
 
 	mAccountInfo = sAccountMgr.lookupAccount(UserName);
 
 	// check if the password matches the saved password.
-	if(memcmp(UserPasswordHash.c_str(), mAccountInfo->AccountShaHash, UserPasswordHash.size()) == TRUE)
+	if(memcmp(UserPasswordHash, mAccountInfo->AccountShaHash, 20) == TRUE)
 	{
 		// pass doesn't seem to match... send exception...
 		Disconnect();
@@ -444,42 +359,102 @@ void EveClientSocket::_authStateCryptoChallenge(PyObject* object)
 	}
 	else
 	{
-		PyTupleStream outPacket;
+		PyTuple & syncTuple = *new PyTuple(4);
+		
+		PyTuple & AuthPyFunctionArg = *new PyTuple(1);
+		  //AuthPyFunctionArg[0] = new PySubStream((uint8*)handshakeFunc, handshakeFuncSize);
+		  //AuthPyFunctionArg[1] = new PyBool(false);
+		AuthPyFunctionArg[0] = &mMarshal.PyNone; mMarshal.PyNone.IncRef();
+
+		  /* sync data dict */
+		  PyDict* syncDict = new PyDict();
+		  syncDict->set_double("boot_version", EveVersionNumber);
+		  syncDict->set_str("boot_region", EveProjectRegion);
+		  syncDict->set_str("challenge_responsehash", "654");
+		  syncDict->set_int("cluster_usercount", 10);
+		  syncDict->set_int("user_logonqueueposition", 1);
+		  syncDict->set_int("macho_version", MachoNetVersion);
+		  syncDict->set_str("boot_codename", EveProjectCodename);
+		  syncDict->set_int("boot_build", EveBuildVersion);
+		  syncDict->set_int("proxy_nodeid", 0xFFAA);
+
+		/* the main tuple */
+		syncTuple[0] = "hi";
+		syncTuple[1] = &AuthPyFunctionArg;
+		syncTuple[2] = new PyDict();
+		syncTuple[3] = syncDict;
+
+		MarshalSend(syncTuple);		
+
+		/*PyTupleStream outPacket;
 
 		outPacket << "hi";			// this is crap... makes me think we can send like everything...
-			PyTupleStream tTuple;
-			// FIX: no tuple operator << for PyBufferStream 
-			//tTuple << PyBufferStream(handshakeFunc, handshakeFuncSize); // marshaled PyNone object function taking no parameters
-			tTuple << false;			
-			// FIX: no PyTupleStream operator << for PyDictStream
-			//tTuple << PyDictStream();	// empty dict
+		PyTupleStream tTuple;
+		// FIX: no tuple operator << for PyBufferStream 
+		//tTuple << PyBufferStream(handshakeFunc, handshakeFuncSize); // marshaled PyNone object function taking no parameters
+		tTuple << false;			
+		// FIX: no PyTupleStream operator << for PyDictStream
+		//tTuple << PyDictStream();	// empty dict
 		outPacket << tTuple;
 
 		PyDictStream tDict;
 		outPacket << tDict; // add empty dictionary.
 
-			tDict["boot_version"] << EveVersionNumber;
-			tDict["boot_region"] << EveProjectRegion;
-			tDict["cluster_usercount"] << 10;
-			tDict["user_logonqueueposition"] << 1;
-			// FIX: no PyDictStream operator << for PyStringStream
-			//tDict["challenge_responsehash"] << PyStringStream("654", 3);//PyBufferStream(64);
-			tDict["macho_version"] << MachoNetVersion;
-			tDict["boot_codename"] << EveProjectCodename;
-			tDict["boot_build"] << EveBuildVersion;
-			tDict["proxy_nodeid"] << 0xFFAA;
-			tDict.finish();
+		tDict["boot_version"] << EveVersionNumber;
+		tDict["boot_region"] << EveProjectRegion;
+		tDict["cluster_usercount"] << 10;
+		tDict["user_logonqueueposition"] << 1;
+		// FIX: no PyDictStream operator << for PyStringStream
+		//tDict["challenge_responsehash"] << PyStringStream("654", 3);//PyBufferStream(64);
+		tDict["macho_version"] << MachoNetVersion;
+		tDict["boot_codename"] << EveProjectCodename;
+		tDict["boot_build"] << EveBuildVersion;
+		tDict["proxy_nodeid"] << 0xFFAA;
+		tDict.finish();
 		outPacket << tDict; // dict with content
 
-		SendSimpleStream(outPacket);
+		SendSimpleStream(outPacket);*/
 	}
-	
+
 	Log.Debug("AuthStateMachine","State changed into HandservershakeSend");
-	mCurrentStateMachine = &EveClientSocket::_authStateHandshakeSend;*/
+	mCurrentStateMachine = &EveClientSocket::_authStateHandshakeSend;
 }
 
 void EveClientSocket::_authStateHandshakeSend(PyObject* object)
 {
+	uint32 userid = sSpace.GenerateUserId();
+	uint32 userClientId = mAccountInfo->AccountId;
+
+	/* Server challenge response ack */
+	PyDict * dict = new PyDict();
+	PyDict * session_init = new PyDict();
+	
+	/* @todo clean this */
+	std::string remoteip = GetRemoteIP();
+	remoteip += ":"; remoteip += Utils::Strings::toString(GetRemotePort());
+
+	session_init->set_str ("address", remoteip.c_str());
+	session_init->set_int ("userid", userid);
+	session_init->set_item("maxSessionTime", mMarshal.GetPyNone());
+	session_init->set_bool("inDetention", false);
+	session_init->set_int ("role", 0x10000002/*mAccountInfo->AccountRole*/);
+	session_init->set_str ("languageID", "EN");
+	session_init->set_int ("userType", 23);
+	/* userType: 23:trial? 
+	   steam
+	   normal
+	*/
+
+	dict->set_item("live_updates", new PyList());
+	dict->set_item("session_init", session_init);
+	dict->set_item("client_hashes" , new PyList());
+	dict->set_int ("user_clientid", userClientId);
+
+	MarshalSend(*dict);
+
+	Log.Debug("AuthStateMachine","State changed into StateDone");
+	mCurrentStateMachine = &EveClientSocket::_authStateDone;
+
 	/*uint32 userid = sSpace.GenerateUserId();
 	uint32 userClientId = mAccountInfo->AccountId;
 

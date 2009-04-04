@@ -29,6 +29,7 @@
 #define CLIENTSOCKET_SENDBUF_SIZE 0xF4240
 #define CLIENTOCKET_RECVBUF_SIZE 0xF4240
 
+//#define OBJECT_DUMPER_SUPPORT
 
 /* outPacket queue system, part of a reliable packet sending system */
 enum OUTPACKET_RESULT
@@ -80,13 +81,24 @@ public:
 	int MarshalSend(T& object)
 	{
 		PyObject * sendObject = (PyObject*)&object;
+#ifdef OBJECT_DUMPER_SUPPORT
+		printf("server sends:\n");
+		DumpObject(stdout, sendObject);
+		printf("\n");
+#endif//OBJECT_DUMPER_SUPPORT
 
 		/* some error checking.... but its not good enough */
 		if (sendObject == NULL)
+		{
+			Log.Error("ClientSocket","can't send a NULL object");
 			return OUTPACKET_RESULT_SOCKET_ERROR;
+		}
 
 		if (sendObject->gettype() >= PyTypeDeleted)
+		{
+			Log.Error("ClientSocket","object seems to be corrupt.");
 			return OUTPACKET_RESULT_SOCKET_ERROR;
+		}
 
 		/* marshal part.... need to be moved somewhere... */
 		WriteStream stream(100);
@@ -130,7 +142,6 @@ public:
 		}
 		BurstEnd();
 
-		
 		return rv ? OUTPACKET_RESULT_SUCCESS : OUTPACKET_RESULT_SOCKET_ERROR;
 	}
 

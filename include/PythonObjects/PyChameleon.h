@@ -37,7 +37,10 @@ class PyBool;
 class PyClass;
 class PyObject;
 class PyBaseNone;
+class PyString;
+class PySubStream;
 struct PyDictEntry;
+
 
 /**
  * \class PyChameleon
@@ -90,9 +93,13 @@ public:
 	PyChameleon &operator=(const PyList* pointer);
 	PyChameleon &operator=(const PyTuple* pointer);
 	PyChameleon &operator=(const PyBaseNone* pointer);
+	PyChameleon &operator=(const PyBool* pointer);
+	PyChameleon &operator=(const PySubStream* pointer);
 
 	PyChameleon &operator=(PyObject* pointer);
 	PyChameleon &operator=(PyObject& pointer);
+	PyChameleon &operator=(PyString* str);
+
 
 protected:
 	void _settype(uint8 type);

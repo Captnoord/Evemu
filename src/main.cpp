@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
 	Log.Line();
 	
 	//sLog.String("Revision: %s", EVEMU_REVISION);
-	sLog.String("Revision: %h", 666);
+	sLog.String("Revision: %u", 666);
 	sLog.String("Supported Client: %s, Version %.2f, Build %d, MachoNet %d", EveProjectVersion, EveVersionNumber, EveBuildVersion, MachoNetVersion);
 
 	printf( "The key combination <Ctrl-C> will safely shut down the server at any time.\n" );
@@ -86,13 +86,13 @@ int main(int argc, char *argv[])
 	/* start the 'threadpool', this needs to be in front of things that uses the 'threadpool' */
 	ThreadPool.Startup();
 
-	// connect the db system to the db
-	/*bool dbret = _DBStartup("localhost",3306, "padawa", "theforce", "evemu_rewrite_static", "evemu_rewrite_dynamic");
+	/* connect the db system to the db */
+	bool dbret = _DBStartup("localhost",3306, "padawa", "theforce", "evemu_rewrite_static", "evemu_rewrite_dynamic");
 	if(dbret == false)
 	{
 		Log.Error("Database", "Unable to connect to the db");
 		return 0;
-	}*/
+	}
 
 	// Startup banner
 	UNIXTIME = time(NULL);
