@@ -62,6 +62,10 @@ Database* Database_static;
 
 int main(int argc, char *argv[])
 {
+	/* set the global time variable */
+	UNIXTIME = time(NULL);
+	g_localTime = *localtime(&UNIXTIME);
+
 	printf("\nCopyright (C) 2006-2009 EVEmu Team. http://evemu.mmoforge.org\n");
 	printf("\nThis program is free software; you can redistribute it and/or modify");
 	printf("it under the terms of the GNU General Public License as published by");
@@ -107,10 +111,6 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 
-	// Startup banner
-	UNIXTIME = time(NULL);
-	g_localTime = *localtime(&UNIXTIME);
-
 	time_t curTime;
 
 	uint32 realCurrTime, realPrevTime;
@@ -135,9 +135,9 @@ int main(int argc, char *argv[])
 	
 	sSocketMgr.SpawnWorkerThreads();
 
-	/* these settings are 'hardcoded' for now */
-	uint32 wsport = 26000;
-	std::string host = "127.0.0.1";
+	/* listen settings */
+	string host = Config.GetStringDefault( "Listen", "Host", "127.0.0.1" );
+	int wsport = Config.GetIntDefault( "Listen", "WorldServerPort", 26000 );
 
 #ifdef WIN32
 	HANDLE hThread = GetCurrentThread();
