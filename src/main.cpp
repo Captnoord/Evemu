@@ -138,7 +138,6 @@ int main(int argc, char *argv[])
 	/* these settings are 'hardcoded' for now */
 	uint32 wsport = 26000;
 	std::string host = "127.0.0.1";
-	//std::string host = "192.168.123.1";
 
 #ifdef WIN32
 	HANDLE hThread = GetCurrentThread();
