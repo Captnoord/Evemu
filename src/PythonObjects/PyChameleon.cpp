@@ -54,8 +54,8 @@ PyChameleon::PyChameleon( PyDictEntry * entry )
 	}
 	
 	mIsEmpty = false;
-
 }
+
 PyChameleon::~PyChameleon()
 {
 	if (mKeyObj != NULL)

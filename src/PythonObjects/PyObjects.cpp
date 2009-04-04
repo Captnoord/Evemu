@@ -652,6 +652,86 @@ std::string PyTuple::GetString( const int index )
 	return str;
 }
 
+/* @todo add other variable types */
+bool PyTuple::get_smart( const char * format, ... )
+{
+	va_list ap;
+	va_start(ap, format);
+
+	size_t formatLen = strlen(format);
+
+	void* pVar = NULL;
+	size_t formatIndex = 0;
+	//while (pVar != ((void*)-1))
+	while (formatLen != formatIndex)
+	{
+		pVar = va_arg( ap, void*);
+
+		if (formatIndex > mTuple.size())
+			return false;
+
+		char tag = format[formatIndex];
+
+		PyObject* foundObject = mTuple[formatIndex]->getPyObject();
+		switch(tag)
+		{
+			/*unicode string*/
+		case 'u': // std::wstring
+			{
+				if (foundObject->gettype() != PyTypeUnicode)
+					return false;
+	
+				std::wstring * str = (std::wstring *)pVar;
+				str->clear();
+	
+				size_t len = ((PyUnicodeUCS2*)foundObject)->length();
+				wchar_t * buff = ((PyUnicodeUCS2*)foundObject)->content();
+				str->append(buff, len);
+			}
+			break;
+
+		case 'i': // int
+			{
+				if (foundObject->gettype() != PyTypeInt)
+					return false;
+
+				int32 * num = (int32 *)pVar;
+				*num = ((PyInt*)foundObject)->GetValue();
+			}
+			break;
+
+		case 'f': // double
+			{
+				if (foundObject->gettype() != PyTypeReal)
+					return false;
+
+				double * num = (double *)pVar;
+				*num = ((PyFloat*)foundObject)->GetValue();
+			}
+			break;
+
+		case 's': // std::string
+			{
+				if (foundObject->gettype() != PyTypeString)
+					return false;
+	
+				std::string * str = (std::string *)pVar;
+				str->clear();
+	
+				size_t len = ((PyString*)foundObject)->length();
+				const char* buff = ((PyString*)foundObject)->content();
+				str->append(buff, len);
+			}
+			break;
+		}
+
+		formatIndex++;
+	}
+
+	va_end(ap);
+	return true;
+
+}
 /************************************************************************/
 /* PyList                                                               */
 /************************************************************************/
@@ -1629,6 +1709,3 @@ uint32 PyObject_Hash( PyObject* obj )
 {
 	return obj->hash();
 }
-
-
-

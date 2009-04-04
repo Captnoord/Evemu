@@ -29,6 +29,7 @@
 #define CLIENTSOCKET_SENDBUF_SIZE 0xF4240
 #define CLIENTOCKET_RECVBUF_SIZE 0xF4240
 
+/* captnoord personal object debug support */
 //#define OBJECT_DUMPER_SUPPORT
 
 /* outPacket queue system, part of a reliable packet sending system */
@@ -53,9 +54,6 @@ enum EVE_AUTH_STATE
 	EVE_AUTH_STATE_DONE,				// old AcceptingPackets						| finished authorization
 };
 
-static const uint8 DefaultSimpleStreamHeader[] = {'~', 0, 0, 0, 0};
-static const size_t DefaultSimpleStreamHeaderSize = 5;
-
 class EveClientSession;
 class EveClientSocket : public Socket
 {
@@ -71,8 +69,46 @@ public:
 	void OnConnect();
 	void OnDisconnect();
 
-	int SendInt(int number);
-	int SendPyNone();
+	bool SendInt(int number);
+	bool SendPyNone();
+
+	/**
+	 * \brief sends a object to the client
+	 *
+	 * this functions marshals and sends the python object to the client.
+	 *
+	 * @param[in] object is a reference to a PyObject.
+	 * @return true if successful and false if not.
+	 */
+	template<typename T>
+	bool send(T &object)
+	{
+		PyObject * sendObject = (PyObject*)&object;
+
+/* captnoord personal debug stuff */
+#ifdef OBJECT_DUMPER_SUPPORT
+		printf("server sends:\n");
+		DumpObject(stdout, sendObject);
+		printf("\n");
+#endif//OBJECT_DUMPER_SUPPORT
+
+		WriteStream stream(0x80);
+		if(!mMarshal.save(sendObject, stream))
+		{
+			Log.Error("ClientSocket","send: unable to marshal object");
+			return false;
+		}
+
+		OUTPACKET_RESULT sendResult = SendRaw(stream.content(), stream.size());
+		if (sendResult != OUTPACKET_RESULT_SUCCESS)
+		{
+			/* @todo add resend and other hacky solutions to a crowded socket system */
+			Log.Error("ClientSocket","send: unable to send marshaled object");
+			return false;
+		}
+
+		return true;
+	}
 
 	/**
 	 * Function for sending easy packets
@@ -81,11 +117,6 @@ public:
 	int MarshalSend(T& object)
 	{
 		PyObject * sendObject = (PyObject*)&object;
-#ifdef OBJECT_DUMPER_SUPPORT
-		printf("server sends:\n");
-		DumpObject(stdout, sendObject);
-		printf("\n");
-#endif//OBJECT_DUMPER_SUPPORT
 
 		/* some error checking.... but its not good enough */
 		if (sendObject == NULL)
@@ -100,16 +131,12 @@ public:
 			return OUTPACKET_RESULT_SOCKET_ERROR;
 		}
 
-		/* marshal part.... need to be moved somewhere... */
-		WriteStream stream(100);
+		WriteStream stream(0x80);
 		if(!mMarshal.save(sendObject, stream))
 		{
-			Log.Error("ClientSocket","object marshaling went wrong.... disregarding object");
-			sendObject->DecRef();
-			return OUTPACKET_RESULT_SOCKET_ERROR;
+			Log.Error("ClientSocket","MarshalSend: unable to marshal object");
+			return false;
 		}
-
-		sendObject->DecRef();
 
 		if(IsConnected() == false)
 			return OUTPACKET_RESULT_NOT_CONNECTED;
@@ -145,46 +172,7 @@ public:
 		return rv ? OUTPACKET_RESULT_SUCCESS : OUTPACKET_RESULT_SOCKET_ERROR;
 	}
 
-
-	// function to send single object streams...
-	// don't use this one for normal objects... or streams...
-	OUTPACKET_RESULT SendRawSimpleStream(const uint8* data, /*const*/ size_t len)
-	{
-		if(IsConnected() == false)
-			return OUTPACKET_RESULT_NOT_CONNECTED;
-
-		// this is a hack.. so we can send single object streams
-		size_t netLen = len + DefaultSimpleStreamHeaderSize;
-		
-		BurstBegin();
-		if( GetWriteBuffer().GetSpace() < (len+4) )
-		{
-			BurstEnd();
-			return OUTPACKET_RESULT_NO_ROOM_IN_BUFFER;
-		}
-
-		sFileLogger.logSimplePacket(data, len, 1);
-
-		// Pass the size of the packet to our send buffer
-		bool rv = BurstSend((const uint8*)&netLen, 4);
-
-		// Pass the rest of the packet to our send buffer (if there is any)
-		if(len > 0 && rv == true)
-		{
-			rv = BurstSend(DefaultSimpleStreamHeader, (uint32)DefaultSimpleStreamHeaderSize); // add marshal header to the stream...
-			rv |= BurstSend(data, (uint32)len);
-		}
-
-		if(rv == true)
-		{
-			BurstPush();
-		}
-		BurstEnd();
-		return rv ? OUTPACKET_RESULT_SUCCESS : OUTPACKET_RESULT_SOCKET_ERROR;
-
-	}
-
-	// function to send RAW data.
+	/* function to send RAW data */
 	OUTPACKET_RESULT SendRaw(const uint8* data, const size_t len)
 	{
 		if(IsConnected() == false)
@@ -225,9 +213,7 @@ protected:
 	/* Python packet send wrapper functions make the code readable          */
 	/************************************************************************/
 	ASCENT_INLINE void _sendHandShake();
-	ASCENT_INLINE void _sendQueuePos( int queuePos );
 	ASCENT_INLINE void _sendAccept();
-	ASCENT_INLINE void _sendRequirePasswordType(int passwordType);
 
 	/************************************************************************/
 	/* Authorization state machine                                          */
@@ -238,7 +224,6 @@ protected:
 	void _authStateCryptoChallenge(PyObject* object);
 	void _authStateHandshakeSend(PyObject* object);
 	void _authStateDone(PyObject* object);
-	//void _authStateException(PyReadStream& packet);
 
 	// current state function pointer
 	stateProc mCurrentStateMachine;
@@ -266,6 +251,7 @@ private:
 	/* OnRead remaining size */
 	uint32 mRemaining;
 
+	/* marshal wrapper */
 	MarshalStream mMarshal;
 
 	/* send queue

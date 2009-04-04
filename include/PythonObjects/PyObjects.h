@@ -317,6 +317,26 @@ public:
 	 */
 	std::string GetString(const int index);
 
+	template<typename T>
+	void set_item(const int index, T * object)
+	{
+		if (index+1 > (int)mTuple.size())
+			mTuple.resize(index+1);
+		PyChameleon * itr = mTuple[index];
+		itr->setPyObject((PyObject*)object);
+	}
+
+	/**
+	 * \brief a VA function for getting multiple object from a single tuple
+	 *
+	 * a VA function for getting multiple object from a single tuple
+	 *
+	 * @param[in]
+	 * @param[out]
+	 * @return true if successful and false if not.
+	 */
+	bool get_smart(const char * format, ...);
+
 	// returns the element count
 	size_t size();
 

@@ -129,75 +129,70 @@ private:
 	ASCENT_INLINE PyObject* ReadClassString(ReadStream & stream, BOOL shared);
 
 	/**
-	 * \brief
+	 * \brief ReadClass reads the class instance data.
 	 *
-	 * 
+	 * no long description
 	 *
-	 * @param[in]
-	 * @param[out]
-	 * @return
+	 * @param[in] stream the data stream.
+	 * @param[in] shared is the object this is true, meaning it should be saved.
+	 * @return the deserialized object and NULL if it failed.
 	 */
 	ASCENT_INLINE PyObject* ReadClass(ReadStream & stream, BOOL shared);
 
 	/**
 	 * \brief
 	 *
-	 * 
+	 * no long description
 	 *
 	 * @param[in]
-	 * @param[out]
-	 * @return
+	 * @return the deserialized object and NULL if it failed.
 	 */
 	ASCENT_INLINE PyObject* ReadCallUpdateObject(ReadStream & stream, BOOL shared);
 
 	/**
 	 * \brief
 	 *
-	 * 
+	 * no long description
 	 *
 	 * @param[in]
-	 * @param[out]
-	 * @return
+	 * @return the deserialized object and NULL if it failed.
 	 */
 	ASCENT_INLINE PyObject* ReadCallObjectNew(ReadStream & stream, BOOL shared);
 
 	/**
 	 * \brief
 	 *
-	 * 
+	 * no long description
 	 *
 	 * @param[in]
-	 * @param[out]
-	 * @return
+	 * @return the deserialized object and NULL if it failed.
 	 */
 	ASCENT_INLINE PyObject* ReadPackedRow(ReadStream & stream);
 
 	/**
 	 * \brief
 	 *
-	 * 
+	 * no long description
 	 *
 	 * @param[in]
-	 * @param[out]
-	 * @return
+	 * @return the deserialized object and NULL if it failed.
 	 */
 	ASCENT_INLINE PyObject* ReadSubStream(ReadStream & stream);
 
 	/**
 	 * \brief
 	 *
-	 * 
+	 * no long description
 	 *
 	 * @param[in]
-	 * @param[out]
-	 * @return
+	 * @return the deserialized object and NULL if it failed.
 	 */
 	ASCENT_INLINE PyObject* ReadVarInteger(ReadStream & stream, BOOL shared);
 
 	/**
 	 * \brief ReadBuffer reads the SizeEx chunk of the stream and reads the string accordingly.
 	 *
-	 * 
+	 * no long description
 	 *
 	 * @param[in] 
 	 * @return a PyString pointer if successful and NULL if it wasn't.
@@ -207,22 +202,20 @@ private:
 	/**
 	 * \brief
 	 *
-	 * 
+	 * no long description
 	 *
 	 * @param[in]
-	 * @param[out]
-	 * @return
+	 * @return the deserialized new object list and NULL if it failed.
 	 */
 	ASCENT_INLINE bool ReadNewObjList(ReadStream & stream, PyClass & obj);
 
 	/**
 	 * \brief
 	 *
-	 * 
+	 * no long description
 	 *
 	 * @param[in]
-	 * @param[out]
-	 * @return
+	 * @return the deserialized new object dict and NULL if it failed.
 	 */
 	ASCENT_INLINE bool ReadNewObjDict(ReadStream & stream, PyClass & obj);
 

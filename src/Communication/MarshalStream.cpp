@@ -52,7 +52,8 @@ PyObject* MarshalStream::load(ReadStream & stream)
 		return NULL;
 
 	if (checkAndInflate(stream) == false)
-		MARSHALSTREAM_RETURN_NULL;
+		//MARSHALSTREAM_RETURN_NULL;
+		return NULL;
 
 	/* second time check for byte code because its possible it was zipped */
 	if (checkForBytecode(stream) == true)
@@ -1271,7 +1272,7 @@ bool MarshalStream::marshal( PyObject * object, WriteStream & stream )
 			{
 				if (!stream.writeOpcode(Op_PyStringTableItem))
 					return false;
-				return stream.write1(str_index);
+				return stream.write1(str_index+1);
 			}
 			else if (str_len < 0xFF)
 			{
