@@ -217,12 +217,18 @@ void EveClientSocket::_authStateHandshake(PyObject* object)
 	Log.Debug(__FUNCTION__, "hand shaking...");
 
 	if (object->gettype() != PyTypeTuple)
+	{
+		Log.Error("ClientSocket","initial packet isn't a tuple");
 		return;
+	}
 
 	PyTuple * tuple = (PyTuple*)object;
 	// not sure if we need this check becaus of the get_smart function below
 	if (tuple->size() != 6)
+	{
+		Log.Error("ClientSocket","initial packet isn't a tuple size 6");
 		return;
+	}
 
 	int32 birthDay;
 	int32 machoVersion;
@@ -233,7 +239,11 @@ void EveClientSocket::_authStateHandshake(PyObject* object)
 
 	// note for mmcs look what I did :P
 	if(!tuple->get_smart("iiifis", &birthDay, &machoVersion, &userCount, &versionNr, &buildVersion, &projectVersion))
+	{
+		Log.Error("ClientSocket","unable to read info from tuple");
 		return;
+	}
+
 
 	printf("EveClientSocket 'auth' handshake version: \n\tbirthDay:%d\n\tmachoVersion:%d\n\tuserCount:%d\n\tversionNr:%f\n\tbuildVersion:%d\n\tprojectVersion:%s\n",
 		birthDay, machoVersion, userCount, versionNr, buildVersion, projectVersion.c_str());
@@ -255,13 +265,15 @@ void EveClientSocket::_authStateQueueCommand(PyObject* object)
 
 	/* we only want to be fed tuple's at this point */
 	if (object->gettype() != PyTypeTuple)
+	{
+		Log.Error("ClientSocket","received object isn't a tuple");
 		return;
+	}
 
 	PyTuple * tuple = (PyTuple*)object;
 
 	//std::string unk = tuple->GetString(0); /* return str(binascii.crc_hqx(blue.marshal.Save(args), 0)) */
 	std::string queueCommand = tuple->GetString(1);
-	printf("queue command: command: %s\n", queueCommand.c_str());
 
 	/* check if the user has special rights */
 	if (queueCommand == "VK") // vip key
@@ -352,7 +364,7 @@ void EveClientSocket::_authStateCryptoChallenge(PyObject* object)
 	}
 	else
 	{
-		PyTuple & syncTuple = *new PyTuple(4);
+		PyTuple syncTuple(4);
 		
 		/* initial function blob */
 		PyTuple & initialFunctionBlob = *new PyTuple(2);
@@ -369,15 +381,15 @@ void EveClientSocket::_authStateCryptoChallenge(PyObject* object)
 		  syncDict->set_int("macho_version", MachoNetVersion);
 		  syncDict->set_str("boot_codename", EveProjectCodename);
 		  syncDict->set_int("boot_build", EveBuildVersion);
-		  syncDict->set_int("proxy_nodeid", 0xFFAA);
+		  syncDict->set_int("proxy_nodeid", 0xFFAA);					// doesn't really matter which proxy node id we send
 
 		/* the main tuple */
-		syncTuple[0] = "hi";					/* we can send everything here as its related to the  */
+		syncTuple[0] = "hi";					/* we can send everything here as its related to the handShakeInitialFunctionBlob */
 		syncTuple[1] = &initialFunctionBlob;
 		syncTuple[2] = new PyDict();
 		syncTuple[3] = syncDict;
 
-		MarshalSend(syncTuple);		
+		send(syncTuple);
 	}
 
 	Log.Debug("AuthStateMachine","State changed into HandservershakeSend");

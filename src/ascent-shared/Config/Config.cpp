@@ -19,6 +19,7 @@
 
 #include "Config/ConfigEnv.h"
 #include "NGLog.h"
+ConfigFile Config;
 
 //#define _CONFIG_DEBUG
 

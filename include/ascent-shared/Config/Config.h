@@ -61,4 +61,6 @@ private:
 	map<uint32, ConfigBlock> m_settings;
 };
 
+extern SERVER_DECL ConfigFile Config;
+
 #endif

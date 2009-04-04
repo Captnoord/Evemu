@@ -27,18 +27,15 @@
 #include "EVEVersion.h"
 #include <signal.h>
 
-//#include "TestCaseMain.h"
-//#include "TestCaseMarshal.h"
-
 static volatile bool m_stopEvent;
 initialiseSingleton(FileLogger);
 
 /* basic prototypes */
-bool _DBStartup(std::string _hostname, uint32 _port, std::string _username, std::string _password, std::string _database, std::string _databaseDynamic);
+bool _DBStartup();
 bool _DBShutdown();
-static void _OnSignal(int s);
 void _HookSignals();
 void _UnhookSignals();
+static void _OnSignal(int s);
 
 // Default main loop settings
 #define ServerFrameworkMinute(x) (x * 60 * 1000)
@@ -49,10 +46,16 @@ void _UnhookSignals();
 #define ServerThreadPoolUpdateTest (ServerFrameworkMinute(1) / ServerFrameworkDelay)
 
 #ifdef _DEBUG
-#  define ServerThreadPoolUpdate ServerThreadPoolUpdateTest
+#  define ServerThreadPoolUpdate ServerThreadPoolUpdateRelease
 #else
 #  define ServerThreadPoolUpdate ServerThreadPoolUpdateRelease
 #endif//_DEBUG
+
+#ifdef WIN32
+static const char* default_config_file = "evemu-server.conf";
+#else
+static const char* default_config_file = CONFDIR "/evemu-server.conf";
+#endif
 
 Database* Database_dynamic;
 Database* Database_static;
@@ -86,8 +89,18 @@ int main(int argc, char *argv[])
 	/* start the 'threadpool', this needs to be in front of things that uses the 'threadpool' */
 	ThreadPool.Startup();
 
+	/* loading the config file */
+	Log.Notice( "Config", "Loading Config Files...\n" );
+	if( Config.SetSource( default_config_file ) )
+		Log.Success( "Config", ">> evemu-server.conf" );
+	else
+	{
+		Log.Error( "Config", ">> evemu-server.conf" );
+		return false;
+	}
+
 	/* connect the db system to the db */
-	bool dbret = _DBStartup("localhost",3306, "padawa", "theforce", "evemu_rewrite_static", "evemu_rewrite_dynamic");
+	bool dbret = _DBStartup();
 	if(dbret == false)
 	{
 		Log.Error("Database", "Unable to connect to the db");
@@ -125,6 +138,7 @@ int main(int argc, char *argv[])
 	/* these settings are 'hardcoded' for now */
 	uint32 wsport = 26000;
 	std::string host = "127.0.0.1";
+	//std::string host = "192.168.123.1";
 
 #ifdef WIN32
 	HANDLE hThread = GetCurrentThread();
@@ -164,9 +178,6 @@ int main(int argc, char *argv[])
 
 		// check for garbage sockets
 		sSocketGarbageCollector.Update();
-
-		// temp solution for updating services
-		//services.Process();
 
 		/* UPDATE */
 		last_time = GetTickCount();
@@ -248,32 +259,62 @@ void OnCrash( bool Terminate )
 #endif
 
 /* internal db start up wrapper... */
-bool _DBStartup(std::string _hostname, uint32 _port, std::string _username, std::string _password, std::string _databaseStatic, std::string _databaseDynamic)
+bool _DBStartup()
 {
-	std::string hostname = _hostname;
-	std::string username = _username;
-	std::string password = _password;
-	std::string staticdb = _databaseStatic;
-	std::string dynamicdb = _databaseDynamic;
+	std::string dynamic_hostname;
+	std::string dynamic_username;
+	std::string dynamic_password;
+	std::string dynamic_db_name;
 
-	uint32 port = _port;
-	int type = 1; // 1 is mysql
-	int connectionCount = 3; // make this configurable
+	std::string static_hostname;
+	std::string static_username;
+	std::string static_password;
+	std::string static_db_name;
+
+	int dynamic_port;
+	int dynamic_connCount;
+	int dynamic_type;
+	
+	int static_port;
+	int static_connCount;
+	int static_type;	
+
+	bool result =				Config.GetString( "dynamic_database", "Username", &dynamic_username );
+	result = !result ? result : Config.GetString( "dynamic_database", "Password", &dynamic_password );
+	result = !result ? result : Config.GetString( "dynamic_database", "Hostname", &dynamic_hostname );
+	result = !result ? result : Config.GetString( "dynamic_database", "Name", &dynamic_db_name );
+	result = !result ? result : Config.GetInt( "dynamic_database", "Port", &dynamic_port );
+	result = !result ? result : Config.GetInt( "dynamic_database", "Type", &dynamic_type );
+	result = !result ? result : Config.GetInt( "dynamic_database", "ConnectionCount", &dynamic_connCount );
+
+	result = !result ? result : Config.GetString( "static_database", "Username", &static_username );
+	result = !result ? result : Config.GetString( "static_database", "Password", &static_password );
+	result = !result ? result : Config.GetString( "static_database", "Hostname", &static_hostname );
+	result = !result ? result : Config.GetString( "static_database", "Name", &static_db_name );
+	result = !result ? result : Config.GetInt( "static_database", "Port", &static_port );
+	result = !result ? result : Config.GetInt( "static_database", "Type", &static_type );
+	result = !result ? result : Config.GetInt( "static_database", "ConnectionCount", &static_connCount );
+
+	if (result == false)
+	{
+		Log.Error( "Database","something went wrong while reading the database settings from the config file. Exiting..." );
+		return false;
+	}
 
 	// we use 2 database handles
-	Database_static = Database::CreateDatabaseInterface(type);
-	Database_dynamic = Database::CreateDatabaseInterface(type);
+	Database_static = Database::CreateDatabaseInterface(static_type);
+	Database_dynamic = Database::CreateDatabaseInterface(dynamic_type);
 
 	// Initialize it
-	if( !StaticDatabase.Initialize(hostname.c_str(), port, username.c_str(),
-		password.c_str(), staticdb.c_str(), connectionCount, 16384 ) )
+	if( !StaticDatabase.Initialize(static_hostname.c_str(), static_port, static_username.c_str(),
+		static_password.c_str(), static_db_name.c_str(), static_connCount, 16384 ) )
 	{
 		Log.Error( "Database","Static database initialization failed. Exiting..." );
 		return false;
 	}
 
-	if( !DynamicDatabase.Initialize(hostname.c_str(), port, username.c_str(),
-		password.c_str(), dynamicdb.c_str(), connectionCount, 16384 ) )
+	if( !DynamicDatabase.Initialize(dynamic_hostname.c_str(), dynamic_port, dynamic_username.c_str(),
+		dynamic_password.c_str(), dynamic_db_name.c_str(), dynamic_connCount, 16384 ) )
 	{
 		Log.Error( "Database","Dynamic database initialization failed. Exiting..." );
 		return false;
