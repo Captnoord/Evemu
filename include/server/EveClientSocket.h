@@ -30,7 +30,7 @@
 #define CLIENTOCKET_RECVBUF_SIZE 0xF4240
 
 /* captnoord personal object debug support */
-//#define OBJECT_DUMPER_SUPPORT
+#define OBJECT_DUMPER_SUPPORT
 
 /* outPacket queue system, part of a reliable packet sending system */
 enum OUTPACKET_RESULT
@@ -207,6 +207,13 @@ public:
 
 	/* set the sessions socket */
 	void SetSession(EveClientSession* session) { mSession = session; }
+
+	/**
+	* Utility function that generates a PyString containing "ip:port"
+	*
+	* @return PyString if success and NULL if its not.
+	*/
+	PyString * GetAddress();
 
 protected:
 	/************************************************************************/

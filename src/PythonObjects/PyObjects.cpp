@@ -652,6 +652,25 @@ std::string PyTuple::GetString( const int index )
 	return str;
 }
 
+bool PyTuple::GetString( const int index, std::string & str )
+{
+	if (index > mTuple.size())
+		return false;
+
+	PyChameleon * itr = mTuple[index];
+	PyObject * object = itr->getPyObject();
+
+	if (object->gettype() != PyTypeString)
+		return false;
+
+	PyString * strobj = (PyString*)object;
+	
+	str.clear(); // make sure its empty
+	str.append(strobj->content(), strobj->length());
+
+	return true;
+}
+
 /* @todo add other variable types */
 bool PyTuple::get_smart( const char * format, ... )
 {

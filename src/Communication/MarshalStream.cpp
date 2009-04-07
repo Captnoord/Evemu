@@ -47,16 +47,8 @@ MarshalStream::~MarshalStream() {}
 
 PyObject* MarshalStream::load(ReadStream & stream)
 {
-	/* first time check for byte code because I don't want to contaminate checkAndInflate */
-	if (checkForBytecode(stream) == true)
-		return NULL;
-
 	if (checkAndInflate(stream) == false)
 		//MARSHALSTREAM_RETURN_NULL;
-		return NULL;
-
-	/* second time check for byte code because its possible it was zipped */
-	if (checkForBytecode(stream) == true)
 		return NULL;
 
 	if (ReadMarshalHeader(stream) == false)
@@ -80,7 +72,6 @@ bool MarshalStream::ReadMarshalHeader( ReadStream & stream )
 
 	if (marshalTilde != '~')
 	{
-		//Log.Error("MarshalStream", "[ReadMarshalHeader]invalid marshal header, missing tilde");
 		Log.Error("MarshalStream", "[ReadMarshalHeader]invalid marshal header, missing tilde: 0x%X", marshalTilde);
 		return false;
 	}
@@ -133,8 +124,6 @@ PyObject* MarshalStream::unmarshal( ReadStream & stream )
 	{
 		uint8 opcode;
 		stream.read1(opcode);
-		//if (((opcode >> 6) & 0xFFFFFF01) != 0)
-		//	printf("ref obj: [0X%x]\n", opcode & 0x3F);
 
 		switch ( opcode & 0x3F )
 		{
@@ -187,7 +176,6 @@ PyObject* MarshalStream::unmarshal( ReadStream & stream )
 				MARSHALSTREAM_RETURN(PyInt_FromLong(number));
 			}
 
-			// original code also has a reference counter of this object in the following cases.
 			case Op_PyMinusOne:
 			{
 				unmarshalState(Op_PyMinusOne, stream);
@@ -517,7 +505,7 @@ PyObject* MarshalStream::unmarshal( ReadStream & stream )
 				MARSHALSTREAM_RETURN_NULL;
 			}
 			
-			/* need to implement custom callbacks and reading stuff... but for the server this doesn't seem to usefull.. */
+			/* need to implement custom callbacks and reading stuff... but for the server this doesn't seem useful.. */
 			case Op_PyClassInstance:
 			{
 				//Unmarshal stream contains custom data but I have no callback method
@@ -605,9 +593,9 @@ PyObject* MarshalStream::unmarshal( ReadStream & stream )
 				MARSHALSTREAM_RETURN(ReadVarInteger(stream, (opcode >> 6) & 1));
 
 				/* iterator sequence stop tag */
-			case Op_PyStopIter:
-				MARSHALSTREAM_RETURN_NULL;
-				return NULL;
+			//case Op_PyStopIter:
+			//	MARSHALSTREAM_RETURN_NULL;
+			//	return NULL;
 
 			default:
 			{
@@ -1495,32 +1483,6 @@ bool MarshalStream::marshal( PyObject * object, WriteStream & stream )
 	//every case should return its own stuff regarding success or not
 	ASCENT_HARDWARE_BREAKPOINT;
 	return true;
-}
-
-bool MarshalStream::checkForBytecode( ReadStream & stream )
-{
-	uint8 byteCodeTag;
-	if (!stream.peek1(byteCodeTag))
-	{
-		Log.Error("MarshalStream","unable to check marshal stream for byte code");
-		return false;
-	}
-
-	if (byteCodeTag == 0x63 || byteCodeTag == 0xB3)
-	{
-		printf("dumpting python bytecode to file\n");
-		char byteCodePacketName[MAX_PATH];
-
-		/* hash the buffer so we can dump them easily */
-		uint32 bytecodeHash = Utils::Hash::djb2_hash((char*)stream.content(), (int)stream.buffersize());
-		snprintf(byteCodePacketName, MAX_PATH, "bytecodeStream_%u.pyc", bytecodeHash);
-		FILE * fp = fopen(byteCodePacketName, "wb");
-		fwrite((char*)stream.content(), stream.buffersize(), 1, fp);
-		fclose(fp);
-		stream.seek(0, SEEK_END); // we have read everything into the bytecode buffer.... so we now act like we have parsed the entire file
-		return true;
-	}
-	return false;
 }
 
 ASCENT_INLINE bool MarshalStream::WriteVarInteger( WriteStream& stream, PyObject* number )

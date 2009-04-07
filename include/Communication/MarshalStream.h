@@ -96,16 +96,6 @@ private:
 	bool checkAndInflate( ReadStream & stream );
 
 	/**
-	 * \brief it seems that the server sends bytecode packets to every client.
-	 *
-	 * this function should check for the common signs and write them to a file.
-	 * important to know is that this isn't normal client behavure.
-	 *
-	 * @param[in] stream is the data stream that contains the data that needs to be checked for bytecode streams.
-	 */
-	bool checkForBytecode( ReadStream & stream );
-
-	/**
 	 * \brief ReadMarshalHeader is a internal function that reads the marshal header.
 	 *
 	 * ReadMarshalHeader is a internal function that reads the marshal header and parses the reference

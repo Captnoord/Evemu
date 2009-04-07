@@ -56,6 +56,7 @@
 #include "EveSession.h"
 #include "EveClientSocket.h"
 #include "EveClientSession.h"
+#include "Macho.h"
 
 #include "Space.h"
 #include "SpaceRunnable.h"

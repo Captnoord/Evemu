@@ -317,6 +317,11 @@ public:
 	 */
 	std::string GetString(const int index);
 
+	/**
+	 * get item as std::string
+	 */
+	bool GetString(const int index, std::string & str);
+
 	template<typename T>
 	void set_item(const int index, T * object)
 	{

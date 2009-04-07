@@ -23,6 +23,8 @@
 	Author:		zhur, Captnoord, mmcs
 */
 
+/* turtles VS unicorns */
+
 #include "EvemuPCH.h"
 #include "EVEVersion.h"
 #include <signal.h>

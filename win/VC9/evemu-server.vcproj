@@ -50,8 +50,8 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderThrough=""
-				PrecompiledHeaderFile=""
+				PrecompiledHeaderThrough="proxyPCH.h"
+				PrecompiledHeaderFile="$(IntDir)\$(TargetName).pch"
 				AssemblerListingLocation="$(IntDir)\"
 				ObjectFile="$(IntDir)\"
 				ProgramDataBaseFileName="$(IntDir)\"
@@ -303,6 +303,14 @@
 			</File>
 			<File
 				RelativePath="..\..\include\Communication\EVEVersion.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\Communication\Macho.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\Communication\Macho.h"
 				>
 			</File>
 			<File
