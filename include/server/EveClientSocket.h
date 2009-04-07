@@ -69,8 +69,8 @@ public:
 	void OnConnect();
 	void OnDisconnect();
 
-	bool SendInt(int number);
-	bool SendPyNone();
+	bool sendInt(int number);
+	bool sendPyNone();
 
 	/**
 	 * \brief sends a object to the client
@@ -225,8 +225,8 @@ protected:
 	/************************************************************************/
 	/* Python packet send wrapper functions make the code readable          */
 	/************************************************************************/
-	ASCENT_INLINE void _sendHandShake();
-	ASCENT_INLINE void _sendCryptoContextAccept();
+	ASCENT_INLINE void sendConnectionHandShake();
+	ASCENT_INLINE void sendCryptoContextAccept();
 
 	/************************************************************************/
 	/* Authorization state machine                                          */

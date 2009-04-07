@@ -39,6 +39,13 @@ static const uint8 handShakeInitialFunctionBlob[] = {
 };
 static const uint8 handShakeInitialFunctionBlobSize = 9;
 
+/* defining debug messages which can be disabled */
+#ifdef _DEBUG
+#  define dlog(x,...) printf(x"\n",  __VA_ARGS__)
+#else
+#  define dlog(x,...) /*x*/
+#endif
+
 EveClientSocket::EveClientSocket(SOCKET fd) : Socket(fd, CLIENTSOCKET_SENDBUF_SIZE, CLIENTOCKET_RECVBUF_SIZE)
 {
 	mAuthed = false;
@@ -80,8 +87,16 @@ void EveClientSocket::OnDisconnect()
 	}
 }
 
-/* Sends initial handshake containing the version info */
-void EveClientSocket::_sendHandShake()
+/** Connection Handshake Packet Description
+ * PyTuple:6
+ *   itr[0]: PyInt containing the EveBirthday.
+ *   itr[1]: PyInt containing the macho version number.
+ *   itr[2]: PyInt containing the amount of connected players.
+ *   itr[3]: PyFloat containing the eve version number.
+ *   itr[4]: PyInt containing the eve build number.
+ *   itr[5]: PyString containing the eve project string.
+ */
+void EveClientSocket::sendConnectionHandShake()
 {
 	uint32 authCount = (uint32)sSpace.GetAuthorizedCount();
 
@@ -105,10 +120,24 @@ void EveClientSocket::_sendHandShake()
  */
 
 /* send handshake accept */
-void EveClientSocket::_sendCryptoContextAccept()
+void EveClientSocket::sendCryptoContextAccept()
 {
 	PyString out("OK CC");
 	send(out);
+}
+
+bool EveClientSocket::sendInt( int number )
+{
+	PyInt num(number);
+	return send(num);
+}
+
+/**
+ * quick and tricky because we don't want to increase and decrease the ref counter.
+ */
+bool EveClientSocket::sendPyNone()
+{
+	return send(mMarshal.PyNone);
 }
 
 void EveClientSocket::OnConnect()
@@ -119,11 +148,12 @@ void EveClientSocket::OnConnect()
 	//_latency = GetTickCount();
 
 	/* send initial 'auth' handshake */
-	_sendHandShake();
+	sendConnectionHandShake();
 }
 
 void EveClientSocket::OnRead()
 {
+	printf("EveClientSocket::OnRead\n");
 	for(;;)
 	{
 		//Check for the header if we don't have any bytes to wait for.
@@ -191,7 +221,7 @@ void EveClientSocket::_authStateHandshake(PyObject* object)
 {
 	if (object->gettype() != PyTypeTuple)
 	{
-		Log.Error("ClientSocket","initial packet isn't a tuple");
+		dlog("ClientSocket::initial packet isn't a tuple");
 		return;
 	}
 
@@ -199,7 +229,7 @@ void EveClientSocket::_authStateHandshake(PyObject* object)
 	// not sure if we need this check because of the get_smart function below
 	if (tuple->size() != 6)
 	{
-		Log.Error("ClientSocket","initial packet isn't a tuple size 6");
+		dlog("ClientSocket::initial packet isn't a tuple size 6");
 		return;
 	}
 
@@ -222,16 +252,12 @@ void EveClientSocket::_authStateHandshake(PyObject* object)
 
 	if (birthDay != EveBirthday || machoVersion != MachoNetVersion || versionNr != EveVersionNumber || buildVersion != EveBuildVersion || projectVersion != EveProjectVersion)
 	{
-		Log.Error("AuthStateMachine", "uncompatible client trying to connect.");
+		Log.Error("AuthStateMachine", "incompatible client trying to connect.");
 		Disconnect();
 		return;
 	}
 
-	/* send fake queue position */
-	PyInt queuePos(1);
-	send(queuePos);
-	
-	Log.Debug("AuthStateMachine","State changed into StateQueueCommand");
+	dlog("AuthStateMachine::State changed into StateQueueCommand");
 	mCurrentStateMachine = &EveClientSocket::_authStateQueueCommand;
 }
 
@@ -242,7 +268,7 @@ void EveClientSocket::_authStateQueueCommand(PyObject* object)
 	{
 		Log.Error("AuthStateMachine", "received object isn't a tuple");
 		mCurrentStateMachine = &EveClientSocket::_authStateHandshake;
-		_sendHandShake();
+		sendConnectionHandShake();
 		return;
 	}
 
@@ -255,29 +281,32 @@ void EveClientSocket::_authStateQueueCommand(PyObject* object)
 	 */
 	std::string queueCommand;
 	if(!tuple->GetString(1, queueCommand))
+	{
+		dlog("AuthStateMachine::_authStateQueueCommand unable to get queueCommand string from packet");
 		return;
+	}
 
 	/* check if the user has special rights */
 	if (queueCommand == "VK") // vip key
 	{
-		Log.Debug("AuthStateMachine","State changed into StateStateNoCrypto");
+		dlog("AuthStateMachine::State changed into StateStateNoCrypto");
 		mCurrentStateMachine = &EveClientSocket::_authStateNoCrypto;
 		return;
 	}
 	else if (queueCommand == "QC") // queue command
 	{
 		/* send login queue position */
-		SendInt(1);
+		sendInt(1);
 
-		_sendHandShake();
+		sendConnectionHandShake();
 
-		Log.Debug("AuthStateMachine","State changed into StateHandshake");
+		dlog("AuthStateMachine::State changed into StateHandshake");
 		mCurrentStateMachine = &EveClientSocket::_authStateHandshake;
 		return;
 	}
-	else 
+	else
 	{
-		Log.Debug("AuthStateMachine", "%s: Received invalid command packet:", GetRemoteIP().c_str());
+		Log.Error("AuthStateMachine", "%s: Received invalid command packet:", GetRemoteIP().c_str());
 		Disconnect();
 	}
 	/* If we get here.... it means that the authorization failed in some way, also we didn't handle the exceptions yet.
@@ -288,22 +317,27 @@ void EveClientSocket::_authStateQueueCommand(PyObject* object)
 void EveClientSocket::_authStateNoCrypto(PyObject* object)
 {
 	if (object->gettype() != PyTypeTuple)
+	{
+		dlog("AuthStateMachine::_authStateNoCrypto packet is not a PyTuple");
 		return;
+	}
 
 	PyTuple * tuple = (PyTuple*)object;
 	
 	std::string cryptoVersion;
 	if(!tuple->GetString(0, cryptoVersion))
+	{
+		dlog("AuthStateMachine::_authStateNoCrypto unable to get crypt version string");
 		return;
+	}
 
 	/* do the crypt version check */
 	if (cryptoVersion == "placebo")
 	{
-		Log.Debug("AuthStateMachine","State changed into StateCryptoChallenge");
+		dlog("AuthStateMachine::State changed into StateCryptoChallenge");
 		mCurrentStateMachine = &EveClientSocket::_authStateCryptoChallenge;
 
-		//SendInt(2);
-		_sendCryptoContextAccept();
+		sendCryptoContextAccept();
 		return;
 	}
 	else
@@ -316,11 +350,17 @@ void EveClientSocket::_authStateNoCrypto(PyObject* object)
 void EveClientSocket::_authStateCryptoChallenge(PyObject* object)
 {
 	if (object->gettype() != PyTypeTuple)
+	{
+		dlog("AuthStateMachine::_authStateCryptoChallenge packet is not a PyTuple");
 		return;
+	}
 
 	PyTuple & tuple = *(PyTuple*)object;
 	if (tuple.size() != 2)
+	{
+		dlog("AuthStateMachine::_authStateCryptoChallenge tuple size is wrong");
 		return;
+	}
 
 	/** Packet description
 	 * tuple[0] = session hash.
@@ -336,13 +376,14 @@ void EveClientSocket::_authStateCryptoChallenge(PyObject* object)
 	dict.get_buffer("user_password_hash", (char*)UserPasswordHash, 20);
 
 	/* send password version, I think... */
-	//SendInt(2);
+	sendInt(2);
 
 	mAccountInfo = sAccountMgr.lookupAccount(UserName);
 
 	// check if the password matches the saved password.
 	if(memcmp(UserPasswordHash, mAccountInfo->AccountShaHash, 20) == TRUE)
 	{
+		dlog("AuthStateMachine::_authStateCryptoChallenge pass hash not correct");
 		// pass doesn't seem to match... send exception...
 		Disconnect();
 		return;
@@ -377,7 +418,7 @@ void EveClientSocket::_authStateCryptoChallenge(PyObject* object)
 		send(AuthServerResponceTuple);
 	}
 
-	Log.Debug("AuthStateMachine","State changed into HandservershakeSend");
+	dlog("AuthStateMachine::State changed into HandservershakeSend");
 	mCurrentStateMachine = &EveClientSocket::_authStateHandshakeSend;
 }
 
@@ -443,20 +484,6 @@ void EveClientSocket::packetHandler( PyObject* object )
 	}
 
 	mSession->QueuePacket(pyPacket);*/
-}
-
-bool EveClientSocket::SendInt( int number )
-{
-	PyInt num(number);
-	return send(num);
-}
-
-/**
- * quick and tricky because we don't want to increase and decrease the ref counter.
- */
-bool EveClientSocket::SendPyNone()
-{
-	return send(mMarshal.PyNone);
 }
 
 PyString * EveClientSocket::GetAddress()

@@ -654,7 +654,7 @@ std::string PyTuple::GetString( const int index )
 
 bool PyTuple::GetString( const int index, std::string & str )
 {
-	if (index > mTuple.size())
+	if (index > (int)mTuple.size())
 		return false;
 
 	PyChameleon * itr = mTuple[index];
