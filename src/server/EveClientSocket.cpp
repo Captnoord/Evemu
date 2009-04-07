@@ -347,6 +347,40 @@ void EveClientSocket::_authStateNoCrypto(PyObject* object)
 	}
 }
 
+/** Challenge-Response Packet Description.
+ * PyTuple:4
+ *   itr[0]:PyString containing a 64 bytes Session Hash
+ *   itr[1]:PyTuple:2
+ *     itr[0]:							PySubStream containing a PyString containing a cPickled piece of Python byte code.
+ *     itr[1]:							PyString or PyBool containing the argument for the byte code (not sure).
+ *   itr[2]:PyDict:0					Empty PyDict.
+ *   itr[3]:PyDict:9
+ *     dict["boot_version"]=			PyFloat containing the eve version number.
+ *     dict["boot_region"]=				PyString containing the Eve Project Region
+ *     dict["cluster_usercount"]=		PyInt containing the number of users in that cluster.
+ *     dict["user_logonqueueposition"]=	PyInt containing the login queue position.
+ *     dict["challenge_responsehash"]=	PyString containing a 40 bytes hash.
+ *     dict["macho_version"]=			PyInt containing the macho version number.
+ *     dict["boot_codename"]=			PyString containing the eve project string.
+ *     dict["boot_build"]=				PyInt containing the eve build number.
+ *     dict["proxy_nodeid"]=			PyInt containing the node id
+ */
+
+/** Client-Handshake Packet Description.
+  * PyTuple:2
+      itr[0]: PyString containing a 64 bytes session hash
+      itr[1]:PyDict:10
+        dict["boot_version"]=			PyFloat containing the eve version number.
+        dict["boot_region"]=			PyString containing the Eve Project Region.
+        dict["user_password"]=			PyNone or PyString containing nothing or the password if its requested as plain.
+        dict["user_affiliateid"]=		PyInt (I have no clue where or for what the 'affiliateid' is used for).
+        dict["user_password_hash"]=		PyString containing a 20 bytes username + password hash.
+        dict["macho_version"]=			PyInt containing the macho version number.
+        dict["boot_codename"]=			PyString containing the eve project string.
+        dict["boot_build"]=				PyInt containing the eve build number.
+        dict["user_name"]=				PyString containing the username.
+        dict["user_languageid"]=		PyString containing the 2 characters language 'thingy' ( EN, NL, DE, FR, AU ).
+ */
 void EveClientSocket::_authStateCryptoChallenge(PyObject* object)
 {
 	if (object->gettype() != PyTypeTuple)
@@ -362,20 +396,18 @@ void EveClientSocket::_authStateCryptoChallenge(PyObject* object)
 		return;
 	}
 
-	/** Packet description
-	 * tuple[0] = session hash.
-	 * tuple[1] = client authorization info as PyDict.
-	 */
+	/*  Client-Handshake Packet */
 	PyDict &dict = *(PyDict *)tuple.GetItem(1);
 
 	std::wstring UserName;
 	char UserPasswordHash[20];
 
+	/* Client handshake */
 	/* the only 2 things we actually need to know for now */
 	dict.get_smart("user_name", "u", &UserName);
 	dict.get_buffer("user_password_hash", (char*)UserPasswordHash, 20);
 
-	/* send password version, I think... */
+	/* send password version */
 	sendInt(2);
 
 	mAccountInfo = sAccountMgr.lookupAccount(UserName);
