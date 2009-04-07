@@ -33,31 +33,6 @@
 #include "PyObjectDumper.h"
 #endif//OBJECT_DUMPER_SUPPORT
 
-/* unused utility functions */
-static std::string CaseFold(std::string & str)
-{
-	std::string s2 = str;
-	Utils::Strings::toUpperCase(s2);
-	Utils::Strings::toLowerCase(s2);
-	if (s2 != str)
-	{
-		return CaseFold(s2);
-	}
-	return s2;
-}
-
-static std::wstring CaseFold(std::wstring & str)
-{
-	std::wstring s2 = str;
-	Utils::Strings::toUpperCase(s2);
-	Utils::Strings::toLowerCase(s2);
-	if (s2 != str)
-	{
-		return CaseFold(s2);
-	}
-	return s2;
-}
-
 // Dummy authorization handshake function
 static const uint8 handShakeInitialFunctionBlob[] = {
 	0x74, 0x04, 0x00, 0x00, 0x00, 0x4E, 0x6F, 0x6E, 0x65	//marshaled Python string "None"
@@ -121,13 +96,16 @@ void EveClientSocket::_sendHandShake()
 	send(tulpe);
 }
 
-// 'auth' commands
-//OK = Reading Client 'Crypto' Context OR Queue Check
-//OK CC = 'Crypto' Context Complete
-//CC = 'Crypto' Context
+/**
+ * Crypto Context Notify Packet description
+ *
+ * PyString:"OK"
+ * PyString:"OK CC"
+ * PyString:"CC"
+ */
 
 /* send handshake accept */
-void EveClientSocket::_sendAccept()
+void EveClientSocket::_sendCryptoContextAccept()
 {
 	PyString out("OK CC");
 	send(out);
@@ -325,7 +303,7 @@ void EveClientSocket::_authStateNoCrypto(PyObject* object)
 		mCurrentStateMachine = &EveClientSocket::_authStateCryptoChallenge;
 
 		//SendInt(2);
-		_sendAccept();
+		_sendCryptoContextAccept();
 		return;
 	}
 	else
@@ -409,7 +387,7 @@ void EveClientSocket::_authStateHandshakeSend(PyObject* object)
 	uint32 userClientId = mAccountInfo->AccountId;
 
 	/* Server challenge response ack */
-	PyDict * dict = new PyDict();
+	PyDict dict;
 	PyDict * session_init = new PyDict();
 	
 	PyString * pyAddress = GetAddress();
@@ -422,21 +400,21 @@ void EveClientSocket::_authStateHandshakeSend(PyObject* object)
 	session_init->set_item("address", pyAddress);
 	session_init->set_bool("inDetention", false);
 
-	dict->set_item("live_updates", new PyList());
-	dict->set_item("session_init", session_init);
-	dict->set_item("client_hashes" , new PyList());
-	dict->set_int ("user_clientid", userClientId);
+	dict.set_item("live_updates", new PyList());
+	dict.set_item("session_init", session_init);
+	dict.set_item("client_hashes" , new PyList());
+	dict.set_int ("user_clientid", userClientId);
 	
-	MarshalSend(*dict);
+	send(dict);
 
 	Log.Debug("AuthStateMachine","State changed into StateDone");
-	mCurrentStateMachine = &EveClientSocket::_authStateDone;
+	mCurrentStateMachine = &EveClientSocket::packetHandler;
 
 	mAuthed = true;
 }
 
 /* 'ingame' packet dispatcher */
-void EveClientSocket::_authStateDone(PyObject* object)
+void EveClientSocket::packetHandler( PyObject* object )
 {
 	Log.Debug("ClientSocket","received packet 'whooo' we passed authorization");
 
@@ -473,21 +451,28 @@ bool EveClientSocket::SendInt( int number )
 	return send(num);
 }
 
+/**
+ * quick and tricky because we don't want to increase and decrease the ref counter.
+ */
 bool EveClientSocket::SendPyNone()
 {
-	/* quick and tricky because we don't increase and decrease the ref counter */
 	return send(mMarshal.PyNone);
 }
 
 PyString * EveClientSocket::GetAddress()
 {
-	// max: "255.255.255.255:65535"
 	char address[22];
 
-	/* to hell with this */
+	/* "The Matrix is a system, 'Neo'. That system is our enemy. But when you're inside, you look around, what do you see?"
+	 * @note Aim I'm sorry :'( but I don't think this is cross platform compatible.
+	 */
 	uint8 *addr = (uint8*)&m_client.sin_addr;
 
 	int len = snprintf(address, 21, "%u.%u.%u.%u:%u", addr[0], addr[1],addr[2],addr[3], m_client.sin_port);
+
+	/* snprintf will return < 0 when a error occurs so return NULL */
+	if (len < 0)
+		return NULL;
 
 	return PyString_FromStringAndSize(address, len);
 }

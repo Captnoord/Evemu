@@ -6,7 +6,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "evemu-server", "VC9\evemu-s
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zlib", "VC9\zlib.vcproj", "{FA5AC1A0-2A35-48B1-AF36-ADF7E6ED2DD4}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "evemu-proxy", "evemu-proxy\evemu-proxy.vcproj", "{54CB1034-61B9-4A3D-B743-A184E469F0BB}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "evemu-proxy", "VC9\evemu-proxy.vcproj", "{54CB1034-61B9-4A3D-B743-A184E469F0BB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

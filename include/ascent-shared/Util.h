@@ -209,18 +209,26 @@ public:
 	 */
 	static void						toLowerCase(std::wstring& TString);
 
-	/**
-	 * @brief a function to convert numbers to std strings
-	 *
-	 * 
-	 *
-	 * @param[in] the number that needs a representatively in a character array.
-	 */
-	static std::string				toString(uint32 number);
-};
 	/************************************************************************/
 	/* end of the OpenFrag project header                                   */
 	/************************************************************************/
+
+	/**
+	 * CaseFold
+	 *
+	 * Folds a a strings case.
+	 *
+	 */
+	static std::string CaseFold(std::string & str);
+
+	/**
+	 * CaseFold
+	 *
+	 * Folds a a strings case.
+	 *
+	 */
+	static std::wstring CaseFold(std::wstring & str);
+};
 
 /**
  * \class Hash

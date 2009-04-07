@@ -209,10 +209,16 @@ public:
 	void SetSession(EveClientSession* session) { mSession = session; }
 
 	/**
-	* Utility function that generates a PyString containing "ip:port"
-	*
-	* @return PyString if success and NULL if its not.
-	*/
+	 * \brief Utility function that generates a PyString containing "ip:port"
+	 *
+	 * GetAddress converts the remote address ( read server IP + Port ) to a PyString.
+	 * The implementation is based on the fact that the snprintf formatting will
+	 * maximum use 21 characters. 
+	 * strlen("255.255.255.255:65535")
+	 * Which translates into a memory chunk of 22 bytes including the '\0'.
+	 *
+	 * @return PyString if success and NULL if its not.
+	 */
 	PyString * GetAddress();
 
 protected:
@@ -220,7 +226,7 @@ protected:
 	/* Python packet send wrapper functions make the code readable          */
 	/************************************************************************/
 	ASCENT_INLINE void _sendHandShake();
-	ASCENT_INLINE void _sendAccept();
+	ASCENT_INLINE void _sendCryptoContextAccept();
 
 	/************************************************************************/
 	/* Authorization state machine                                          */
@@ -230,7 +236,7 @@ protected:
 	void _authStateNoCrypto(PyObject* object);
 	void _authStateCryptoChallenge(PyObject* object);
 	void _authStateHandshakeSend(PyObject* object);
-	void _authStateDone(PyObject* object);
+	void packetHandler(PyObject* object);
 
 	// current state function pointer
 	stateProc mCurrentStateMachine;

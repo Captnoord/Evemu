@@ -798,19 +798,31 @@ char* itoa( int value, char* result, int base ) {
 }
 #endif
 
-
-std::string Strings::toString(uint32 number)
-{
-	// a unsigned 32 bits value has a max string representative of 10 characters.
-	char tArray[10];
-	#ifndef WIN32
-		itoa(number, tArray, 10);
-	#else
-		_itoa(number, tArray, 10);
-	#endif
-	return tArray;
-}
-}//namespace Utils
 /************************************************************************/
 /* End of OpenFrag borrowed code                                        */
 /************************************************************************/
+
+std::string Strings::CaseFold( std::string & str )
+{
+	std::string s2 = str;
+	Utils::Strings::toUpperCase(s2);
+	Utils::Strings::toLowerCase(s2);
+	if (s2 != str)
+	{
+		return CaseFold(s2);
+	}
+	return s2;
+}
+
+std::wstring Strings::CaseFold( std::wstring & str )
+{
+	std::wstring s2 = str;
+	Utils::Strings::toUpperCase(s2);
+	Utils::Strings::toLowerCase(s2);
+	if (s2 != str)
+	{
+		return CaseFold(s2);
+	}
+	return s2;
+}
+}//namespace Utils

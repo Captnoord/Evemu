@@ -19,7 +19,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			IntermediateDirectory=".\evemu___Win32_$(ConfigurationName)"
 			ConfigurationType="1"
 			CharacterSet="2"
 			>
@@ -41,13 +41,18 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
+				AdditionalIncludeDirectories="&quot;..\..\include\ascent-shared\&quot;;&quot;..\..\include\ascent-shared\Threading\&quot;;..\..\include\server\;..\..\include\server\Session\;..\..\include\server\Space\;..\..\include\PCH\;..\..\include\Utilities\;..\..\include\TestCases\;..\..\include\Authorization\;..\..\include\Communication\;..\..\include\PythonObjects\;..\..\3rdparty\;..\..\dep\include\;..\..\dep\include\zlib\;..\..\dep\include\mysql\;..\"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CRT_SECURE_NO_WARNINGS=1;_CRT_SECURE_NO_DEPRECATE=1;_CRT_SECURE_COPP_OVERLOAD_STANDARD_NAMES=1"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
+				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
 				PrecompiledHeaderThrough="proxyPCH.h"
+				PrecompiledHeaderFile="$(IntDir)\$(TargetName).pch"
+				AssemblerListingLocation="$(IntDir)\"
+				ProgramDataBaseFileName="$(IntDir)\"
 				WarningLevel="3"
+				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -172,7 +177,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\main.cpp"
+				RelativePath="..\..\src\Proxy\main.cpp"
 				>
 			</File>
 		</Filter>
@@ -182,7 +187,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\proxyPCH.h"
+				RelativePath="..\..\include\Proxy\proxyPCH.h"
 				>
 			</File>
 		</Filter>
