@@ -125,8 +125,10 @@ int main(int argc, char *argv[])
 	uint32 etime;
 	uint32 next_printout = GetTickCount(), next_send = GetTickCount();
 
-	new Space;
-	new AccountMgr;
+	/* server services */
+	new ConfigMgr;				/* depending on the database system. */
+	new Space;					/* not depending on anything atm. */
+	new AccountMgr;				/* depending on the database system. */
 
 	// runnable thread to update server systems and sessions
 	SpaceRunnable * sr = new SpaceRunnable();

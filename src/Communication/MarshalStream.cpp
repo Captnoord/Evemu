@@ -592,15 +592,9 @@ PyObject* MarshalStream::unmarshal( ReadStream & stream )
 				unmarshalState(Op_PyVarInteger, stream);
 				MARSHALSTREAM_RETURN(ReadVarInteger(stream, (opcode >> 6) & 1));
 
-				/* iterator sequence stop tag */
-			//case Op_PyStopIter:
-			//	MARSHALSTREAM_RETURN_NULL;
-			//	return NULL;
-
 			default:
 			{
-				//Log.Error("MarshalStream", "Invalid type tag %d, '%c' in stream.", opcode, *((char*)&opcode));
-				Log.Error("MarshalStream", "Invalid type tag %d, raw 0x%X, char '%c' at:0x%X", opcode,opcode,*((char*)&opcode), stream.tell());
+				Log.Error("MarshalStream", "Invalid type tag %d, '%c' in stream.", opcode, *((char*)&opcode));
 				MARSHALSTREAM_RETURN_NULL;
 			}
 		}
@@ -1099,6 +1093,7 @@ bool MarshalStream::ReadNewObjDict( ReadStream & stream, PyClass & obj )
 
 		dict->set_item(dictItr, keyName);
 		keyName->DecRef();
+		dictItr->DecRef();
 	}
 
 	obj.setDirDict(dict);

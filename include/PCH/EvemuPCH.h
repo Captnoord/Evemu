@@ -50,6 +50,11 @@
 
 #include "MarshalStream.h"
 
+// server feature stuff..
+#include "ConfigMgr.h"
+#include "ObjectCacheMgr.h"
+#include "ObjectCaching.h"
+
 #include "packet_types.h"
 
 #include "AccountMgr.h"

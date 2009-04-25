@@ -240,6 +240,19 @@ PyChameleon & PyChameleon::operator=( const PySubStream* pointer )
 	mIsEmpty = false;
 	return *this;
 }
+
+PyChameleon & PyChameleon::operator=( const PyInt* pyInt )
+{
+	assert(pyInt != NULL);
+	assert(mIsEmpty == true);
+	assert(mPayload == NULL);
+
+	_settype(PyTypeInt);
+	mPayload = (PyObject*)pyInt;
+	mIsEmpty = false;
+	return *this;
+}
+
 uint8 PyChameleon::gettype()
 {
 	return mType;

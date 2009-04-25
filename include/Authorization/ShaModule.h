@@ -42,10 +42,10 @@ public:
 	/* ------------------------------------------------------------------------
 	 *
 	 * Majority of this code is part of Python. The original
-	 * headers are pasted below.
+	 * headers are copied below.
 	 *
 	 * Several changes have been made to make it more compatible with the
-	 * Evemu and desired interface. Even Stole this comment header.
+	 * Evemu and its desired interface. Even Stole this comment header.
 	 *
 	 */
 
@@ -392,7 +392,7 @@ public:
 	}
 
 	static void
-		SHA_digest(SHAobject *self, uint8 *digest)
+		sha_digest(SHAobject *self, uint8 *digest)
 	{
 		if (digest == NULL)
 			return;
@@ -402,7 +402,7 @@ public:
 	}
 
 	static void
-		SHA_digest(SHAobject *self, std::string &digest)
+		sha_digest(SHAobject *self, std::string &digest)
 	{
 		if (digest.size() < SHA_DIGESTSIZE)
 			digest.resize(SHA_DIGESTSIZE);
@@ -413,9 +413,7 @@ public:
 	}
 
 	/**
-	 * @brief Hexify is a small until function to do a simple convention to hex representation.
-	 *
-	 * 
+	 * Hexify is a small until function to do a simple convention to hex representation.
 	 *
 	 * @param[in] data the char array that contains the data
 	 * @param[in] len the length of data

@@ -331,16 +331,19 @@ public:
 		itr->setPyObject((PyObject*)object);
 	}
 
+	void set_str(const int index, const char* str);
+	void set_str(const int index, const char* str, const size_t len);
+
 	/**
-	 * \brief a VA function for getting multiple object from a single tuple
+	 * \brief a VA function for getting multiple object from a tuple.
 	 *
-	 * a VA function for getting multiple object from a single tuple
+	 * a VA function for getting multiple object from a tuple.
 	 *
-	 * @param[in]
-	 * @param[out]
-	 * @return true if successful and false if not.
+	 * @param[in] format is the VA string containing the expected object types.
+	 * @param[out] ... this VA field contains the pointers to the VA items.
+	 * @return the number of 'scanned' objects and 0 of a error has happened.
 	 */
-	bool get_smart(const char * format, ...);
+	int scanf(const char * format, ...);
 
 	// returns the element count
 	size_t size();
@@ -411,6 +414,16 @@ public:
 	~PyDict();
 	PyChameleon operator[](const char* keyName);
 
+	/**
+	 * \brief set_item adds or sets a database entry.
+	 *
+	 * PyDict::set_item handles the adding and setting of object in
+	 * mapped and non mapped dictionary's's.
+	 *
+	 * @param[in]
+	 * @param[out]
+	 * @return
+	 */
 	template<typename T>
 	bool set_item(const char* key_name, T* obj)
 	{
@@ -450,9 +463,9 @@ public:
 	PyObject* get_item(PyObject* key);
 	PyObject* get_item(const char* key_name);
 
-	bool get_smart(const char * keyName, const char * format, ...);
-	bool get_buffer(const char * keyName, char* dst, size_t dst_len);
+	bool scanf(const char * keyName, const char * format, ...);
 
+	bool get_buffer(const char * keyName, char* dst, size_t dst_len);
 	bool set_int(const char * keyName, int number);
 	bool set_double(const char * keyName, double number);
 	bool set_str(const char * keyName, const char* str);
@@ -554,7 +567,8 @@ public:
 	PyDict* getdict();
 	PyList * getDirList();
 	PyDict * getDirDict();
-private:
+//private:
+protected:
 	PyTuple		*mBases;/* A tuple of class objects */
 	PyDict		*mDict;	/* A dictionary */
 	PyString	*mName;	/* A string */

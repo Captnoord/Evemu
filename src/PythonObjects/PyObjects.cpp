@@ -672,22 +672,36 @@ bool PyTuple::GetString( const int index, std::string & str )
 }
 
 /* @todo add other variable types */
-bool PyTuple::get_smart( const char * format, ... )
+int PyTuple::scanf( const char * format, ... )
 {
+	/* should not be possible */
+	if (format == NULL || *format == '\0')
+		return 0;
+
+	size_t formatLen = strlen(format);
+	if (formatLen == 0)
+		return 0;
+
 	va_list ap;
 	va_start(ap, format);
 
-	size_t formatLen = strlen(format);
-
 	void* pVar = NULL;
 	size_t formatIndex = 0;
-	//while (pVar != ((void*)-1))
 	while (formatLen != formatIndex)
 	{
-		pVar = va_arg( ap, void*);
+		pVar = va_arg( ap, void* );
+
+		if (pVar == NULL)
+		{
+			va_end(ap);
+			return 0;
+		}
 
 		if (formatIndex > mTuple.size())
-			return false;
+		{
+			va_end(ap);
+			return 0;
+		}
 
 		char tag = format[formatIndex];
 
@@ -698,7 +712,10 @@ bool PyTuple::get_smart( const char * format, ... )
 		case 'u': // std::wstring
 			{
 				if (foundObject->gettype() != PyTypeUnicode)
-					return false;
+				{
+					va_end(ap);
+					return 0;
+				}
 	
 				std::wstring * str = (std::wstring *)pVar;
 				str->clear();
@@ -712,7 +729,10 @@ bool PyTuple::get_smart( const char * format, ... )
 		case 'i': // int
 			{
 				if (foundObject->gettype() != PyTypeInt)
-					return false;
+				{
+					va_end(ap);
+					return 0;
+				}
 
 				int32 * num = (int32 *)pVar;
 				*num = ((PyInt*)foundObject)->GetValue();
@@ -722,7 +742,10 @@ bool PyTuple::get_smart( const char * format, ... )
 		case 'f': // double
 			{
 				if (foundObject->gettype() != PyTypeReal)
-					return false;
+				{
+					va_end(ap);
+					return 0;
+				}
 
 				double * num = (double *)pVar;
 				*num = ((PyFloat*)foundObject)->GetValue();
@@ -732,7 +755,10 @@ bool PyTuple::get_smart( const char * format, ... )
 		case 's': // std::string
 			{
 				if (foundObject->gettype() != PyTypeString)
-					return false;
+				{
+					va_end(ap);
+					return 0;
+				}
 	
 				std::string * str = (std::string *)pVar;
 				str->clear();
@@ -748,8 +774,24 @@ bool PyTuple::get_smart( const char * format, ... )
 	}
 
 	va_end(ap);
-	return true;
+	return (int)formatIndex;
+}
 
+void PyTuple::set_str( const int index, const char* str )
+{
+	if (index+1 > (int)mTuple.size())
+		mTuple.resize(index+1);
+	PyChameleon * itr = mTuple[index];
+	PyString *pStr = new PyString(str);
+	itr->setPyObject((PyObject*)pStr);
+}
+
+void PyTuple::set_str( const int index, const char* str, const size_t len )
+{
+	if (index+1 > (int)mTuple.size())
+		mTuple.resize(index+1);
+	PyChameleon * itr = mTuple[index];
+	itr->setPyObject((PyObject*)new PyString(str, len)); // GCC is not going to like this
 }
 /************************************************************************/
 /* PyList                                                               */
@@ -934,6 +976,9 @@ bool PyDict::set_item( PyObject* key, PyObject* obj )
 	}
 	else
 	{
+		// hit debug as I want to make sure its working correctly.
+		ASCENT_HARDWARE_BREAKPOINT;
+
 		uint32 hsh = PyObject_Hash(key);
 
 		iterator itr = mDict.find(hsh);
@@ -1000,7 +1045,7 @@ PyDict::iterator PyDict::end()
 	return mDict.end();
 }
 
-bool PyDict::get_smart( const char * keyName, const char* format, ... )
+bool PyDict::scanf( const char * keyName, const char* format, ... )
 {
 	/* useless call.. because the dict need a lookup callback for this.... lol I actualy don't care.*/
 	update();

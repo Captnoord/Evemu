@@ -52,7 +52,7 @@ void PasswordModule::GeneratePassHash(std::wstring &userName, std::wstring &pass
 
 	for (int i = 0; i < 1000; i++)
 	{
-		ShaModule::SHA_digest(&shaObj, uDaylySalt);
+		ShaModule::sha_digest(&shaObj, uDaylySalt);
 		memcpy(uDaylySaltPart, saltChar, saltLen);
 
 		ShaModule::sha_init(&shaObj);
@@ -92,7 +92,7 @@ void PasswordModule::GeneratePassHash(const wchar_t *userName, const wchar_t *pa
 
 	for (int i = 0; i < 1000; i++)
 	{
-		ShaModule::SHA_digest(&shaObj, uDaylySalt);
+		ShaModule::sha_digest(&shaObj, uDaylySalt);
 		memcpy(uDaylySaltPart, saltChar, saltLen);
 
 		ShaModule::sha_init(&shaObj);

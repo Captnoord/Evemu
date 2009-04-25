@@ -46,8 +46,6 @@ PyObject* DBRowModule::parseraw( MarshalStream& stream, PyObject* header, uint8 
 	PyTuple& classdataterror = *((PyTuple*)classdata[1].getPyObject());
 	PyTuple& tuple = *((PyTuple*)classdataterror[0].getPyObject());
 
-	//Dump(stdout, (PyObject*)&tuple, 0);
-
 	if (tuple.size() == 0)
 		ASCENT_HARDWARE_BREAKPOINT;
 
@@ -63,17 +61,11 @@ PyObject* DBRowModule::parseraw( MarshalStream& stream, PyObject* header, uint8 
 		PyInt& fieldType = (PyInt&)field[1].getPyObjRef();
 		PyObject* resObj = ReadRawDbField(stream, fieldType, mVirtualFieldCount);
 		
-		/*if (resObj != NULL)
-			Dump(stdout, (PyObject*)resObj, 0);
-		else
-			printf("broked\n");*/
-		
 		if (resObj == NULL)
 			continue;
 		
 		result_tuple[i] = resObj; // store the damn thing...
 	}
-	//Dump(stdout, (PyObject*)&result_tuple, 0);
 	virtualFieldCount = mVirtualFieldCount;
 	fieldCount = tuple.size();
 	return (PyObject*)&result_tuple;

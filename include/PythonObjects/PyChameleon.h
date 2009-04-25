@@ -95,10 +95,12 @@ public:
 	PyChameleon &operator=(const PyBaseNone* pointer);
 	PyChameleon &operator=(const PyBool* pointer);
 	PyChameleon &operator=(const PySubStream* pointer);
+	PyChameleon &operator=(const PyInt* pyInt);
 
 	PyChameleon &operator=(PyObject* pointer);
 	PyChameleon &operator=(PyObject& pointer);
 	PyChameleon &operator=(PyString* str);
+	
 
 
 protected:

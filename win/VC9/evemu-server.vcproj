@@ -222,6 +222,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\server\ConfigMgr.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\server\ConfigMgr.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\server\EveClientSession.cpp"
 				>
 			</File>
@@ -235,6 +243,18 @@
 			</File>
 			<File
 				RelativePath="..\..\include\server\EveClientSocket.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\server\ObjectCacheMgr.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\server\ObjectCaching.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\server\ObjectCaching.h"
 				>
 			</File>
 			<Filter

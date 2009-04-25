@@ -98,12 +98,12 @@ void EveClientSocket::OnDisconnect()
  */
 void EveClientSocket::sendConnectionHandShake()
 {
-	uint32 authCount = (uint32)sSpace.GetAuthorizedCount();
+	uint32 clusterUserCount = (uint32)sSpace.GetAuthorizedCount();
 
 	PyTuple tulpe(6);
 	tulpe[0] = EveBirthday;
 	tulpe[1] = MachoNetVersion;
-	tulpe[2] = authCount;
+	tulpe[2] = clusterUserCount;
 	tulpe[3] = EveVersionNumber;
 	tulpe[4] = EveBuildVersion;
 	tulpe[5] = EveProjectVersion;
@@ -226,7 +226,7 @@ void EveClientSocket::_authStateHandshake(PyObject* object)
 	}
 
 	PyTuple * tuple = (PyTuple*)object;
-	// not sure if we need this check because of the get_smart function below
+	// not sure if we need this check because of the scanf function below
 	if (tuple->size() != 6)
 	{
 		dlog("ClientSocket::initial packet isn't a tuple size 6");
@@ -241,14 +241,11 @@ void EveClientSocket::_authStateHandshake(PyObject* object)
 	std::string projectVersion;	
 
 	// note for mmcs look what I did :P
-	if(!tuple->get_smart("iiifis", &birthDay, &machoVersion, &userCount, &versionNr, &buildVersion, &projectVersion))
+	if(!tuple->scanf("iiifis", &birthDay, &machoVersion, &userCount, &versionNr, &buildVersion, &projectVersion))
 	{
 		Log.Error("ClientSocket","unable to read info from tuple");
 		return;
 	}
-
-	//printf("EveClientSocket 'auth' handshake version: \n\tbirthDay:%d\n\tmachoVersion:%d\n\tuserCount:%d\n\tversionNr:%f\n\tbuildVersion:%d\n\tprojectVersion:%s\n",
-	//	birthDay, machoVersion, userCount, versionNr, buildVersion, projectVersion.c_str());
 
 	if (birthDay != EveBirthday || machoVersion != MachoNetVersion || versionNr != EveVersionNumber || buildVersion != EveBuildVersion || projectVersion != EveProjectVersion)
 	{
@@ -368,19 +365,19 @@ void EveClientSocket::_authStateNoCrypto(PyObject* object)
 
 /** Client-Handshake Packet Description.
   * PyTuple:2
-      itr[0]: PyString containing a 64 bytes session hash
-      itr[1]:PyDict:10
-        dict["boot_version"]=			PyFloat containing the eve version number.
-        dict["boot_region"]=			PyString containing the Eve Project Region.
-        dict["user_password"]=			PyNone or PyString containing nothing or the password if its requested as plain.
-        dict["user_affiliateid"]=		PyInt (I have no clue where or for what the 'affiliateid' is used for).
-        dict["user_password_hash"]=		PyString containing a 20 bytes username + password hash.
-        dict["macho_version"]=			PyInt containing the macho version number.
-        dict["boot_codename"]=			PyString containing the eve project string.
-        dict["boot_build"]=				PyInt containing the eve build number.
-        dict["user_name"]=				PyString containing the username.
-        dict["user_languageid"]=		PyString containing the 2 characters language 'thingy' ( EN, NL, DE, FR, AU ).
- */
+  *   itr[0]: PyString containing a 64 bytes session hash
+  *   itr[1]:PyDict:10
+  *     dict["boot_version"]=			PyFloat containing the eve version number.
+  *     dict["boot_region"]=			PyString containing the Eve Project Region.
+  *     dict["user_password"]=			PyNone or PyString containing nothing or the password if its requested as plain.
+  *     dict["user_affiliateid"]=		PyInt (I have no clue where or for what the 'affiliateid' is used for).
+  *     dict["user_password_hash"]=		PyString containing a 20 bytes username + password hash.
+  *     dict["macho_version"]=			PyInt containing the macho version number.
+  *     dict["boot_codename"]=			PyString containing the eve project string.
+  *     dict["boot_build"]=				PyInt containing the eve build number.
+  *     dict["user_name"]=				PyString containing the username.
+  *     dict["user_languageid"]=		PyString containing the 2 characters language 'thingy' ( EN, NL, DE, FR, AU ).
+  */
 void EveClientSocket::_authStateCryptoChallenge(PyObject* object)
 {
 	if (object->gettype() != PyTypeTuple)
@@ -399,42 +396,60 @@ void EveClientSocket::_authStateCryptoChallenge(PyObject* object)
 	/*  Client-Handshake Packet */
 	PyDict &dict = *(PyDict *)tuple.GetItem(1);
 
+	if(dict.gettype() != PyTypeDict)
+	{
+		dlog("AuthStateMachine::_authStateCryptoChallenge received object isn't a dict");
+		return;
+	}
+
 	std::wstring UserName;
 	char UserPasswordHash[20];
 
 	/* Client handshake */
 	/* the only 2 things we actually need to know for now */
-	dict.get_smart("user_name", "u", &UserName);
-	dict.get_buffer("user_password_hash", (char*)UserPasswordHash, 20);
+	if(!dict.scanf("user_name", "u", &UserName))
+	{
+		dlog("AuthStateMachine::_authStateCryptoChallenge unable to read username");
+		return;
+	}
 
-	/* send password version */
-	sendInt(2);
+	if(!dict.get_buffer("user_password_hash", (char*)UserPasswordHash, 20))
+	{
+		dlog("AuthStateMachine::_authStateCryptoChallenge unable to read user password hash");
+		return;
+	}
 
 	mAccountInfo = sAccountMgr.lookupAccount(UserName);
 
-	// check if the password matches the saved password.
+	/* check if the user password hash matches the saved one. */
 	if(memcmp(UserPasswordHash, mAccountInfo->AccountShaHash, 20) == TRUE)
 	{
 		dlog("AuthStateMachine::_authStateCryptoChallenge pass hash not correct");
-		// pass doesn't seem to match... send exception...
+		/* pass doesn't seem to match... send exception... */
 		Disconnect();
 		return;
 	}
 	else
 	{
+		/* send password version */
+		sendInt(2);
+
 		PyTuple AuthServerResponceTuple(4);
 		
-		/* initial function blob */
+		/** initial function blob
+		 * @note cache this tuple as its not required to be build and allocated time and time again.
+		 */
 		PyTuple & initialFunctionBlob = *new PyTuple(2);
 		  initialFunctionBlob[0] = new PyString((char*)handShakeInitialFunctionBlob, handShakeInitialFunctionBlobSize);
 		  initialFunctionBlob[1] = new PyBool(false);
 		
+	    uint32 clusterUserCount = (uint32)sSpace.GetAuthorizedCount();
 		  /* sync data dict */
 		PyDict* syncDict = new PyDict();
 		  syncDict->set_double("boot_version", EveVersionNumber);
 		  syncDict->set_str("boot_region", EveProjectRegion);
 		  syncDict->set_str("challenge_responsehash", "654");
-		  syncDict->set_int("cluster_usercount", 10);
+		  syncDict->set_int("cluster_usercount", clusterUserCount);
 		  syncDict->set_int("user_logonqueueposition", 1);
 		  syncDict->set_int("macho_version", MachoNetVersion);
 		  syncDict->set_str("boot_codename", EveProjectCodename);
@@ -463,15 +478,14 @@ void EveClientSocket::_authStateHandshakeSend(PyObject* object)
 	PyDict dict;
 	PyDict * session_init = new PyDict();
 	
-	PyString * pyAddress = GetAddress();
-
-	session_init->set_str ("languageID", "EN");
-	session_init->set_int ("userid", userid);
-	session_init->set_item("maxSessionTime", mMarshal.GetPyNone());
-	session_init->set_int ("userType", 1);	/* userType: trial:23, steam:? normal:1? */
-	session_init->set_int ("role", mAccountInfo->AccountRole);
-	session_init->set_item("address", pyAddress);
-	session_init->set_bool("inDetention", false);
+	  PyString * pyAddress = GetAddress();
+	  session_init->set_str ("languageID", "EN");
+	  session_init->set_int ("userid", userid);
+	  session_init->set_item("maxSessionTime", mMarshal.GetPyNone());
+	  session_init->set_int ("userType", 1);	/* userType: trial:23, steam:? normal:1? */
+	  session_init->set_int ("role", mAccountInfo->AccountRole);
+	  session_init->set_item("address", pyAddress);
+	  session_init->set_bool("inDetention", false);
 
 	dict.set_item("live_updates", new PyList());
 	dict.set_item("session_init", session_init);
