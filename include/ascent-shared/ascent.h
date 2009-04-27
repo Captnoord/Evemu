@@ -37,7 +37,7 @@
 #include "string_map.h"
 
 // config
-#include "config/ConfigEnv.h"
+#include "Config/ConfigEnv.h"
 
 // threading
 #include "Threading/Threading.h"
@@ -63,3 +63,4 @@
 #endif
 
 #include "Auth/Sha1.h"
+

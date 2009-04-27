@@ -256,7 +256,7 @@ public:
 		uint32 hash = 5381;
 		int c;
 
-		while (c = *str++)
+		while ((c = *str++))
 			hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
 
 		return hash;
@@ -275,7 +275,7 @@ public:
 		uint32 hash = 5381;
 		int c;
 
-		while (c = *str++)
+		while ((c = *str++))
 			hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
 
 		return hash;
@@ -296,7 +296,7 @@ public:
 		uint32 hash = 5381;
 		int c;
 
-		while (c = *str++)
+		while ((c = *str++))
 			hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
 
 		return hash;
@@ -317,7 +317,7 @@ public:
 		uint32 hash = 5381;
 		int c;
 
-		while (c = *str++)
+		while ((c = *str++))
 			hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
 
 		return hash;
@@ -360,7 +360,7 @@ public:
 		uint32 hash = 0;
 		int c;
 
-		while (c = *str++)
+		while ((c = *str++))
 			hash = c + (hash << 6) + (hash << 16) - hash;
 
 		return hash;
@@ -379,7 +379,7 @@ public:
 		uint32 hash = 0;
 		int c;
 
-		while (c = *str++)
+		while ((c = *str++))
 			hash = c + (hash << 6) + (hash << 16) - hash;
 
 		return hash;
@@ -398,7 +398,7 @@ public:
 		uint32 hash = 0;
 		int c;
 
-		while (c = *str++)
+		while ((c = *str++))
 			hash = c + (hash << 6) + (hash << 16) - hash;
 
 		return hash;

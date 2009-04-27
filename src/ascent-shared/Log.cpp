@@ -266,7 +266,8 @@ void SessionLogWriter::Close()
 
 SessionLogWriter::SessionLogWriter(const char * filename, bool open)
 {
-	m_filename = _strdup(filename);
+	// TODO: _strdup Not unix compatible
+	//m_filename = _strdup(filename);
 	m_file = NULL;
 	if( open == true )
 	{

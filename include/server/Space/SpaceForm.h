@@ -26,73 +26,86 @@
 #ifndef __SPACEFORM_H
 #define __SPACEFORM_H
 
-struct Constellation;
-struct SolarSystem;
+
+#define REGIONSUMEDVAL 1e+7
+#define CONSTELLATIONSUMEDVAL 2e+7
+#define SOLARSYSTEMSUMEDVAL 3e+7
+
 
 struct Region {
-	uint32 regionID;
 
-	std::wstring regionName;
+	struct {
+		double x,y,z;
+		double xMin,yMin,zMin;
+		double xMax,yMax,zMax;
+		double radius;
+		
+		uint32 factionID;	
+	} RegionData;
 
-    float x,y,z;
-    float xMin,yMin,zMin;
-    float xMax,yMax,zMax;
-    float radius;
-    
-    uint32 factionID;	
-    
-	uint32 constellationSize;
-	Constellation *constellations;
-}
+	// vector of constellations id's
+	std::vector<uint32> constellations;
+};
 
 struct Constellation {
-	uint32 constellationID;
-	uint32 regionID;
 
-	std::wstring constellationName;
-
-    float x,y,z;
-    float xMin,yMin,zMin;
-    float xMax,yMax,zMax;
-    float radius;
-    
-    uint32 factionID;
-
+    struct {
+    	uint32 regionID;
+		double x,y,z;
+		double xMin,yMin,zMin;
+		double xMax,yMax,zMax;
+		double radius;
+		
+		uint32 factionID;
+	} ConstellationData;
+	
 	// the tasty stuff
-	uint32 solarsystemSize;
-	SolarSystem *solarsystems;	
-}
+	// vector of solarsystems id's
+	std::vector<uint32> solarsystems;	
+};
+#define OBJECT_NAME_MAX 100
+struct SolarSystemObject {
+
+	uint32 objectID;
+	uint16 typeID;
+	uint16 groupID;
+	
+	double x,y,z;
+	double radius;
+	
+	char objectName[OBJECT_NAME_MAX];
+};
 
 struct SolarSystem {
-	uint32 solarsystemID;
-	uint32 regionID;
-  	uint32 constellationID;
 
-    std::wstring solarSystemName;
+	struct {
+		uint32 constellationID;
+		// stuff...
+		double x,y,z;
+		double xMin,yMin,zMin;
+		double xMax,yMax,zMax;
+		double radius;
+		
+		double luminosity;
+		
+		uint32 border;
+		uint32 fringe;
+		uint32 corridor;
+		uint32 hub;
+		uint32 international;
+		uint32 regional;
+		uint32 constellation;
+		
+		double security;
+		uint32 factionID;
 
-	// stuff...
-    float x,y,z;
-    float xMin,yMin,zMin;
-    float xMax,yMax,zMax;
-    float radius;
+		uint32 sunTypeID;
+		//char securityClass[3];
+	} SolarSystemData;
     
-    float luminosity;
     
-    uint32 border;
-    uint32 fringe;
-  	uint32 corridor;
-  	uint32 hub;
-  	uint32 international;
-    uint32 regional;
-    uint32 constellation;
-    
-    float security;
-    uint32 factionID;
-
-    uint32 sunTypeID;
-    char securityClass[2];
-    
-    MapOctree solarSystemMapOctree;
-}
+    std::map<uint32,SolarSystemObject> solarsystem_objects;
+    //MapOctree solarSystemMapOctree;
+};
 
 #endif//__SPACEFORM_H

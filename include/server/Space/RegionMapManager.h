@@ -37,20 +37,25 @@ public:
 
 /* Region Map Manager */
 
-class RegionMapMgr {
-	
-	uint32 regionID;
-	// MAX of 255 threads per Manager
-	uint8 workers_size;
+class RegionMapMgr 
+{
+	uint32 m_regionID;
+	// MAX of 255 threads per Manager witch is insane! 
+	uint8 m_workersSize;
 
-	
+	bool m_isLoaded;
+	uint32 m_solarsystemsSize;
+	SolarSystem *m_solarsystems;
+
 public:
 
-	RegionMapMgr(uint32 regionID,uint8 nrWorkers);	
+	RegionMapMgr(uint32 regionID,uint8 nrWorkers = 1);	
 	~RegionMapMgr();
 	
+	void loadRegion_fromDB(Database *targetStaticDB, Database *targetDynamicDB);
+	
 	void SpawnWorkerThreads();
-
+	//void unSpawnWorkers();
 };
 
 #endif//__REGIONMAPMANAGER_H

@@ -17,7 +17,6 @@ libascent_a_SOURCES = \
 	MersenneTwister.cpp \
 	NGLog.cpp \
 	PacketLog.cpp \
-	StackWalker.cpp \
 	Util.cpp \
 	Auth/BigNumber.cpp \
 	Auth/MD5.cpp \

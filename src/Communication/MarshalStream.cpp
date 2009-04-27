@@ -1,17 +1,11 @@
-#include "Common.h"
-#include "ascent.h"
-
 #include "EvemuPCH.h"
-
-#include "EveMarshalOpcodes.h"
-#include "PyStringTable.h"
 
 #include <zlib.h>
 
 #include "DBRowModule.h"
 
 /* macro's that help debugging exceptions */
-#define EVEMU_EXTRA_DEBUG
+//#define EVEMU_EXTRA_DEBUG
 #ifdef _DEBUG
 #  ifdef EVEMU_EXTRA_DEBUG
 #    define MARSHALSTREAM_RETURN_NULL {ASCENT_HARDWARE_BREAKPOINT; return NULL;}
@@ -40,7 +34,7 @@
 #  define unmarshalState(x, y) /*{x, y}*/
 #endif//_DEBUG
 
-MarshalStream::MarshalStream() : PyIntZero(0), PyIntOne(1), PyIntMinOne(-1), PyFloatZero(0.0),PyIntMinusOne(-1),
+MarshalStream::MarshalStream() : PyIntZero(0), PyIntOne(1), PyIntMinusOne(-1), PyFloatZero(0.0),
 	Py_TrueStruct(true), Py_ZeroStruct(false) {}
 
 MarshalStream::~MarshalStream() {}

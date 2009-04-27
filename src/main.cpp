@@ -56,7 +56,7 @@ static void _OnSignal(int s);
 #ifdef WIN32
 static const char* default_config_file = "evemu-server.conf";
 #else
-static const char* default_config_file = CONFDIR "/evemu-server.conf";
+static const char* default_config_file = "evemu-server.conf";
 #endif
 
 Database* Database_dynamic;
@@ -69,8 +69,8 @@ int main(int argc, char *argv[])
 	g_localTime = *localtime(&UNIXTIME);
 
 	printf("\nCopyright (C) 2006-2009 EVEmu Team. http://evemu.mmoforge.org\n");
-	printf("\nThis program is free software; you can redistribute it and/or modify");
-	printf("it under the terms of the GNU General Public License as published by");
+	printf("\nThis program is free software; you can redistribute it and/or modify ");
+	printf("it under the terms of the GNU General Public License as published by ");
 	printf("the Free Software Foundation; version 2 of the License.");
 	printf("For a copy of this license, see the COPYING file provided with this distribution.\n");
 	Log.Line();
@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
 	bool dbret = _DBStartup();
 	if(dbret == false)
 	{
-		Log.Error("Database", "Unable to connect to the db");
+		Log.Error("Database", "Unable to connect to the db.");
 		return 0;
 	}
 
@@ -126,9 +126,15 @@ int main(int argc, char *argv[])
 	uint32 next_printout = GetTickCount(), next_send = GetTickCount();
 
 	/* server services */
-	new ConfigMgr;				/* depending on the database system. */
+	//new ConfigMgr;				/* depending on the database system. */
 	new Space;					/* not depending on anything atm. */
 	new AccountMgr;				/* depending on the database system. */
+	
+	/*if(!sSpace.LoadSpaceFormFromDB(Database_static))
+	{
+		Log.Error("Space", "failed to load space form, from Database.");
+		return 1;
+	}*/
 
 	// runnable thread to update server systems and sessions
 	SpaceRunnable * sr = new SpaceRunnable();
@@ -196,7 +202,8 @@ int main(int argc, char *argv[])
 #endif
 		}
 	}
-
+	
+	//sSpace.DeleteSpaceForm();
 	_DBShutdown();
 
 	return 1;

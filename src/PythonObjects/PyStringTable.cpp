@@ -49,7 +49,7 @@ size_t PyMarshalStringTable::LookupIndex(std::string &str)
 {
 	mLock.Acquire();
 	uint32 hashValue = hash(str);
-	StringTableMapConstItr Itr = mStringTable.find(hashValue);
+	std::tr1::unordered_map<uint32, uint8>::const_iterator Itr = mStringTable.find(hashValue);
 	if (Itr != mStringTable.end())
 	{
 		mLock.Release();

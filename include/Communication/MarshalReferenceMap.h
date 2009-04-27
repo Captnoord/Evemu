@@ -52,13 +52,13 @@ class UnmarshalReferenceMap
 {
 public:
 
-	UnmarshalReferenceMap() : mExpectedObjectsCount(0), mStoredObjectCount(0), mStoreObjectIndex(0), mReferenceObjects(NULL) {}
+	UnmarshalReferenceMap() : mStoredObjectCount(0), mStoreObjectIndex(0), mExpectedObjectsCount(0), mReferenceObjects(NULL) {}
 
 	/**
 	 * Constructor that sets the expected object count of referenced objects.
 	 * @param objectCount is the number of expected referenced objects within the marshal stream, its also known in the client as as MapCount.
 	 */
-	UnmarshalReferenceMap(const uint32 objectCount) : mExpectedObjectsCount(objectCount), mStoredObjectCount(0), mStoreObjectIndex(0), mReferenceObjects(NULL)
+	UnmarshalReferenceMap(const uint32 objectCount) : mStoredObjectCount(0), mStoreObjectIndex(0), mExpectedObjectsCount(objectCount), mReferenceObjects(NULL)
 	{
 		assert(false);
 		//if (objectCount == 0)

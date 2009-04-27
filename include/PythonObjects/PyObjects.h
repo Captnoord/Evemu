@@ -323,13 +323,7 @@ public:
 	bool GetString(const int index, std::string & str);
 
 	template<typename T>
-	void set_item(const int index, T * object)
-	{
-		if (index+1 > (int)mTuple.size())
-			mTuple.resize(index+1);
-		PyChameleon * itr = mTuple[index];
-		itr->setPyObject((PyObject*)object);
-	}
+	void set_item(const int index, T * object);
 
 	void set_str(const int index, const char* str);
 	void set_str(const int index, const char* str, const size_t len);

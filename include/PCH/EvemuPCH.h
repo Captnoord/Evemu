@@ -61,8 +61,9 @@
 #include "EveSession.h"
 #include "EveClientSocket.h"
 #include "EveClientSession.h"
-#include "Macho.h"
+//#include "Macho.h"
 
+#include "SpaceForm.h"
 #include "Space.h"
 #include "SpaceRunnable.h"
 #include "RegionMapManager.h"

@@ -26,6 +26,7 @@
 #ifndef __SPACE_H
 #define __SPACE_H
 
+
 typedef std::list<EveClientSession*>						SessionList;
 typedef SessionList::iterator								SessionListItr;
 typedef SessionList::const_iterator							SessionListConstItr;
@@ -34,7 +35,7 @@ typedef std::set<EveClientSession*>							SessionSet;
 typedef SessionSet::iterator								SessionSetItr;
 typedef SessionSet::const_iterator							SessionSetConstItr;
 
-typedef std::tr1::unordered_map<uint32, EveClientSession*>SessionMap;
+typedef std::tr1::unordered_map<uint32, EveClientSession*>  SessionMap;
 typedef SessionMap::iterator								SessionMapItr;
 typedef SessionMap::const_iterator							SessionMapConstItr;
 
@@ -43,6 +44,14 @@ class SERVER_DECL Space : public Singleton<Space>
 {
 public:
 	Space();
+	
+	// ---- space information ----
+	bool Load_SpaceForm_fromDB(Database *targetdb);
+	void Delete_SpaceForm();
+	bool Create_RegionManagers_fromDB(Database *targetdb);
+	void Delete_RegionManagers();
+	
+	// ---------------------------
 
 	size_t GetConnectionCount() { return mAcceptedConnections; }
 	size_t GetAuthorizedCount() { return mAuthorizedConnections; }
@@ -82,7 +91,7 @@ public:
 	 *
 	 * @note this function is purely for server statistics.
 	 */
-	ASCENT_INLINE void OnClientDisconnect();
+	void OnClientDisconnect();
 
 	/**
 	 * @brief OnClientConnect is triggered when a client is authorized successfully.
@@ -91,7 +100,7 @@ public:
 	 *
 	 * @note this function is purely for server statistics.
 	 */
-	ASCENT_INLINE void OnClientConnect();
+	void OnClientConnect();
 
 	/**
 	 * @brief a function to generate user id's.
@@ -102,8 +111,23 @@ public:
 	 * @note this is so fucked up.... lol..... I hope that because of its natural overrun it will be safe.... lol.... but it isn't safe... (for clients hehe)
 	 */
 	uint32 GenerateUserId() { return mUserIdGeneratorNumber++; }
-
+	
+	
+	
 private:
+
+	// space information
+	uint32 m_regionsSize;
+	Region *m_regions;
+	
+	uint32 m_constellationsSize;
+	Constellation *m_constellations;
+	//------------------
+
+	// region managers objects got from DB assigned by is ID.
+	//uint32 m_regionSize;
+	//RegionMapMgr *m_spaceRegionsMgrs;
+	//------------------
 	
 	SessionMap m_sessions;
 	RWLock m_sessionlock;
@@ -124,6 +148,7 @@ protected:
 	uint32 mStartTime;
 	uint32 m_queueUpdateTimer;
 };
+
 
 #endif//__SPACE_H
 

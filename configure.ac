@@ -148,6 +148,7 @@ AC_CONFIG_FILES([
 	3rdparty/Makefile
 	3rdparty/tinyxml/Makefile
 	src/ascent-shared/Makefile
+	extras/SolarSystemkdTree/Makefile
 	src/Makefile
 ])
 

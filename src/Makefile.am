@@ -16,12 +16,14 @@ bin_PROGRAMS = evemuserver
 
 evemuserver_SOURCES = \
     Authorization/PasswordModule.cpp \
-	Communication/MarshalReadStream.cpp \
+    Communication/DBRowModule.cpp \
 	Communication/MarshalStream.cpp \
-	Communication/MarshalWriteStream.cpp \
-	Communication/PyStream.cpp \
-	Communication/PyStringTable.cpp \
+	Communication/ReadStream.cpp \
+	Communication/WriteStream.cpp \
+	PythonObjects/PyChameleon.cpp \
 	PythonObjects/PyObjects.cpp \
+	PythonObjects/PyStringTable.cpp \
+	PythonObjects/PyUnicodeUCS2.cpp \
 	server/Session/EveSession.cpp \
 	server/Space/RegionMapManager.cpp \
 	server/Space/Space.cpp \
@@ -29,6 +31,7 @@ evemuserver_SOURCES = \
 	server/AccountMgr.cpp \
 	server/EveClientSession.cpp \
 	server/EveClientSocket.cpp \
+	Utilities/RleModule.cpp \
 	main.cpp
 
 evemuserver_LDADD = \

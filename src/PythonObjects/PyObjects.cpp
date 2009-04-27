@@ -671,6 +671,15 @@ bool PyTuple::GetString( const int index, std::string & str )
 	return true;
 }
 
+template<typename T>
+void PyTuple::set_item(const int index, T * object)
+{
+	if (index+1 > (int)mTuple.size())
+		mTuple.resize(index+1);
+	PyChameleon * itr = mTuple[index];
+	itr->setPyObject((PyObject*)object);
+}
+
 /* @todo add other variable types */
 int PyTuple::scanf( const char * format, ... )
 {

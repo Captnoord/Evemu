@@ -165,12 +165,12 @@ private:
 		// if there isn't anything in the container there can't be a hash collision.
 		if (mContainer.size() == 0)
 			return false;
-
-		StringMap::iterator Itr = mContainer.find(hash);
+		// TYPEDEF ISSUE
+		/*StringMap::iterator Itr = mContainer.find(hash);
 		if (Itr != mContainer.end())
 		{
 			return true;
-		}
+		}*/
 		return false;
 	}
 

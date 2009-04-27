@@ -90,12 +90,13 @@ public:
 		return _lookupAttribute(keyName);
 	}
 
-	template<typename T>
+	// work in progress, commented (mmcs)
+	/*template<typename T>
 	void ChangeAttribute(const char* attr, T & towhat)
 	{
 		PySessionAttribute &attribute = _lookupAttribute(attr);
 		attribute.change(towhat);
-	}
+	}*/
 
 private:
 	PySessionAttribute &_lookupAttribute(const char * attr)
@@ -149,12 +150,12 @@ public:
 	/* utility functions */
 
 	PySessionAttribute GetDefaultValueOfAttribute(const char *attribute);
-
-	template<typename T>
+	// work in progress, commented (mmcs)
+	/*template<typename T>
 	void ChangeAttribute(const char* attr, T & towhat)
 	{
 		mSessionDict.ChangeAttribute(attr, towhat);
-	}
+	}*/
 
 	void LogSessionHistory(const char *reason, const char *details = NULL, bool noBlather = false);
 

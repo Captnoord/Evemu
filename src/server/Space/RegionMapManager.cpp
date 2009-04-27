@@ -27,31 +27,33 @@
 #define SPACE_REGION_UPDATE_DELAY 50
 
 RegionMapMgr::RegionMapMgr(uint32 regionID,uint8 nrWorkers) :
-regionID(regionID), workers_size(nrWorkers)
+m_regionID(regionID), m_workersSize(nrWorkers),m_isLoaded(false), m_solarsystemsSize(0), m_solarsystems(NULL)
 {
-	
-		
-	
-	
-	
+
+
 }
 	
 RegionMapMgr::~RegionMapMgr()
 {
 	
 	
-	
-	
-	
-	
-	
-	
 }
+
+/*void loadRegion_fromDB(Database *targetStaticDB, Database *targetDynamicDB)
+{
+	// TODO: create solars information and load kdtree from dynamic db Solar Objects cache.
+	
+	// region is loaded, then the manager can spawn the threads.
+	m_isLoaded = true;
+}*/
 
 void RegionMapMgr::SpawnWorkerThreads()
 {
-    for(uint8 i = 0; i < workers_size; ++i)
-        ThreadPool.ExecuteTask(new RegionMapWorkerThread());
+	if(m_isLoaded)
+	{
+    	for(uint8 i = 0; i < m_workersSize; ++i)
+        	ThreadPool.ExecuteTask(new RegionMapWorkerThread());
+    }
 }
 
 

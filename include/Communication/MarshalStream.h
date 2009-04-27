@@ -1,6 +1,8 @@
 #ifndef _MARSHALSTREAM_H
 #define _MARSHALSTREAM_H
 
+// hack?
+#define BOOL bool
 /**
  * \class MarshalStream
  *
@@ -51,7 +53,6 @@ protected:
 	/* common packet python variables */
 	PyInt PyIntZero;
 	PyInt PyIntOne;
-	PyInt PyIntMinOne;
 	PyInt PyIntMinusOne;
 
 	PyFloat PyFloatZero;
