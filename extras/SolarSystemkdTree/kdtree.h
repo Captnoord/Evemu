@@ -13,10 +13,10 @@ class kdTreeNode
 
 	// solarsystem stuff
 	uint32 m_nrObjects; //number of objects
-	SolarSystemObject *m_objects; // pointer to the begining of the objects	
+	SolarSystemObject *m_objects; // pointer to the beginning of the objects	
 
 	//pointers to left and right tree nodes
-	kdTreeNode *m_left; 
+	kdTreeNode *m_left;
 	kdTreeNode *m_right;
 	
 public:	

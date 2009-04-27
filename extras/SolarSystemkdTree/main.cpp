@@ -1,3 +1,4 @@
+#include "ascent.h"
 #include <GL/glut.h>
 #include <cmath>
 #include <ctime>
@@ -5,7 +6,6 @@
 #include <stdlib.h>
 #include <iostream>
 
-#include "ascent.h"
 #include "SpaceForm.h"
 #include "kdtree.h"
 #include "camera.h"
@@ -49,11 +49,9 @@ SolarSystemkdTree mysolarTree(MAX_TREE_DEPTH, MAX_NROBJECTS_NODE);
 //***************************************************  glut shit
 bool keys[0xff];
 
-
-
 void display();
 
-void KeyDown(unsigned char key, int x, int y)
+void KeyDown(unsigned char key, int /*x*/, int /*y*/)
 {
 	switch (key) 
 	{
@@ -120,7 +118,7 @@ void KeyDown(unsigned char key, int x, int y)
 }
 
 
-void keyUp(unsigned char key,int x,int y)
+void keyUp(unsigned char key,int /*x*/,int /*y*/)
 {
 	keys[key] = false;
 }
@@ -128,7 +126,7 @@ void keyUp(unsigned char key,int x,int y)
 void renderBitmapCharacter(float x, float y, float z, void *font,char *string)
 {
   char *c;
-  glRasterPos3f(x, y,z);
+  glRasterPos3f(x, y, z);
   for (c=string; *c != '\0'; c++) {
     glutBitmapCharacter(font, *c);
   }
@@ -156,8 +154,7 @@ void DrawNet(GLfloat size, GLint LinesX, GLint LinesZ)
 					-size / 2.0 + zc / (GLfloat)(LinesZ-1)*size);
 	}
 	glEnd();
-}
-	
+}	
 
 /* internal db start up wrapper... */
 bool _DBStartup(std::string _hostname, uint32 _port, std::string _username, std::string _password, std::string _databaseStatic, std::string _databaseDynamic)
@@ -169,7 +166,7 @@ bool _DBStartup(std::string _hostname, uint32 _port, std::string _username, std:
 	std::string dynamicdb = _databaseDynamic;
 
 	uint32 port = _port;
-	int type = 1; // 1 is mysql
+	int type = 1; // 1 is MYSQL
 	int connectionCount = 3; // make this configurable
 
 	// we use 2 database handles
@@ -231,9 +228,9 @@ void display()
 		glVertex3f(trav->x0,trav->y1,trav->z1);
 		glEnd();
 	}*/
-	
+
 	glCallList(kd_rend);
-	
+
 	/*if(near_k!=NULL)
 	{
 		glColor3f(1,1,0);
@@ -258,10 +255,9 @@ void display()
 		 glVertex3f(near_1->x-2,near_1->y+2,near_1->z);
 		glEnd();
 	}*/
-	glFlush();  
+	glFlush();
 	glutSwapBuffers();
 }
-
 
 void reshape(int x, int y)
 {	
@@ -276,7 +272,7 @@ void reshape(int x, int y)
 	gluPerspective(45,ratio,0.01f,600);
 
 	glMatrixMode(GL_MODELVIEW);
-	// Set the viewport to be the entire window
+	// Set the view port to be the entire window
 	glViewport(0, 0, x, y);
 	glLoadIdentity();
 }
@@ -309,7 +305,7 @@ SolarSystemObject* Load_SolarSystem_fromDB(uint64 solarsystemID,uint32 *solarSiz
 	Field *field = NULL;
 	double xCenter,yCenter,zCenter;
 	
-	printf("geting solarsystemID info.\n");
+	printf("getting solarsystemID info.\n");
 	
 	result = StaticDatabase.Query("SELECT x,y,z,xMin,yMin,zMin,xMax,yMax,zMax FROM mapSolarSystems WHERE SolarSystemID = %u", solarsystemID);
 	if(!result)
@@ -331,8 +327,8 @@ SolarSystemObject* Load_SolarSystem_fromDB(uint64 solarsystemID,uint32 *solarSiz
 	*yMax = field[7].GetDouble();
 	*zMax = field[8].GetDouble();
 
-	// move the bounds of the box to the (0,0,0) coords, since the bound is relative to the solar center vector.
-	// this way whe get the bounds in the same position of the objects, since the sun is always in the (0,0,0)
+	// move the bounds of the box to the (0,0,0) coordinations, since the bound is relative to the solar center vector.
+	// this way we get the bounds in the same position of the objects, since the sun is always in the (0,0,0)
 	*xMin -= xCenter;
 	*yMin -= yCenter;
 	*zMin -= zCenter;
@@ -342,7 +338,7 @@ SolarSystemObject* Load_SolarSystem_fromDB(uint64 solarsystemID,uint32 *solarSiz
 	
 	printf("xMin: %e, yMin: %e, zMin: %e, xMax: %e, yMax: %e, zMax: %e\n",*xMin,*yMin,*zMin,*xMax,*yMax,*zMax);
 		
-	printf("geting objects by solarsystemID.\n");
+	printf("getting objects by solarsystemID.\n");
 	
 	delete result;
 	result = StaticDatabase.Query("SELECT itemID,itemName,typeID,groupID,x,y,z,radius FROM mapDenormalize WHERE SolarSystemID = %u", solarsystemID);
@@ -356,7 +352,7 @@ SolarSystemObject* Load_SolarSystem_fromDB(uint64 solarsystemID,uint32 *solarSiz
 	
 	SolarSystemObject *newSolarData = new SolarSystemObject[*solarSize];
 	
-	// NOTE: since whe got the above, if whe need absolute coordinates for this objects, then whe sum the center vector :)
+	// NOTE: since we got the above, if we need absolute coordinates for this objects, then we sum the center vector :)
 		
 	uint32 index = 0;
 	do
@@ -374,7 +370,7 @@ SolarSystemObject* Load_SolarSystem_fromDB(uint64 solarsystemID,uint32 *solarSiz
 		printf("typeID: %i,objectName: %s, groupID: %i\n",newSolarData[index].typeID,newSolarData[index].objectName,newSolarData[index].groupID);		
 		printf("objectID: %i, x: %e, y: %e, z: %e,rad: %e\n",newSolarData[index].objectID,newSolarData[index].x,newSolarData[index].y,newSolarData[index].z,
 																	newSolarData[index].radius);	
-		index++;	
+		index++;
 	} while(result->NextRow());
 	
 	delete result;
@@ -384,7 +380,7 @@ SolarSystemObject* Load_SolarSystem_fromDB(uint64 solarsystemID,uint32 *solarSiz
 int main(int argc, char ** argv)
 {
 
-	bool dbret =  _DBStartup("localhost",3306, "root","xpto12345", "eve_dbo", "eve_olddb");
+	bool dbret =  _DBStartup("localhost",3306, "padawa","theforce", "evemu_trunk", "evemu_rewrite_dynamic");
 	if(dbret == false)
 	{
 		Log.Error("Database", "Unable to connect to the db.");

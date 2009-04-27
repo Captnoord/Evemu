@@ -1,9 +1,14 @@
 
-#include <GL/glut.h>
+#include "ascent.h"
+
 #include <cstdlib>
+#include <cstdio>
+
+#include <GL/glut.h>
+
 #include <cmath>
 
-#include "ascent.h"
+
 #include "SpaceForm.h"
 #include "kdtree.h"
 
@@ -64,7 +69,6 @@ kdTreeNode::kdTreeNode(double xMin,double yMin,double zMin,double xMax,double yM
 m_splitplane(SPLIT_PLANE_X),m_xMin(xMin),m_yMin(yMin),m_zMin(zMin),m_xMax(xMax),m_yMax(yMax),m_zMax(zMax),
 m_nrObjects(0),m_objects(NULL),m_left(NULL),m_right(NULL)
 {
-		
 }
 
 kdTreeNode::~kdTreeNode()

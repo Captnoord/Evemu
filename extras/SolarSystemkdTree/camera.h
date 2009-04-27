@@ -62,5 +62,3 @@ public:
 	void StrafeRight ( double Distance );
 
 };
-
-

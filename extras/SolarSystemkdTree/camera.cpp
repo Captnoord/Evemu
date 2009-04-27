@@ -14,17 +14,14 @@
   If you want to use parts of any code of mine:
 	let me know and
 	use it!
-
 **/
 
-
-
 #include <GL/glut.h>		// Need to include it here because the GL* types are required
+
 #include <stdlib.h>
 #include <iostream>
 #include "math.h"
 #include "camera.h"
-
 
 #define SQR(x) (x*x)
 
