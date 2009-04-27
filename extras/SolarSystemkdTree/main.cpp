@@ -384,7 +384,7 @@ SolarSystemObject* Load_SolarSystem_fromDB(uint64 solarsystemID,uint32 *solarSiz
 int main(int argc, char ** argv)
 {
 
-	bool dbret =  _DBStartup("localhost",3306, "root", "xptodb", "eve_dbo", "eve_olddb");
+	bool dbret =  _DBStartup("localhost",3306, "root","xpto12345", "eve_dbo", "eve_olddb");
 	if(dbret == false)
 	{
 		Log.Error("Database", "Unable to connect to the db.");

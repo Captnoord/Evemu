@@ -1,0 +1,19 @@
+
+keyboard for aplication:
+
+ ESC - exit aplication
+ 'a' - rotate to left
+ 'd' - rotate to right		
+ 'w' - move foward
+ 's' - move backward
+ 
+ 'x' - rotate up
+ 'y' - rotate down		
+ 'c' - strafe to the right
+ 'v' - strafe to the left
+ 'f' - move down
+ 'r' - move up
+ 'm' - rotate in z axis to left
+ 'n' - rotate in z axis to right
+ 
+ 'l' - toogle camera speed from light speed to normal speed
