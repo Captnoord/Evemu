@@ -43,6 +43,7 @@ class kdTreeNode
 	kdTreeNode *m_left;
 	kdTreeNode *m_right;
 	
+	void merge_sort_objects(SolarSystemObject *a, int32 n);
 public:	
 	friend class SolarSystemkdTree;
 	

@@ -41,52 +41,52 @@
 #define SPLIT_PLANE_Y 1
 #define SPLIT_PLANE_Z 2
 
-// rand methods
-int rand_int(const int & l, const int & r)
+void kdTreeNode::merge_sort_objects(SolarSystemObject *a, int32 n)
 {
-	return rand()%(r-l)+l;
-}
-
-uint32 partition(SolarSystemObject *solarObjects, uint32 left, uint32 right, uint32 splitplane, uint32 pivot)
-{
-	double pval = splitplane == SPLIT_PLANE_X ? solarObjects[pivot].x : splitplane == SPLIT_PLANE_Y ? solarObjects[pivot].y : solarObjects[pivot].z;
+	int32 i, j, k;
 	
-	SolarSystemObject temp; 
-	temp = solarObjects[right];
-	solarObjects[right] = solarObjects[pivot];
-	solarObjects[pivot] = temp;
-	
-	uint32 sindex = left;
-	for(uint32 i = left; i < right; i++)
+	/* For small arrays, insertion sort is much faster */
+	if (n < 64) {
+		SolarSystemObject tmp;
+		for (i = 1; i < n; i++) {
+			tmp = a[i];
+			for (j = i-1; j >= 0 && ((m_splitplane == SPLIT_PLANE_X ? tmp.x : m_splitplane == SPLIT_PLANE_Y ? tmp.y : tmp.z ) <
+			                         (m_splitplane == SPLIT_PLANE_X ? a[j].x : m_splitplane == SPLIT_PLANE_Y ? a[j].y : a[j].z )); j--) 
+			      a[j+1] = a[j];
+			
+			a[j+1] = tmp;
+		}
+		return;
+	}
+ 
+ 	/* f = number of elements in first half */
+	int32 f = n >> 1;		
+ 
+    /* Recursively sort both halves */
+	merge_sort_objects(a, f);
+	merge_sort_objects(a+f, n-f);
+ 
+    /* Merge */
+	SolarSystemObject *s = new SolarSystemObject[n];	/* temporary array to keep the sorted sequence */
+ 
+	for(i = 0, j = f, k = 0; i < f && j < n;)
 	{
-		if(( splitplane == SPLIT_PLANE_X ? solarObjects[i].x : splitplane == SPLIT_PLANE_Y ? solarObjects[i].y : solarObjects[i].z ) < pval)
+		if ( (m_splitplane == SPLIT_PLANE_X ? a[i].x : m_splitplane == SPLIT_PLANE_Y ? a[i].y : a[i].z ) <
+			 (m_splitplane == SPLIT_PLANE_X ? a[j].x : m_splitplane == SPLIT_PLANE_Y ? a[j].y : a[j].z )    )
 		{
-			temp = solarObjects[i];
-			solarObjects[i] = solarObjects[sindex];
-			solarObjects[sindex] = temp;
-			sindex++;
+				s[k++] = a[i++];
+		}
+		else
+		{
+				s[k++] = a[j++];
 		}
 	}
-	
-	temp = solarObjects[sindex];
-	solarObjects[sindex] = solarObjects[right];
-	solarObjects[right] = temp;
-
-	return sindex;
-}
-
-void quicksort(SolarSystemObject *solarObjects, uint32 left, uint32 right, uint32 splitplane)
-{	
-	if(right > left)
-	{
-		uint32 pivot = rand_int(left,right);
-		uint32 npivot = partition(solarObjects,left,right,splitplane,pivot);
-		if(npivot > 0)
-		{
-			quicksort(solarObjects,left,npivot-1,splitplane);
-			quicksort(solarObjects,npivot+1,right,splitplane);
-		}
-	}
+ 
+	while (i < f) s[k++] = a[i++];
+	while (j < n) s[k++] = a[j++];
+ 
+	for (i = 0; i < n; i++) a[i] = s[i];
+	delete[] s;
 }
 
 kdTreeNode::kdTreeNode(double xMin,double yMin,double zMin,double xMax,double yMax,double zMax) :
@@ -112,21 +112,16 @@ void kdTreeNode::build(SolarSystemObject *solarObjects, uint32 nrObjects, uint32
 		m_objects = solarObjects;
 		return;
 	}
-	
-	//printf("nrObjects: %i\n",nrObjects);
-	
-	//splits along the axis of who the treeNode bound is largest
+		
+	// splits along the axis of who the treeNode bound is largest
 	m_splitplane = (m_xMax-m_xMin > m_yMax-m_yMin) ? SPLIT_PLANE_X : (m_yMax-m_yMin > m_zMax-m_zMin) ? SPLIT_PLANE_Y : SPLIT_PLANE_Z; 
-	
-	// sorts the points in order along the axis splited
-	quicksort(solarObjects,0,nrObjects-1,m_splitplane); 
+
+	// merge sort the objects according the splited plane
+	merge_sort_objects(solarObjects,nrObjects);
 		
 	// calculate the nr objects to the left and right of the objects size.	
 	uint32 numl = nrObjects >> 1;
 	uint32 numr = nrObjects-numl;
-	
-	//printf("numl: %i\n",numl);
-	//printf("numr: %i\n",numr);
 	
 	//calculate bounds for each split
 	switch(m_splitplane)
@@ -173,110 +168,6 @@ void kdTreeNode::build(SolarSystemObject *solarObjects, uint32 nrObjects, uint32
 	m_left->build(solarObjects,numl,maxObjectsInNode,maxDepth,cdepth+1);
 	m_right->build(solarObjects+numl,numr,maxObjectsInNode,maxDepth,cdepth+1);
 }
-
-/*void kdTreeNode::save(std::stringstream *stream)
-{	
-	*stream << m_splitplane;
-	
-	*stream << m_xMin << m_yMin << m_zMin;
-	*stream << m_xMax << m_yMax << m_zMax;
-	
-	if(!m_left && !m_right)
-	{
-		// solar data
-		*stream << m_nrObjects;
-		
-		for(uint32 i=0; i < m_nrObjects; i++)
-		{
-			*stream << m_objects[i].objectID << m_objects[i].typeID << m_objects[i].groupID;
-			*stream << m_objects[i].x << m_objects[i].y << m_objects[i].z << m_objects[i].radius;
-			*stream << m_objects[i].objectName;
-		}
-		
-		*stream << false;
-		*stream << false;
-	}
-
-	if(m_left)
-	{
-		*stream << true; 
-		m_left->save(stream);
-	}
-		
-	if(m_right) 
-	{
-		*stream << true;
-		m_right->save(stream);
-	}	
-}
-
-void kdTreeNode::traverseSaveTreeToBuffer() {
-   std::stack<kdTreeNode*> nodes = new std::stack();
-   kdTreeNode *currentNode,*right,*left;
-   
-   nodes.push(m_mainNode);  
-   
-   while (!nodes.empty()){
-      currentNode = nodes.top();
-      nodes.pop();
-      right = currentNode->m_right;
-      if (right != NULL)
-         nodes.push(right);
-      left = currentNode->m_left;
-      if (left != null)
-         nodes.push(left);      
-
-      //save to the buffer.
-      currentNode->saveToBuffer();
-   }
-}*/
-
-/*
-char finalhash[20];
-
-char hexval[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
-for(int j = 0; j < 10; j++){
-finalhash[j*2] = hexval[((hval[j] >> 4) & 0xF)];
-finalhash[(j*2) + 1] = hexval[(hval[j]) & 0x0F];
-}
-*/
-/*
-void kdTreeNode::load(std::stringstream *stream) 
-{
-	printf("TEST\n");
-	*stream >> m_splitplane;
-	
-	*stream >> m_xMin >> m_yMin >> m_zMin;
-	*stream >> m_xMax >> m_yMax >> m_zMax;
-	
-	bool left,right;
-	
-	*stream >> left;
-	
-	if(left)
-		m_left->load(stream);
-	
-	*stream >> right;
-	
-	if(right)
-		m_right->load(stream);
-		
-	if(!left && !right)
-	{
-		// solar data
-		*stream >> m_nrObjects;
-		
-		m_objects = new SolarSystemObject[m_nrObjects]; 
-		
-		for(uint32 i=0; i < m_nrObjects; i++)
-		{
-			*stream >> m_objects[i].objectID >> m_objects[i].typeID >> m_objects[i].groupID;
-			*stream >> m_objects[i].x >> m_objects[i].y >> m_objects[i].z >> m_objects[i].radius;
-			*stream >> m_objects[i].objectName;
-		}
-	}
-}
-*/
 
 //kd-tree rendering method
 void kdTreeNode::render()
@@ -348,24 +239,6 @@ void SolarSystemkdTree::build_tree(SolarSystemObject *solarObjects, uint32 nrObj
 	m_mainNode = new kdTreeNode(xMin,yMin,zMin,xMax,yMax,zMax);
 	m_mainNode->build(solarObjects,nrObjects,m_maxObjectsInNode,m_maxDepth,0);
 }
-
-/*
-void SolarSystemkdTree::save_tree(std::stringstream *stream)
-{
-	*stream << m_maxDepth << m_maxObjectsInNode;
-	
-	if(m_mainNode) 
-		m_mainNode->save(stream);
-}
-
-void SolarSystemkdTree::load_tree(std::stringstream *stream) 
-{
-	*stream >> m_maxDepth >> m_maxObjectsInNode;
-	
-	if(m_mainNode) 
-		m_mainNode->load(stream);
-}
-*/
 
 void SolarSystemkdTree::render_tree()
 {

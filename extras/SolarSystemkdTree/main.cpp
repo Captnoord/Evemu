@@ -48,7 +48,7 @@
 #define SCALE_RESOLUTION 1e-10
 //uint32 nnum = 20; //number of points to search for k-nearest
 #define MAX_TREE_DEPTH 10 // max depth of recursion in kd-tree
-#define MAX_NROBJECTS_NODE 2 //max number of objects per cell in kd-tree
+#define MAX_NROBJECTS_NODE 1 //max number of objects per cell in kd-tree
 
 // 142 objects
 #define SOLARSYSTEMID 5249 // current fetch solar id
@@ -60,6 +60,7 @@ Database* Database_dynamic;
 
 double speed = CAMSPEEDLIGHT;
 float ratio;
+// GLUT_BITMAP_HELVETICA_10
 int font=(int)GLUT_BITMAP_HELVETICA_10;
 
 CCamera Camera;
@@ -405,7 +406,7 @@ SolarSystemObject* Load_SolarSystem_fromDB(uint64 solarsystemID,uint32 *solarSiz
 int main(int argc, char ** argv)
 {
 
-	bool dbret =  _DBStartup("localhost",3306, "padawa","theforce", "evemu_trunk", "evemu_rewrite_dynamic");
+	bool dbret =  _DBStartup("localhost",3306, "powanda","theforce", "evemu_trunk", "evemu_rewrite_dynamic");
 	if(dbret == false)
 	{
 		Log.Error("Database", "Unable to connect to the db.");
@@ -416,12 +417,10 @@ int main(int argc, char ** argv)
     now = GetTickCount();
 
 	mysolarData = Load_SolarSystem_fromDB(SOLARSYSTEMSUMEDVAL+SOLARSYSTEMID,&solarSize,&xMin,&yMin,&zMin,&xMax,&yMax,&zMax);
-	
-
 	mysolarTree.build_tree(mysolarData,solarSize,xMin,yMin,zMin,xMax,yMax,zMax);
 	
 	printf("time to build: %ums\n", GetTickCount() - now);
-	printf("DEBUG: \nsolar_objects_size: %d\n",solarSize);
+	printf("solar_objects_size: %d\n",solarSize);
 	
 	glutInit(&argc,argv); 
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGB);
