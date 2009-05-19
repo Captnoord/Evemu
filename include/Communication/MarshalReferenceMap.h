@@ -76,12 +76,29 @@ public:
 		}
 
 		mReferenceObjects.clear();
+		mStoredObjectCount = 0;
+		mStoreObjectIndex = 0;
+		mExpectedObjectsCount = 0;
+		//mReferenceObjects(NULL)
 
 		//if (mReferenceObjects)
 		//	SafeFree(mReferenceObjects);
 		//SafeDeleteArray(mReferenceObjects);
 		//SafeDelete(mReferenceObjects);
 		//delete mReferenceObjects;
+	}
+
+	void clear()
+	{
+		for (uint32 i = 0; i < mExpectedObjectsCount; i++)
+		{
+			mReferenceObjects[i]->DecRef();
+		}
+
+		mReferenceObjects.clear();
+		mStoredObjectCount = 0;
+		mStoreObjectIndex = 0;
+		mExpectedObjectsCount = 0;
 	}
 
 	/**
@@ -164,7 +181,7 @@ public:
 		//	SafeFree(mReferenceObjects)
 			//SafeDeleteArray(mReferenceObjects);
 
-		assert(mReferenceObjects.size() == 0);
+		//assert(mReferenceObjects.size() == 0);
 		mReferenceObjects.resize(sharedObjectCount);
 
 		//mReferenceObjects = new PyObject*[expectedObjectsCount+1];

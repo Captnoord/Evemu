@@ -386,6 +386,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\Utilities\FileModule.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\include\Utilities\HexAsciiModule.h"
 				>
 			</File>
@@ -395,6 +399,10 @@
 			</File>
 			<File
 				RelativePath="..\..\include\Utilities\RleModule.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\Utilities\RowSet.h"
 				>
 			</File>
 		</Filter>

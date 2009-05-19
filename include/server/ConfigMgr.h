@@ -48,6 +48,11 @@ public:
 	void initBulkData();
 
 	/**
+	* this function loads the bulk data from bulkdata
+	*/
+	void loadFromBulk();
+
+	/**
 	 * \brief gets the 'initvals' for the client
 	 *
 	 * no long description.
@@ -63,6 +68,9 @@ private:
 
 	// keep the amount of none objects to a minimum so share it as much as possible.
 	PyBaseNone PyNone;
+
+	// we keep this class here because it contains the static objects we use in the cached objects.
+	MarshalStream mMarshalStream;
 };
 #endif // _CONFIGMGR_H
 

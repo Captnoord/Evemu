@@ -106,12 +106,12 @@ int main(int argc, char *argv[])
 	}
 
 	/* connect the db system to the db */
-	bool dbret = _DBStartup();
+	/*bool dbret = _DBStartup();
 	if(dbret == false)
 	{
 		Log.Error("Database", "Unable to connect to the db.");
 		return 0;
-	}
+	}*/
 
 	time_t curTime;
 
@@ -126,9 +126,10 @@ int main(int argc, char *argv[])
 	uint32 next_printout = GetTickCount(), next_send = GetTickCount();
 
 	/* server services */
-	//new ConfigMgr;				/* depending on the database system. */
-	new Space;					/* not depending on anything atm. */
-	new AccountMgr;				/* depending on the database system. */
+	//new Space;					/* not depending on anything atm. */
+	//new AccountMgr;				/* depending on the database system. */
+	//new ObjectCachingSvc;		/* depending on unknown. */
+	new ConfigMgr;				/* depending on the database system. */
 	
 	/*if(!sSpace.LoadSpaceFormFromDB(Database_static))
 	{

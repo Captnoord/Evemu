@@ -123,7 +123,7 @@ void QueryBuffer::AddQuery(const char * format, ...)
 
 	size_t len = strlen(query);
 	char * pBuffer = new char[len+1];
-	memcpy(pBuffer, query, len + 1);
+	memcpy(pBuffer, query, len+1);
 
 	queries.push_back(pBuffer);
 }
@@ -132,7 +132,7 @@ void QueryBuffer::AddQueryNA( const char * str )
 {
 	size_t len = strlen(str);
 	char * pBuffer = new char[len+1];
-	memcpy(pBuffer, str, len + 1);
+	memcpy(pBuffer, str, len+1);
 
 	queries.push_back(pBuffer);
 }
@@ -141,7 +141,7 @@ void QueryBuffer::AddQueryStr(const string& str)
 {
 	size_t len = str.size();
 	char * pBuffer = new char[len+1];
-	memcpy(pBuffer, str.c_str(), len + 1);
+	memcpy(pBuffer, str.c_str(), len+1);
 
 	queries.push_back(pBuffer);
 }
@@ -183,7 +183,7 @@ bool Database::Execute(const char* QueryString, ...)
 
 	size_t len = strlen(query);
 	char * pBuffer = new char[len+1];
-	memcpy(pBuffer, query, len + 1);
+	memcpy(pBuffer, query, len+1);
 
 	queries_queue.push(pBuffer);
 	return true;
@@ -196,7 +196,7 @@ bool Database::ExecuteNA(const char* QueryString)
 
 	size_t len = strlen(QueryString);
 	char * pBuffer = new char[len+1];
-	memcpy(pBuffer, QueryString, len + 1);
+	memcpy(pBuffer, QueryString, len+1);
 
 	queries_queue.push(pBuffer);
 	return true;

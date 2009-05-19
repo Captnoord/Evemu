@@ -48,6 +48,9 @@ public:
 	/* utility function */
 	PyBaseNone* GetPyNone();
 
+	/* clear left over stuff so we can reuse this */
+	void clear();
+
 protected:
 	
 	/* common packet python variables */

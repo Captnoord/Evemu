@@ -241,6 +241,11 @@ protected:
 	// current state function pointer
 	stateProc mCurrentStateMachine;
 
+	/**
+	 * resets the connection when we are in authorization mode.
+	 */
+	void ResetConnection();
+
 private:
 
 	/* Session of this socket */

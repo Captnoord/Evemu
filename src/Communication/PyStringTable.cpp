@@ -72,7 +72,7 @@ bool PyMarshalStringTable::LookupString(uint8 index, std::string &str)
 		return false;
 	}
 
-	str = StringTableData[index];
+	str = StringTableData[index-1];
 	mLock.Release();
 	return true;
 }
@@ -88,7 +88,7 @@ bool PyMarshalStringTable::LookupPyString( uint8 index, PyString *&str )
 		return false;
 	}
 
-	str = &mPyStringTable[index];
+	str = &mPyStringTable[index-1];
 	str->IncRef();
 	mLock.Release();
 	return true;

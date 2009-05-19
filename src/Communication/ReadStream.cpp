@@ -32,14 +32,14 @@
 #include "FastQueue.h"
 #include "BufferPool.h"
 
-ReadStream::ReadStream() : mBuffer(NULL), mSize(0), mReadIndex(0), mPayloadSize(0) {}
+ReadStream::ReadStream() : mBuffer(NULL), mSize(0), mReadIndex(0), mPayloadSize(0), mAllocatedMem(0) {}
 
-ReadStream::ReadStream( size_t size ) : mBuffer(NULL), mSize(size), mReadIndex(0), mPayloadSize(size)
+ReadStream::ReadStream( size_t size ) : mBuffer(NULL), mSize(size), mReadIndex(0), mPayloadSize(size),mAllocatedMem(0)
 {
 	resize(size);
 }
 
-ReadStream::ReadStream( const char* buff, size_t size ) : mBuffer(NULL), mSize(size), mReadIndex(0), mPayloadSize(size)
+ReadStream::ReadStream( const char* buff, size_t size ) : mBuffer(NULL), mSize(size), mReadIndex(0), mPayloadSize(size),mAllocatedMem(0)
 {
 	resize(size);
 

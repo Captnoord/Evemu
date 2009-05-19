@@ -163,7 +163,7 @@ static void testmarshal(PyStream * packet, uint32 depth = -1)
 			TestLog("PyReal 0.0");
 		} break;
 
-	case Op_PyBuffer:
+	case Op_PyLongString:
 		{
 			uint32 strlen = readExSize();
 			std::string str = readString(strlen);

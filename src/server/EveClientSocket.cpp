@@ -325,6 +325,7 @@ void EveClientSocket::_authStateNoCrypto(PyObject* object)
 	if(!tuple->GetString(0, cryptoVersion))
 	{
 		dlog("AuthStateMachine::_authStateNoCrypto unable to get crypt version string");
+		ResetConnection();
 		return;
 	}
 
@@ -339,8 +340,9 @@ void EveClientSocket::_authStateNoCrypto(PyObject* object)
 	}
 	else
 	{
+		/* add a generic message that they need to change there client config files */
 		sLog.Debug("Received invalid 'crypto' request!");
-		Disconnect();
+		ResetConnection();
 	}
 }
 
@@ -383,6 +385,7 @@ void EveClientSocket::_authStateCryptoChallenge(PyObject* object)
 	if (object->gettype() != PyTypeTuple)
 	{
 		dlog("AuthStateMachine::_authStateCryptoChallenge packet is not a PyTuple");
+		ResetConnection();
 		return;
 	}
 
@@ -390,6 +393,7 @@ void EveClientSocket::_authStateCryptoChallenge(PyObject* object)
 	if (tuple.size() != 2)
 	{
 		dlog("AuthStateMachine::_authStateCryptoChallenge tuple size is wrong");
+		ResetConnection();
 		return;
 	}
 
@@ -399,6 +403,7 @@ void EveClientSocket::_authStateCryptoChallenge(PyObject* object)
 	if(dict.gettype() != PyTypeDict)
 	{
 		dlog("AuthStateMachine::_authStateCryptoChallenge received object isn't a dict");
+		ResetConnection();
 		return;
 	}
 
@@ -410,12 +415,14 @@ void EveClientSocket::_authStateCryptoChallenge(PyObject* object)
 	if(!dict.scanf("user_name", "u", &UserName))
 	{
 		dlog("AuthStateMachine::_authStateCryptoChallenge unable to read username");
+		ResetConnection();
 		return;
 	}
 
 	if(!dict.get_buffer("user_password_hash", (char*)UserPasswordHash, 20))
 	{
 		dlog("AuthStateMachine::_authStateCryptoChallenge unable to read user password hash");
+		ResetConnection();
 		return;
 	}
 
@@ -479,13 +486,13 @@ void EveClientSocket::_authStateHandshakeSend(PyObject* object)
 	PyDict * session_init = new PyDict();
 	
 	  PyString * pyAddress = GetAddress();
-	  session_init->set_str ("languageID", "EN");
-	  session_init->set_int ("userid", userid);
-	  session_init->set_item("maxSessionTime", mMarshal.GetPyNone());
-	  session_init->set_int ("userType", 1);	/* userType: trial:23, steam:? normal:1? */
-	  session_init->set_int ("role", mAccountInfo->AccountRole);
-	  session_init->set_item("address", pyAddress);
-	  session_init->set_bool("inDetention", false);
+	  session_init->set_str ("languageID",		"EN");
+	  session_init->set_int ("userid",			userid);
+	  session_init->set_item("maxSessionTime",	mMarshal.GetPyNone());
+	  session_init->set_int ("userType",		1);	/* userType: trial:23, steam:? normal:1? */
+	  session_init->set_int ("role",			mAccountInfo->AccountRole);
+	  session_init->set_item("address",			pyAddress);
+	  session_init->set_bool("inDetention",		false);
 
 	dict.set_item("live_updates", new PyList());
 	dict.set_item("session_init", session_init);
@@ -504,6 +511,24 @@ void EveClientSocket::_authStateHandshakeSend(PyObject* object)
 void EveClientSocket::packetHandler( PyObject* object )
 {
 	Log.Debug("ClientSocket","received packet 'whooo' we passed authorization");
+
+	/************************************************************************/
+	/* split packet types, classes, tuple's and such                        */
+	/************************************************************************/
+
+	switch(object->gettype())
+	{
+		/* main stream packets */
+	case PyTypeClass:
+		break;
+
+		/* exceptions and such */
+	case PyTypeTuple:
+		break;
+	}
+
+	
+	
 
 	// small hack to manage to handle the unexpected stuff..
 	// and of course is this not the correct way 'todo' this
@@ -548,4 +573,13 @@ PyString * EveClientSocket::GetAddress()
 		return NULL;
 
 	return PyString_FromStringAndSize(address, len);
+}
+
+void EveClientSocket::ResetConnection()
+{
+	/* when we are resetting the connection we send the handshake again
+	 * and set login state machine back to its starting state.
+	 */
+	sendConnectionHandShake();
+	mCurrentStateMachine = &EveClientSocket::_authStateHandshake;
 }

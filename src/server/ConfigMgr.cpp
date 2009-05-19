@@ -24,6 +24,8 @@
 */
 
 #include "EvemuPCH.h"
+#include "FileModule.h"
+#include "PyObjectDumper.h"
 
 initialiseSingleton( ConfigMgr );
 
@@ -36,6 +38,8 @@ ConfigMgr::~ConfigMgr() {}
 
 bool ConfigMgr::init()
 {
+	loadFromBulk();
+
 	initServiceInfo();
 	initBulkData();
 
@@ -121,6 +125,94 @@ void ConfigMgr::initServiceInfo()
 	serviceInfo->set_item("onlineStatus",	&PyNone);
 	serviceInfo->set_item("LPSvc",			&PyNone);
 
+	/*
+	dict["trademgr"]="station"
+	dict["stationSvc"]=PyNone
+	dict["zsystem"]=PyNone
+	dict["invbroker"]=PyNone
+	dict["droneMgr"]=PyNone
+	dict["userSvc"]=PyNone
+	dict["map"]=PyNone
+	dict["beyonce"]=PyNone
+	dict["standing2"]=PyNone
+	dict["ram"]=PyNone
+	dict["DB"]=PyNone
+	dict["posMgr"]=PyNone
+	dict["voucher"]=PyNone
+	dict["entity"]=PyNone
+	dict["damageTracker"]=PyNone
+	dict["agentMgr"]=PyNone
+	dict["dogmaIM"]=PyNone
+	dict["machoNet"]=PyNone
+	dict["dungeonExplorationMgr"]=PyNone
+	dict["watchdog"]=PyNone
+	dict["ship"]=PyNone
+	dict["DB2"]=PyNone
+	dict["market"]=PyNone
+	dict["dungeon"]=PyNone
+	dict["npcSvc"]=PyNone
+	dict["sessionMgr"]=PyNone
+	dict["LSC"]="location"
+	dict["allianceRegistry"]=PyNone
+	dict["tutorialSvc"]="location"
+	dict["bookmark"]="location"
+	dict["cache"]=PyNone
+	dict["character"]=PyNone
+	dict["factory"]=PyNone
+	dict["facWarMgr"]=PyNone
+	dict["corpStationMgr"]=PyNone
+	dict["authentication"]=PyNone
+	dict["station"]="station"
+	dict["effectCompiler"]=PyNone
+	dict["slash"]="location"
+	dict["charmgr"]=PyNone
+	dict["BSD"]=PyNone
+	dict["reprocessingSvc"]=PyNone
+	dict["config"]="locationPreferred"
+	dict["billingMgr"]=PyNone
+	dict["billMgr"]=PyNone
+	dict["lookupSvc"]=PyNone
+	dict["emailreader"]=PyNone
+	dict["lootSvc"]=PyNone
+	dict["http"]=PyNone
+	dict["repairSvc"]=PyNone
+	dict["gagger"]=PyNone
+	dict["dataconfig"]=PyNone
+	dict["lien"]=PyNone
+	dict["i2"]=PyNone
+	dict["wormholeMgr"]="location"
+	dict["pathfinder"]=PyNone
+	dict["alert"]=PyNone
+	dict["director"]=PyNone
+	dict["dogma"]=PyNone
+	dict["aggressionMgr"]=PyNone
+	dict["corporationSvc"]=PyNone
+	dict["certificateMgr"]=PyNone
+	dict["clones"]=PyNone
+	dict["jumpCloneSvc"]=PyNone
+	dict["insuranceSvc"]=PyNone
+	dict["corpmgr"]=PyNone
+	dict["warRegistry"]=PyNone
+	dict["corpRegistry"]=PyNone
+	dict["account"]="location"
+	dict["gangSvc"]="location"
+	dict["objectCaching"]=PyNone
+	dict["counter"]=PyNone
+	dict["petitioner"]=PyNone
+	dict["keeper"]="solarsystem"
+	dict["LPSvc"]=PyNone
+	dict["clientStatsMgr"]=PyNone
+	dict["jumpbeaconsvc"]=PyNone
+	dict["scanMgr"]="solarsystem"
+	dict["contractMgr"]="location"
+	dict["debug"]=PyNone
+	dict["languageSvc"]=PyNone
+	dict["skillMgr"]=PyNone
+	dict["voiceMgr"]=PyNone
+	dict["onlineStatus"]=PyNone
+	dict["gangSvcObjectHandler"]=PyNone
+	*/
+
 	mMachoNetServiceInfo = (PyObject*)serviceInfo;
 	sObjectCachingSvc.CacheObject((PyObject*)serviceInfo, "machoNet.serviceInfo");
 }
@@ -130,4 +222,71 @@ void ConfigMgr::initBulkData()
 	QueryResult* result = StaticDatabase.QueryNA("SELECT * FROM invcategories");
 
 	SafeDelete(result);
+}
+
+void ConfigMgr::loadFromBulk()
+{
+	ReadStream readStream;
+	std::string bulkdatapath = "bulkdata/"; // todo make this configurable
+	std::string bulkdir = bulkdatapath + "*.cache";
+	
+	FileModule bulkdataDir(bulkdir.c_str());// FileModule or FileSystem
+	
+	const char* file_path = NULL;
+	while ((file_path = bulkdataDir.NextFile()) != NULL)
+	{
+		// fix path so we can open the file
+		std::string bulkdatafile = bulkdatapath + file_path;
+		FILE * fp = fopen(bulkdatafile.c_str(), "rb");
+		if (fp == NULL)
+		{
+			sLog.Error("ConfigMgr","Unable to open: %s", file_path);
+			return;
+		}
+
+		/* for those who don't know, this gets me the file size */
+		fseek(fp, 0, SEEK_END);
+		size_t fsize = ftell(fp);
+		fseek(fp, 0, SEEK_SET);
+
+		/* my read stream needs to be the same size as the file if I want to do
+		   nice things with it.
+		*/
+		if (!readStream.resize(fsize))
+		{
+			sLog.Error("ConfigMgr","Unable to allocate enough memory: %s", file_path);
+			fclose(fp);
+			return;
+		}
+
+		readStream.reset();
+		
+		size_t readCount = fread(readStream.content(), fsize, 1, fp);
+		if ((readCount * fsize) != fsize)
+		{
+			sLog.Error("ConfigMgr","Reading error while reading: %s", file_path);
+			fclose(fp);
+			return;
+		}
+
+		fclose(fp);
+
+		PyObject* bulk_obj = mMarshalStream.load(readStream);
+		if (bulk_obj == NULL)
+		{
+			sLog.Error("ConfigMgr","Parsing: %s resulted in a error", file_path);
+			return;
+		}
+
+		Dump(stdout, bulk_obj, 0);
+		int henk  = 3;
+
+		// we remove it for the moment
+		bulk_obj->DecRef();
+
+		/* its important that we check if this call may possible loose some objects */
+		mMarshalStream.clear();		
+
+		printf("ConfigMgr::walking::file_path: %s\n", file_path);
+	}
 }

@@ -5,7 +5,7 @@
 #include "DBRowModule.h"
 
 /* macro's that help debugging exceptions */
-//#define EVEMU_EXTRA_DEBUG
+#define EVEMU_EXTRA_DEBUG
 #ifdef _DEBUG
 #  ifdef EVEMU_EXTRA_DEBUG
 #    define MARSHALSTREAM_RETURN_NULL {ASCENT_HARDWARE_BREAKPOINT; return NULL;}
@@ -119,6 +119,9 @@ PyObject* MarshalStream::unmarshal( ReadStream & stream )
 		uint8 opcode;
 		stream.read1(opcode);
 
+		if(opcode & 0x40)
+			printf("shared object\n");
+
 		switch ( opcode & 0x3F )
 		{
 			case Op_PyNone:
@@ -221,9 +224,10 @@ PyObject* MarshalStream::unmarshal( ReadStream & stream )
 				MARSHALSTREAM_RETURN(&Py_ZeroStruct);
 			}
 			
-			case Op_PyLongString:
+			case Op_PyLongString_unk:
 			{
-				unmarshalState(Op_PyLongString, stream);
+				ASCENT_HARDWARE_BREAKPOINT;
+				unmarshalState(Op_PyLongString_unk, stream);
 				MARSHALSTREAM_RETURN(ReadBuffer(stream));
 			}
 			
@@ -314,13 +318,17 @@ PyObject* MarshalStream::unmarshal( ReadStream & stream )
 				MARSHALSTREAM_RETURN(PyUnicodeUCS2_DecodeUTF8(strptr, strlen));
 			}
 
-			/* binary blob */
-			case Op_PyBuffer:
+			case Op_PyLongString:
 			{
-				unmarshalState(Op_PyBuffer, stream);
-				
-				ASCENT_HARDWARE_BREAKPOINT;
-				MARSHALSTREAM_RETURN_NULL;
+				unmarshalState(Op_PyLongString, stream);
+				PyObject * str_obj = ReadBuffer(stream);
+				if ((opcode & 0x40) != 0)
+				{
+					str_obj->IncRef();
+					if(!mReferencedObjectsMap.StoreReferencedObject(str_obj))
+						MARSHALSTREAM_RETURN_NULL;
+				}
+				MARSHALSTREAM_RETURN(str_obj);
 			}
 
 			case Op_PyEmptyTuple:
@@ -516,6 +524,7 @@ PyObject* MarshalStream::unmarshal( ReadStream & stream )
 			/**/
 			case Op_PyLoadcPickledObject:
 			{
+				ASCENT_HARDWARE_BREAKPOINT;
 				unmarshalState(Op_PyLoadcPickledObject, stream);
 				/* |extended size|stream| */
 				//MARSHALSTREAM_RETURN(PyObject_CallMethod(unpickledObject, "load", 0);
@@ -524,6 +533,7 @@ PyObject* MarshalStream::unmarshal( ReadStream & stream )
 		
 			case Op_cPicked:
 			{
+				ASCENT_HARDWARE_BREAKPOINT;
 				unmarshalState(Op_cPicked, stream);
 				MARSHALSTREAM_RETURN_NULL;
 			}
@@ -588,6 +598,7 @@ PyObject* MarshalStream::unmarshal( ReadStream & stream )
 
 			default:
 			{
+				ASCENT_HARDWARE_BREAKPOINT;
 				Log.Error("MarshalStream", "Invalid type tag %d, '%c' in stream.", opcode, *((char*)&opcode));
 				MARSHALSTREAM_RETURN_NULL;
 			}
@@ -595,6 +606,7 @@ PyObject* MarshalStream::unmarshal( ReadStream & stream )
 		MARSHALSTREAM_RETURN_NULL;
 	}
 
+	ASCENT_HARDWARE_BREAKPOINT;
 	Log.Error("MarshalStream", "not enough data in the stream to read a additional character");
 	MARSHALSTREAM_RETURN_NULL;
 }
@@ -893,7 +905,7 @@ bool MarshalStream::checkAndInflate( ReadStream & stream )
 		return false;
 	}
 
-	/* check if the packet its compressed */
+	/* check if the packet is compressed */
 	if (idChar != '~' )
 	{
 		if (idChar != char(0x78))
@@ -917,12 +929,9 @@ bool MarshalStream::checkAndInflate( ReadStream & stream )
 			uint32 bufferMultiplier = 4;
 			u_long outBufferLen = sourcelen * bufferMultiplier;
 			u_long allocatedBufferLen = outBufferLen;
-#ifndef PACKET_PARSER_MEMORY_ON_DRUGS
+
 			Bytef * outBuffer = (Bytef *)ASCENT_MALLOC(outBufferLen);
-#else
-			Bytef * outBuffer = (Bytef *)sBufferPool.GetBuffer(outBufferLen);
-#endif
-			
+
 			int zlibUncompressResult = uncompress(outBuffer, &outBufferLen, source, sourcelen);
 			
 			if (zlibUncompressResult == Z_BUF_ERROR)
@@ -938,54 +947,36 @@ bool MarshalStream::checkAndInflate( ReadStream & stream )
 						break;
 					}
 
-#ifdef PACKET_PARSER_MEMORY_ON_DRUGS
-					sBufferPool.DumpBuffer(outBuffer, allocatedBufferLen);
-#endif
-
 					bufferMultiplier*=2;
 					outBufferLen = sourcelen * bufferMultiplier;
 
 					Log.Warning("MarshalStream","uncompress failed and we now do the increase buffer size trick: %d times. Resizing from: %u to %u", loop_limiter, outBufferLen / bufferMultiplier,outBufferLen);
 					
 					allocatedBufferLen = outBufferLen;
-#ifndef PACKET_PARSER_MEMORY_ON_DRUGS
+
 					outBuffer = (Bytef*)ASCENT_REALLOC(outBuffer, outBufferLen); // resize the output buffer
-#else
-					outBuffer = (Bytef *)sBufferPool.GetBuffer(outBufferLen);
-#endif
 					zlibUncompressResult = uncompress(outBuffer, &outBufferLen, source, sourcelen); // and try it again
 				}
 
 				if (zlibUncompressResult != Z_OK)
 				{
 					Log.Error("MarshalStream", "uncompress went wrong ***PANIC***");
-#ifndef PACKET_PARSER_MEMORY_ON_DRUGS
-					free(outBuffer);
-#else
-					sBufferPool.DumpBuffer(outBuffer, allocatedBufferLen);
-#endif
+
+					ASCENT_FREE(outBuffer);
 					return false;
 				}
 			}
 			else if (zlibUncompressResult != Z_OK)
 			{
 				Log.Error("MarshalStream", "uncompress went wrong ***PANIC***");
-#ifndef PACKET_PARSER_MEMORY_ON_DRUGS
-				free(outBuffer);
-#else
-				sBufferPool.DumpBuffer(outBuffer, allocatedBufferLen);
-#endif
+				ASCENT_FREE(outBuffer);
 				return false;
 			}
 			
 			/* if we get here it usually means uncompress was successful. */
 			stream.set(outBuffer, outBufferLen);
 
-#ifndef PACKET_PARSER_MEMORY_ON_DRUGS
-			free(outBuffer);
-#else
-			sBufferPool.DumpBuffer(outBuffer, allocatedBufferLen);
-#endif
+			ASCENT_FREE(outBuffer);
 		}
 	}
 	return true;
@@ -1534,6 +1525,11 @@ PyBaseNone* MarshalStream::GetPyNone()
 {
 	PyNone.IncRef();
 	return &PyNone;
+}
+
+void MarshalStream::clear()
+{
+	mReferencedObjectsMap.clear();
 }
 
 // undef our return null macro.

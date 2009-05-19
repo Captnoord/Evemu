@@ -34,7 +34,6 @@ CachedObject::CachedObject( bool shared, const char* objectID, PyObject *object,
 		PySubStream * wSubStream = new PySubStream();
 		wSubStream->set(wstream->content(), wstream->size());
 		
-
 		bases[1] = wSubStream;
 		// do zlib shit.. and store it as the pickled....
 
@@ -56,7 +55,6 @@ PyObject* CachedObject::GenerateObjectVersion( WriteStream& stream )
 	ShaModule::sha_final(shaResult, &shaObj);
 
 	/* a object version is a 2 tuple containing a stamp and a kind of hash */
-
 	PyTuple& obj_version = *new PyTuple(2);
 	obj_version[0] = 1337;							// lolz stamp
 	obj_version.set_str(1, (char*)shaResult, 20);	 // this is ugly I know.
