@@ -126,91 +126,91 @@ void ConfigMgr::initServiceInfo()
 	serviceInfo->set_item("LPSvc",			&PyNone);
 
 	/*
-	dict["trademgr"]="station"
-	dict["stationSvc"]=PyNone
-	dict["zsystem"]=PyNone
-	dict["invbroker"]=PyNone
-	dict["droneMgr"]=PyNone
-	dict["userSvc"]=PyNone
-	dict["map"]=PyNone
-	dict["beyonce"]=PyNone
-	dict["standing2"]=PyNone
-	dict["ram"]=PyNone
-	dict["DB"]=PyNone
-	dict["posMgr"]=PyNone
-	dict["voucher"]=PyNone
-	dict["entity"]=PyNone
-	dict["damageTracker"]=PyNone
-	dict["agentMgr"]=PyNone
-	dict["dogmaIM"]=PyNone
-	dict["machoNet"]=PyNone
-	dict["dungeonExplorationMgr"]=PyNone
-	dict["watchdog"]=PyNone
-	dict["ship"]=PyNone
-	dict["DB2"]=PyNone
-	dict["market"]=PyNone
-	dict["dungeon"]=PyNone
-	dict["npcSvc"]=PyNone
-	dict["sessionMgr"]=PyNone
-	dict["LSC"]="location"
-	dict["allianceRegistry"]=PyNone
-	dict["tutorialSvc"]="location"
-	dict["bookmark"]="location"
-	dict["cache"]=PyNone
-	dict["character"]=PyNone
-	dict["factory"]=PyNone
-	dict["facWarMgr"]=PyNone
-	dict["corpStationMgr"]=PyNone
-	dict["authentication"]=PyNone
-	dict["station"]="station"
-	dict["effectCompiler"]=PyNone
-	dict["slash"]="location"
-	dict["charmgr"]=PyNone
-	dict["BSD"]=PyNone
-	dict["reprocessingSvc"]=PyNone
-	dict["config"]="locationPreferred"
-	dict["billingMgr"]=PyNone
-	dict["billMgr"]=PyNone
-	dict["lookupSvc"]=PyNone
-	dict["emailreader"]=PyNone
-	dict["lootSvc"]=PyNone
-	dict["http"]=PyNone
-	dict["repairSvc"]=PyNone
-	dict["gagger"]=PyNone
-	dict["dataconfig"]=PyNone
-	dict["lien"]=PyNone
-	dict["i2"]=PyNone
-	dict["wormholeMgr"]="location"
-	dict["pathfinder"]=PyNone
-	dict["alert"]=PyNone
-	dict["director"]=PyNone
-	dict["dogma"]=PyNone
-	dict["aggressionMgr"]=PyNone
-	dict["corporationSvc"]=PyNone
-	dict["certificateMgr"]=PyNone
-	dict["clones"]=PyNone
-	dict["jumpCloneSvc"]=PyNone
-	dict["insuranceSvc"]=PyNone
-	dict["corpmgr"]=PyNone
-	dict["warRegistry"]=PyNone
-	dict["corpRegistry"]=PyNone
-	dict["account"]="location"
-	dict["gangSvc"]="location"
-	dict["objectCaching"]=PyNone
-	dict["counter"]=PyNone
-	dict["petitioner"]=PyNone
-	dict["keeper"]="solarsystem"
-	dict["LPSvc"]=PyNone
-	dict["clientStatsMgr"]=PyNone
-	dict["jumpbeaconsvc"]=PyNone
-	dict["scanMgr"]="solarsystem"
-	dict["contractMgr"]="location"
-	dict["debug"]=PyNone
-	dict["languageSvc"]=PyNone
-	dict["skillMgr"]=PyNone
-	dict["voiceMgr"]=PyNone
-	dict["onlineStatus"]=PyNone
-	dict["gangSvcObjectHandler"]=PyNone
+	serviceInfo->set_str ("trademgr",		"station");
+	serviceInfo->set_item("stationSvc",		&PyNone);
+	serviceInfo->set_item("zsystem",		&PyNone);
+	serviceInfo->set_item("invbroker",		&PyNone);
+	serviceInfo->set_item("droneMgr",		&PyNone);
+	serviceInfo->set_item("userSvc",		&PyNone);
+	serviceInfo->set_item("map",			&PyNone);
+	serviceInfo->set_item("beyonce",		&PyNone);
+	serviceInfo->set_item("standing2",		&PyNone);
+	serviceInfo->set_item("ram",			&PyNone);
+	serviceInfo->set_item("DB",				&PyNone);
+	serviceInfo->set_item("posMgr",			&PyNone);
+	serviceInfo->set_item("voucher",		&PyNone);
+	serviceInfo->set_item("entity",			&PyNone);
+	serviceInfo->set_item("damageTracker",	&PyNone);
+	serviceInfo->set_item("agentMgr",		&PyNone);
+	serviceInfo->set_item("dogmaIM",		&PyNone);
+	serviceInfo->set_item("machoNet",		&PyNone);
+	serviceInfo->set_str ("dungeonExplorationMgr", &PyNone);
+	serviceInfo->set_item("watchdog",		&PyNone);
+	serviceInfo->set_item("ship",			&PyNone);
+	serviceInfo->set_item("DB2",			&PyNone);
+	serviceInfo->set_item("market",			&PyNone);
+	serviceInfo->set_item("dungeon",		&PyNone);
+	serviceInfo->set_item("npcSvc",			&PyNone);
+	serviceInfo->set_item("sessionMgr",		&PyNone);
+	serviceInfo->set_str ("LSC",			"location");
+	serviceInfo->set_item("allianceRegistry", &PyNone);
+	serviceInfo->set_str ("tutorialSvc",	"location");
+	serviceInfo->set_str ("bookmark",		"location");
+	serviceInfo->set_item("cache",			&PyNone);
+	serviceInfo->set_item("character",		&PyNone);
+	serviceInfo->set_item("factory",		&PyNone);
+	serviceInfo->set_item("facWarMgr",		&PyNone);
+	serviceInfo->set_item("corpStationMgr", &PyNone);
+	serviceInfo->set_item("authentication", &PyNone);
+	serviceInfo->set_item("station",		"station");
+	serviceInfo->set_item("effectCompiler", &PyNone);
+	serviceInfo->set_str ("slash",			"location");
+	serviceInfo->set_item("charmgr",		&PyNone);
+	serviceInfo->set_item("BSD",			&PyNone);
+	serviceInfo->set_item("reprocessingSvc", &PyNone);
+	serviceInfo->set_str ("config",			"locationPreferred");
+	serviceInfo->set_item("billingMgr",		&PyNone);
+	serviceInfo->set_item("billMgr",		&PyNone);
+	serviceInfo->set_item("lookupSvc",		&PyNone);
+	serviceInfo->set_item("emailreader",	&PyNone);
+	serviceInfo->set_item("lootSvc",		&PyNone);
+	serviceInfo->set_item("http",			&PyNone);
+	serviceInfo->set_item("repairSvc",		&PyNone);
+	serviceInfo->set_item("gagger",			&PyNone);
+	serviceInfo->set_item("dataconfig",		&PyNone);
+	serviceInfo->set_item("lien",			&PyNone);
+	serviceInfo->set_item("i2",				&PyNone);
+	serviceInfo->set_str ("wormholeMgr",	"location");
+	serviceInfo->set_item("pathfinder",		&PyNone);
+	serviceInfo->set_item("alert",			&PyNone);
+	serviceInfo->set_item("director",		&PyNone);
+	serviceInfo->set_item("dogma",			&PyNone);
+	serviceInfo->set_item("aggressionMgr",	&PyNone);
+	serviceInfo->set_item("corporationSvc", &PyNone);
+	serviceInfo->set_item("certificateMgr", &PyNone);
+	serviceInfo->set_item("clones",			&PyNone);
+	serviceInfo->set_item("jumpCloneSvc",	&PyNone);
+	serviceInfo->set_item("insuranceSvc",	&PyNone);
+	serviceInfo->set_item("corpmgr",		&PyNone);
+	serviceInfo->set_item("warRegistry",	&PyNone);
+	serviceInfo->set_item("corpRegistry",	&PyNone);
+	serviceInfo->set_str ("account",		"location");
+	serviceInfo->set_str ("gangSvc",		"location");
+	serviceInfo->set_item("objectCaching",	&PyNone);
+	serviceInfo->set_item("counter",		&PyNone);
+	serviceInfo->set_item("petitioner",		&PyNone);
+	serviceInfo->set_str ("keeper",			"solarsystem");
+	serviceInfo->set_item("LPSvc",			&PyNone);
+	serviceInfo->set_item("clientStatsMgr", &PyNone);
+	serviceInfo->set_item("jumpbeaconsvc",	&PyNone);
+	serviceInfo->set_str ("scanMgr",		"solarsystem");
+	serviceInfo->set_str ("contractMgr",	"location");
+	serviceInfo->set_item("debug",			&PyNone);
+	serviceInfo->set_item("languageSvc",	&PyNone);
+	serviceInfo->set_item("skillMgr",		&PyNone);
+	serviceInfo->set_item("voiceMgr",		&PyNone);
+	serviceInfo->set_item("onlineStatus",	&PyNone);
+	serviceInfo->set_item("gangSvcObjectHandler", &PyNone);
 	*/
 
 	mMachoNetServiceInfo = (PyObject*)serviceInfo;
@@ -219,9 +219,9 @@ void ConfigMgr::initServiceInfo()
 
 void ConfigMgr::initBulkData()
 {
-	QueryResult* result = StaticDatabase.QueryNA("SELECT * FROM invcategories");
+	//QueryResult* result = StaticDatabase.QueryNA("SELECT * FROM invcategories");
 
-	SafeDelete(result);
+	//SafeDelete(result);
 }
 
 void ConfigMgr::loadFromBulk()
@@ -254,7 +254,7 @@ void ConfigMgr::loadFromBulk()
 		*/
 		if (!readStream.resize(fsize))
 		{
-			sLog.Error("ConfigMgr","Unable to allocate enough memory: %s", file_path);
+			sLog.Error("ConfigMgr", "Unable to allocate enough memory: %s", file_path);
 			fclose(fp);
 			return;
 		}
@@ -264,7 +264,7 @@ void ConfigMgr::loadFromBulk()
 		size_t readCount = fread(readStream.content(), fsize, 1, fp);
 		if ((readCount * fsize) != fsize)
 		{
-			sLog.Error("ConfigMgr","Reading error while reading: %s", file_path);
+			sLog.Error("ConfigMgr", "Reading error while reading: %s", file_path);
 			fclose(fp);
 			return;
 		}
@@ -274,18 +274,20 @@ void ConfigMgr::loadFromBulk()
 		PyObject* bulk_obj = mMarshalStream.load(readStream);
 		if (bulk_obj == NULL)
 		{
-			sLog.Error("ConfigMgr","Parsing: %s resulted in a error", file_path);
+			sLog.Error("ConfigMgr", "Parsing: %s resulted in a error", file_path);
 			return;
 		}
 
+		//CachedObject * henk = (CachedObject *)bulk_obj;
+
 		Dump(stdout, bulk_obj, 0);
-		int henk  = 3;
+		//int henk  = 3;
 
 		// we remove it for the moment
-		bulk_obj->DecRef();
+		//bulk_obj->DecRef();
 
 		/* its important that we check if this call may possible loose some objects */
-		mMarshalStream.clear();		
+		mMarshalStream.clear();
 
 		printf("ConfigMgr::walking::file_path: %s\n", file_path);
 	}

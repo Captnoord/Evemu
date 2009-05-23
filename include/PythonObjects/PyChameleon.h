@@ -41,7 +41,6 @@ class PyString;
 class PySubStream;
 struct PyDictEntry;
 
-
 /**
  * \class PyChameleon
  *
@@ -72,8 +71,6 @@ public:
 
 	/**
 	 * @brief 
-	 *
-	 * 
 	 *
 	 * @param[in]
 	 * @param[out]
@@ -117,8 +114,6 @@ private:
  * \class PyErrorChameleon
  *
  * @brief the PyErrorChameleon class is a VERY important class related to error detection and checking.
- *
- * 
  *
  * @author Captnoord.
  * @date January 2009

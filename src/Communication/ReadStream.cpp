@@ -34,7 +34,7 @@
 
 ReadStream::ReadStream() : mBuffer(NULL), mSize(0), mReadIndex(0), mPayloadSize(0), mAllocatedMem(0) {}
 
-ReadStream::ReadStream( size_t size ) : mBuffer(NULL), mSize(size), mReadIndex(0), mPayloadSize(size),mAllocatedMem(0)
+ReadStream::ReadStream( size_t size ) : mBuffer(NULL), mSize(size), mReadIndex(0), mPayloadSize(size), mAllocatedMem(0)
 {
 	resize(size);
 }
@@ -81,6 +81,7 @@ bool ReadStream::resize( size_t newsize )
 
 	mSize = newsize;
 	mPayloadSize = newsize;
+	mAllocatedMem = newsize;
 	return true;
 }
 

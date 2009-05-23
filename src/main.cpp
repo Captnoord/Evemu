@@ -33,8 +33,8 @@ static volatile bool m_stopEvent;
 initialiseSingleton(FileLogger);
 
 /* basic prototypes */
-bool _DBStartup();
-bool _DBShutdown();
+bool StartDatabase();
+bool ShutdownDatabase();
 void _HookSignals();
 void _UnhookSignals();
 static void _OnSignal(int s);
@@ -106,12 +106,11 @@ int main(int argc, char *argv[])
 	}
 
 	/* connect the db system to the db */
-	/*bool dbret = _DBStartup();
-	if(dbret == false)
+	if(!StartDatabase())
 	{
 		Log.Error("Database", "Unable to connect to the db.");
 		return 0;
-	}*/
+	}
 
 	time_t curTime;
 
@@ -126,9 +125,9 @@ int main(int argc, char *argv[])
 	uint32 next_printout = GetTickCount(), next_send = GetTickCount();
 
 	/* server services */
-	//new Space;					/* not depending on anything atm. */
-	//new AccountMgr;				/* depending on the database system. */
-	//new ObjectCachingSvc;		/* depending on unknown. */
+	new Space;					/* not depending on anything atm. */
+	new AccountMgr;				/* depending on the database system. */
+	new ObjectCachingSvc;		/* depending on unknown. */
 	new ConfigMgr;				/* depending on the database system. */
 	
 	/*if(!sSpace.LoadSpaceFormFromDB(Database_static))
@@ -148,7 +147,7 @@ int main(int argc, char *argv[])
 
 	/* listen settings */
 	string host = Config.GetStringDefault( "Listen", "Host", "127.0.0.1" );
-	int wsport = Config.GetIntDefault( "Listen", "WorldServerPort", 26000 );
+	int wsport = Config.GetIntDefault( "Listen", "ServerPort", 26000 );
 
 #ifdef WIN32
 	HANDLE hThread = GetCurrentThread();
@@ -205,7 +204,7 @@ int main(int argc, char *argv[])
 	}
 	
 	//sSpace.DeleteSpaceForm();
-	_DBShutdown();
+	ShutdownDatabase();
 
 	return 1;
 }
@@ -259,18 +258,13 @@ void _UnhookSignals()
 }
 
 #ifdef WIN32
-
 Mutex m_crashedMutex;
-
 // Crash Handler
-void OnCrash( bool Terminate )
-{
-}
-
+void OnCrash( bool Terminate ) {}
 #endif
 
 /* internal db start up wrapper... */
-bool _DBStartup()
+bool StartDatabase()
 {
 	std::string dynamic_hostname;
 	std::string dynamic_username;
@@ -335,7 +329,7 @@ bool _DBStartup()
 }
 
 /* internal db shutdown wrapper... */
-bool _DBShutdown()
+bool ShutdownDatabase()
 {
 	SafeDelete(Database_static);
 	SafeDelete(Database_dynamic);

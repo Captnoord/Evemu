@@ -57,7 +57,7 @@ void AccountMgr::_updateAccountInfo()
 	QueryResult *result = DynamicDatabase.Query("SELECT * FROM account");
 	if(!result)
 	{
-		sLog.String("Query failed: SELECT * FROM account");
+		sLog.Error("Query failed: SELECT * FROM account");
 		return;
 	}
 

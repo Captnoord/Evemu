@@ -497,7 +497,7 @@ PyObject* MarshalStream::unmarshal( ReadStream & stream )
 			case Op_PyModuleInstance:
 			{
 				unmarshalState(Op_PyModuleInstance, stream);
-				MARSHALSTREAM_RETURN(ReadClass(stream, (opcode >> 6) & 0xFFFFFF01));
+				MARSHALSTREAM_RETURN(ReadClass(stream, (opcode & 0x40) != 0));
 			}
 
 			/* unknown isn't handled but what we know of them is that its related to the cPickle system */
