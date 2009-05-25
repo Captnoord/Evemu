@@ -108,7 +108,9 @@ public:
 	 */
 	//void CacheObject(CachedObject* object) {}
 
-	void CacheObject(PyObject* object, const char * objectID );
+	void CacheObject(PyObject *object, const char *objectID );
+
+	void AddCachedObject(CachedObject *cachedObject, const char *objectID);
 
 private:
 	PyDict mCachedObjects; // keeps track of the cached objects

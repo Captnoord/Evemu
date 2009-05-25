@@ -68,6 +68,18 @@ protected:
 	UnmarshalReferenceMap mReferencedObjectsMap;
 
 private:
+
+	bool sharedObjectFunction(PyObject* obj, size_t & resultingRefCount);
+
+	//             obj hash | shared object id
+	typedef std::map<uint32, uint32>	SharedObjectMap;
+	typedef SharedObjectMap::iterator	SharedObjectMapItr;
+
+	SharedObjectMap mSharedObjects;
+	uint32 mLastSharedObjectID;
+
+
+
 	/**
 	 * \brief unmarshal this function deserializes the python stream.
 	 *

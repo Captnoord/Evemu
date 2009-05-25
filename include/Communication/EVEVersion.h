@@ -26,11 +26,9 @@
 #ifndef __EVE_VERSION_H
 #define __EVE_VERSION_H
 
-//supported client is the Quantum Rise client build 69477
-
-static const uint8 MachoNetVersion = 206;
-static const double EveVersionNumber = 6.10;
-static const uint32 EveBuildVersion = 85476;
+static const uint8 MachoNetVersion = 214;
+static const double EveVersionNumber = 6.12;
+static const uint32 EveBuildVersion = 88974;
 static const char *const EveProjectCodename = "EVE-EVE-RELEASE";
 static const char *const EveProjectRegion = "ccp";
 static const char *const EveProjectVersion = "EVE-EVE-RELEASE@ccp";

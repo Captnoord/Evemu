@@ -162,8 +162,8 @@ private:
 	size_t mRefcnt;
 	uint32 (PyLong::*mHash)();
 public:
-	explicit PyLong(int64 & num);
-	explicit PyLong(uint64 & num);
+	explicit PyLong(int64 num);
+	explicit PyLong(uint64 num);
 	~PyLong();
 	int64 GetValue();
 private:
@@ -308,7 +308,23 @@ public:
 	 * @return always returns a PyChameleon object even if there isn't a object stored (so it can be used to store objects).
 	 */
 	PyChameleon &operator[](const int index);
+		
 	PyObject* GetItem(const int index);
+
+	template<typename T>
+	bool GetItem(const int index, T& item)
+	{
+		// check for morons
+		if (index < 0)
+			return false;
+
+		if (index+1 > (int)mTuple.size())
+			return false;
+
+		PyChameleon * itr = mTuple[index];
+		item = (T)itr->getPyObject();
+		return true;
+	}
 
 	int GetInt(const int index);
 	double GetFloat(const int index);
@@ -325,8 +341,11 @@ public:
 	template<typename T>
 	void set_item(const int index, T * object);
 
+	// generic object setters..... because it makes the code a bit cleaner
 	void set_str(const int index, const char* str);
 	void set_str(const int index, const char* str, const size_t len);
+	void set_int(const int index, const int number);
+	void set_long(const int index, const long number);
 
 	/**
 	 * \brief a VA function for getting multiple object from a tuple.

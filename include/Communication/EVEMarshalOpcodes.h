@@ -40,13 +40,13 @@ typedef enum _PyRepOpcodes
 	Op_PyFloat				= 0x0Au,	//10
 	Op_PyZeroFloat			= 0x0Bu,	//11
 	//Op_PyUnused1			= 0x0Cu,	//12
-	Op_PyLongString_unk			= 0x0Du,	//13	| for strings longer than 255
+	Op_PyLongString_unk		= 0x0Du,	//13	| for strings longer than 255
 	Op_PyEmptyString		= 0x0Eu,	//14
 	Op_PyCharString			= 0x0Fu,	//15
 	Op_PyShortString		= 0x10u,	//16
 	Op_PyStringTableItem	= 0x11u,	//17
 	Op_PyUnicodeString		= 0x12u,	//18	| full unicode string
-	Op_PyLongString				= 0x13u,	//19
+	Op_PyLongString			= 0x13u,	//19
 	Op_PyTuple				= 0x14u,	//20
 	Op_PyList				= 0x15u,	//21
 	Op_PyDict				= 0x16u,	//22

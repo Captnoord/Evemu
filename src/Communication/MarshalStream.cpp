@@ -35,7 +35,7 @@
 #endif//_DEBUG
 
 MarshalStream::MarshalStream() : PyIntZero(0), PyIntOne(1), PyIntMinusOne(-1), PyFloatZero(0.0),
-	Py_TrueStruct(true), Py_ZeroStruct(false) {}
+	Py_TrueStruct(true), Py_ZeroStruct(false), mLastSharedObjectID(0) {}
 
 MarshalStream::~MarshalStream() {}
 
@@ -1133,7 +1133,14 @@ bool marshalString(const char* str, WriteStream & stream)
 
 bool MarshalStream::marshal( PyObject * object, WriteStream & stream )
 {
+	// fucked stuff..... make a special PyObject for this so we can do better typecasting.
+	uint8 * helper = (uint8 *)object;
+	size_t refCount = *(size_t*)(helper+1);
+	
 	uint8 object_type = ((PyInt*)object)->gettype();
+	
+	/*if (refCount>1 && object_type != PyTypeNone)
+		__asm{int 3};*/	
 	
 	switch (object_type)
 	{
@@ -1170,7 +1177,7 @@ bool MarshalStream::marshal( PyObject * object, WriteStream & stream )
 		}
 	case PyTypeInt:
 		{
-			int32 val = ((PyInt *)object)->GetValue();;
+			int32 val = ((PyInt *)object)->GetValue();
 
 			if (val == -1)
 			{
@@ -1530,6 +1537,11 @@ PyBaseNone* MarshalStream::GetPyNone()
 void MarshalStream::clear()
 {
 	mReferencedObjectsMap.clear();
+}
+
+bool MarshalStream::sharedObjectFunction( PyObject* obj, size_t & resultingRefCount )
+{
+	return true;
 }
 
 // undef our return null macro.

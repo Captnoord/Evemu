@@ -8,7 +8,7 @@ initialiseSingleton(ObjectCachingSvc);
 /************************************************************************/
 CachedObject::CachedObject( bool shared, const char* objectID, PyObject *object, PyObject* objectVersion /*= NULL */ ) : PyClass()
 {
-    ASCENT_HARDWARE_BREAKPOINT;
+    //ASCENT_HARDWARE_BREAKPOINT;
     ASCENT_ASSERT(!mBases);
     ASCENT_ASSERT(!mName);
 
@@ -50,27 +50,23 @@ CachedObject::CachedObject( bool shared, const char* objectID, PyObject *object,
 
 PyObject* CachedObject::GenerateObjectVersion( WriteStream& stream )
 {
-    // TODO: seg fault...
-    /*unsigned char shaResult[20];
-    const char *shaSalt = "thisIsAFuckedUpSaltX";
-    ShaModule::SHAobject shaObj;
-    ShaModule::sha_init(&shaObj);
-    ShaModule::sha_digest(&shaObj, (uint8*)shaSalt);
-    ShaModule::sha_update(&shaObj, (ShaModule::SHA_BYTE*)stream.content(), (int)stream.size());
-    ShaModule::sha_final(shaResult, &shaObj);
-    */
+	char shaResult1[20];
+	std::string shaInit = "thisIsAFuckedUpSaltX";
+	ShaModule::SHAobject shaObj;
+	ShaModule::sha_init(&shaObj);
+	ShaModule::sha_digest(&shaObj, shaInit);
+	ShaModule::sha_update(&shaObj, (ShaModule::SHA_BYTE*)stream.content(), (int)stream.size());
+	ShaModule::sha_final((unsigned char*)shaResult1, &shaObj);
 
     // using a predefined result sha
+    //unsigned char shaResult[20] = {'\x02','\x0f','1x0a','\x0b','\x02','\x0f','1x0a','\x0b','\x02','\x0f',
+    //                               '1x0a','\x0b','\x02','\x0f','1x0a','\x0b','\x02','\x0f','1x0a','\x0b'};
 
-    unsigned char shaResult[20] = {'\x02','\x0f','1x0a','\x0b','\x02','\x0f','1x0a','\x0b','\x02','\x0f',
-                                   '1x0a','\x0b','\x02','\x0f','1x0a','\x0b','\x02','\x0f','1x0a','\x0b'};
+    PyTuple *obj_version = new PyTuple(2);
 
-
-    /* a object version is a 2 tuple containing a stamp and a kind of hash */
-    PyTuple& obj_version = *new PyTuple(2);
-    obj_version[0] = 1337;                          // lolz stamp
-    obj_version.set_str(1, (char*)shaResult, 20);    // this is ugly I know.
-    return (PyObject*)&obj_version;
+    obj_version->set_int(0, 1337);							// timestamp
+    obj_version->set_str(1, (char*)shaResult1, 20);			// hash
+    return (PyObject*)obj_version;
 }
 
 /************************************************************************/
@@ -114,4 +110,9 @@ void ObjectCachingSvc::CacheObject( PyObject* object, const char * objectID )
 {
     CachedObject * newCachedObject = new CachedObject(1, objectID, object);
     mCachedObjects.set_item(objectID, (PyObject*)newCachedObject);
+}
+
+void ObjectCachingSvc::AddCachedObject( CachedObject *cachedObject, const char *objectID )
+{
+
 }

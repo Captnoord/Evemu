@@ -286,13 +286,13 @@ int32 PyInt::GetValue()
 /************************************************************************/
 /* PyLong                                                               */
 /************************************************************************/
-PyLong::PyLong( int64 & num ) : mNumber(num), mType(PyTypeLong), mRefcnt(1)
+PyLong::PyLong( int64 num ) : mNumber(num), mType(PyTypeLong), mRefcnt(1)
 {
 	mHash = &PyLong::_hash;
 }
 
 /* @todo solve the signed/unsigned problem */
-PyLong::PyLong( uint64 & num ) : mNumber(num), mType(PyTypeLong), mRefcnt(1)
+PyLong::PyLong( uint64 num ) : mNumber(num), mType(PyTypeLong), mRefcnt(1)
 {
 	mHash = &PyLong::_hash;
 }
@@ -802,6 +802,23 @@ void PyTuple::set_str( const int index, const char* str, const size_t len )
 	PyChameleon * itr = mTuple[index];
 	itr->setPyObject((PyObject*)new PyString(str, len)); // GCC is not going to like this
 }
+
+void PyTuple::set_int( const int index, const int number )
+{
+	if (index+1 > (int)mTuple.size())
+		mTuple.resize(index+1);
+	PyChameleon * itr = mTuple[index];
+	itr->setPyObject((PyObject*)new PyInt(number));
+}
+
+void PyTuple::set_long( const int index, const long number )
+{
+	if (index+1 > (int)mTuple.size())
+		mTuple.resize(index+1);
+	PyChameleon * itr = mTuple[index];
+	itr->setPyObject((PyObject*)new PyLong((int64)number));
+}
+
 /************************************************************************/
 /* PyList                                                               */
 /************************************************************************/
@@ -809,6 +826,7 @@ PyList::PyList() : mType(PyTypeList), mRefcnt(1)
 {
 	mHash = &PyList::_hash;
 }
+
 PyList::PyList( int elementCount ) : mType(PyTypeList), mRefcnt(1)
 {
 	mHash = &PyList::_hash;

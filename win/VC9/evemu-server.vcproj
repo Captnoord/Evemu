@@ -350,14 +350,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\Communication\PyStringTable.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\Communication\PyStringTable.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\Communication\ReadStream.cpp"
 				>
 			</File>

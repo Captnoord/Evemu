@@ -233,9 +233,14 @@ PyChameleon & PyChameleon::operator=( const PyBool* pointer )
 PyChameleon & PyChameleon::operator=( const PySubStream* pointer )
 {
 	assert(pointer != NULL);
-	assert(mIsEmpty == true);
+	//assert(mIsEmpty == true);
 	_settype(PyTypeSubStream);
-	assert(mPayload == NULL);
+	//assert(mPayload == NULL);
+	
+	/* remove the reference if we are replacing a entry */
+	if(mPayload != NULL)
+		mPayload->DecRef();
+
 	mPayload = (PyObject*)pointer;
 	mIsEmpty = false;
 	return *this;
