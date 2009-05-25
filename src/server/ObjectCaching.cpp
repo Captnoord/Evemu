@@ -8,22 +8,13 @@ initialiseSingleton(ObjectCachingSvc);
 /************************************************************************/
 CachedObject::CachedObject( bool shared, const char* objectID, PyObject *object, PyObject* objectVersion /*= NULL */ ) : PyClass()
 {
-    // NOTE: not properly working
-    /*ASCENT_HARDWARE_BREAKPOINT;
-    ASCENT_ASSERT(mBases);
-    ASCENT_ASSERT(mName);
+    ASCENT_HARDWARE_BREAKPOINT;
+    ASCENT_ASSERT(!mBases);
+    ASCENT_ASSERT(!mName);
 
     mName = new PyString("objectCaching.CachedObject");
     mBases = new PyTuple(7);
     PyTuple & bases = *mBases;
-    // TODO: objectVersion passed as NULL resulting in assert
-    bases[0] = objectVersion;       //object version
-    bases[1] = new PyBaseNone;      //the pickle, containing the MarshalSream of a object.
-    bases[2] = 0;                   //nodeID
-    bases[3] = shared;              //shared
-    bases[4] = object;              //object
-    bases[5] = 0;                   //compressed
-    bases[6] = objectID;            //objectID
 
     // make sure we are generating a version for this object if we need to
     if (shared == true || objectVersion == NULL)
@@ -43,18 +34,37 @@ CachedObject::CachedObject( bool shared, const char* objectID, PyObject *object,
 
         SafeDelete(wstream);
         bases[0].setPyObject(object_version); // this is going to crash hehe...
-    }*/
+    }
+    else
+    {
+        bases[0] = objectVersion;       //object version
+        bases[1] = new PyBaseNone;      //the pickle, containing the MarshalSream of a object.
+    }
+
+    bases[2] = 0;                   //nodeID
+    bases[3] = shared;              //shared
+    bases[4] = object;              //object
+    bases[5] = 0;                   //compressed
+    bases[6] = objectID;            //objectID
 }
 
 PyObject* CachedObject::GenerateObjectVersion( WriteStream& stream )
 {
-    unsigned char shaResult[20];
+    // TODO: seg fault...
+    /*unsigned char shaResult[20];
     const char *shaSalt = "thisIsAFuckedUpSaltX";
     ShaModule::SHAobject shaObj;
     ShaModule::sha_init(&shaObj);
     ShaModule::sha_digest(&shaObj, (uint8*)shaSalt);
     ShaModule::sha_update(&shaObj, (ShaModule::SHA_BYTE*)stream.content(), (int)stream.size());
     ShaModule::sha_final(shaResult, &shaObj);
+    */
+
+    // using a predefined result sha
+
+    unsigned char shaResult[20] = {'\x02','\x0f','1x0a','\x0b','\x02','\x0f','1x0a','\x0b','\x02','\x0f',
+                                   '1x0a','\x0b','\x02','\x0f','1x0a','\x0b','\x02','\x0f','1x0a','\x0b'};
+
 
     /* a object version is a 2 tuple containing a stamp and a kind of hash */
     PyTuple& obj_version = *new PyTuple(2);

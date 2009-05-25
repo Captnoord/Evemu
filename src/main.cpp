@@ -125,6 +125,7 @@ int main(int argc, char *argv[])
     uint32 next_printout = GetTickCount(), next_send = GetTickCount();
 
     /* server services */
+    new PyMarshalStringTable;
     new Space;                  /* not depending on anything atm. */
     new AccountMgr;             /* depending on the database system. */
     new ObjectCachingSvc;       /* depending on unknown. */
