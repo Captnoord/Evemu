@@ -29,8 +29,10 @@ evemuserver_SOURCES = \
 	server/Space/Space.cpp \
 	server/Space/SpaceRunnable.cpp \
 	server/AccountMgr.cpp \
+	server/ConfigMgr.cpp \
 	server/EveClientSession.cpp \
 	server/EveClientSocket.cpp \
+	server/ObjectCaching.cpp \
 	Utilities/RleModule.cpp \
 	main.cpp
 
@@ -39,7 +41,7 @@ evemuserver_LDADD = \
   -ltinyxml \
   -lz \
   -lpthread \
-  -ldl 
+  -ldl
 
 evemuserver_LDFLAGS = \
 	-L$(srcdir)/../3rdparty/tinyxml \

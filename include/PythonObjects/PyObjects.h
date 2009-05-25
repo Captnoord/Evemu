@@ -501,7 +501,7 @@ private:
  * @date February 2009
  */
 
-static int SubStreamCounter = 0;
+//static int SubStreamCounter = 0;
 class PySubStream
 {
 public:

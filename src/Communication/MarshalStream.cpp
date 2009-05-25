@@ -5,13 +5,13 @@
 #include "DBRowModule.h"
 
 /* macro's that help debugging exceptions */
-#define EVEMU_EXTRA_DEBUG
+//#define EVEMU_EXTRA_DEBUG
 #ifdef _DEBUG
 #  ifdef EVEMU_EXTRA_DEBUG
 #    define MARSHALSTREAM_RETURN_NULL {ASCENT_HARDWARE_BREAKPOINT; return NULL;}
 #    define MARSHALSTREAM_RETURN(p) {PyObject * x = ((PyObject*)p); assert(x != NULL); return x;}
-//#  define MARSHALSTREAM_RETURN(p) {PyObject * x = ((PyObject*)p); assert(x != NULL); Dump(stdout, (PyObject*)x, 0); return x;}
-//#  define MARSHALSTREAM_RETURN(p) {PyObject * x = ((PyObject*)p); assert(x != NULL); Dump(fp_debug, (PyObject*)x, 0); return x;}
+#  define MARSHALSTREAM_RETURN(p) {PyObject * x = ((PyObject*)p); assert(x != NULL); Dump(stdout, (PyObject*)x, 0); return x;}
+#  define MARSHALSTREAM_RETURN(p) {PyObject * x = ((PyObject*)p); assert(x != NULL); Dump(fp_debug, (PyObject*)x, 0); return x;}
 #  else
 #    define MARSHALSTREAM_RETURN_NULL return NULL;
 #    define MARSHALSTREAM_RETURN(p) return (PyObject*)p;

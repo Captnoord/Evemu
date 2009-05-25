@@ -241,6 +241,7 @@ void EveClientSocket::_authStateHandshake(PyObject* object)
 	std::string projectVersion;	
 
 	// note for mmcs look what I did :P
+    //                           'i'           'i'          'i'         'f'           'i'              's'
 	if(!tuple->scanf("iiifis", &birthDay, &machoVersion, &userCount, &versionNr, &buildVersion, &projectVersion))
 	{
 		Log.Error("ClientSocket","unable to read info from tuple");
