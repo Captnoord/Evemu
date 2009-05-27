@@ -26,6 +26,7 @@
 #ifndef _PYSTRING_H
 #define _PYSTRING_H
 
+#pragma pack(push,1)
 
 class PyString
 {
@@ -81,5 +82,7 @@ public:
 private:
     uint32 _hash();
 };
+
+#pragma pack(pop)
 
 #endif

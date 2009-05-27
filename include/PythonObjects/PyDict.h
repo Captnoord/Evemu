@@ -26,6 +26,8 @@
 #ifndef _PYDICT_H
 #define _PYDICT_H
 
+#pragma pack(push,1)
+
 class PyDict
 {
     uint8 mType;
@@ -119,5 +121,7 @@ private:
     DictMap mDict;
     uint32 _hash();
 };
+
+#pragma pack(pop)
 
 #endif // _PYDICT_H

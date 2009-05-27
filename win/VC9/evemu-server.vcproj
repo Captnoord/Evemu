@@ -450,11 +450,43 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\PythonObjects\PyClass.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\PythonObjects\PyClass.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\PythonObjects\PyDict.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\include\PythonObjects\PyDict.h"
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\PythonObjects\PyInstance.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\PythonObjects\PyInstance.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\PythonObjects\PyList.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\include\PythonObjects\PyList.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\PythonObjects\PyModule.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\PythonObjects\PyModule.h"
 				>
 			</File>
 			<File
@@ -478,6 +510,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\PythonObjects\PyPackedRow.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\PythonObjects\PyPackedRow.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\PythonObjects\PyString.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\include\PythonObjects\PyString.h"
 				>
 			</File>
@@ -487,6 +531,30 @@
 			</File>
 			<File
 				RelativePath="..\..\include\PythonObjects\PyStringTable.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\PythonObjects\PySubStream.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\PythonObjects\PySubStream.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\PythonObjects\PySubStruct.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\PythonObjects\PySubStruct.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\PythonObjects\PyTuple.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\PythonObjects\PyTuple.h"
 				>
 			</File>
 			<File

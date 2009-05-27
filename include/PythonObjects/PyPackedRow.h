@@ -26,6 +26,8 @@
 #ifndef _PYPACKEDROW_H
 #define _PYPACKEDROW_H
 
+#pragma pack(push,1)
+
 /**
  * \class PyPackedRow
  *
@@ -80,5 +82,7 @@ public:
     // local hash function
     uint32 _hash();
 };
+
+#pragma pack(pop)
 
 #endif //_PYPACKEDROW_H

@@ -26,6 +26,8 @@
 #ifndef _PYINSTANCE_H
 #define _PYINSTANCE_H
 
+#pragma pack(push,1)
+
 /**
 * \class PyInstance
 *
@@ -57,5 +59,6 @@ private:
     uint32 _hash();
 };
 
+#pragma pack(pop)
 
 #endif //_PYINSTANCE_H

@@ -26,13 +26,14 @@
 /* Small Todo and note space
    - check http://nedprod.com/programs/portable/nedmalloc/index.html as the we allocate and deallocate very very often due to
      the design
+   - Proxy node id is static.
 */
 
 #include "EvemuPCH.h"
 
 initialiseSingleton( Space );
 
-Space::Space() : mAcceptedConnections(0), mAuthorizedConnections(0), mStartTime(0), mUserIdGeneratorNumber(1) { }
+Space::Space() : mAcceptedConnections(0), mAuthorizedConnections(0), mStartTime(0), mUserIdGeneratorNumber(1), mProxyNodeID(666) { }
 
 bool Space::Load_SpaceForm_fromDB(Database *mdb)
 {

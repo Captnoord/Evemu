@@ -26,6 +26,8 @@
 #ifndef _PYSUBSTREAM_H
 #define _PYSUBSTREAM_H
 
+#pragma pack(push,1)
+
 /**
  * \class PySubStream
  *
@@ -61,5 +63,7 @@ public:
 private:
     uint32 _hash();
 };
+
+#pragma pack(pop)
 
 #endif //_PYSUBSTREAM_H

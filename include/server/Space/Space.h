@@ -111,8 +111,8 @@ public:
 	 * @note this is so fucked up.... lol..... I hope that because of its natural overrun it will be safe.... lol.... but it isn't safe... (for clients hehe)
 	 */
 	uint32 GenerateUserId() { return mUserIdGeneratorNumber++; }
-	
-	
+
+    uint32 GetProxyNodeID(){return mProxyNodeID;}
 	
 private:
 
@@ -147,6 +147,7 @@ protected:
 
 	uint32 mStartTime;
 	uint32 m_queueUpdateTimer;
+    uint32 mProxyNodeID;
 };
 
 

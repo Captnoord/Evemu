@@ -28,6 +28,8 @@
 
 class PyObject;
 
+#pragma pack(push,1)
+
 class PyUnicodeUCS2
 {
     uint8 mType;
@@ -55,6 +57,8 @@ public:
 private:
     uint32 _hash();
 };
+
+#pragma pack(pop)
 
 /************************************************************************/
 /* fake python api                                                      */

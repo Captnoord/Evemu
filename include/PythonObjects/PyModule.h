@@ -26,6 +26,8 @@
 #ifndef _PYMODULE_H
 #define _PYMODULE_H
 
+#pragma pack(push,1)
+
 /**
  * \class PyModule
  *
@@ -54,5 +56,7 @@ public:
 private:
     uint32 _hash();
 };
+
+#pragma pack(pop)
 
 #endif //_PYMODULE_H

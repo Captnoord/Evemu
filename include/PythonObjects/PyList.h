@@ -26,6 +26,8 @@
 #ifndef _PYLIST_H
 #define _PYLIST_H
 
+#pragma pack(push,1)
+
 class PyList
 {
     uint8 mType;
@@ -48,5 +50,7 @@ private:
     typedef std::vector<PyChameleon*>::iterator iterator;
     uint32 _hash();
 };
+
+#pragma pack(pop)
 
 #endif // _PYLIST_H

@@ -26,6 +26,8 @@
 #ifndef _PYTUPLE_H
 #define _PYTUPLE_H
 
+#pragma pack(push,1)
+
 /**
  * \class PyTuple
  *
@@ -119,5 +121,7 @@ private:
     // tuple hash function
     uint32 _hash();
 };
+
+#pragma pack(pop)
 
 #endif //_PYTUPLE_H

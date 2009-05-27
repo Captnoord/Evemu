@@ -26,6 +26,8 @@
 #ifndef _PYCLASS_H
 #define _PYCLASS_H
 
+#pragma pack(push,1)
+
 /**
  * \class PyClassObject
  *
@@ -70,5 +72,7 @@ protected:
     PyDict      *mDirivedCallDict;
     uint32 _hash();
 };
+
+#pragma pack(pop)
 
 #endif // _PYCLASS_H
