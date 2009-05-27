@@ -44,7 +44,6 @@
 #include "PyInstance.h"
 #include "PyList.h"
 #include "PyModule.h"
-#include "PyObjects.h"
 #include "PyPackedRow.h"
 #include "PySubStream.h"
 #include "PySubStruct.h"
