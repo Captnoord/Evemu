@@ -47,7 +47,6 @@ private:
     uint8 mType;
     size_t mRefcnt;
     uint32 (PyPackedRow::*mHash)();
-
 public:
     PyPackedRow();
     ~PyPackedRow();

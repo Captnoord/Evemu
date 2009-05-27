@@ -32,11 +32,11 @@ class PyDict
 {
     uint8 mType;
     size_t mRefcnt;
+    uint32 (PyDict::*mHash)();
     /** mMappingMode makes it possible to simply store the objects
      */
     bool    mMappingMode;
     uint32  mMappingIndex;
-    uint32 (PyDict::*mHash)();
 public:
     uint8 gettype();
     void IncRef();

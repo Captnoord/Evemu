@@ -34,10 +34,10 @@ class PyUnicodeUCS2
 {
     uint8 mType;
     size_t mRefcnt;
+    uint32 (PyUnicodeUCS2::*mHash)();
     wchar_t* mStr;
     size_t mStrLen;
     uint32 mHashValue; /* string hash cache */
-    uint32 (PyUnicodeUCS2::*mHash)();
 public:
     uint8 gettype();
     void IncRef();

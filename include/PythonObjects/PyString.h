@@ -32,11 +32,10 @@ class PyString
 {
     uint8 mType;
     size_t mRefcnt;
+    uint32 (PyString::*mHash)();
     char* mStr;
     size_t mStrLen;
     uint32 mHashValue;
-    uint32 (PyString::*mHash)();
-
 public:
     uint8 gettype();
     void IncRef();

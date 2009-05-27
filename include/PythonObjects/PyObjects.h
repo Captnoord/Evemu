@@ -139,8 +139,8 @@ class PyInt
 {
     uint8 mType;
     size_t mRefcnt;
-    int32 mNumber;
     uint32 (PyInt::*mHash)();
+    int32 mNumber;
 public:
     uint8 gettype();
     void IncRef();
@@ -163,9 +163,8 @@ class PyLong
 {
     uint8 mType;
     size_t mRefcnt;
-    int64 mNumber;
     uint32 (PyLong::*mHash)();
-
+    int64 mNumber;
 public:
     uint8 gettype();
     void IncRef();
@@ -184,9 +183,8 @@ class PyFloat
 {
     uint8 mType;
     size_t mRefcnt;
-    double mNumber;
     uint32 (PyFloat::*mHash)();
-
+    double mNumber;
 public:
     uint8 gettype();
     void IncRef();
@@ -206,8 +204,8 @@ class PyBool
 {
     uint8 mType;
     size_t mRefcnt;
-    bool mCheck;
     uint32 (PyBool::*mHash)();
+    bool mCheck;
 public:
     uint8 gettype();
     void IncRef();
