@@ -37,9 +37,9 @@
 /************************************************************************/
 /* PyClass                                                              */
 /************************************************************************/
-PyClass::PyClass() : mType(PyTypeClass), mRefcnt(1), mDict(NULL), mName(NULL), mBases(NULL), mDirivedCallList(NULL), mDirivedCallDict(NULL)
+PyClass::PyClass() : mType(PyTypeClass), mRefcnt(1), mHash(&PyClass::_hash),
+                     mDict(NULL), mName(NULL), mBases(NULL), mDirivedCallList(NULL), mDirivedCallDict(NULL)
 {
-    mHash = &PyClass::_hash;
 }
 
 PyClass::~PyClass()

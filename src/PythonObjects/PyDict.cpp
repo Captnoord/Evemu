@@ -37,10 +37,10 @@
 /************************************************************************/
 /* PyDict                                                               */
 /************************************************************************/
-PyDict::PyDict() : mType(PyTypeDict), mRefcnt(1), mMappingMode(true), mMappingIndex(0)
+PyDict::PyDict() : mType(PyTypeDict), mRefcnt(1), mHash(&PyDict::_hash), mMappingMode(true), mMappingIndex(0)
 {
-    mHash = &PyDict::_hash;
 }
+
 PyDict::~PyDict()
 {
     int i = 0;

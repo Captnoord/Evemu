@@ -33,8 +33,8 @@ class PyString
     uint8 mType;
     size_t mRefcnt;
     uint32 (PyString::*mHash)();
-    char* mStr;
     size_t mStrLen;
+    char* mStr;
     uint32 mHashValue;
 public:
     uint8 gettype();

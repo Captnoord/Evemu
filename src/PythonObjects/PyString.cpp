@@ -36,27 +36,27 @@
 /************************************************************************/
 /* PyString code                                                        */
 /************************************************************************/
-PyString::PyString() : mType(PyTypeString), mRefcnt(1),  mStr(NULL), mStrLen(0), mHashValue(0)
+PyString::PyString() : mType(PyTypeString), mRefcnt(1), mHash(&PyString::_hash),
+                       mStrLen(0), mStr(NULL), mHashValue(0)
 {
-    mHash = &PyString::_hash;
 }
 
-PyString::PyString(const char* str) : mType(PyTypeString), mRefcnt(1),  mStr(NULL), mStrLen(0), mHashValue(0)
+PyString::PyString(const char* str) : mType(PyTypeString), mRefcnt(1), mHash(&PyString::_hash),
+                                      mStrLen(0), mStr(NULL), mHashValue(0)
 {
-    mHash = &PyString::_hash;
     size_t len = strlen(str);
     set(str, len);
 }
 
-PyString::PyString(const char* str, size_t len) : mType(PyTypeString), mRefcnt(1),  mStr(NULL), mStrLen(0), mHashValue(0)
+PyString::PyString(const char* str, size_t len) : mType(PyTypeString), mRefcnt(1), mHash(&PyString::_hash),
+                                                  mStrLen(0), mStr(NULL), mHashValue(0)
 {
-    mHash = &PyString::_hash;
     set(str, len);
 }
 
-PyString::PyString(std::string& str) : mType(PyTypeString), mRefcnt(1),  mStr(NULL), mStrLen(0), mHashValue(0)
+PyString::PyString(std::string& str) : mType(PyTypeString), mRefcnt(1), mHash(&PyString::_hash),
+                                       mStrLen(0), mStr(NULL), mHashValue(0)
 {
-    mHash = &PyString::_hash;
     set(str.c_str(), str.size());
 }
 

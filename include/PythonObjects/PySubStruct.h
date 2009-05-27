@@ -28,15 +28,14 @@
 
 class PySubStruct
 {
+    uint8 mType;
+    size_t mRefcnt;
+    uint32 (PySubStruct::*mHash)();
 public:
     uint8 gettype();
     void IncRef();
     void DecRef();
     uint32 hash();
-private:
-    uint8 mType;
-    size_t mRefcnt;
-    uint32 (PySubStruct::*mHash)();
 public:
     PySubStruct();
     ~PySubStruct();

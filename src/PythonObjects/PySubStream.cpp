@@ -37,15 +37,14 @@
 /************************************************************************/
 /* PySubStream                                                          */
 /************************************************************************/
-PySubStream::PySubStream() : mType(PyTypeSubStream), mRefcnt(1), mData(NULL), mLen(0)
+PySubStream::PySubStream() : mType(PyTypeSubStream), mRefcnt(1), mHash(&PySubStream::_hash),
+                             mLen(0), mData(NULL)
 {
-    mHash = &PySubStream::_hash;
 }
 
-PySubStream::PySubStream( uint8* data, size_t len ) : mType(PyTypeSubStream), mRefcnt(1), mData(NULL), mLen(len)
+PySubStream::PySubStream( uint8* data, size_t len ) : mType(PyTypeSubStream), mRefcnt(1), mHash(&PySubStream::_hash),
+                                                      mLen(len), mData(NULL)
 {
-    mHash = &PySubStream::_hash;
-
     if (data == NULL || mLen == 0)
         return;
 
@@ -56,9 +55,6 @@ PySubStream::PySubStream( uint8* data, size_t len ) : mType(PyTypeSubStream), mR
 PySubStream::~PySubStream()
 {
     SafeFree(mData);
-
-    mLen = 0;
-    mType = PyTypeDeleted;
 }
 
 uint8 PySubStream::gettype()

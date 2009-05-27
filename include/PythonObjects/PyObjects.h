@@ -102,15 +102,14 @@ public:
  */
 class PyObject
 {
+    uint8 mType;
+    size_t mRefcnt;
+    uint32 (PyObject::*mHash)();
 public:
     uint8 gettype();
     void IncRef();
     void DecRef();
     uint32 hash();
-private:
-    uint8 mType;
-    size_t mRefcnt;
-    uint32 (PyObject::*mHash)();
 public:
     PyObject();
     ~PyObject();

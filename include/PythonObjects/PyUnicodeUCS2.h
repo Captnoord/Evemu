@@ -35,8 +35,8 @@ class PyUnicodeUCS2
     uint8 mType;
     size_t mRefcnt;
     uint32 (PyUnicodeUCS2::*mHash)();
-    wchar_t* mStr;
     size_t mStrLen;
+    wchar_t* mStr;
     uint32 mHashValue; /* string hash cache */
 public:
     uint8 gettype();

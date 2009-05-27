@@ -37,9 +37,9 @@
 /************************************************************************/
 /* PyPackedRow                                                          */
 /************************************************************************/
-PyPackedRow::PyPackedRow() : mType(PyTypePackedRow), mHeader(NULL), mRawFieldData(NULL), mRawFieldDataLen(0), mRefcnt(1)
+PyPackedRow::PyPackedRow() : mType(PyTypePackedRow), mRefcnt(1), mHash(&PyPackedRow::_hash),
+                             mRawFieldDataLen(0), mRawFieldData(NULL),  mHeader(NULL), rawPayLoad(NULL)
 {
-    mHash = &PyPackedRow::_hash;
 }
 
 PyPackedRow::~PyPackedRow()

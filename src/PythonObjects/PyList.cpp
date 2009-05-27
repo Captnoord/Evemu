@@ -37,14 +37,12 @@
 /************************************************************************/
 /* PyList                                                               */
 /************************************************************************/
-PyList::PyList() : mType(PyTypeList), mRefcnt(1)
+PyList::PyList() : mType(PyTypeList), mRefcnt(1), mHash(&PyList::_hash)
 {
-    mHash = &PyList::_hash;
 }
 
-PyList::PyList( int elementCount ) : mType(PyTypeList), mRefcnt(1)
+PyList::PyList( int elementCount ) : mType(PyTypeList), mRefcnt(1), mHash(&PyList::_hash)
 {
-    mHash = &PyList::_hash;
     mList.resize(elementCount);
 }
 

@@ -37,9 +37,8 @@
 /************************************************************************/
 /* PyModule                                                             */
 /************************************************************************/
-PyModule::PyModule() : mType(PyTypeModule), mModuleName(NULL), mRefcnt(1)
+PyModule::PyModule() : mType(PyTypeModule), mRefcnt(1), mHash(&PyModule::_hash), mModuleName(NULL)
 {
-    mHash = &PyModule::_hash;
 }
 
 PyModule::~PyModule()

@@ -36,14 +36,12 @@
 /************************************************************************/
 /* PyTuple                                                              */
 /************************************************************************/
-PyTuple::PyTuple() : mType(PyTypeTuple), mRefcnt(1)
+PyTuple::PyTuple() : mType(PyTypeTuple), mRefcnt(1), mHash(&PyTuple::_hash)
 {
-    mHash = &PyTuple::_hash;
 }
 
-PyTuple::PyTuple( size_t elementCount ) : mType(PyTypeTuple), mRefcnt(1)
+PyTuple::PyTuple( size_t elementCount ) : mType(PyTypeTuple), mRefcnt(1), mHash(&PyTuple::_hash)
 {
-    mHash = &PyTuple::_hash;
     if (elementCount > PY_TUPLE_ELEMENT_MAX)
     {
         Log.Error("PyTuple", "constructor is requested to allocate a stupid amount of elements: %d", elementCount);
@@ -57,7 +55,6 @@ PyTuple::PyTuple( size_t elementCount ) : mType(PyTypeTuple), mRefcnt(1)
 PyTuple::~PyTuple()
 {
     clear();
-    mType = PyTypeDeleted;
 }
 
 /* this is kinda slow because we are resizing a vector */

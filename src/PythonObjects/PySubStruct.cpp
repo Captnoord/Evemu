@@ -37,9 +37,9 @@
 /************************************************************************/
 /* substruct                                                            */
 /************************************************************************/
-PySubStruct::PySubStruct() : mType(PyTypeSubStruct), payload(NULL), mRefcnt(1)
+PySubStruct::PySubStruct() : mType(PyTypeSubStruct), mRefcnt(1), mHash(&PySubStruct::_hash),
+                             payload(NULL)
 {
-    mHash = &PySubStruct::_hash;
 }
 
 PySubStruct::~PySubStruct()

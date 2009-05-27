@@ -28,35 +28,33 @@
 /************************************************************************/
 /* Py Unicode object                                                    */
 /************************************************************************/
-PyUnicodeUCS2::PyUnicodeUCS2() : mType(PyTypeUnicode), mRefcnt(1), mStr(NULL), mStrLen(0), mHashValue(0)
+PyUnicodeUCS2::PyUnicodeUCS2() : mType(PyTypeUnicode), mRefcnt(1), mHash(&PyUnicodeUCS2::_hash),
+                                 mStrLen(0), mStr(NULL), mHashValue(0)
 {
-    mHash = &PyUnicodeUCS2::_hash;
 }
 
-PyUnicodeUCS2::PyUnicodeUCS2(const wchar_t* str) : mType(PyTypeUnicode), mRefcnt(1), mStr(NULL), mStrLen(0), mHashValue(0)
+PyUnicodeUCS2::PyUnicodeUCS2(const wchar_t* str) : mType(PyTypeUnicode), mRefcnt(1), mHash(&PyUnicodeUCS2::_hash),
+                                                   mStrLen(0), mStr(NULL), mHashValue(0)
 {
-    mHash = &PyUnicodeUCS2::_hash;
     size_t len = wcslen(str);
     set(str, len);
 }
 
-PyUnicodeUCS2::PyUnicodeUCS2(const wchar_t* str, size_t len) : mType(PyTypeUnicode), mRefcnt(1), mStr(NULL), mStrLen(0), mHashValue(0)
+PyUnicodeUCS2::PyUnicodeUCS2(const wchar_t* str, size_t len) : mType(PyTypeUnicode), mRefcnt(1), mHash(&PyUnicodeUCS2::_hash),
+                                                               mStrLen(0), mStr(NULL), mHashValue(0)
 {
-    mHash = &PyUnicodeUCS2::_hash;
     set(str, len);
 }
 
-PyUnicodeUCS2::PyUnicodeUCS2(std::wstring& str) : mType(PyTypeUnicode), mRefcnt(1), mStr(NULL), mStrLen(0), mHashValue(0)
+PyUnicodeUCS2::PyUnicodeUCS2(std::wstring& str) : mType(PyTypeUnicode), mRefcnt(1), mHash(&PyUnicodeUCS2::_hash),
+                                                  mStrLen(0), mStr(NULL), mHashValue(0)
 {
-    mHash = &PyUnicodeUCS2::_hash;
     set(str.c_str(), str.length());
 }
 
 PyUnicodeUCS2::~PyUnicodeUCS2()
 {
     SafeFree(mStr);
-    mType = PyTypeDeleted;
-    mHash = NULL;
 }
 
 bool PyUnicodeUCS2::set( const wchar_t* str, size_t len )

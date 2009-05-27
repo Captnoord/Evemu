@@ -35,11 +35,9 @@
 /************************************************************************/
 /* PyInt                                                                */
 /************************************************************************/
-PyInt::PyInt( int32 num ) : mType(PyTypeInt), mRefcnt(1)
+PyInt::PyInt( int32 num ) : mType(PyTypeInt), mRefcnt(1),
+                            mHash(&PyInt::_hash), mNumber(num)
 {
-    mHash = &PyInt::_hash;
-
-    mNumber = num;
 }
 
 PyInt & PyInt::operator=( const int num )
@@ -89,15 +87,15 @@ int32 PyInt::GetValue()
 /************************************************************************/
 /* PyLong                                                               */
 /************************************************************************/
-PyLong::PyLong( int64 num ) : mType(PyTypeLong), mRefcnt(1),  mNumber(num)
+PyLong::PyLong( int64 num ) : mType(PyTypeLong), mRefcnt(1),
+                              mHash(&PyLong::_hash), mNumber(num)
 {
-    mHash = &PyLong::_hash;
 }
 
 /* @todo solve the signed/unsigned problem */
-PyLong::PyLong( uint64 num ) : mType(PyTypeLong), mRefcnt(1), mNumber(num)
+PyLong::PyLong( uint64 num ) : mType(PyTypeLong), mRefcnt(1),
+                               mHash(&PyLong::_hash) , mNumber(num)
 {
-    mHash = &PyLong::_hash;
 }
 
 PyLong::~PyLong()
@@ -178,18 +176,19 @@ uint32 PyLong::_hash()
 /************************************************************************/
 /* PyFloat                                                              */
 /************************************************************************/
-PyFloat::PyFloat() : mType(PyTypeReal), mRefcnt(1), mNumber(0.0)
+PyFloat::PyFloat() : mType(PyTypeReal), mRefcnt(1),
+                     mHash(&PyFloat::_hash) , mNumber(0.0)
 {
-    mHash = &PyFloat::_hash;
-}
-PyFloat::PyFloat( float num ) : mType(PyTypeReal), mRefcnt(1),  mNumber(num)
-{
-    mHash = &PyFloat::_hash;
 }
 
-PyFloat::PyFloat( double num ) : mType(PyTypeReal), mRefcnt(1), mNumber(num)
+PyFloat::PyFloat( float num ) : mType(PyTypeReal), mRefcnt(1),
+                                mHash(&PyFloat::_hash), mNumber(num)
 {
-    mHash = &PyFloat::_hash;
+}
+
+PyFloat::PyFloat( double num ) : mType(PyTypeReal), mRefcnt(1),
+                                 mHash(&PyFloat::_hash), mNumber(num)
+{
 }
 
 PyFloat::~PyFloat()
@@ -232,9 +231,9 @@ uint32 PyFloat::_hash()
 /************************************************************************/
 /* PyBool                                                               */
 /************************************************************************/
-PyBool::PyBool( bool check ) : mType(PyTypeBool), mRefcnt(1), mCheck(check)
+PyBool::PyBool( bool check ) : mType(PyTypeBool), mRefcnt(1),
+                               mHash(&PyBool::_hash), mCheck(check)
 {
-    mHash = &PyBool::_hash;
 }
 
 PyBool::~PyBool()

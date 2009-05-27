@@ -38,22 +38,21 @@
  */
 class PyPackedRow
 {
+    uint8 mType;
+    size_t mRefcnt;
+    uint32 (PyPackedRow::*mHash)();
 public:
     uint8 gettype();
     void IncRef();
     void DecRef();
     uint32 hash();
-private:
-    uint8 mType;
-    size_t mRefcnt;
-    uint32 (PyPackedRow::*mHash)();
 public:
     PyPackedRow();
     ~PyPackedRow();
 
     /* raw data containing the normal field data fields */
-    uint8* mRawFieldData;           /* also known as 'blob' */
     size_t mRawFieldDataLen;        /* also known as 'blob_length' */
+    uint8* mRawFieldData;           /* also known as 'blob' */
 
 private:
     PyClass * mHeader;

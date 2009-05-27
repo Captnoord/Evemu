@@ -82,10 +82,10 @@ public:
             ASCENT_HARDWARE_BREAKPOINT;
             /* do the same as the set_item function that takes a PyObject as a key, but do some tricks with it */
 
-            size_t str_len = strlen(key_name);
+            // NOTE: not used.
+            //size_t str_len = strlen(key_name);
 
             /* test this and check these */
-            // NOTE: not used.
             //uint32 hsh = Utils::Hash::sdbm_hash(key_name, (int)str_len);
             //uint32 hsh1 = Utils::Hash::sdbm_hash(key_name);
         }

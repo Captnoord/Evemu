@@ -46,8 +46,8 @@ class PySubStream
     uint8 mType;
     size_t mRefcnt;
     uint32 (PySubStream::*mHash)();
+    size_t mLen;
     void* mData;
-    size_t mLen;    
 public:
     uint8 gettype();
     void IncRef();
