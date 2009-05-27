@@ -21,7 +21,17 @@ evemuserver_SOURCES = \
 	Communication/ReadStream.cpp \
 	Communication/WriteStream.cpp \
 	PythonObjects/PyChameleon.cpp \
+	PythonObjects/PyClass.cpp \
+	PythonObjects/PyDict.cpp \
+	PythonObjects/PyInstance.cpp \
+	PythonObjects/PyList.cpp \
+	PythonObjects/PyModule.cpp \
 	PythonObjects/PyObjects.cpp \
+	PythonObjects/PyPackedRow.cpp \
+	PythonObjects/PyString.cpp \
+	PythonObjects/PySubStream.cpp \
+	PythonObjects/PySubStruct.cpp \
+	PythonObjects/PyTuple.cpp \
 	PythonObjects/PyStringTable.cpp \
 	PythonObjects/PyUnicodeUCS2.cpp \
 	server/Session/EveSession.cpp \

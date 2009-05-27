@@ -23,30 +23,62 @@
     Author:     Captnoord
 */
 
-#ifndef _PYLIST_H
-#define _PYLIST_H
+#ifndef _PYPACKEDROW_H
+#define _PYPACKEDROW_H
 
-class PyList
+/**
+ * \class PyPackedRow
+ *
+ * @brief this class represents a packet row... only for data parsing..
+ *
+ * @author Captnoord
+ * @date February 2009
+ */
+class PyPackedRow
 {
-    uint8 mType;
-    size_t mRefcnt;
-    uint32 (PyList::*mHash)();
 public:
     uint8 gettype();
     void IncRef();
     void DecRef();
     uint32 hash();
-public:
-    explicit PyList();
-    explicit PyList(int elementCount);
-    ~PyList();
-    PyChameleon &operator[](const int index);
-    size_t size();
-    bool add(PyObject* obj);
 private:
-    std::vector<PyChameleon*> mList;
-    typedef std::vector<PyChameleon*>::iterator iterator;
+    uint8 mType;
+    size_t mRefcnt;
+    uint32 (PyPackedRow::*mHash)();
+
+public:
+    PyPackedRow();
+    ~PyPackedRow();
+
+    /* raw data containing the normal field data fields */
+    uint8* mRawFieldData;           /* also known as 'blob' */
+    size_t mRawFieldDataLen;        /* also known as 'blob_length' */
+
+private:
+    PyClass * mHeader;
+    PyTuple* rawPayLoad;
+
+    // experimental stuff
+    std::map<uint32, PyChameleon*> flowers; // payload / virtual row set
+public:
+    typedef std::map<uint32, PyChameleon*>::iterator iterator;
+    iterator begin();
+    iterator end();
+    size_t size();
+
+    /* magical function */
+    bool init(PyObject* header);
+
+    bool setheader(PyClass * obj);
+    bool setRawPayLoad(PyObject* tuple);
+    PyObject* getRawPayLoad();
+
+    bool addleaf(PyObject* leaf);
+
+    PyClass*getheader();
+
+    // local hash function
     uint32 _hash();
 };
 
-#endif // _PYLIST_H
+#endif //_PYPACKEDROW_H

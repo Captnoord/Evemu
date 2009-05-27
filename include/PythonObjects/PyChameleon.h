@@ -1,26 +1,26 @@
 /*
-	------------------------------------------------------------------------------------
-	LICENSE:
-	------------------------------------------------------------------------------------
-	This file is part of EVEmu: EVE Online Server Emulator
-	Copyright 2006 - 2009 The EVEmu Team
-	For the latest information visit http://evemu.mmoforge.org
-	------------------------------------------------------------------------------------
-	This program is free software; you can redistribute it and/or modify it under
-	the terms of the GNU Lesser General Public License as published by the Free Software
-	Foundation; either version 2 of the License, or (at your option) any later
-	version.
+    ------------------------------------------------------------------------------------
+    LICENSE:
+    ------------------------------------------------------------------------------------
+    This file is part of EVEmu: EVE Online Server Emulator
+    Copyright 2006 - 2009 The EVEmu Team
+    For the latest information visit http://evemu.mmoforge.org
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+    Foundation; either version 2 of the License, or (at your option) any later
+    version.
 
-	This program is distributed in the hope that it will be useful, but WITHOUT
-	ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-	FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+    This program is distributed in the hope that it will be useful, but WITHOUT
+    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+    FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
 
-	You should have received a copy of the GNU Lesser General Public License along with
-	this program; if not, write to the Free Software Foundation, Inc., 59 Temple
-	Place - Suite 330, Boston, MA 02111-1307, USA, or go to
-	http://www.gnu.org/copyleft/lesser.txt.
-	------------------------------------------------------------------------------------
-	Author:		Captnoord
+    You should have received a copy of the GNU Lesser General Public License along with
+    this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+    Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+    http://www.gnu.org/copyleft/lesser.txt.
+    ------------------------------------------------------------------------------------
+    Author:     Captnoord
 */
 
 #ifndef _PYCHAMELEON_H
@@ -55,59 +55,59 @@ struct PyDictEntry;
 class PyChameleon
 {
 public:
-	uint8 gettype();
-	PyChameleon();
-	~PyChameleon();
-	PyChameleon(PyDictEntry * entry);
+    uint8 gettype();
+    PyChameleon();
+    ~PyChameleon();
+    PyChameleon(PyDictEntry * entry);
 
-	bool isempty();
+    bool isempty();
 
-	void setAtributeObj(PyObject* attrib);
-	PyObject* getAtributeObj();
+    void setAtributeObj(PyObject* attrib);
+    PyObject* getAtributeObj();
 
-	PyObject * getPyObject();
-	PyObject & getPyObjRef();
-	bool setPyObject(PyObject* obj);
+    PyObject * getPyObject();
+    PyObject & getPyObjRef();
+    bool setPyObject(PyObject* obj);
 
-	/**
-	 * @brief 
-	 *
-	 * @param[in]
-	 * @param[out]
-	 * @return
-	 */
-	PyChameleon &operator=(const char* const str);
-	PyChameleon &operator=(const std::string &str);
+    /**
+     * @brief
+     *
+     * @param[in]
+     * @param[out]
+     * @return
+     */
+    PyChameleon &operator=(const char* const str);
+    PyChameleon &operator=(const std::string &str);
 
-	PyChameleon &operator=(const wchar_t* const str);
-	PyChameleon &operator=(const std::wstring &str);
+    PyChameleon &operator=(const wchar_t* const str);
+    PyChameleon &operator=(const std::wstring &str);
 
-	PyChameleon &operator=(const uint32 number);
-	PyChameleon &operator=(const int number);
-	PyChameleon &operator=(const float number);
-	PyChameleon &operator=(const double number);
-	PyChameleon &operator=(const PyDict* pointer);
-	PyChameleon &operator=(const PyList* pointer);
-	PyChameleon &operator=(const PyTuple* pointer);
-	PyChameleon &operator=(const PyBaseNone* pointer);
-	PyChameleon &operator=(const PyBool* pointer);
-	PyChameleon &operator=(const PySubStream* pointer);
-	PyChameleon &operator=(const PyInt* pyInt);
+    PyChameleon &operator=(const uint32 number);
+    PyChameleon &operator=(const int number);
+    PyChameleon &operator=(const float number);
+    PyChameleon &operator=(const double number);
+    PyChameleon &operator=(const PyDict* pointer);
+    PyChameleon &operator=(const PyList* pointer);
+    PyChameleon &operator=(const PyTuple* pointer);
+    PyChameleon &operator=(const PyBaseNone* pointer);
+    PyChameleon &operator=(const PyBool* pointer);
+    PyChameleon &operator=(const PySubStream* pointer);
+    PyChameleon &operator=(const PyInt* pyInt);
 
-	PyChameleon &operator=(PyObject* pointer);
-	PyChameleon &operator=(PyObject& pointer);
-	PyChameleon &operator=(PyString* str);
-	
+    PyChameleon &operator=(PyObject* pointer);
+    PyChameleon &operator=(PyObject& pointer);
+    PyChameleon &operator=(PyString* str);
+
 
 
 protected:
-	void _settype(uint8 type);
+    void _settype(uint8 type);
 
 private:
-	uint8 mType;
-	PyObject* mPayload;
-	bool mIsEmpty;			// indicates a non active PyChameleon
-	PyObject* mKeyObj; // optional
+    uint8 mType;
+    PyObject* mPayload;
+    bool mIsEmpty;          // indicates a non active PyChameleon
+    PyObject* mKeyObj; // optional
 };
 
 /**
@@ -122,16 +122,16 @@ private:
 class PyErrorChameleon : public PyChameleon
 {
 public:
-	PyErrorChameleon() : PyChameleon() {}
-	
-	template<typename T>
-	PyErrorChameleon &operator=(T& str)
-	{
-		Log.Error("PyErrorChameleon", "Error we are used... thats not good... hmm.. there must have been something wrong...");
-		ASCENT_HARDWARE_BREAKPOINT;
-		return *this;
-	}
+    PyErrorChameleon() : PyChameleon() {}
+
+    template<typename T>
+    PyErrorChameleon &operator=(T& str)
+    {
+        Log.Error("PyErrorChameleon", "Error we are used... thats not good... hmm.. there must have been something wrong...");
+        ASCENT_HARDWARE_BREAKPOINT;
+        return *this;
+    }
 };
 
 static PyErrorChameleon PyErrorIterator;
-#endif //_PYCHAMELEON_H
+#endif //_PYCHAMELEON_H

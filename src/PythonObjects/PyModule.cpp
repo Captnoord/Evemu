@@ -23,30 +23,54 @@
     Author:     Captnoord
 */
 
-#ifndef _PYLIST_H
-#define _PYLIST_H
+#include "EvemuPCH.h"
 
-class PyList
+#include "Common.h"
+#include "NGLog.h"
+#include "Log.h"
+#include "string_map.h"
+
+#include "PyObjects.h"
+#include "PyChameleon.h"
+#include "PyModule.h"
+
+/************************************************************************/
+/* PyModule                                                             */
+/************************************************************************/
+PyModule::PyModule() : mType(PyTypeModule), mModuleName(NULL), mRefcnt(1)
 {
-    uint8 mType;
-    size_t mRefcnt;
-    uint32 (PyList::*mHash)();
-public:
-    uint8 gettype();
-    void IncRef();
-    void DecRef();
-    uint32 hash();
-public:
-    explicit PyList();
-    explicit PyList(int elementCount);
-    ~PyList();
-    PyChameleon &operator[](const int index);
-    size_t size();
-    bool add(PyObject* obj);
-private:
-    std::vector<PyChameleon*> mList;
-    typedef std::vector<PyChameleon*>::iterator iterator;
-    uint32 _hash();
-};
+    mHash = &PyModule::_hash;
+}
 
-#endif // _PYLIST_H
+PyModule::~PyModule()
+{
+
+}
+
+uint8 PyModule::gettype()
+{
+    return mType;
+}
+
+void PyModule::IncRef()
+{
+    mRefcnt++;
+}
+
+void PyModule::DecRef()
+{
+    mRefcnt--;
+    if (mRefcnt <= 0)
+        PyDelete(this);
+}
+
+uint32 PyModule::hash()
+{
+    return (this->*mHash)();
+}
+
+uint32 PyModule::_hash()
+{
+    ASCENT_HARDWARE_BREAKPOINT;
+    return 0;
+}

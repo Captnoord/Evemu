@@ -23,30 +23,36 @@
     Author:     Captnoord
 */
 
-#ifndef _PYLIST_H
-#define _PYLIST_H
+#ifndef _PYMODULE_H
+#define _PYMODULE_H
 
-class PyList
+/**
+ * \class PyModule
+ *
+ * @brief
+ *
+ * blaat I dono what I am doing.... part 2. :D
+ *
+ * @author Captnoord
+ * @date March 2009
+ */
+class PyModule
 {
-    uint8 mType;
-    size_t mRefcnt;
-    uint32 (PyList::*mHash)();
 public:
     uint8 gettype();
     void IncRef();
     void DecRef();
     uint32 hash();
-public:
-    explicit PyList();
-    explicit PyList(int elementCount);
-    ~PyList();
-    PyChameleon &operator[](const int index);
-    size_t size();
-    bool add(PyObject* obj);
 private:
-    std::vector<PyChameleon*> mList;
-    typedef std::vector<PyChameleon*>::iterator iterator;
+    uint8 mType;
+    size_t mRefcnt;
+    uint32 (PyModule::*mHash)();
+public:
+    PyModule();
+    ~PyModule();
+    PyString* mModuleName;
+private:
     uint32 _hash();
 };
 
-#endif // _PYLIST_H
+#endif //_PYMODULE_H

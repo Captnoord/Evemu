@@ -23,30 +23,52 @@
     Author:     Captnoord
 */
 
-#ifndef _PYLIST_H
-#define _PYLIST_H
+#ifndef _PYCLASS_H
+#define _PYCLASS_H
 
-class PyList
+/**
+ * \class PyClassObject
+ *
+ * @brief a class object similar to the python one
+ *
+ * blaat I dono what I am doing....
+ *
+ * @author Captnoord
+ * @date February 2009
+ */
+class PyClass
 {
     uint8 mType;
     size_t mRefcnt;
-    uint32 (PyList::*mHash)();
+    uint32 (PyClass::*mHash)();
 public:
     uint8 gettype();
     void IncRef();
     void DecRef();
     uint32 hash();
 public:
-    explicit PyList();
-    explicit PyList(int elementCount);
-    ~PyList();
-    PyChameleon &operator[](const int index);
-    size_t size();
-    bool add(PyObject* obj);
-private:
-    std::vector<PyChameleon*> mList;
-    typedef std::vector<PyChameleon*>::iterator iterator;
+    PyClass();
+    ~PyClass();
+    bool setname(PyString* name);
+    bool setbases(PyTuple* tuple);
+    bool setdict(PyDict* dict);
+    bool setDirList(PyList * list);
+    bool setDirDict(PyDict * dict);
+
+    PyString* getname();
+    PyTuple* getbases();
+    PyDict* getdict();
+    PyList * getDirList();
+    PyDict * getDirDict();
+protected:
+    PyDict      *mDict; /* A dictionary */
+    PyString    *mName; /* A string */
+    PyTuple     *mBases;/* A tuple of class objects */
+
+    // derived object call info...
+    PyList      *mDirivedCallList;
+    PyDict      *mDirivedCallDict;
     uint32 _hash();
 };
 
-#endif // _PYLIST_H
+#endif // _PYCLASS_H

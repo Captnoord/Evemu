@@ -23,30 +23,72 @@
     Author:     Captnoord
 */
 
-#ifndef _PYLIST_H
-#define _PYLIST_H
+#include "EvemuPCH.h"
 
-class PyList
+#include "Common.h"
+#include "NGLog.h"
+#include "Log.h"
+#include "string_map.h"
+
+#include "PyObjects.h"
+#include "PyChameleon.h"
+#include "PySubStruct.h"
+
+/************************************************************************/
+/* substruct                                                            */
+/************************************************************************/
+PySubStruct::PySubStruct() : mType(PyTypeSubStruct), payload(NULL), mRefcnt(1)
 {
-    uint8 mType;
-    size_t mRefcnt;
-    uint32 (PyList::*mHash)();
-public:
-    uint8 gettype();
-    void IncRef();
-    void DecRef();
-    uint32 hash();
-public:
-    explicit PyList();
-    explicit PyList(int elementCount);
-    ~PyList();
-    PyChameleon &operator[](const int index);
-    size_t size();
-    bool add(PyObject* obj);
-private:
-    std::vector<PyChameleon*> mList;
-    typedef std::vector<PyChameleon*>::iterator iterator;
-    uint32 _hash();
-};
+    mHash = &PySubStruct::_hash;
+}
 
-#endif // _PYLIST_H
+PySubStruct::~PySubStruct()
+{
+    if (payload)
+        payload->DecRef();
+}
+
+uint8 PySubStruct::gettype()
+{
+    return mType;
+}
+
+void PySubStruct::IncRef()
+{
+    mRefcnt++;
+}
+
+void PySubStruct::DecRef()
+{
+    mRefcnt--;
+    if (mRefcnt <= 0)
+        PyDelete(this);
+}
+
+PyObject * PySubStruct::getPyObject()
+{
+    return payload;
+}
+
+bool PySubStruct::setPyObject( PyObject* obj )
+{
+    if (obj == NULL)
+        return false;
+
+    payload = obj;
+    obj->IncRef();
+
+    return true;
+}
+
+// generic caller
+uint32 PySubStruct::hash()
+{
+    return (this->*mHash)();
+}
+
+// class related hash function
+uint32 PySubStruct::_hash()
+{
+    ASCENT_HARDWARE_BREAKPOINT;
+}

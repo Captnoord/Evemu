@@ -23,30 +23,39 @@
     Author:     Captnoord
 */
 
-#ifndef _PYLIST_H
-#define _PYLIST_H
+#ifndef _PYINSTANCE_H
+#define _PYINSTANCE_H
 
-class PyList
+/**
+* \class PyInstance
+*
+* @brief
+*
+* blaat I dono what I am doing.... part 2. :D
+*
+* @author Captnoord
+* @date March 2009
+*/
+class PyInstance
 {
-    uint8 mType;
-    size_t mRefcnt;
-    uint32 (PyList::*mHash)();
 public:
     uint8 gettype();
     void IncRef();
     void DecRef();
     uint32 hash();
-public:
-    explicit PyList();
-    explicit PyList(int elementCount);
-    ~PyList();
-    PyChameleon &operator[](const int index);
-    size_t size();
-    bool add(PyObject* obj);
 private:
-    std::vector<PyChameleon*> mList;
-    typedef std::vector<PyChameleon*>::iterator iterator;
+    uint8 mType;
+    size_t mRefcnt;
+    uint32 (PyInstance::*mHash)();
+public:
+    PyInstance();
+    ~PyInstance();
+private:
+    PyClass* mClass;
+    PyDict* mDict;
+    /* PyList weak reference list */
     uint32 _hash();
 };
 
-#endif // _PYLIST_H
+
+#endif //_PYINSTANCE_H

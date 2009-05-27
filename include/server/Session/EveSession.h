@@ -1,26 +1,26 @@
 /*
-	------------------------------------------------------------------------------------
-	LICENSE:
-	------------------------------------------------------------------------------------
-	This file is part of EVEmu: EVE Online Server Emulator
-	Copyright 2006 - 2009 The EVEmu Team
-	For the latest information visit http://evemu.mmoforge.org
-	------------------------------------------------------------------------------------
-	This program is free software; you can redistribute it and/or modify it under
-	the terms of the GNU Lesser General Public License as published by the Free Software
-	Foundation; either version 2 of the License, or (at your option) any later
-	version.
+    ------------------------------------------------------------------------------------
+    LICENSE:
+    ------------------------------------------------------------------------------------
+    This file is part of EVEmu: EVE Online Server Emulator
+    Copyright 2006 - 2009 The EVEmu Team
+    For the latest information visit http://evemu.mmoforge.org
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+    Foundation; either version 2 of the License, or (at your option) any later
+    version.
 
-	This program is distributed in the hope that it will be useful, but WITHOUT
-	ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-	FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+    This program is distributed in the hope that it will be useful, but WITHOUT
+    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+    FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
 
-	You should have received a copy of the GNU Lesser General Public License along with
-	this program; if not, write to the Free Software Foundation, Inc., 59 Temple
-	Place - Suite 330, Boston, MA 02111-1307, USA, or go to
-	http://www.gnu.org/copyleft/lesser.txt.
-	------------------------------------------------------------------------------------
-	Author:		Captnoord
+    You should have received a copy of the GNU Lesser General Public License along with
+    this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+    Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+    http://www.gnu.org/copyleft/lesser.txt.
+    ------------------------------------------------------------------------------------
+    Author:     Captnoord
 */
 
 #ifndef _EVEINFOSESSION_H
@@ -31,7 +31,7 @@
  *
  * @brief a class that has acts like a single object of a PyDictionary
  *
- * 
+ *
  *
  * @author Captnoord
  * @date January 2009
@@ -39,36 +39,36 @@
 class PySessionAttribute
 {
 public:
-	/*PySessionAttribute() : mEntry(10), mIsDirty() {}
+    /*PySessionAttribute() : mEntry(10), mIsDirty() {}
 
-	template<typename T>
-	PySessionAttribute &operator=(const T &value) {
+    template<typename T>
+    PySessionAttribute &operator=(const T &value) {
 
-		// this is a small hack...
-		if (mEntry.size() == 0)
-			mEntry << value;
-		else
-		{
-			mEntry.reset();
-			mEntry << value;
-		}
-		
-		return *this;
-	}
+        // this is a small hack...
+        if (mEntry.size() == 0)
+            mEntry << value;
+        else
+        {
+            mEntry.reset();
+            mEntry << value;
+        }
 
-	template<typename T>
-	void change(T & towhat)
-	{
-		mEntry.reset();
-		mEntry << towhat;
-		mIsDirty = true;
-	}
+        return *this;
+    }
 
-	void reset() {mEntry.reset();}
+    template<typename T>
+    void change(T & towhat)
+    {
+        mEntry.reset();
+        mEntry << towhat;
+        mIsDirty = true;
+    }
+
+    void reset() {mEntry.reset();}
 
 protected:
-	PyStream mEntry;*/
-	bool mIsDirty;
+    PyStream mEntry;*/
+    bool mIsDirty;
 };
 
 /**
@@ -76,7 +76,7 @@ protected:
  *
  * @brief small utility class to wrap the std::tr1::unorded_map functionality into a PyDict style
  *
- * 
+ *
  *
  * @author Captnoord
  * @date January 2009
@@ -84,45 +84,43 @@ protected:
 class SessionDict
 {
 public:
-	SessionDict();
+    SessionDict();
 
-	PySessionAttribute &operator[](const char* keyName) {
-		return _lookupAttribute(keyName);
-	}
+    PySessionAttribute &operator[](const char* keyName) {
+        return _lookupAttribute(keyName);
+    }
 
-	// work in progress, commented (mmcs)
-	/*template<typename T>
-	void ChangeAttribute(const char* attr, T & towhat)
-	{
-		PySessionAttribute &attribute = _lookupAttribute(attr);
-		attribute.change(towhat);
-	}*/
+    // work in progress, commented (mmcs)
+    /*template<typename T>
+    void ChangeAttribute(const char* attr, T & towhat)
+    {
+        PySessionAttribute &attribute = _lookupAttribute(attr);
+        attribute.change(towhat);
+    }*/
 
 private:
-	PySessionAttribute &_lookupAttribute(const char * attr)
-	{
-		DictMapConstItr Itr = mDictStorage.find(attr);
+    PySessionAttribute &_lookupAttribute(const char * attr)
+    {
+        DictMapConstItr Itr = mDictStorage.find(attr);
 
-		if (Itr != mDictStorage.end())
-		{
-			return *((PySessionAttribute*)&Itr->second);
-		}
-		else
-		{
-			//std::pair<iterator, bool> insert(const value_type& val);
-
-			std::pair<DictMapItr, bool> ret = mDictStorage.insert(std::make_pair(attr, PySessionAttribute()));
-			return *((PySessionAttribute*)&ret.first);
-		}
-	}
+        if (Itr != mDictStorage.end())
+        {
+            return *((PySessionAttribute*)&Itr->second);
+        }
+        else
+        {
+            std::pair<DictMapItr, bool> ret = mDictStorage.insert(std::make_pair(attr, PySessionAttribute()));
+            return *((PySessionAttribute*)&((ret.first)->second));
+        }
+    }
 
 
 protected:
-	typedef std::tr1::unordered_map<std::string, PySessionAttribute>	DictMap;
-	typedef DictMap::iterator											DictMapItr;
-	typedef DictMap::const_iterator										DictMapConstItr;
+    typedef std::tr1::unordered_map<std::string, PySessionAttribute>    DictMap;
+    typedef DictMap::iterator                                           DictMapItr;
+    typedef DictMap::const_iterator                                     DictMapConstItr;
 
-	DictMap mDictStorage;
+    DictMap mDictStorage;
 };
 
 /**
@@ -130,7 +128,7 @@ protected:
  *
  * @brief the info session keeps track of often used data.
  *
- * 
+ *
  *
  * @author Captnoord
  * @date January 2009
@@ -138,103 +136,103 @@ protected:
 class EveSession
 {
 public:
-	EveSession(uint32 sid);
+    EveSession(uint32 sid);
 
-	// operator pass trough...
-	/*PySessionAttribute &operator[](const char* keyName) {
-		return mSessionDict[keyName];
-	}*/
+    // operator pass trough...
+    /*PySessionAttribute &operator[](const char* keyName) {
+        return mSessionDict[keyName];
+    }*/
 
-	void init(uint32 sid, uint32 role);
+    void init(uint32 sid, uint32 role);
 
-	/* utility functions */
+    /* utility functions */
 
-	PySessionAttribute GetDefaultValueOfAttribute(const char *attribute);
-	// work in progress, commented (mmcs)
-	/*template<typename T>
-	void ChangeAttribute(const char* attr, T & towhat)
-	{
-		mSessionDict.ChangeAttribute(attr, towhat);
-	}*/
+    PySessionAttribute GetDefaultValueOfAttribute(const char *attribute);
+    // work in progress, commented (mmcs)
+    /*template<typename T>
+    void ChangeAttribute(const char* attr, T & towhat)
+    {
+        mSessionDict.ChangeAttribute(attr, towhat);
+    }*/
 
-	void LogSessionHistory(const char *reason, const char *details = NULL, bool noBlather = false);
+    void LogSessionHistory(const char *reason, const char *details = NULL, bool noBlather = false);
 
-	bool IsMutating();
-	bool IsChanging();
-	bool IsItSafe();
-	bool IsItSemiSafe();
-	
+    bool IsMutating();
+    bool IsChanging();
+    bool IsItSafe();
+    bool IsItSemiSafe();
+
 #if 0
-	void RegisterMachoObjectConnection(, objectID, connection, refID);
-	void UnregisterMachoObjectConnection(, objectID, connection);
-	void RegisterMachoObject(, objectID, object, refID);
-	void UnregisterMachoObject(, objectID, refID, suppressnotification = 1);
+    void RegisterMachoObjectConnection(, objectID, connection, refID);
+    void UnregisterMachoObjectConnection(, objectID, connection);
+    void RegisterMachoObject(, objectID, object, refID);
+    void UnregisterMachoObject(, objectID, refID, suppressnotification = 1);
 
-	/*
-	Notification ID's are used by macho to send sequential notifications to a
-	client.
-	*/
-	void GetNotificationID();
-	void DumpSession(, prefix, reason);
-	
-	/*
-	Enters a masquerading mode for this session, until our mask is removed and
-	the lights are turned on.	
-	*/
-	void Masquerade(, props = None);
-	
-	/*'\n            Since the global session object is now a true Sissy, we need a method to\n            acquire a non-Sissy version of ourselves when people are storing the\n            global session for future use.\n        '*/
-	void GetActualSession();
-	void Callback(, fn, *args, **keywords);
-	
-	void LogSessionHistory(, reason, details = None, noBlather = 0);
-	void LogSessionError(, what, novalidate = 0);
-	void LogSessionWarn(, what);
+    /*
+    Notification ID's are used by macho to send sequential notifications to a
+    client.
+    */
+    void GetNotificationID();
+    void DumpSession(, prefix, reason);
 
-	void __LogSessionProblem(, what, how, novalidate = 0);
-	void SetSessionVariable(, k, v);
-	void GetSessionVariable(, k, defaultValue = None);
-	void GetTime();
-	void GetDistributedProps(, orwhat);
-	void DependantAttributes(, attribute);
-	void GetDefaultValueOfAttribute(, attribute);
-	void ClearAttributes(, isRemote = 0);
-	void ValidateSession(, prefix);
-	void __ChangeAttribute(, attr, towhat);
-	void SetAttributes(, requested, isRemote = 0);
-	void ApplyRemoteAttributeChanges(, clueless, changes);
-	void ApplyInitialState(, initialstate);
-	void __repr__();
-	void __setattr__(, attr, value);
-	void DisconnectObject(, object, key = None, delaySecs = 1);
-	void RedirectObject(, object, serviceName = None, bindParams = None, key = None);
-	void GetConnectionVariable(, object, k, defaultValue = None);
-	void SetConnectionVariable(, object, k, v);
-	void GetInstanceVariable(, object, k);
-	void SetInstanceVariable(, object, k, v);
-	void ConnectToObject(, object, serviceName = None, bindParams = None);
-	void ConnectToClientService(, svc, idtype = None, theID = None);
-	void ConnectToService(, svc, **keywords);
-	void ConnectToFuture(, svc, when);
-	void ConnectToAllServices(, svc, batchInterval = 0);
-	void ConnectToRemoteService(, svc, nodeID = None);
-	void ConnectToSolServerService(, svc, nodeID = None);
-	void ConnectToProxyServerService(, svc, nodeID = None);
-	void ConnectToAnyService(, svc);
-	void ConnectToAllNeighboringServices(, svc, batchInterval = 0);
-	void ConnectToAllProxyServerServices(, svc, batchInterval = 0);
-	void ConnectToAllSolServerServices(, svc, batchInterval = 0);
-	void RemoteServiceCall(, dest, service, method, *args, **keywords);
-	void RemoteServiceCallWithoutTheStars(, dest, service, method, *args, **keywords);
-	void RemoteAnyServiceCall(, service, method, *args, **keywords);
-	void RemoteServiceNotify(, dest, service, method, *args, **keywords);
-	void RemoteServiceNotifyWithoutTheStars(, dest, service, method, args, keywords);
-	void RemoteAnyServiceNotify(, service, method, *args, **keywords);
-	void ResetSessionChangeTimer(, reason);
+    /*
+    Enters a masquerading mode for this session, until our mask is removed and
+    the lights are turned on.
+    */
+    void Masquerade(, props = None);
+
+    /*'\n            Since the global session object is now a true Sissy, we need a method to\n            acquire a non-Sissy version of ourselves when people are storing the\n            global session for future use.\n        '*/
+    void GetActualSession();
+    void Callback(, fn, *args, **keywords);
+
+    void LogSessionHistory(, reason, details = None, noBlather = 0);
+    void LogSessionError(, what, novalidate = 0);
+    void LogSessionWarn(, what);
+
+    void __LogSessionProblem(, what, how, novalidate = 0);
+    void SetSessionVariable(, k, v);
+    void GetSessionVariable(, k, defaultValue = None);
+    void GetTime();
+    void GetDistributedProps(, orwhat);
+    void DependantAttributes(, attribute);
+    void GetDefaultValueOfAttribute(, attribute);
+    void ClearAttributes(, isRemote = 0);
+    void ValidateSession(, prefix);
+    void __ChangeAttribute(, attr, towhat);
+    void SetAttributes(, requested, isRemote = 0);
+    void ApplyRemoteAttributeChanges(, clueless, changes);
+    void ApplyInitialState(, initialstate);
+    void __repr__();
+    void __setattr__(, attr, value);
+    void DisconnectObject(, object, key = None, delaySecs = 1);
+    void RedirectObject(, object, serviceName = None, bindParams = None, key = None);
+    void GetConnectionVariable(, object, k, defaultValue = None);
+    void SetConnectionVariable(, object, k, v);
+    void GetInstanceVariable(, object, k);
+    void SetInstanceVariable(, object, k, v);
+    void ConnectToObject(, object, serviceName = None, bindParams = None);
+    void ConnectToClientService(, svc, idtype = None, theID = None);
+    void ConnectToService(, svc, **keywords);
+    void ConnectToFuture(, svc, when);
+    void ConnectToAllServices(, svc, batchInterval = 0);
+    void ConnectToRemoteService(, svc, nodeID = None);
+    void ConnectToSolServerService(, svc, nodeID = None);
+    void ConnectToProxyServerService(, svc, nodeID = None);
+    void ConnectToAnyService(, svc);
+    void ConnectToAllNeighboringServices(, svc, batchInterval = 0);
+    void ConnectToAllProxyServerServices(, svc, batchInterval = 0);
+    void ConnectToAllSolServerServices(, svc, batchInterval = 0);
+    void RemoteServiceCall(, dest, service, method, *args, **keywords);
+    void RemoteServiceCallWithoutTheStars(, dest, service, method, *args, **keywords);
+    void RemoteAnyServiceCall(, service, method, *args, **keywords);
+    void RemoteServiceNotify(, dest, service, method, *args, **keywords);
+    void RemoteServiceNotifyWithoutTheStars(, dest, service, method, args, keywords);
+    void RemoteAnyServiceNotify(, service, method, *args, **keywords);
+    void ResetSessionChangeTimer(, reason);
 #endif
 
 protected:
-	SessionDict mSessionDict;
+    SessionDict mSessionDict;
 };
 
 

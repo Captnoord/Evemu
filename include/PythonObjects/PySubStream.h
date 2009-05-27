@@ -23,30 +23,43 @@
     Author:     Captnoord
 */
 
-#ifndef _PYLIST_H
-#define _PYLIST_H
+#ifndef _PYSUBSTREAM_H
+#define _PYSUBSTREAM_H
 
-class PyList
+/**
+ * \class PySubStream
+ *
+ * @brief totally unclear if its needed
+ *
+ * this class only keeps track of the pointer to the sub stream.
+ * we also do not own external pointers so we do a memcpy
+ *
+ * @author Captnoord
+ * @date February 2009
+ */
+
+//static int SubStreamCounter = 0;
+class PySubStream
 {
     uint8 mType;
     size_t mRefcnt;
-    uint32 (PyList::*mHash)();
+    void* mData;
+    size_t mLen;
+    uint32 (PySubStream::*mHash)();
 public:
     uint8 gettype();
     void IncRef();
     void DecRef();
     uint32 hash();
 public:
-    explicit PyList();
-    explicit PyList(int elementCount);
-    ~PyList();
-    PyChameleon &operator[](const int index);
+    PySubStream();
+    PySubStream(uint8* data, size_t len);
+    ~PySubStream();
+    uint8* content();
     size_t size();
-    bool add(PyObject* obj);
+    bool set(uint8 * data, size_t len);
 private:
-    std::vector<PyChameleon*> mList;
-    typedef std::vector<PyChameleon*>::iterator iterator;
     uint32 _hash();
 };
 
-#endif // _PYLIST_H
+#endif //_PYSUBSTREAM_H

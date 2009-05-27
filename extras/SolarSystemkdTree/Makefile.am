@@ -16,10 +16,20 @@ kdtree_SOURCES = \
 	../../src/Communication/MarshalStream.cpp \
 	../../src/Communication/ReadStream.cpp \
 	../../src/Communication/WriteStream.cpp \
-    ../../src/PythonObjects/PyChameleon.cpp \
+	../../src/PythonObjects/PyChameleon.cpp \
+	../../src/PythonObjects/PyClass.cpp \
+	../../src/PythonObjects/PyDict.cpp \
+	../../src/PythonObjects/PyInstance.cpp \
+	../../src/PythonObjects/PyList.cpp \
+	../../src/PythonObjects/PyModule.cpp \
 	../../src/PythonObjects/PyObjects.cpp \
-	../../src/PythonObjects/PyStringTable.cpp \
+	../../src/PythonObjects/PyPackedRow.cpp \
+	../../src/PythonObjects/PyString.cpp \
+	../../src/PythonObjects/PySubStream.cpp \
+	../../src/PythonObjects/PySubStruct.cpp \
+	../../src/PythonObjects/PyTuple.cpp \
 	../../src/PythonObjects/PyUnicodeUCS2.cpp \
+	../../src/PythonObjects/PyStringTable.cpp \
 	../../src/server/ConfigMgr.cpp \
 	../../src/server/ObjectCaching.cpp \
 	../../src/Utilities/RleModule.cpp \

@@ -23,30 +23,30 @@
     Author:     Captnoord
 */
 
-#ifndef _PYLIST_H
-#define _PYLIST_H
+#ifndef _PYSUBSTRUCT_H
+#define _PYSUBSTRUCT_H
 
-class PyList
+class PySubStruct
 {
-    uint8 mType;
-    size_t mRefcnt;
-    uint32 (PyList::*mHash)();
 public:
     uint8 gettype();
     void IncRef();
     void DecRef();
     uint32 hash();
-public:
-    explicit PyList();
-    explicit PyList(int elementCount);
-    ~PyList();
-    PyChameleon &operator[](const int index);
-    size_t size();
-    bool add(PyObject* obj);
 private:
-    std::vector<PyChameleon*> mList;
-    typedef std::vector<PyChameleon*>::iterator iterator;
+    uint8 mType;
+    size_t mRefcnt;
+    uint32 (PySubStruct::*mHash)();
+public:
+    PySubStruct();
+    ~PySubStruct();
+
+    PyObject * getPyObject();
+    bool setPyObject(PyObject* obj);
     uint32 _hash();
+
+private:
+    PyObject* payload;
 };
 
-#endif // _PYLIST_H
+#endif //_PYSUBSTRUCT_H

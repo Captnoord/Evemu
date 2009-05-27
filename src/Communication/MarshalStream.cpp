@@ -35,1513 +35,1522 @@
 #endif//_DEBUG
 
 MarshalStream::MarshalStream() : PyIntZero(0), PyIntOne(1), PyIntMinusOne(-1), PyFloatZero(0.0),
-	Py_TrueStruct(true), Py_ZeroStruct(false), mLastSharedObjectID(0) {}
+    Py_TrueStruct(true), Py_ZeroStruct(false), mLastSharedObjectID(0) {}
 
 MarshalStream::~MarshalStream() {}
 
 PyObject* MarshalStream::load(ReadStream & stream)
 {
-	if (checkAndInflate(stream) == false)
-		//MARSHALSTREAM_RETURN_NULL;
-		return NULL;
+    if (checkAndInflate(stream) == false)
+        //MARSHALSTREAM_RETURN_NULL;
+        return NULL;
 
-	if (ReadMarshalHeader(stream) == false)
-	{
-		Log.Error("MarshalStream", "[load] Unable to read and initialize the packet header");
-		return NULL;
-	}
+    if (ReadMarshalHeader(stream) == false)
+    {
+        Log.Error("MarshalStream", "[load] Unable to read and initialize the packet header");
+        return NULL;
+    }
 
-	PyObject* unmarshaledData = unmarshal(stream);
-	MARSHALSTREAM_RETURN(unmarshaledData);
+    PyObject* unmarshaledData = unmarshal(stream);
+    MARSHALSTREAM_RETURN(unmarshaledData);
 }
 
 bool MarshalStream::ReadMarshalHeader( ReadStream & stream )
 {
-	char marshalTilde;
-	if (!stream.read1(marshalTilde))
-	{
-		Log.Error("MarshalStream", "[ReadMarshalHeader]Can't read %d elements of %d bytes, only have %d bytes left", 1, 1, stream.size() - stream.tell());
-		return false;
-	}
+    char marshalTilde;
+    if (!stream.read1(marshalTilde))
+    {
+        Log.Error("MarshalStream", "[ReadMarshalHeader]Can't read %d elements of %d bytes, only have %d bytes left", 1, 1, stream.size() - stream.tell());
+        return false;
+    }
 
-	if (marshalTilde != '~')
-	{
-		Log.Error("MarshalStream", "[ReadMarshalHeader]invalid marshal header, missing tilde: 0x%X", marshalTilde);
-		return false;
-	}
+    if (marshalTilde != '~')
+    {
+        Log.Error("MarshalStream", "[ReadMarshalHeader]invalid marshal header, missing tilde: 0x%X", marshalTilde);
+        return false;
+    }
 
-	int32 sharedObjectCount;
-	if (!stream.read4(sharedObjectCount))
-	{
-		Log.Error("MarshalStream", "[ReadMarshalHeader]Can't read %d elements of %d bytes, only have %d bytes left", 1, 4, stream.size() - stream.tell());
-		return false;
-	}
+    int32 sharedObjectCount;
+    if (!stream.read4(sharedObjectCount))
+    {
+        Log.Error("MarshalStream", "[ReadMarshalHeader]Can't read %d elements of %d bytes, only have %d bytes left", 1, 4, stream.size() - stream.tell());
+        return false;
+    }
 
-	/* check if this packet contains referenced objects */
-	if (sharedObjectCount <= 0)
-		return true;
+    /* check if this packet contains referenced objects */
+    if (sharedObjectCount <= 0)
+        return true;
 
-	mReferencedObjectsMap.SetOrderMapSize(sharedObjectCount);
-	mReferencedObjectsMap.SetSharedObjectCount(sharedObjectCount);
-	
-	size_t tReadIndex2 = stream.tell();
-	if ( (signed int)(stream.size() - tReadIndex2) / 4 < sharedObjectCount )
-	{
-		Log.Error("MarshalStream", "[ReadMarshalHeader]Too little data in marshal stream, %u bytes. I really wanted at least %u bytes total, mapcount in header is %d", stream.size(), tReadIndex2 + 4 * sharedObjectCount, sharedObjectCount);
-		return false;
-	}
+    mReferencedObjectsMap.SetOrderMapSize(sharedObjectCount);
+    mReferencedObjectsMap.SetSharedObjectCount(sharedObjectCount);
 
-	stream.setpayloadsize(stream.size() - (4 * sharedObjectCount));
+    size_t tReadIndex2 = stream.tell();
+    if ( (signed int)(stream.size() - tReadIndex2) / 4 < sharedObjectCount )
+    {
+        Log.Error("MarshalStream", "[ReadMarshalHeader]Too little data in marshal stream, %u bytes. I really wanted at least %u bytes total, mapcount in header is %d", stream.size(), tReadIndex2 + 4 * sharedObjectCount, sharedObjectCount);
+        return false;
+    }
 
-	size_t sharedObjectIndex = stream.buffersize() - 4 * sharedObjectCount;
+    stream.setpayloadsize(stream.size() - (4 * sharedObjectCount));
 
-	int32* sharedObjectBegin = (int32*)&stream.content()[sharedObjectIndex];
-	int32 loopcounter = 0;
-	while ( *sharedObjectBegin >= 1 && *sharedObjectBegin <= sharedObjectCount )
-	{
-		mReferencedObjectsMap.SetObjectOrder(loopcounter, *sharedObjectBegin);
-		++loopcounter;
-		++sharedObjectBegin;
-		
-		if ( loopcounter >= sharedObjectCount )
-			return true;
-	}
+    size_t sharedObjectIndex = stream.buffersize() - 4 * sharedObjectCount;
 
-	Log.Error("MarshalStream", "Bogus map data in marshal stream.");
+    int32* sharedObjectBegin = (int32*)&stream.content()[sharedObjectIndex];
+    int32 loopcounter = 0;
+    while ( *sharedObjectBegin >= 1 && *sharedObjectBegin <= sharedObjectCount )
+    {
+        mReferencedObjectsMap.SetObjectOrder(loopcounter, *sharedObjectBegin);
+        ++loopcounter;
+        ++sharedObjectBegin;
 
-	return false;
+        if ( loopcounter >= sharedObjectCount )
+            return true;
+    }
+
+    Log.Error("MarshalStream", "Bogus map data in marshal stream.");
+
+    return false;
 }
 
 PyObject* MarshalStream::unmarshal( ReadStream & stream )
 {
-	if (stream.size() - stream.tell() >= 1)
-	{
-		uint8 opcode;
-		stream.read1(opcode);
+    if (stream.size() - stream.tell() >= 1)
+    {
+        uint8 opcode;
+        stream.read1(opcode);
 
-		if(opcode & 0x40)
-			printf("shared object\n");
+        if(opcode & 0x40)
+            printf("shared object\n");
 
-		switch ( opcode & 0x3F )
-		{
-			case Op_PyNone:
-			{
-				unmarshalState(Op_PyNone, stream);
-				PyNone.IncRef();
-				MARSHALSTREAM_RETURN(&PyNone);
-			}
+        switch ( opcode & 0x3F )
+        {
+            case Op_PyNone:
+            {
+                unmarshalState(Op_PyNone, stream);
+                PyNone.IncRef();
+                MARSHALSTREAM_RETURN(&PyNone);
+            }
 
-			case Op_PyClassString:
-			{
-				unmarshalState(Op_PyClassString, stream);
-				MARSHALSTREAM_RETURN(ReadClassString(stream, (opcode & 0x40) != 0));
-			}
+            case Op_PyClassString:
+            {
+                unmarshalState(Op_PyClassString, stream);
+                MARSHALSTREAM_RETURN(ReadClassString(stream, (opcode & 0x40) != 0));
+            }
 
-			case Op_PyLongLong:
-			{
-				unmarshalState(Op_PyLongLong, stream);
-				int64 number;
-				if (!stream.read8(number))
-					MARSHALSTREAM_RETURN_NULL;
-				MARSHALSTREAM_RETURN(PyLong_FromLongLong(number));
-			}
+            case Op_PyLongLong:
+            {
+                unmarshalState(Op_PyLongLong, stream);
+                int64 number;
+                if (!stream.read8(number))
+                    MARSHALSTREAM_RETURN_NULL;
+                MARSHALSTREAM_RETURN(PyLong_FromLongLong(number));
+            }
 
-			case Op_PyLong:
-			{
-				unmarshalState(Op_PyLong, stream);
-				int32 number;
-				if (!stream.read4(number))
-					MARSHALSTREAM_RETURN_NULL;
-				MARSHALSTREAM_RETURN(PyInt_FromLong(number));
-			}
+            case Op_PyLong:
+            {
+                unmarshalState(Op_PyLong, stream);
+                int32 number;
+                if (!stream.read4(number))
+                    MARSHALSTREAM_RETURN_NULL;
+                MARSHALSTREAM_RETURN(PyInt_FromLong(number));
+            }
 
-			case Op_PySignedShort:
-			{
-				unmarshalState(Op_PySignedShort, stream);
-				int16 number;
-				if (!stream.read2(number))
-					MARSHALSTREAM_RETURN_NULL;
-				MARSHALSTREAM_RETURN(PyInt_FromLong(number));
-			}
+            case Op_PySignedShort:
+            {
+                unmarshalState(Op_PySignedShort, stream);
+                int16 number;
+                if (!stream.read2(number))
+                    MARSHALSTREAM_RETURN_NULL;
+                MARSHALSTREAM_RETURN(PyInt_FromLong(number));
+            }
 
-			case Op_PyByte:
-			{
-				unmarshalState(Op_PyByte, stream);
-				int8 number;
-				if (!stream.read1(number))
-					MARSHALSTREAM_RETURN_NULL;
-				MARSHALSTREAM_RETURN(PyInt_FromLong(number));
-			}
+            case Op_PyByte:
+            {
+                unmarshalState(Op_PyByte, stream);
+                int8 number;
+                if (!stream.read1(number))
+                    MARSHALSTREAM_RETURN_NULL;
+                MARSHALSTREAM_RETURN(PyInt_FromLong(number));
+            }
 
-			case Op_PyMinusOne:
-			{
-				unmarshalState(Op_PyMinusOne, stream);
-				PyIntMinusOne.IncRef();
-				MARSHALSTREAM_RETURN(&PyIntMinusOne);
-			}
-			
-			case Op_PyZeroInteger:
-			{
-				unmarshalState(Op_PyZeroInteger, stream);
-				PyIntZero.IncRef();
-				MARSHALSTREAM_RETURN(&PyIntZero);
-			}
-			
-			case Op_PyOneInteger:
-			{
-				unmarshalState(Op_PyOneInteger, stream);
-				PyIntOne.IncRef();
-				MARSHALSTREAM_RETURN(&PyIntOne);
-			}
-			
-			case Op_PyFloat:
-			{
-				unmarshalState(Op_PyFloat, stream);
-				double number;
-				if (!stream.read8(number))
-					MARSHALSTREAM_RETURN_NULL;
-				MARSHALSTREAM_RETURN(PyFloat_FromDouble(number));
-			}
+            case Op_PyMinusOne:
+            {
+                unmarshalState(Op_PyMinusOne, stream);
+                PyIntMinusOne.IncRef();
+                MARSHALSTREAM_RETURN(&PyIntMinusOne);
+            }
 
-			case Op_PyZeroFloat:
-			{
-				unmarshalState(Op_PyZeroFloat, stream);
-				PyFloatZero.IncRef();
-				MARSHALSTREAM_RETURN(&PyFloatZero);
-			}
-			
-			case Op_PyTrue:
-			{
-				unmarshalState(Op_PyTrue, stream);
-				Py_TrueStruct.IncRef();
-				MARSHALSTREAM_RETURN(&Py_TrueStruct);
-			}
-			
-			case Op_PyFalse:
-			{
-				unmarshalState(Op_PyFalse, stream);
-				Py_ZeroStruct.IncRef();
-				MARSHALSTREAM_RETURN(&Py_ZeroStruct);
-			}
-			
-			case Op_PyLongString_unk:
-			{
-				ASCENT_HARDWARE_BREAKPOINT;
-				unmarshalState(Op_PyLongString_unk, stream);
-				MARSHALSTREAM_RETURN(ReadBuffer(stream));
-			}
-			
-			case Op_PyEmptyString:
-			{
-				unmarshalState(Op_PyEmptyString, stream);
-				PyStringEmpty.IncRef();
-				MARSHALSTREAM_RETURN(&PyStringEmpty);
-			}
-			
-			case Op_PyCharString:
-			{
-				unmarshalState(Op_PyCharString, stream);
-				char CharString;
-				if (!stream.read1(CharString))
-					MARSHALSTREAM_RETURN_NULL;
-				MARSHALSTREAM_RETURN(PyString_FromStringAndSize(&CharString, 1));
-			}
+            case Op_PyZeroInteger:
+            {
+                unmarshalState(Op_PyZeroInteger, stream);
+                PyIntZero.IncRef();
+                MARSHALSTREAM_RETURN(&PyIntZero);
+            }
 
-			case Op_PyShortString:
-			{
-				unmarshalState(Op_PyShortString, stream);
-				uint8 strlen;
-				char* strptr;
-				if (!stream.read1(strlen))
-					MARSHALSTREAM_RETURN_NULL;
-				if (!stream.readString(&strptr, strlen))
-					MARSHALSTREAM_RETURN_NULL;
-				MARSHALSTREAM_RETURN(PyString_FromStringAndSize(strptr, strlen));
-			}
+            case Op_PyOneInteger:
+            {
+                unmarshalState(Op_PyOneInteger, stream);
+                PyIntOne.IncRef();
+                MARSHALSTREAM_RETURN(&PyIntOne);
+            }
 
-			case Op_PyStringTableItem:
-			{
-				unmarshalState(Op_PyStringTableItem, stream);
-				uint8 index;
-				if (!stream.read1(index))
-					MARSHALSTREAM_RETURN_NULL;
-	
-				PyString * ret = NULL;
-				if (!sPyStringTable.LookupPyString(index, ret) && ret == NULL)
-				{
-					Log.Error("MarshalStream", "Invalid string table index %d", index);
-					MARSHALSTREAM_RETURN_NULL;
-				}
-				MARSHALSTREAM_RETURN(ret);
-			}
+            case Op_PyFloat:
+            {
+                unmarshalState(Op_PyFloat, stream);
+                double number;
+                if (!stream.read8(number))
+                    MARSHALSTREAM_RETURN_NULL;
+                MARSHALSTREAM_RETURN(PyFloat_FromDouble(number));
+            }
 
-			case Op_PyUnicodeString:
-			{
-				unmarshalState(Op_PyUnicodeString, stream);
-				uint32 strlen;
-				wchar_t* strptr;
-				if (!stream.readSizeEx(strlen))
-					MARSHALSTREAM_RETURN_NULL;
-	
-				if (!stream.readWstring(&strptr, strlen))
-					MARSHALSTREAM_RETURN_NULL;
-	
-				MARSHALSTREAM_RETURN(PyUnicodeUCS2_FromWideChar(strptr, strlen));
-			}
+            case Op_PyZeroFloat:
+            {
+                unmarshalState(Op_PyZeroFloat, stream);
+                PyFloatZero.IncRef();
+                MARSHALSTREAM_RETURN(&PyFloatZero);
+            }
 
-			case Op_PyUnicodeEmptyString:
-			{
-				unmarshalState(Op_PyUnicodeEmptyString, stream);
-				MARSHALSTREAM_RETURN(PyUnicodeUCS2_FromWideChar(0, 0));
-			}
+            case Op_PyTrue:
+            {
+                unmarshalState(Op_PyTrue, stream);
+                Py_TrueStruct.IncRef();
+                MARSHALSTREAM_RETURN(&Py_TrueStruct);
+            }
 
-			case Op_PyUnicodeCharString:
-			{
-				unmarshalState(Op_PyUnicodeCharString, stream);
-				wchar_t singleWChar;
-				if (!stream.read2(singleWChar))
-					MARSHALSTREAM_RETURN_NULL;
-				MARSHALSTREAM_RETURN(PyUnicodeUCS2_FromWideChar(&singleWChar, 1));
-			}
+            case Op_PyFalse:
+            {
+                unmarshalState(Op_PyFalse, stream);
+                Py_ZeroStruct.IncRef();
+                MARSHALSTREAM_RETURN(&Py_ZeroStruct);
+            }
 
-			case Op_PyUnicodeUTF8String:
-			{
-				unmarshalState(Op_PyUnicodeUTF8String, stream);
-				uint32 strlen;
-				char* strptr;
-				if (!stream.readSizeEx(strlen))
-					MARSHALSTREAM_RETURN_NULL;
-	
-				if (!stream.readString(&strptr, strlen))
-					MARSHALSTREAM_RETURN_NULL;
-	
-				MARSHALSTREAM_RETURN(PyUnicodeUCS2_DecodeUTF8(strptr, strlen));
-			}
+            case Op_PyLongString_unk:
+            {
+                ASCENT_HARDWARE_BREAKPOINT;
+                unmarshalState(Op_PyLongString_unk, stream);
+                MARSHALSTREAM_RETURN(ReadBuffer(stream));
+            }
 
-			case Op_PyLongString:
-			{
-				unmarshalState(Op_PyLongString, stream);
-				PyObject * str_obj = ReadBuffer(stream);
-				if ((opcode & 0x40) != 0)
-				{
-					str_obj->IncRef();
-					if(!mReferencedObjectsMap.StoreReferencedObject(str_obj))
-						MARSHALSTREAM_RETURN_NULL;
-				}
-				MARSHALSTREAM_RETURN(str_obj);
-			}
+            case Op_PyEmptyString:
+            {
+                unmarshalState(Op_PyEmptyString, stream);
+                PyStringEmpty.IncRef();
+                MARSHALSTREAM_RETURN(&PyStringEmpty);
+            }
 
-			case Op_PyEmptyTuple:
-			{
-				unmarshalState(Op_PyEmptyTuple, stream);
-				MARSHALSTREAM_RETURN(PyTuple_New(0));
-			}
-			
-			case Op_PyOneTuple:
-			{
-				unmarshalState(Op_PyOneTuple, stream);
-				PyTuple& tuple = *PyTuple_New(1);
-				if ((opcode & 0x40) != 0)
-				{
-					tuple.IncRef();
-					if(!mReferencedObjectsMap.StoreReferencedObject(&tuple))
-						MARSHALSTREAM_RETURN_NULL;
-				}
-	
-				// warning recursive function...
-				tuple[0] = unmarshal(stream);
-				assert(tuple[0].getPyObject() != (PyObject*)&tuple);
+            case Op_PyCharString:
+            {
+                unmarshalState(Op_PyCharString, stream);
+                char CharString;
+                if (!stream.read1(CharString))
+                    MARSHALSTREAM_RETURN_NULL;
+                MARSHALSTREAM_RETURN(PyString_FromStringAndSize(&CharString, 1));
+            }
 
-				MARSHALSTREAM_RETURN(&tuple);
-			}
+            case Op_PyShortString:
+            {
+                unmarshalState(Op_PyShortString, stream);
+                uint8 strlen;
+                char* strptr;
+                if (!stream.read1(strlen))
+                    MARSHALSTREAM_RETURN_NULL;
+                if (!stream.readString(&strptr, strlen))
+                    MARSHALSTREAM_RETURN_NULL;
+                MARSHALSTREAM_RETURN(PyString_FromStringAndSize(strptr, strlen));
+            }
 
-			case Op_PyTwoTuple:
-			{
-				unmarshalState(Op_PyTwoTuple, stream);
-				PyTuple& tuple = *PyTuple_New(2);
-				if ((opcode & 0x40) != 0)
-				{
-					tuple.IncRef();
-					if(!mReferencedObjectsMap.StoreReferencedObject(&tuple))
-						MARSHALSTREAM_RETURN_NULL;
-				}
-	
-				// warning double recursive function...
-				for (int i = 0; i < 2; i++)
-				{
-					PyObject* Itr = unmarshal(stream);
-					assert(Itr != (PyObject*)&tuple);
-					tuple[i] = Itr;
-				}
+            case Op_PyStringTableItem:
+            {
+                unmarshalState(Op_PyStringTableItem, stream);
+                uint8 index;
+                if (!stream.read1(index))
+                    MARSHALSTREAM_RETURN_NULL;
 
-				MARSHALSTREAM_RETURN(&tuple);
-			}
-			
-			case Op_PyTuple:
-			{
-				unmarshalState(Op_PyTuple, stream);
-				uint32 elementCount;
-				if (!stream.readSizeEx(elementCount))
-					MARSHALSTREAM_RETURN_NULL;
-	
-				PyTuple& tuple = *PyTuple_New(elementCount);
-				if ((opcode & 0x40) != 0)
-				{
-					tuple.IncRef();
-					if(!mReferencedObjectsMap.StoreReferencedObject(&tuple))
-						MARSHALSTREAM_RETURN_NULL;
-				}
-	
-				// warning double recursive function...
-				for (uint32 i = 0; i < elementCount; i++)
-				{
-					PyObject* Itr = unmarshal(stream);
-					assert(Itr != (PyObject*)&tuple);
-					tuple[i] = Itr;
-				}
+                PyString * ret = NULL;
+                if (!sPyStringTable.LookupPyString(index, ret) && ret == NULL)
+                {
+                    Log.Error("MarshalStream", "Invalid string table index %d", index);
+                    MARSHALSTREAM_RETURN_NULL;
+                }
+                MARSHALSTREAM_RETURN(ret);
+            }
 
-				MARSHALSTREAM_RETURN(&tuple);
-			}
+            case Op_PyUnicodeString:
+            {
+                unmarshalState(Op_PyUnicodeString, stream);
+                uint32 strlen;
+                wchar_t* strptr;
+                if (!stream.readSizeEx(strlen))
+                    MARSHALSTREAM_RETURN_NULL;
 
-			case Op_PyEmptyList:
-			{
-				unmarshalState(Op_PyEmptyList, stream);
-				MARSHALSTREAM_RETURN(PyList_New(0));
-			}
+                if (!stream.readWstring(&strptr, strlen))
+                    MARSHALSTREAM_RETURN_NULL;
 
-			case Op_PyOneList:
-			{
-				unmarshalState(Op_PyOneList, stream);
-				PyList &list = *PyList_New(1);
-				if (&list == NULL)
-					MARSHALSTREAM_RETURN_NULL;
-				
-				if ((opcode & 0x40) != 0)
-				{
-					list.IncRef();
-					if(!mReferencedObjectsMap.StoreReferencedObject(&list))
-						MARSHALSTREAM_RETURN_NULL;
-				}
-				// recursive function...
-				list[0] = unmarshal(stream);
-				assert(list[0].getPyObject() != (PyObject*)&list);
+                MARSHALSTREAM_RETURN(PyUnicodeUCS2_FromWideChar(strptr, strlen));
+            }
 
-				MARSHALSTREAM_RETURN(&list);
-			}
+            case Op_PyUnicodeEmptyString:
+            {
+                unmarshalState(Op_PyUnicodeEmptyString, stream);
+                MARSHALSTREAM_RETURN(PyUnicodeUCS2_FromWideChar(0, 0));
+            }
 
-			case Op_PyList:
-			{
-				unmarshalState(Op_PyList, stream);
-				uint32 elementCount;
-				if (!stream.readSizeEx(elementCount))
-					MARSHALSTREAM_RETURN_NULL;
-	
-				PyList &list = *PyList_New(elementCount);
-				if (&list == NULL)
-					MARSHALSTREAM_RETURN_NULL;
-	
-				if ((opcode & 0x40) != 0)
-				{
-					list.IncRef();
-					if(!mReferencedObjectsMap.StoreReferencedObject(&list))
-						MARSHALSTREAM_RETURN_NULL;
-				}
-	
-				// n recursive function call
-				for (uint32 i = 0; i < elementCount; i++)
-				{
-					PyObject* itr = unmarshal(stream);
-					assert(itr != (PyObject*)&list);
-					if (itr == NULL)
-						MARSHALSTREAM_RETURN_NULL;
+            case Op_PyUnicodeCharString:
+            {
+                unmarshalState(Op_PyUnicodeCharString, stream);
+                wchar_t singleWChar;
+                if (!stream.read2(singleWChar))
+                    MARSHALSTREAM_RETURN_NULL;
+                MARSHALSTREAM_RETURN(PyUnicodeUCS2_FromWideChar(&singleWChar, 1));
+            }
 
-					list[i] = itr;
-				}
-				MARSHALSTREAM_RETURN(&list);
-			}
-			
-			/* this handler is a lot more complicated than I have implemented here... will do for now... */
-			case Op_PyDict:
-			{
-				unmarshalState(Op_PyDict, stream);
-				uint32 elementCount;
-				if (!stream.readSizeEx(elementCount))
-					MARSHALSTREAM_RETURN_NULL;
-	
-				PyDict & dict = *PyDict_New();
-				if ((opcode & 0x40) != 0)
-				{
-					dict.IncRef();
-					if(!mReferencedObjectsMap.StoreReferencedObject(&dict))
-						MARSHALSTREAM_RETURN_NULL;
-				}
-	
-				// whoo tricky stuff....
-				for (uint32 i = 0; i < elementCount; i++)
-				{
-					PyObject* keyPayload = unmarshal(stream);			// Payload
-					PyObject* keyName = unmarshal(stream);				// the keyname
+            case Op_PyUnicodeUTF8String:
+            {
+                unmarshalState(Op_PyUnicodeUTF8String, stream);
+                uint32 strlen;
+                char* strptr;
+                if (!stream.readSizeEx(strlen))
+                    MARSHALSTREAM_RETURN_NULL;
 
-					assert(keyName);
+                if (!stream.readString(&strptr, strlen))
+                    MARSHALSTREAM_RETURN_NULL;
 
-					dict.set_item(keyName, keyPayload);
+                MARSHALSTREAM_RETURN(PyUnicodeUCS2_DecodeUTF8(strptr, strlen));
+            }
 
-					keyName->DecRef();
-					keyPayload->DecRef();
-				}
+            case Op_PyLongString:
+            {
+                unmarshalState(Op_PyLongString, stream);
+                PyObject * str_obj = ReadBuffer(stream);
+                if ((opcode & 0x40) != 0)
+                {
+                    str_obj->IncRef();
+                    if(!mReferencedObjectsMap.StoreReferencedObject(str_obj))
+                        MARSHALSTREAM_RETURN_NULL;
+                }
+                MARSHALSTREAM_RETURN(str_obj);
+            }
 
-				MARSHALSTREAM_RETURN(&dict);
-			}
+            case Op_PyEmptyTuple:
+            {
+                unmarshalState(Op_PyEmptyTuple, stream);
+                MARSHALSTREAM_RETURN(PyTuple_New(0));
+            }
 
-			/* read a object, it also has a check for reference mapping */
-			case Op_PyModuleInstance:
-			{
-				unmarshalState(Op_PyModuleInstance, stream);
-				MARSHALSTREAM_RETURN(ReadClass(stream, (opcode & 0x40) != 0));
-			}
+            case Op_PyOneTuple:
+            {
+                unmarshalState(Op_PyOneTuple, stream);
+                PyTuple& tuple = *PyTuple_New(1);
+                if ((opcode & 0x40) != 0)
+                {
+                    tuple.IncRef();
+                    if(!mReferencedObjectsMap.StoreReferencedObject(&tuple))
+                        MARSHALSTREAM_RETURN_NULL;
+                }
 
-			/* unknown isn't handled but what we know of them is that its related to the cPickle system */
-			case Op_PyBinairy:
-			{
-				unmarshalState(Op_PyBinairy, stream);
-				MARSHALSTREAM_RETURN_NULL;
-			}
-			
-			/* need to implement custom callbacks and reading stuff... but for the server this doesn't seem useful.. */
-			case Op_PyClassInstance:
-			{
-				//Unmarshal stream contains custom data but I have no callback method
+                // warning recursive function...
+                tuple[0] = unmarshal(stream);
+                assert(tuple[0].getPyObject() != (PyObject*)&tuple);
 
-				unmarshalState(Op_PyClassInstance, stream);
-				PySubStruct * obj = new PySubStruct();
-				PyObject * tobj = unmarshal(stream);
-				assert(obj->setPyObject(tobj));
-				tobj->DecRef();
-				
-				MARSHALSTREAM_RETURN(obj);
-			}
+                MARSHALSTREAM_RETURN(&tuple);
+            }
 
-			/**/
-			case Op_PyLoadcPickledObject:
-			{
-				ASCENT_HARDWARE_BREAKPOINT;
-				unmarshalState(Op_PyLoadcPickledObject, stream);
-				/* |extended size|stream| */
-				//MARSHALSTREAM_RETURN(PyObject_CallMethod(unpickledObject, "load", 0);
-				MARSHALSTREAM_RETURN_NULL;
-			}
-		
-			case Op_cPicked:
-			{
-				ASCENT_HARDWARE_BREAKPOINT;
-				unmarshalState(Op_cPicked, stream);
-				MARSHALSTREAM_RETURN_NULL;
-			}
+            case Op_PyTwoTuple:
+            {
+                unmarshalState(Op_PyTwoTuple, stream);
+                PyTuple& tuple = *PyTuple_New(2);
+                if ((opcode & 0x40) != 0)
+                {
+                    tuple.IncRef();
+                    if(!mReferencedObjectsMap.StoreReferencedObject(&tuple))
+                        MARSHALSTREAM_RETURN_NULL;
+                }
 
-			case Op_PySavedStreamElement:
-			{
-				unmarshalState(Op_PySavedStreamElement, stream);
-				uint32 index;
-				if (!stream.readSizeEx(index))
-					MARSHALSTREAM_RETURN_NULL;
-				PyObject* obj;
-				if (!mReferencedObjectsMap.GetStoredObject(index,&obj))
-				{
-					Log.Error("MarshalStream", "(Op_PySavedStreamElement)there seems to be a Invalid TY_REFECENCE in the stream");
-					MARSHALSTREAM_RETURN_NULL;
-				}
-				obj->IncRef();
-				MARSHALSTREAM_RETURN(obj);
-			}
+                // warning double recursive function...
+                for (int i = 0; i < 2; i++)
+                {
+                    PyObject* Itr = unmarshal(stream);
+                    assert(Itr != (PyObject*)&tuple);
+                    tuple[i] = Itr;
+                }
 
-			/* this is fun as check the clients packet hash.... */
-			case Op_PyChecksumedStream:
-			{
-				unmarshalState(Op_PyChecksumedStream, stream);
-				uint32 clientHash;
-				if (!stream.read4(clientHash))
-					MARSHALSTREAM_RETURN_NULL;
+                MARSHALSTREAM_RETURN(&tuple);
+            }
 
-				Bytef* data = &stream.content()[stream.tell()];
-				uInt len = (uInt)stream.buffersize() - stream.tell();
-				uint32 serverHash = adler32(1, data, len);
-				if (clientHash != serverHash)
-				{
-					Log.Error("MarshalStream", "(Op_PyChecksumedStream) the checksum fails... client send us a 'oepsie' or he's just plain stupid");
-					MARSHALSTREAM_RETURN_NULL;
-				}
-				else
-				{
-					MARSHALSTREAM_RETURN(unmarshal(stream));
-				}
-			}
+            case Op_PyTuple:
+            {
+                unmarshalState(Op_PyTuple, stream);
+                uint32 elementCount;
+                if (!stream.readSizeEx(elementCount))
+                    MARSHALSTREAM_RETURN_NULL;
 
-			case Op_UpdateObject:
-				unmarshalState(Op_UpdateObject, stream);
-				MARSHALSTREAM_RETURN(ReadCallUpdateObject(stream, (opcode >> 6) & 1));
+                PyTuple& tuple = *PyTuple_New(elementCount);
+                if ((opcode & 0x40) != 0)
+                {
+                    tuple.IncRef();
+                    if(!mReferencedObjectsMap.StoreReferencedObject(&tuple))
+                        MARSHALSTREAM_RETURN_NULL;
+                }
 
-			case Op_NewObject:
-				unmarshalState(Op_NewObject, stream);
-				MARSHALSTREAM_RETURN(ReadCallObjectNew(stream, (opcode >> 6) & 1));
+                // warning double recursive function...
+                for (uint32 i = 0; i < elementCount; i++)
+                {
+                    PyObject* Itr = unmarshal(stream);
+                    assert(Itr != (PyObject*)&tuple);
+                    tuple[i] = Itr;
+                }
 
-			case Op_PyDBRow:
-				unmarshalState(Op_PyDBRow, stream);
-				MARSHALSTREAM_RETURN(ReadPackedRow(stream));
+                MARSHALSTREAM_RETURN(&tuple);
+            }
 
-			case Op_PySubStream:
-				unmarshalState(Op_PySubStream, stream);
-				MARSHALSTREAM_RETURN(ReadSubStream(stream));
+            case Op_PyEmptyList:
+            {
+                unmarshalState(Op_PyEmptyList, stream);
+                MARSHALSTREAM_RETURN(PyList_New(0));
+            }
 
-			case Op_PyVarInteger:
-				unmarshalState(Op_PyVarInteger, stream);
-				MARSHALSTREAM_RETURN(ReadVarInteger(stream, (opcode >> 6) & 1));
+            case Op_PyOneList:
+            {
+                unmarshalState(Op_PyOneList, stream);
+                PyList &list = *PyList_New(1);
+                if (&list == NULL)
+                    MARSHALSTREAM_RETURN_NULL;
 
-			default:
-			{
-				ASCENT_HARDWARE_BREAKPOINT;
-				Log.Error("MarshalStream", "Invalid type tag %d, '%c' in stream.", opcode, *((char*)&opcode));
-				MARSHALSTREAM_RETURN_NULL;
-			}
-		}
-		MARSHALSTREAM_RETURN_NULL;
-	}
+                if ((opcode & 0x40) != 0)
+                {
+                    list.IncRef();
+                    if(!mReferencedObjectsMap.StoreReferencedObject(&list))
+                        MARSHALSTREAM_RETURN_NULL;
+                }
+                // recursive function...
+                list[0] = unmarshal(stream);
+                assert(list[0].getPyObject() != (PyObject*)&list);
 
-	ASCENT_HARDWARE_BREAKPOINT;
-	Log.Error("MarshalStream", "not enough data in the stream to read a additional character");
-	MARSHALSTREAM_RETURN_NULL;
+                MARSHALSTREAM_RETURN(&list);
+            }
+
+            case Op_PyList:
+            {
+                unmarshalState(Op_PyList, stream);
+                uint32 elementCount;
+                if (!stream.readSizeEx(elementCount))
+                    MARSHALSTREAM_RETURN_NULL;
+
+                PyList &list = *PyList_New(elementCount);
+                if (&list == NULL)
+                    MARSHALSTREAM_RETURN_NULL;
+
+                if ((opcode & 0x40) != 0)
+                {
+                    list.IncRef();
+                    if(!mReferencedObjectsMap.StoreReferencedObject(&list))
+                        MARSHALSTREAM_RETURN_NULL;
+                }
+
+                // n recursive function call
+                for (uint32 i = 0; i < elementCount; i++)
+                {
+                    PyObject* itr = unmarshal(stream);
+                    assert(itr != (PyObject*)&list);
+                    if (itr == NULL)
+                        MARSHALSTREAM_RETURN_NULL;
+
+                    list[i] = itr;
+                }
+                MARSHALSTREAM_RETURN(&list);
+            }
+
+            /* this handler is a lot more complicated than I have implemented here... will do for now... */
+            case Op_PyDict:
+            {
+                unmarshalState(Op_PyDict, stream);
+                uint32 elementCount;
+                if (!stream.readSizeEx(elementCount))
+                    MARSHALSTREAM_RETURN_NULL;
+
+                PyDict & dict = *PyDict_New();
+                if ((opcode & 0x40) != 0)
+                {
+                    dict.IncRef();
+                    if(!mReferencedObjectsMap.StoreReferencedObject(&dict))
+                        MARSHALSTREAM_RETURN_NULL;
+                }
+
+                // whoo tricky stuff....
+                for (uint32 i = 0; i < elementCount; i++)
+                {
+                    PyObject* keyPayload = unmarshal(stream);           // Payload
+                    PyObject* keyName = unmarshal(stream);              // the keyname
+
+                    assert(keyName);
+
+                    dict.set_item(keyName, keyPayload);
+
+                    keyName->DecRef();
+                    keyPayload->DecRef();
+                }
+
+                MARSHALSTREAM_RETURN(&dict);
+            }
+
+            /* read a object, it also has a check for reference mapping */
+            case Op_PyModuleInstance:
+            {
+                unmarshalState(Op_PyModuleInstance, stream);
+                MARSHALSTREAM_RETURN(ReadClass(stream, (opcode & 0x40) != 0));
+            }
+
+            /* unknown isn't handled but what we know of them is that its related to the cPickle system */
+            case Op_PyBinairy:
+            {
+                unmarshalState(Op_PyBinairy, stream);
+                MARSHALSTREAM_RETURN_NULL;
+            }
+
+            /* need to implement custom callbacks and reading stuff... but for the server this doesn't seem useful.. */
+            case Op_PyClassInstance:
+            {
+                //Unmarshal stream contains custom data but I have no callback method
+
+                unmarshalState(Op_PyClassInstance, stream);
+                PySubStruct * obj = new PySubStruct();
+                PyObject * tobj = unmarshal(stream);
+                assert(obj->setPyObject(tobj));
+                tobj->DecRef();
+
+                MARSHALSTREAM_RETURN(obj);
+            }
+
+            /**/
+            case Op_PyLoadcPickledObject:
+            {
+                ASCENT_HARDWARE_BREAKPOINT;
+                unmarshalState(Op_PyLoadcPickledObject, stream);
+                /* |extended size|stream| */
+                //MARSHALSTREAM_RETURN(PyObject_CallMethod(unpickledObject, "load", 0);
+                MARSHALSTREAM_RETURN_NULL;
+            }
+
+            case Op_cPicked:
+            {
+                ASCENT_HARDWARE_BREAKPOINT;
+                unmarshalState(Op_cPicked, stream);
+                MARSHALSTREAM_RETURN_NULL;
+            }
+
+            case Op_PySavedStreamElement:
+            {
+                unmarshalState(Op_PySavedStreamElement, stream);
+                uint32 index;
+                if (!stream.readSizeEx(index))
+                    MARSHALSTREAM_RETURN_NULL;
+                PyObject* obj;
+                if (!mReferencedObjectsMap.GetStoredObject(index,&obj))
+                {
+                    Log.Error("MarshalStream", "(Op_PySavedStreamElement)there seems to be a Invalid TY_REFECENCE in the stream");
+                    MARSHALSTREAM_RETURN_NULL;
+                }
+                obj->IncRef();
+                MARSHALSTREAM_RETURN(obj);
+            }
+
+            /* this is fun as check the clients packet hash.... */
+            case Op_PyChecksumedStream:
+            {
+                unmarshalState(Op_PyChecksumedStream, stream);
+                uint32 clientHash;
+                if (!stream.read4(clientHash))
+                    MARSHALSTREAM_RETURN_NULL;
+
+                Bytef* data = &stream.content()[stream.tell()];
+                uInt len = (uInt)stream.buffersize() - stream.tell();
+                uint32 serverHash = adler32(1, data, len);
+                if (clientHash != serverHash)
+                {
+                    Log.Error("MarshalStream", "(Op_PyChecksumedStream) the checksum fails... client send us a 'oepsie' or he's just plain stupid");
+                    MARSHALSTREAM_RETURN_NULL;
+                }
+                else
+                {
+                    MARSHALSTREAM_RETURN(unmarshal(stream));
+                }
+            }
+
+            case Op_UpdateObject:
+                unmarshalState(Op_UpdateObject, stream);
+                MARSHALSTREAM_RETURN(ReadCallUpdateObject(stream, (opcode >> 6) & 1));
+
+            case Op_NewObject:
+                unmarshalState(Op_NewObject, stream);
+                MARSHALSTREAM_RETURN(ReadCallObjectNew(stream, (opcode >> 6) & 1));
+
+            case Op_PyDBRow:
+                unmarshalState(Op_PyDBRow, stream);
+                MARSHALSTREAM_RETURN(ReadPackedRow(stream));
+
+            case Op_PySubStream:
+                unmarshalState(Op_PySubStream, stream);
+                MARSHALSTREAM_RETURN(ReadSubStream(stream));
+
+            case Op_PyVarInteger:
+                unmarshalState(Op_PyVarInteger, stream);
+                MARSHALSTREAM_RETURN(ReadVarInteger(stream, (opcode >> 6) & 1));
+
+            default:
+            {
+                ASCENT_HARDWARE_BREAKPOINT;
+                Log.Error("MarshalStream", "Invalid type tag %d, '%c' in stream.", opcode, *((char*)&opcode));
+                MARSHALSTREAM_RETURN_NULL;
+            }
+        }
+        MARSHALSTREAM_RETURN_NULL;
+    }
+
+    ASCENT_HARDWARE_BREAKPOINT;
+    Log.Error("MarshalStream", "not enough data in the stream to read a additional character");
+    MARSHALSTREAM_RETURN_NULL;
 }
 
 PyObject* MarshalStream::ReadBuffer( ReadStream & stream )
 {
-	uint32 size;
-	if (!stream.readSizeEx(size))
-		MARSHALSTREAM_RETURN_NULL;
+    uint32 size;
+    if (!stream.readSizeEx(size))
+        MARSHALSTREAM_RETURN_NULL;
 
-	uint8* buffer;
-	if (!stream.readBuffer(&buffer, size))
-		MARSHALSTREAM_RETURN_NULL;
+    uint8* buffer;
+    if (!stream.readBuffer(&buffer, size))
+        MARSHALSTREAM_RETURN_NULL;
 
-	PyString* ret = PyString_FromStringAndSize((char*)buffer, size);
-	MARSHALSTREAM_RETURN(ret);
+    PyString* ret = PyString_FromStringAndSize((char*)buffer, size);
+    MARSHALSTREAM_RETURN(ret);
 }
 
 /* this still can go wrong... */
 PyObject* MarshalStream::ReadClass( ReadStream & stream, BOOL shared )
 {
-	PyClass * classObj = new PyClass();
+    PyClass * classObj = new PyClass();
 
-	if (shared != FALSE)
-	{
-		classObj->IncRef();
-		mReferencedObjectsMap.StoreReferencedObject(classObj);
-	}
+    if (shared != FALSE)
+    {
+        classObj->IncRef();
+        mReferencedObjectsMap.StoreReferencedObject(classObj);
+    }
 
-	if (classObj == NULL)
-		MARSHALSTREAM_RETURN_NULL;
+    if (classObj == NULL)
+        MARSHALSTREAM_RETURN_NULL;
 
-	PyString * className = (PyString *)unmarshal(stream);
-	PyTuple * bases = (PyTuple*)unmarshal(stream);
+    PyString * className = (PyString *)unmarshal(stream);
+    PyTuple * bases = (PyTuple*)unmarshal(stream);
 
-	if(!classObj->setname(className))
-	{
-		ASCENT_HARDWARE_BREAKPOINT;
-		className->DecRef();
-		classObj->DecRef();
-		bases->DecRef();
-		MARSHALSTREAM_RETURN_NULL;
-	}
+    if(!classObj->setname(className))
+    {
+        ASCENT_HARDWARE_BREAKPOINT;
+        className->DecRef();
+        classObj->DecRef();
+        bases->DecRef();
+        MARSHALSTREAM_RETURN_NULL;
+    }
 
-	if(!classObj->setbases(bases))
-	{
-		ASCENT_HARDWARE_BREAKPOINT;
-		className->DecRef();
-		classObj->DecRef();
-		bases->DecRef();
-		MARSHALSTREAM_RETURN_NULL;
-	}
+    if(!classObj->setbases(bases))
+    {
+        ASCENT_HARDWARE_BREAKPOINT;
+        className->DecRef();
+        classObj->DecRef();
+        bases->DecRef();
+        MARSHALSTREAM_RETURN_NULL;
+    }
 
-	MARSHALSTREAM_RETURN(classObj);
+    MARSHALSTREAM_RETURN(classObj);
 }
 
 PyObject* MarshalStream::ReadCallUpdateObject( ReadStream & stream, BOOL shared )
 {
-	PyClass * classObj = new PyClass();
+    PyClass * classObj = new PyClass();
 
-	if (classObj == NULL)
-		MARSHALSTREAM_RETURN_NULL;
+    if (classObj == NULL)
+        MARSHALSTREAM_RETURN_NULL;
 
-	if (shared != FALSE)
-	{
-		classObj->IncRef();
-		mReferencedObjectsMap.StoreReferencedObject(classObj);
-	}
+    if (shared != FALSE)
+    {
+        classObj->IncRef();
+        mReferencedObjectsMap.StoreReferencedObject(classObj);
+    }
 
-	PyTuple * bases = (PyTuple *)unmarshal(stream);
-	if (bases == NULL)
-		MARSHALSTREAM_RETURN_NULL;
+    PyTuple * bases = (PyTuple *)unmarshal(stream);
+    if (bases == NULL)
+        MARSHALSTREAM_RETURN_NULL;
 
-	PyString * debugName = new PyString("[DEBUG] class update");
-	classObj->setname(debugName);
+    PyString * debugName = new PyString("[DEBUG] class update");
+    classObj->setname(debugName);
 
-	classObj->setbases(bases);
-	ReadNewObjList(stream, *classObj);
-	ReadNewObjDict(stream, *classObj);
+    classObj->setbases(bases);
+    ReadNewObjList(stream, *classObj);
+    ReadNewObjDict(stream, *classObj);
 
-	MARSHALSTREAM_RETURN(classObj);
+    MARSHALSTREAM_RETURN(classObj);
 }
 
 PyObject* MarshalStream::ReadCallObjectNew( ReadStream & stream, BOOL shared )
 {
-	PyClass * classObj = new PyClass();
+    PyClass * classObj = new PyClass();
 
-	if (shared != FALSE)
-	{
-		classObj->IncRef();
-		mReferencedObjectsMap.StoreReferencedObject(classObj);
-	}
+    if (shared != FALSE)
+    {
+        classObj->IncRef();
+        mReferencedObjectsMap.StoreReferencedObject(classObj);
+    }
 
-	PyTuple * bases = (PyTuple *)unmarshal(stream);
+    PyTuple * bases = (PyTuple *)unmarshal(stream);
 
-	PyString * debugName = new PyString("[DEBUG] class new");
-	classObj->setname(debugName);
+    PyString * debugName = new PyString("[DEBUG] class new");
+    classObj->setname(debugName);
 
-	classObj->setbases(bases);
+    classObj->setbases(bases);
 
-	ReadNewObjList(stream, *classObj);
-	ReadNewObjDict(stream, *classObj);
+    ReadNewObjList(stream, *classObj);
+    ReadNewObjDict(stream, *classObj);
 
-	MARSHALSTREAM_RETURN(classObj);
+    MARSHALSTREAM_RETURN(classObj);
 }
 
 PyObject* MarshalStream::ReadPackedRow( ReadStream & stream )
 {
-	PyPackedRow * packedRow = NULL;
-	PyClass* obj1 = (PyClass*)unmarshal(stream);
-	if (obj1 == NULL)
-		MARSHALSTREAM_RETURN_NULL;
+    PyPackedRow * packedRow = NULL;
+    PyClass* obj1 = (PyClass*)unmarshal(stream);
+    if (obj1 == NULL)
+        MARSHALSTREAM_RETURN_NULL;
 
-	packedRow = new PyPackedRow();
-	packedRow->init((PyObject*)obj1);
+    packedRow = new PyPackedRow();
+    packedRow->init((PyObject*)obj1);
 
-	assert(obj1->gettype() == PyTypeClass);
-		
-	size_t size;
-	if (!stream.readSizeEx(size))
-	{
-		obj1->DecRef();
-		packedRow->DecRef();
-		MARSHALSTREAM_RETURN_NULL;
-	}
+    assert(obj1->gettype() == PyTypeClass);
 
-	uint8* data;
-	if (!stream.readBuffer(&data, size))
-	{
-		obj1->DecRef();
-		packedRow->DecRef();
-		MARSHALSTREAM_RETURN_NULL;
-	}
+    size_t size;
+    if (!stream.readSizeEx(size))
+    {
+        obj1->DecRef();
+        packedRow->DecRef();
+        MARSHALSTREAM_RETURN_NULL;
+    }
 
-	size_t outsize = 0;
-	uint8 *outbuff = NULL;
+    uint8* data;
+    if (!stream.readBuffer(&data, size))
+    {
+        obj1->DecRef();
+        packedRow->DecRef();
+        MARSHALSTREAM_RETURN_NULL;
+    }
 
-	size_t virtualFieldCount = 0;
-	size_t fieldCount = 0;
-	PyObject* rawPayload = NULL;
+    size_t outsize = 0;
+    uint8 *outbuff = NULL;
 
-	if (size > 0)
-	{
-		outsize = (size * 8) + 0x100;
-		size_t bufferSize = outsize;
+    size_t virtualFieldCount = 0;
+    size_t fieldCount = 0;
+    PyObject* rawPayload = NULL;
 
-		outbuff = (uint8*)ASCENT_MALLOC(outsize);
-		
-		assert(outbuff);
+    if (size > 0)
+    {
+        outsize = (size * 8) + 0x100;
+        // NOTE: not used
+        //size_t bufferSize = outsize;
 
-		if (!RleModule::decode(data, size, outbuff, &outsize))
-		{
-			SafeFree(outbuff);
+        outbuff = (uint8*)ASCENT_MALLOC(outsize);
 
-			obj1->DecRef();
-			Log.Error("MarshalStream", "error happened in the 'Rle' decoder");
-			MARSHALSTREAM_RETURN_NULL;
-		}
+        assert(outbuff);
 
-		packedRow->mRawFieldData = outbuff;
-		packedRow->mRawFieldDataLen = outsize;
+        if (!RleModule::decode(data, size, outbuff, &outsize))
+        {
+            SafeFree(outbuff);
 
-		/*size_t guessedSize = DBRowModule::GetRawFieldSizeFromHeader(((PyTuple*)obj1->getbases())->GetItem(1));
+            obj1->DecRef();
+            Log.Error("MarshalStream", "error happened in the 'Rle' decoder");
+            MARSHALSTREAM_RETURN_NULL;
+        }
 
-		if (outsize != guessedSize)
-		{
-			Dump(stdout, ((PyTuple*)obj1->getbases())->GetItem(1), 0);
+        packedRow->mRawFieldData = outbuff;
+        packedRow->mRawFieldDataLen = outsize;
 
-			HexAsciiModule::print_hexview(stdout, (char*)outbuff, outsize);
-			HexAsciiModule::print_hexview(stdout, (char*)data, size);
+        /*size_t guessedSize = DBRowModule::GetRawFieldSizeFromHeader(((PyTuple*)obj1->getbases())->GetItem(1));
 
-			RleModule::zeropackbuff testBuff;
-			RleModule::UnpackZeroCompressed(data, size, testBuff);
-			HexAsciiModule::print_hexview(stdout, (char*)&testBuff[0], testBuff.size());
+        if (outsize != guessedSize)
+        {
+            Dump(stdout, ((PyTuple*)obj1->getbases())->GetItem(1), 0);
 
-			int henk = 3;
+            HexAsciiModule::print_hexview(stdout, (char*)outbuff, outsize);
+            HexAsciiModule::print_hexview(stdout, (char*)data, size);
 
-			//ASCENT_HARDWARE_BREAKPOINT;
-		}*/
+            RleModule::zeropackbuff testBuff;
+            RleModule::UnpackZeroCompressed(data, size, testBuff);
+            HexAsciiModule::print_hexview(stdout, (char*)&testBuff[0], testBuff.size());
 
-		memset(&outbuff[outsize+1],0,100);
-		// seems to be a bit wierd at first but it seems to be correct, what should be checked is how this results in correct stuff.
-		outsize = (size * 8) + 0x100;
+            int henk = 3;
 
-		//FILE * dbrowTest = fopen("dbrowtest.txt", "wb");
-		//HexAsciiModule::print_hexview(dbrowTest, (char*)outbuff, size);
-		//fclose(dbrowTest);
-		//HexAsciiModule::print_hexview(stdout, (char*)outbuff, size);
-		rawPayload = DBRowModule::parseraw(*this, (PyObject*)obj1, outbuff, outsize, virtualFieldCount, fieldCount);
-		//SafeFree(outbuff);
+            //ASCENT_HARDWARE_BREAKPOINT;
+        }*/
 
-		//SafeFree(outbuff);
-	}
-	
-	packedRow->setheader(obj1);
-	packedRow->setRawPayLoad(rawPayload);
+        memset(&outbuff[outsize+1],0,100);
+        // seems to be a bit wierd at first but it seems to be correct, what should be checked is how this results in correct stuff.
+        outsize = (size * 8) + 0x100;
 
-	/* evil bit we force the row tuple to swallow the itr chunks / objects */
+        //FILE * dbrowTest = fopen("dbrowtest.txt", "wb");
+        //HexAsciiModule::print_hexview(dbrowTest, (char*)outbuff, size);
+        //fclose(dbrowTest);
+        //HexAsciiModule::print_hexview(stdout, (char*)outbuff, size);
+        rawPayload = DBRowModule::parseraw(*this, (PyObject*)obj1, outbuff, outsize, virtualFieldCount, fieldCount);
+        //SafeFree(outbuff);
 
-	/* strings related to the following code
-	 * "extra virtual columns at the end"
-	 * "return size of data, and number of extra columns"
-	 */
-	if (virtualFieldCount > 0)
-	{
-		size_t intergralOffset = fieldCount - virtualFieldCount;
-		for (size_t i = 0; i < virtualFieldCount; i++)
-		{
-			PyObject* henk = unmarshal(stream);
-			packedRow->addleaf(henk);
-		}
-	}
-		
-	MARSHALSTREAM_RETURN(packedRow);
+        //SafeFree(outbuff);
+    }
+
+    packedRow->setheader(obj1);
+    packedRow->setRawPayLoad(rawPayload);
+
+    /* evil bit we force the row tuple to swallow the itr chunks / objects */
+
+    /* strings related to the following code
+     * "extra virtual columns at the end"
+     * "return size of data, and number of extra columns"
+     */
+    if (virtualFieldCount > 0)
+    {
+        // NOTE: not used.
+        //size_t intergralOffset = fieldCount - virtualFieldCount;
+
+        for (size_t i = 0; i < virtualFieldCount; i++)
+        {
+            PyObject* henk = unmarshal(stream);
+            packedRow->addleaf(henk);
+        }
+    }
+
+    MARSHALSTREAM_RETURN(packedRow);
 }
 
 PyObject* MarshalStream::ReadSubStream( ReadStream & stream )
 {
-	uint32 size = 0;
-	if (!stream.readSizeEx(size))
-		MARSHALSTREAM_RETURN_NULL;
+    uint32 size = 0;
+    if (!stream.readSizeEx(size))
+        MARSHALSTREAM_RETURN_NULL;
 
-	PySubStream* object = new PySubStream();
-	uint8* data;
-	if (!stream.readBuffer(&data, size))
-	{
-		object->DecRef();
-		MARSHALSTREAM_RETURN_NULL;
-	}
+    PySubStream* object = new PySubStream();
+    uint8* data;
+    if (!stream.readBuffer(&data, size))
+    {
+        object->DecRef();
+        MARSHALSTREAM_RETURN_NULL;
+    }
 
-	if(!object->set(data, size))
-	{
-		object->DecRef();
-		MARSHALSTREAM_RETURN_NULL;
-	}
+    if(!object->set(data, size))
+    {
+        object->DecRef();
+        MARSHALSTREAM_RETURN_NULL;
+    }
 
-	MARSHALSTREAM_RETURN(object);
+    MARSHALSTREAM_RETURN(object);
 }
 
 PyObject* MarshalStream::ReadVarInteger( ReadStream & stream, BOOL shared )
 {
-	uint32 len = 0;
-	if(!stream.readSizeEx(len))
-		MARSHALSTREAM_RETURN_NULL;
-	
-	/* we don't have big int implemented so crash if it goes crazy */
-	ASCENT_ASSERT(len <= 8);
-	
-	PyLong* object = NULL;
-	if(len == 0)
-	{
-		object = PyLong_FromLong(len);
-	}
-	else
-	{
-		uint8 *buffer = NULL;
-		if (!stream.readBuffer(&buffer, len))
-			MARSHALSTREAM_RETURN_NULL;
+    uint32 len = 0;
+    if(!stream.readSizeEx(len))
+        MARSHALSTREAM_RETURN_NULL;
 
-		object = _ByteArray_AsPyLong(buffer, len);
-	}
-	
-	if (shared != FALSE)
-	{
-		object->IncRef();
-		mReferencedObjectsMap.StoreReferencedObject(object);
-	}
+    /* we don't have big int implemented so crash if it goes crazy */
+    ASCENT_ASSERT(len <= 8);
 
-	MARSHALSTREAM_RETURN(object);
+    PyLong* object = NULL;
+    if(len == 0)
+    {
+        object = PyLong_FromLong(len);
+    }
+    else
+    {
+        uint8 *buffer = NULL;
+        if (!stream.readBuffer(&buffer, len))
+            MARSHALSTREAM_RETURN_NULL;
+
+        object = _ByteArray_AsPyLong(buffer, len);
+    }
+
+    if (shared != FALSE)
+    {
+        object->IncRef();
+        mReferencedObjectsMap.StoreReferencedObject(object);
+    }
+
+    MARSHALSTREAM_RETURN(object);
 }
 
 PyObject* MarshalStream::ReadClassString( ReadStream & stream, BOOL shared )
 {
-	PyString* objectName = (PyString*)ReadBuffer(stream);
-	objectName->append("[CLASS STRING]", 0, 14);
+    PyString* objectName = (PyString*)ReadBuffer(stream);
+    objectName->append("[CLASS STRING]", 0, 14);
 
-	/* bad bad bad boy, don't do a "new" here... because the class needed to return already exists */
-	PyClass * GlobalClass = new PyClass();
-	GlobalClass->setname(objectName);
+    /* bad bad bad boy, don't do a "new" here... because the class needed to return already exists */
+    PyClass * GlobalClass = new PyClass();
+    GlobalClass->setname(objectName);
 
-	if (shared != FALSE)
-	{
-		GlobalClass->IncRef();
-		mReferencedObjectsMap.StoreReferencedObject(GlobalClass);
-	}
-	
-	MARSHALSTREAM_RETURN(GlobalClass);
+    if (shared != FALSE)
+    {
+        GlobalClass->IncRef();
+        mReferencedObjectsMap.StoreReferencedObject(GlobalClass);
+    }
+
+    MARSHALSTREAM_RETURN(GlobalClass);
 }
 
 bool MarshalStream::checkAndInflate( ReadStream & stream )
 {
-	char idChar;
-	if (!stream.peek1(idChar))
-	{
-		Log.Error("MarshalStream", "Unable to peek 1 byte of the stream and check if its compressed");
-		return false;
-	}
+    char idChar;
+    if (!stream.peek1(idChar))
+    {
+        Log.Error("MarshalStream", "Unable to peek 1 byte of the stream and check if its compressed");
+        return false;
+    }
 
-	/* check if the packet is compressed */
-	if (idChar != '~' )
-	{
-		if (idChar != char(0x78))
-		{
-			Log.Error("MarshalStream", "unknown idChar something fishy is going on..... panic");
-			return false;
-		}
-		else
-		{
-			u_long  sourcelen = (u_long)stream.size();
-			Bytef * source = stream.content();
+    /* check if the packet is compressed */
+    if (idChar != '~' )
+    {
+        if (idChar != char(0x78))
+        {
+            Log.Error("MarshalStream", "unknown idChar something fishy is going on..... panic");
+            return false;
+        }
+        else
+        {
+            u_long  sourcelen = (u_long)stream.size();
+            Bytef * source = stream.content();
 
-			/* One of the key things of the ZLIB stuff is that we 'sometimes' don't know the size of the uncompressed data.
-			 * My idea is to fix this regarding the first phase of the parsing of the data (the parser) is to go trough a
-			 * couple of output buffer size. First buffer size would be 4x the initial buffer size, implying that the
-			 * compression ratio is about 75%. The second buffer size would be 8x the initial buffer size, implying that the
-			 * compression ratio is about 87.5%. The third and last buffer size is 16x the initial buffer size implying that
-			 * the compression ratio is about 93.75%. This theory is really stupid because there is no way to actually know.
-			 */
+            /* One of the key things of the ZLIB stuff is that we 'sometimes' don't know the size of the uncompressed data.
+             * My idea is to fix this regarding the first phase of the parsing of the data (the parser) is to go trough a
+             * couple of output buffer size. First buffer size would be 4x the initial buffer size, implying that the
+             * compression ratio is about 75%. The second buffer size would be 8x the initial buffer size, implying that the
+             * compression ratio is about 87.5%. The third and last buffer size is 16x the initial buffer size implying that
+             * the compression ratio is about 93.75%. This theory is really stupid because there is no way to actually know.
+             */
 
-			uint32 bufferMultiplier = 4;
-			u_long outBufferLen = sourcelen * bufferMultiplier;
-			u_long allocatedBufferLen = outBufferLen;
+            uint32 bufferMultiplier = 4;
+            u_long outBufferLen = sourcelen * bufferMultiplier;
+            u_long allocatedBufferLen = outBufferLen;
 
-			Bytef * outBuffer = (Bytef *)ASCENT_MALLOC(outBufferLen);
+            Bytef * outBuffer = (Bytef *)ASCENT_MALLOC(outBufferLen);
 
-			int zlibUncompressResult = uncompress(outBuffer, &outBufferLen, source, sourcelen);
-			
-			if (zlibUncompressResult == Z_BUF_ERROR)
-			{
-				int loop_limiter = 0;
-				while(zlibUncompressResult == Z_BUF_ERROR)
-				{
-					/* because this code is a possible fuck up, we add a check */
-					if (loop_limiter++ > 100)
-					{
-						zlibUncompressResult = Z_MEM_ERROR;
-						Log.Error("MarshalStream", "uncompress increase buffer overflow safe mechanism");
-						break;
-					}
+            int zlibUncompressResult = uncompress(outBuffer, &outBufferLen, source, sourcelen);
 
-					bufferMultiplier*=2;
-					outBufferLen = sourcelen * bufferMultiplier;
+            if (zlibUncompressResult == Z_BUF_ERROR)
+            {
+                int loop_limiter = 0;
+                while(zlibUncompressResult == Z_BUF_ERROR)
+                {
+                    /* because this code is a possible fuck up, we add a check */
+                    if (loop_limiter++ > 100)
+                    {
+                        zlibUncompressResult = Z_MEM_ERROR;
+                        Log.Error("MarshalStream", "uncompress increase buffer overflow safe mechanism");
+                        break;
+                    }
 
-					Log.Warning("MarshalStream","uncompress failed and we now do the increase buffer size trick: %d times. Resizing from: %u to %u", loop_limiter, outBufferLen / bufferMultiplier,outBufferLen);
-					
-					allocatedBufferLen = outBufferLen;
+                    bufferMultiplier*=2;
+                    outBufferLen = sourcelen * bufferMultiplier;
 
-					outBuffer = (Bytef*)ASCENT_REALLOC(outBuffer, outBufferLen); // resize the output buffer
-					zlibUncompressResult = uncompress(outBuffer, &outBufferLen, source, sourcelen); // and try it again
-				}
+                    Log.Warning("MarshalStream","uncompress failed and we now do the increase buffer size trick: %d times. Resizing from: %u to %u", loop_limiter, outBufferLen / bufferMultiplier,outBufferLen);
 
-				if (zlibUncompressResult != Z_OK)
-				{
-					Log.Error("MarshalStream", "uncompress went wrong ***PANIC***");
+                    allocatedBufferLen = outBufferLen;
 
-					ASCENT_FREE(outBuffer);
-					return false;
-				}
-			}
-			else if (zlibUncompressResult != Z_OK)
-			{
-				Log.Error("MarshalStream", "uncompress went wrong ***PANIC***");
-				ASCENT_FREE(outBuffer);
-				return false;
-			}
-			
-			/* if we get here it usually means uncompress was successful. */
-			stream.set(outBuffer, outBufferLen);
+                    outBuffer = (Bytef*)ASCENT_REALLOC(outBuffer, outBufferLen); // resize the output buffer
+                    zlibUncompressResult = uncompress(outBuffer, &outBufferLen, source, sourcelen); // and try it again
+                }
 
-			ASCENT_FREE(outBuffer);
-		}
-	}
-	return true;
+                if (zlibUncompressResult != Z_OK)
+                {
+                    Log.Error("MarshalStream", "uncompress went wrong ***PANIC***");
+
+                    ASCENT_FREE(outBuffer);
+                    return false;
+                }
+            }
+            else if (zlibUncompressResult != Z_OK)
+            {
+                Log.Error("MarshalStream", "uncompress went wrong ***PANIC***");
+                ASCENT_FREE(outBuffer);
+                return false;
+            }
+
+            /* if we get here it usually means uncompress was successful. */
+            stream.set(outBuffer, outBufferLen);
+
+            ASCENT_FREE(outBuffer);
+        }
+    }
+    return true;
 }
 
 bool MarshalStream::ReadNewObjList( ReadStream & stream, PyClass & obj )
 {
-	PyList * list = PyList_New(0);
-	PyObject * listItr = NULL;
-	bool healthyExit = false;
-	while (true)
-	{
-		char thingy;
-		if (stream.peek1(thingy))
-		{
-			if (thingy != Op_PyStopIter)
-			{
-				listItr = unmarshal(stream);
-			}
-			else
-			{
-				listItr = NULL;
+    PyList * list = PyList_New(0);
+    PyObject * listItr = NULL;
+    bool healthyExit = false;
+    while (true)
+    {
+        char thingy;
+        if (stream.peek1(thingy))
+        {
+            if (thingy != Op_PyStopIter)
+            {
+                listItr = unmarshal(stream);
+            }
+            else
+            {
+                listItr = NULL;
 
-				if(!stream.seek(1, SEEK_CUR))
-				{
-					Log.Error("MarshalStream", "unable to skip '-' in ReadNewObjList");
-					assert(false);
-				}
-				else
-				{
-					healthyExit = true;
-				}
-			}
-		}
-		else
-		{
-			listItr = NULL;
-			Log.Error("MarshalStream", "unable to peek for itr stop char in ReadNewObjList");
-			assert(false);
-		}
+                if(!stream.seek(1, SEEK_CUR))
+                {
+                    Log.Error("MarshalStream", "unable to skip '-' in ReadNewObjList");
+                    assert(false);
+                }
+                else
+                {
+                    healthyExit = true;
+                }
+            }
+        }
+        else
+        {
+            listItr = NULL;
+            Log.Error("MarshalStream", "unable to peek for itr stop char in ReadNewObjList");
+            assert(false);
+        }
 
-		if (healthyExit == true)
-			break;
+        if (healthyExit == true)
+            break;
 
-		if (listItr == NULL)
-			return false;
+        if (listItr == NULL)
+            return false;
 
-		list->add(listItr);
-	}
+        list->add(listItr);
+    }
 
-	obj.setDirList(list);
+    obj.setDirList(list);
 
-	return true;
+    return true;
 }
 
 bool MarshalStream::ReadNewObjDict( ReadStream & stream, PyClass & obj )
 {
-	PyDict * dict = PyDict_New();
-	PyObject * dictItr = NULL;
-	bool healthyExit = false;
-	while (true)
-	{
-		char thingy;
-		if (stream.peek1(thingy))
-		{
-			if (thingy != Op_PyStopIter)
-			{
-				dictItr = unmarshal(stream);
-			}
-			else
-			{
-				dictItr = NULL;
+    PyDict * dict = PyDict_New();
+    PyObject * dictItr = NULL;
+    bool healthyExit = false;
+    while (true)
+    {
+        char thingy;
+        if (stream.peek1(thingy))
+        {
+            if (thingy != Op_PyStopIter)
+            {
+                dictItr = unmarshal(stream);
+            }
+            else
+            {
+                dictItr = NULL;
 
-				if(!stream.seek(1, SEEK_CUR))
-				{
-					Log.Error("MarshalStream", "unable to skip '-'");
-					assert(false);
-				}
-				else
-				{
-					healthyExit = true;
-				}
-			}
-		}
-		else
-		{
-			dictItr = NULL;
-			Log.Error("MarshalStream", "unable to peek for itr stop char");
-			assert(false);
-		}
+                if(!stream.seek(1, SEEK_CUR))
+                {
+                    Log.Error("MarshalStream", "unable to skip '-'");
+                    assert(false);
+                }
+                else
+                {
+                    healthyExit = true;
+                }
+            }
+        }
+        else
+        {
+            dictItr = NULL;
+            Log.Error("MarshalStream", "unable to peek for itr stop char");
+            assert(false);
+        }
 
-		if (healthyExit == true)
-			break;
+        if (healthyExit == true)
+            break;
 
-		if (dictItr == NULL)
-			return false;
+        if (dictItr == NULL)
+            return false;
 
-		PyObject * keyName = unmarshal(stream);
+        PyObject * keyName = unmarshal(stream);
 
-		dict->set_item(dictItr, keyName);
-		keyName->DecRef();
-		dictItr->DecRef();
-	}
+        dict->set_item(dictItr, keyName);
+        keyName->DecRef();
+        dictItr->DecRef();
+    }
 
-	obj.setDirDict(dict);
+    obj.setDirDict(dict);
 
-	return true;
+    return true;
 }
 
 bool MarshalStream::save( PyObject * object, WriteStream & stream )
 {
-	if (object == NULL)
-		return false;
+    if (object == NULL)
+        return false;
 
-	stream.write1('~'); // first token
-	uint32 refCountPlaceholder = 0;
-	stream.write4(refCountPlaceholder);
+    stream.write1('~'); // first token
+    uint32 refCountPlaceholder = 0;
+    stream.write4(refCountPlaceholder);
 
-	return marshal(object, stream);
+    return marshal(object, stream);
 }
 
 /* helper function for me fucking up */
 bool marshalString(const char* str, WriteStream & stream)
 {
-	size_t str_len = strlen(str);
+    size_t str_len = strlen(str);
 
-	if (str_len == 0)
-	{
-		return stream.writeOpcode(Op_PyEmptyString);
-	}
-	else if(str_len == 1)
-	{
-		if (!stream.writeOpcode(Op_PyCharString))
-			return false;
-		return stream.write1(str[0]);
-	}
-	else if (str_len < 0xFF)
-	{
-		if (!stream.writeOpcode(Op_PyShortString))
-			return false;
+    if (str_len == 0)
+    {
+        return stream.writeOpcode(Op_PyEmptyString);
+    }
+    else if(str_len == 1)
+    {
+        if (!stream.writeOpcode(Op_PyCharString))
+            return false;
+        return stream.write1(str[0]);
+    }
+    else if (str_len < 0xFF)
+    {
+        if (!stream.writeOpcode(Op_PyShortString))
+            return false;
 
-		if (!stream.write1(str_len))
-			return false;
-		return stream.write(str, str_len);
-	}
-	else
-	{
-		/* I can't remember why and how.... */
-		ASCENT_HARDWARE_BREAKPOINT;
-	}
+        if (!stream.write1(str_len))
+            return false;
+        return stream.write(str, str_len);
+    }
+    else
+    {
+        /* I can't remember why and how.... */
+        ASCENT_HARDWARE_BREAKPOINT;
+        return false;
+    }
+
+    return false;
 }
 
 //#  define unmarshalState(x, y) {sLog.String("State:"#x"\toffset:0x%X", y.tell());}
 
 bool MarshalStream::marshal( PyObject * object, WriteStream & stream )
 {
-	// fucked stuff..... make a special PyObject for this so we can do better typecasting.
-	uint8 * helper = (uint8 *)object;
-	size_t refCount = *(size_t*)(helper+1);
-	
-	uint8 object_type = ((PyInt*)object)->gettype();
-	
-	/*if (refCount>1 && object_type != PyTypeNone)
-		__asm{int 3};*/	
-	
-	switch (object_type)
-	{
-	case PyTypeNone:
-		{
-			return stream.writeOpcode(Op_PyNone);
-		} break;
+    // fucked stuff..... make a special PyObject for this so we can do better typecasting.
+    // NOTE: unused variable
+    //uint8 * helper = (uint8 *)object;
 
-	case PyTypeBool:
-		{
-			PyBool & b = *(PyBool *)object;
-			if (b == true)
-				return stream.writeOpcode(Op_PyTrue);
-			else
-				return stream.writeOpcode(Op_PyFalse);
-		} break;
+    // NOTE: unused refCount
+    //size_t refCount = *(size_t*)(helper+1);
 
-	case PyTypeLong:
-		{
-			int64 val = ((PyLong *)object)->GetValue();
+    uint8 object_type = ((PyInt*)object)->gettype();
 
-			if (val < 0)
-			{
-				/* if our value is smaller than 0 meaning its a negative value we can't send it trough the optimized system so send it as long long */
-				if(!stream.writeOpcode(Op_PyLongLong))
-					return false;
-				return stream.write8(val);
-			}
-			else
-			{
-				return WriteVarInteger(stream, object);
-			}
-			break;
-		}
-	case PyTypeInt:
-		{
-			int32 val = ((PyInt *)object)->GetValue();
+    /*if (refCount>1 && object_type != PyTypeNone)
+        __asm{int 3};*/
 
-			if (val == -1)
-			{
-				return stream.writeOpcode(Op_PyMinusOne);
-			}
-			else if (val == 0)
-			{
-				return stream.writeOpcode(Op_PyZeroInteger);
-			}
-			else if (val == 1)
-			{
-				return stream.writeOpcode(Op_PyOneInteger);
-			}
-			else if ( val + 0x80u > 0xFF )
-			{
-				if ( val + 0x8000u > 0xFFFF )
-				{
-					if (!stream.writeOpcode(Op_PyLong))
-						return false;
-					return stream.write4(val);
-				}
-				else
-				{
-					if (!stream.writeOpcode(Op_PySignedShort))
-						return false;
-					return stream.write2(val);
-				}
-			}
-			else
-			{
-				if (!stream.writeOpcode(Op_PyByte))
-					return false;
-				return stream.write1(val);
-			}
-		} break;
+    switch (object_type)
+    {
+    case PyTypeNone:
+        {
+            return stream.writeOpcode(Op_PyNone);
+        } break;
 
-	case PyTypeReal:
-		{
-			PyFloat & number = *(PyFloat*)object;
-			double val = number.GetValue();
-			if (val == 0.0)
-				return stream.writeOpcode(Op_PyZeroFloat);
+    case PyTypeBool:
+        {
+            PyBool & b = *(PyBool *)object;
+            if (b == true)
+                return stream.writeOpcode(Op_PyTrue);
+            else
+                return stream.writeOpcode(Op_PyFalse);
+        } break;
 
-			if (!stream.writeOpcode(Op_PyFloat))
-				return false;
+    case PyTypeLong:
+        {
+            int64 val = ((PyLong *)object)->GetValue();
 
-			return stream.write8(val);
-		} break;
+            if (val < 0)
+            {
+                /* if our value is smaller than 0 meaning its a negative value we can't send it trough the optimized system so send it as long long */
+                if(!stream.writeOpcode(Op_PyLongLong))
+                    return false;
+                return stream.write8(val);
+            }
+            else
+            {
+                return WriteVarInteger(stream, object);
+            }
+            break;
+        }
+    case PyTypeInt:
+        {
+            int32 val = ((PyInt *)object)->GetValue();
 
-	case PyTypeString:
-		{
-			PyString & str = *(PyString*)object;
-			size_t str_len = str.length();
-			if (str_len == 0)
-			{
-				return stream.writeOpcode(Op_PyEmptyString);
-			}
-			else if(str_len == 1)
-			{
-				if (!stream.writeOpcode(Op_PyCharString))
-					return false;
-				return stream.write1(str[0]);
-			}
+            if (val == -1)
+            {
+                return stream.writeOpcode(Op_PyMinusOne);
+            }
+            else if (val == 0)
+            {
+                return stream.writeOpcode(Op_PyZeroInteger);
+            }
+            else if (val == 1)
+            {
+                return stream.writeOpcode(Op_PyOneInteger);
+            }
+            else if ( val + 0x80u > 0xFF )
+            {
+                if ( val + 0x8000u > 0xFFFF )
+                {
+                    if (!stream.writeOpcode(Op_PyLong))
+                        return false;
+                    return stream.write4(val);
+                }
+                else
+                {
+                    if (!stream.writeOpcode(Op_PySignedShort))
+                        return false;
+                    return stream.write2(val);
+                }
+            }
+            else
+            {
+                if (!stream.writeOpcode(Op_PyByte))
+                    return false;
+                return stream.write1(val);
+            }
+        } break;
 
-			size_t str_index = sPyStringTable.LookupIndex(str.content());
-			if (str_index != -1)
-			{
-				if (!stream.writeOpcode(Op_PyStringTableItem))
-					return false;
-				return stream.write1(str_index+1);
-			}
-			else if (str_len < 0xFF)
-			{
-				if (!stream.writeOpcode(Op_PyShortString))
-					return false;
+    case PyTypeReal:
+        {
+            PyFloat & number = *(PyFloat*)object;
+            double val = number.GetValue();
+            if (val == 0.0)
+                return stream.writeOpcode(Op_PyZeroFloat);
 
-				if (!stream.write1(str_len))
-					return false;
-				return stream.write(str.content(), str_len);
-			}
-			else
-			{
-				/* I can't remember why and how.... */
-				ASCENT_HARDWARE_BREAKPOINT;
-			}
-		} break;
+            if (!stream.writeOpcode(Op_PyFloat))
+                return false;
 
-	case PyTypeUnicode:
-		{
-			/*
-			v32 = PyUnicodeUCS2_AsUTF8String(ArgList);
-			*/
-			PyUnicodeUCS2 & str = *(PyUnicodeUCS2*)object;
-			size_t str_len = str.length();
-			if (str_len == 0)
-			{
-				return stream.writeOpcode(Op_PyUnicodeEmptyString);
-			}
-			else if(str_len == 1)
-			{
-				if (!stream.writeOpcode(Op_PyUnicodeCharString))
-					return false;
-				return stream.write2(str.content()[0]);
-			}
+            return stream.write8(val);
+        } break;
 
-			PyString* utf8str = (PyString*)PyUnicode_AsUTF8String(object);
-			if (utf8str != NULL)
-			{
-				if (utf8str->length() < str_len * 2)
-				{
-					if (!stream.writeOpcode(Op_PyUnicodeUTF8String))
-					{
-						utf8str->DecRef();
-						return false;
-					}
+    case PyTypeString:
+        {
+            PyString & str = *(PyString*)object;
+            size_t str_len = str.length();
+            if (str_len == 0)
+            {
+                return stream.writeOpcode(Op_PyEmptyString);
+            }
+            else if(str_len == 1)
+            {
+                if (!stream.writeOpcode(Op_PyCharString))
+                    return false;
+                return stream.write1(str[0]);
+            }
 
-					if (!stream.writeSizeEx(utf8str->length()))
-					{
-						utf8str->DecRef();
-						return false;
-					}
+            size_t str_index = sPyStringTable.LookupIndex(str.content());
+            if (str_index != -1)
+            {
+                if (!stream.writeOpcode(Op_PyStringTableItem))
+                    return false;
+                return stream.write1(str_index+1);
+            }
+            else if (str_len < 0xFF)
+            {
+                if (!stream.writeOpcode(Op_PyShortString))
+                    return false;
 
-					if (stream.write(utf8str->content(), utf8str->length()))
-					{
-						utf8str->DecRef();
-						return true;
-					}
-					else
-					{
-						utf8str->DecRef();
-						return false;
-					}
-				}
-			}
+                if (!stream.write1(str_len))
+                    return false;
+                return stream.write(str.content(), str_len);
+            }
+            else
+            {
+                /* I can't remember why and how.... */
+                ASCENT_HARDWARE_BREAKPOINT;
+            }
+        } break;
 
-			/* if we got here we can't save bandwidth by sending the unicode string as UTF8 */
-			if (!stream.writeOpcode(Op_PyUnicodeString))
-				return false;
+    case PyTypeUnicode:
+        {
+            /*
+            v32 = PyUnicodeUCS2_AsUTF8String(ArgList);
+            */
+            PyUnicodeUCS2 & str = *(PyUnicodeUCS2*)object;
+            size_t str_len = str.length();
+            if (str_len == 0)
+            {
+                return stream.writeOpcode(Op_PyUnicodeEmptyString);
+            }
+            else if(str_len == 1)
+            {
+                if (!stream.writeOpcode(Op_PyUnicodeCharString))
+                    return false;
+                return stream.write2(str.content()[0]);
+            }
 
-			if (!stream.writeSizeEx(str.length()))
-				return false;
+            PyString* utf8str = (PyString*)PyUnicode_AsUTF8String(object);
+            if (utf8str != NULL)
+            {
+                if (utf8str->length() < str_len * 2)
+                {
+                    if (!stream.writeOpcode(Op_PyUnicodeUTF8String))
+                    {
+                        utf8str->DecRef();
+                        return false;
+                    }
 
-			return stream.write((char*)str.content(), str.length() * 2);
-		} break;
+                    if (!stream.writeSizeEx(utf8str->length()))
+                    {
+                        utf8str->DecRef();
+                        return false;
+                    }
 
-	case PyTypeDict:
-		{
-			PyDict & dict = *(PyDict*)object;			
+                    if (stream.write(utf8str->content(), utf8str->length()))
+                    {
+                        utf8str->DecRef();
+                        return true;
+                    }
+                    else
+                    {
+                        utf8str->DecRef();
+                        return false;
+                    }
+                }
+            }
 
-			if(!stream.writeOpcode(Op_PyDict))
-				return false;
-			
-			if (!stream.writeSizeEx(dict.size()))
-				return false;
+            /* if we got here we can't save bandwidth by sending the unicode string as UTF8 */
+            if (!stream.writeOpcode(Op_PyUnicodeString))
+                return false;
 
-			PyDict::iterator itr = dict.begin();
-			for (; itr != dict.end(); itr++)
-			{
-				PyDictEntry * entry = itr->second;
+            if (!stream.writeSizeEx(str.length()))
+                return false;
 
-				/* marshal the payload */
-				if(!marshal(entry->obj, stream))
-					return false;
+            return stream.write((char*)str.content(), str.length() * 2);
+        } break;
 
-				/* marshal the key */
-				if(!marshal(entry->key, stream))
-					return false;
-			}
-			return true;
-		} break;
+    case PyTypeDict:
+        {
+            PyDict & dict = *(PyDict*)object;
 
-	case PyTypeTuple:
-		{
-			PyTuple & tuple = *(PyTuple*)object;
-			switch(tuple.size())
-			{
-			case 0:
-				return stream.writeOpcode(Op_PyEmptyTuple);
-			case 1:
-				if(!stream.writeOpcode(Op_PyOneTuple))
-					return false;
-				break;
-			case 2:
-				if(!stream.writeOpcode(Op_PyTwoTuple))
-					return false;
-				break;
-			default:
-				if(!stream.writeOpcode(Op_PyTuple))
-					return false;
+            if(!stream.writeOpcode(Op_PyDict))
+                return false;
 
-				if(!stream.writeSizeEx(tuple.size()))
-					return false;
+            if (!stream.writeSizeEx(dict.size()))
+                return false;
 
-				break;
-			}
+            PyDict::iterator itr = dict.begin();
+            for (; itr != dict.end(); itr++)
+            {
+                PyDictEntry * entry = itr->second;
 
-			PyTuple::iterator itr = tuple.begin();
-			for (; itr != tuple.end(); itr++)
-			{
-				PyChameleon* leaf = (*itr);
-				if (leaf == NULL)
-					return false;
-				if (leaf->getPyObject() == NULL)
-					return false;
-				if(!marshal(leaf->getPyObject(), stream))
-					return false;
-			}
-			return true;
-		} break;
+                /* marshal the payload */
+                if(!marshal(entry->obj, stream))
+                    return false;
 
-	case PyTypeList:
-		{
-			PyList & list = *(PyList*)object;
-			switch(list.size())
-			{
-			case 0:
-				return stream.writeOpcode(Op_PyEmptyList);
-			case 1:
-				if(!stream.writeOpcode(Op_PyOneList))
-					return false;
-				break;
-			default:
-				if(!stream.writeOpcode(Op_PyList))
-					return false;
+                /* marshal the key */
+                if(!marshal(entry->key, stream))
+                    return false;
+            }
+            return true;
+        } break;
 
-				if(!stream.writeSizeEx(list.size()))
-					return false;
-				break;
-			}
+    case PyTypeTuple:
+        {
+            PyTuple & tuple = *(PyTuple*)object;
+            switch(tuple.size())
+            {
+            case 0:
+                return stream.writeOpcode(Op_PyEmptyTuple);
+            case 1:
+                if(!stream.writeOpcode(Op_PyOneTuple))
+                    return false;
+                break;
+            case 2:
+                if(!stream.writeOpcode(Op_PyTwoTuple))
+                    return false;
+                break;
+            default:
+                if(!stream.writeOpcode(Op_PyTuple))
+                    return false;
 
-			for (size_t i = 0; i < list.size(); i++)
-			{
-				PyChameleon& leaf = list[int(i)];
-				if (&leaf == NULL)
-					return false;
-				if (leaf.getPyObject() == NULL)
-					return false;
-				if(!marshal(leaf.getPyObject(), stream))
-					return false;
-			}
-			return true;
-		} break;
+                if(!stream.writeSizeEx(tuple.size()))
+                    return false;
 
-	case PyTypeSubStream: 
-		{
-			PySubStream & substream = *(PySubStream*)object;
+                break;
+            }
 
-			if(!stream.writeOpcode(Op_PySubStream))
-				return false;
+            PyTuple::iterator itr = tuple.begin();
+            for (; itr != tuple.end(); itr++)
+            {
+                PyChameleon* leaf = (*itr);
+                if (leaf == NULL)
+                    return false;
+                if (leaf->getPyObject() == NULL)
+                    return false;
+                if(!marshal(leaf->getPyObject(), stream))
+                    return false;
+            }
+            return true;
+        } break;
 
-			if (!stream.writeSizeEx(substream.size()))
-				return false;
+    case PyTypeList:
+        {
+            PyList & list = *(PyList*)object;
+            switch(list.size())
+            {
+            case 0:
+                return stream.writeOpcode(Op_PyEmptyList);
+            case 1:
+                if(!stream.writeOpcode(Op_PyOneList))
+                    return false;
+                break;
+            default:
+                if(!stream.writeOpcode(Op_PyList))
+                    return false;
 
-			return stream.write((char*)substream.content(), substream.size());
-		} break;
+                if(!stream.writeSizeEx(list.size()))
+                    return false;
+                break;
+            }
 
-	case PyTypeClass:
-		{
-			if (!stream.writeOpcode(Op_PyModuleInstance))
-				return false;
+            for (size_t i = 0; i < list.size(); i++)
+            {
+                PyChameleon& leaf = list[int(i)];
+                if (&leaf == NULL)
+                    return false;
+                if (leaf.getPyObject() == NULL)
+                    return false;
+                if(!marshal(leaf.getPyObject(), stream))
+                    return false;
+            }
+            return true;
+        } break;
 
-			PyClass * classObject = (PyClass*)object;
-			if(!marshal((PyObject*)classObject->getname(), stream))
-				return false;
-			if(!marshal((PyObject*)classObject->getbases(), stream))
-				return false;
-			return true;
-		} break;
+    case PyTypeSubStream:
+        {
+            PySubStream & substream = *(PySubStream*)object;
 
-	case PyTypePackedRow: 
-		{
-			ASCENT_HARDWARE_BREAKPOINT;
-		} break;
+            if(!stream.writeOpcode(Op_PySubStream))
+                return false;
 
-	case PyTypeSubStruct: 
-		{
-			ASCENT_HARDWARE_BREAKPOINT;
-		} break;
+            if (!stream.writeSizeEx(substream.size()))
+                return false;
 
-	case PyTypeDeleted: {assert(false);} break;
+            return stream.write((char*)substream.content(), substream.size());
+        } break;
 
-	default:
-		uint8 sjaak = object->gettype();
-		Log.Error("MarshalStream","marshalling unhandled tag[0x%X].... sometying borked..", sjaak);
-		
-		ASCENT_HARDWARE_BREAKPOINT;
-		break;
-	}
+    case PyTypeClass:
+        {
+            if (!stream.writeOpcode(Op_PyModuleInstance))
+                return false;
 
-	//every case should return its own stuff regarding success or not
-	ASCENT_HARDWARE_BREAKPOINT;
-	return true;
+            PyClass * classObject = (PyClass*)object;
+            if(!marshal((PyObject*)classObject->getname(), stream))
+                return false;
+            if(!marshal((PyObject*)classObject->getbases(), stream))
+                return false;
+            return true;
+        } break;
+
+    case PyTypePackedRow:
+        {
+            ASCENT_HARDWARE_BREAKPOINT;
+        } break;
+
+    case PyTypeSubStruct:
+        {
+            ASCENT_HARDWARE_BREAKPOINT;
+        } break;
+
+    case PyTypeDeleted: {assert(false);} break;
+
+    default:
+        uint8 sjaak = object->gettype();
+        Log.Error("MarshalStream","marshalling unhandled tag[0x%X].... sometying borked..", sjaak);
+
+        ASCENT_HARDWARE_BREAKPOINT;
+        break;
+    }
+
+    //every case should return its own stuff regarding success or not
+    ASCENT_HARDWARE_BREAKPOINT;
+    return true;
 }
 
 ASCENT_INLINE bool MarshalStream::WriteVarInteger( WriteStream& stream, PyObject* number )
 {
-	/* check if something went wrong */
-	if (number == NULL)
-		return false;
+    /* check if something went wrong */
+    if (number == NULL)
+        return false;
 
-	if (number->gettype() != PyTypeLong)
-		return false;
+    if (number->gettype() != PyTypeLong)
+        return false;
 
-	int64 num = ((PyLong*)number)->GetValue();
-	int64 tempNum = num;
-	bool negative = false;
-	if (num < 0)
-	{
-		negative = true;
-		num = -num;
-	}
+    int64 num = ((PyLong*)number)->GetValue();
+    int64 tempNum = num;
+    bool negative = false;
+    if (num < 0)
+    {
+        negative = true;
+        num = -num;
+    }
 
-	/* this part checks how many bytes the number is using */
-	uint8 integerSize = 0;
-	uint8* num_buff = (uint8*)&num;
-	for (int i = 8; i >= 1; i--)
-	{
-		if (num_buff[i-1] != 0)
-		{
-			integerSize = i;
-			break;
-		}
-	}
+    /* this part checks how many bytes the number is using */
+    uint8 integerSize = 0;
+    uint8* num_buff = (uint8*)&num;
+    for (int i = 8; i >= 1; i--)
+    {
+        if (num_buff[i-1] != 0)
+        {
+            integerSize = i;
+            break;
+        }
+    }
 
-	uint8* pTempNum = (uint8*)&tempNum;
+    uint8* pTempNum = (uint8*)&tempNum;
 
-	/** the theory about this piece of code: the python var integer system is fucked up...
-	 * @todo Captnoord: complete this comment and improve the code.
-	 */
-	if (pTempNum[integerSize-1] & 0x80 && negative == false)
-	{
-		integerSize++;
-	}
-	else if (negative == true)
-	{
-		num_buff[integerSize-1] |= 0x80; /* @todo implement this in the read function.... argsh(*&^*&^%$ */
-	}
+    /** the theory about this piece of code: the python var integer system is fucked up...
+     * @todo Captnoord: complete this comment and improve the code.
+     */
+    if (pTempNum[integerSize-1] & 0x80 && negative == false)
+    {
+        integerSize++;
+    }
+    else if (negative == true)
+    {
+        num_buff[integerSize-1] |= 0x80; /* @todo implement this in the read function.... argsh(*&^*&^%$ */
+    }
 
-	if(!stream.reserve(integerSize + 2)) /* reserve 2 extra because we know we have 2 additional bytes */
-		return false;
+    if(!stream.reserve(integerSize + 2)) /* reserve 2 extra because we know we have 2 additional bytes */
+        return false;
 
-	if (!stream.writeOpcode(Op_PyVarInteger))
-		return false;
+    if (!stream.writeOpcode(Op_PyVarInteger))
+        return false;
 
-	if (!stream.write1(integerSize))
-		return false;
+    if (!stream.write1(integerSize))
+        return false;
 
-	return stream.write((char*)num_buff, integerSize);
+    return stream.write((char*)num_buff, integerSize);
 }
 
 PyBaseNone* MarshalStream::GetPyNone()
 {
-	PyNone.IncRef();
-	return &PyNone;
+    PyNone.IncRef();
+    return &PyNone;
 }
 
 void MarshalStream::clear()
 {
-	mReferencedObjectsMap.clear();
+    mReferencedObjectsMap.clear();
 }
 
 bool MarshalStream::sharedObjectFunction( PyObject* obj, size_t & resultingRefCount )
 {
-	return true;
+    return true;
 }
 
 // undef our return null macro.

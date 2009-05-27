@@ -49,6 +49,7 @@ CachedObject::CachedObject( bool shared, const char* objectID, PyObject *object,
 }
 
 PyObject* CachedObject::GenerateObjectVersion( WriteStream& stream )
+
 {
     char shaResult1[20];
     std::string shaInit = "thisIsAFuckedUpSaltX";
