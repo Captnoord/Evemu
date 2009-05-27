@@ -270,3 +270,4 @@ public:
 
 
 #endif//_DBROW_H
+

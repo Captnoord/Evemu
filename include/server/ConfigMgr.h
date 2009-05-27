@@ -75,3 +75,4 @@ private:
 #endif // _CONFIGMGR_H
 
 #define sConfigMgr ConfigMgr::getSingleton()
+

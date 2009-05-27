@@ -113,3 +113,4 @@ public:
 	}
 };
 #endif // _HEXASCIIMODULE_H
+

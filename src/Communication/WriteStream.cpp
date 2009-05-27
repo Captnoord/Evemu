@@ -221,3 +221,4 @@ size_t WriteStream::allocatedsize()
 {
 	return mSize;
 }
+

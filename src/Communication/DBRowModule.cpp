@@ -294,3 +294,4 @@ size_t DBRowModule::GetFieldSizeFromType( uint8 type )
 	}
 	return -1;
 }
+

@@ -122,3 +122,4 @@ public:
 };
 
 #endif//BIN_ASCII_MODULE_H
+

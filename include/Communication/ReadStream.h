@@ -256,3 +256,4 @@ private:
 };
 
 #endif //_MARSHALREADSTREAM_H
+

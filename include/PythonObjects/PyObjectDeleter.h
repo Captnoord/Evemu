@@ -95,3 +95,4 @@ static bool PyDelete(T * obj)
 }
 
 #endif // _PYOBJECTDELETER_H
+

@@ -92,3 +92,4 @@ uint32 PySubStruct::_hash()
 {
     ASCENT_HARDWARE_BREAKPOINT;
 }
+

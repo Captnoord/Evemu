@@ -154,3 +154,4 @@ public:
 	}
 };
 #endif // _RLEMODULE_H
+
