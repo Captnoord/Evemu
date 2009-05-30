@@ -115,5 +115,5 @@ void ObjectCachingSvc::CacheObject( PyObject* object, const char * objectID )
 
 void ObjectCachingSvc::AddCachedObject( CachedObject *cachedObject, const char *objectID )
 {
-
+    mCachedObjects.set_item(objectID, (PyObject*)cachedObject);
 }

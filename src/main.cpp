@@ -62,7 +62,7 @@ static const char* default_config_file = "evemu-server.conf";
 Database* Database_dynamic;
 Database* Database_static;
 
-int main(int argc, char *argv[])
+int main(int /*argc*/, char * /*argv[]*/)
 {
     /* set the global time variable */
     UNIXTIME = time(NULL);
@@ -122,7 +122,6 @@ int main(int argc, char *argv[])
     uint32 diff;
     uint32 last_time = GetTickCount();
     uint32 etime;
-    uint32 next_printout = GetTickCount(), next_send = GetTickCount();
 
     /* server services */
     new PyMarshalStringTable;
@@ -261,7 +260,7 @@ void _UnhookSignals()
 #ifdef WIN32
 Mutex m_crashedMutex;
 // Crash Handler
-void OnCrash( bool Terminate ) {}
+void OnCrash( bool /*Terminate*/ ) {}
 #endif
 
 /* internal db start up wrapper... */
@@ -277,13 +276,13 @@ bool StartDatabase()
     std::string static_password;
     std::string static_db_name;
 
-    int dynamic_port;
-    int dynamic_connCount;
-    int dynamic_type;
+    int dynamic_port = 0;
+    int dynamic_connCount = 0;
+    int dynamic_type = 0;
 
-    int static_port;
-    int static_connCount;
-    int static_type;
+    int static_port = 0;
+    int static_connCount = 0;
+    int static_type = 0;
 
     bool result =               Config.GetString( "dynamic_database", "Username", &dynamic_username );
     result = !result ? result : Config.GetString( "dynamic_database", "Password", &dynamic_password );

@@ -25,8 +25,10 @@
 
 #include "EvemuPCH.h"
 #include "FileModule.h"
-// not in repository
-//#include "PyObjectDumper.h"
+
+#ifdef OBJECT_DUMPER_SUPPORT
+#include "PyObjectDumper.h"
+#endif//OBJECT_DUMPER_SUPPORT
 
 initialiseSingleton( ConfigMgr );
 
@@ -216,12 +218,9 @@ void ConfigMgr::loadFromBulk()
         sObjectCachingSvc.AddCachedObject(cachedObject, objectID.c_str());
 
 
-        // TODO: not in repo
-        //Dump(stdout, (PyObject*)cachedObject, 0);
-        //int henk  = 3;
-
-        // we remove it for the moment
-        //bulk_obj->DecRef();
+        #ifdef OBJECT_DUMPER_SUPPORT
+        Dump(stdout, (PyObject*)cachedObject, 0);
+        #endif//OBJECT_DUMPER_SUPPORT
 
         /* its important that we check if this call may possible loose some objects */
         mMarshalStream.clear();

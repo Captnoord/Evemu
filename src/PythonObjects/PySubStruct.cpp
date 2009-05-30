@@ -28,7 +28,6 @@
 #include "Common.h"
 #include "NGLog.h"
 #include "Log.h"
-#include "string_map.h"
 
 #include "PyObjects.h"
 #include "PyChameleon.h"
