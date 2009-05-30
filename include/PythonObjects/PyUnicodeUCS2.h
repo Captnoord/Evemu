@@ -51,9 +51,8 @@ public:
     ~PyUnicodeUCS2();
     bool set(const wchar_t* str, size_t len);
     bool resize(size_t newsize);
-    wchar_t * content();
+    wchar_t* content();
     const size_t length();
-
 private:
     uint32 _hash();
 };
@@ -65,20 +64,17 @@ private:
 /************************************************************************/
 
 /**
- * @brief
+ * @brief Python API cloning, creating a unicode object from a wide character string.
  *
- *
- *
- * @param[in]
- * @param[out]
- * @return
+ * @param[in] str is the text that is converted into a python unicode object.
+ * @param[in] len is the length of the string.
+ * @return if successful this functions returns a PyUnicodeUCS2 object containing the fed string.
+ * if its unsuccessful this function returns NULL.
  */
 PyUnicodeUCS2* PyUnicodeUCS2_FromWideChar(const wchar_t* str, size_t len);
 
 /**
  * @brief Python API cloning, converting a UTF8 string to a unicode UCS2 string.
- *
- *
  *
  * @note this isn't as close to the native python implementation... we will see how far this will get us.
  * @param[in] str is the const char string that is fed into the function.
@@ -88,6 +84,11 @@ PyUnicodeUCS2* PyUnicodeUCS2_FromWideChar(const wchar_t* str, size_t len);
  */
 PyUnicodeUCS2* PyUnicodeUCS2_DecodeUTF8(const char* str, size_t len);
 
-PyObject *PyUnicode_AsUTF8String(PyObject *unicode);
+/**
+ * @brief Python API cloning, converting a unicode string to a utf8 string object.
+ * @param[in] unicode is the unicode string that is required to be converted.
+ * @return if successful this functions returns a valid PyString object and a NULL if unsuccessful.
+ */
+PyObject* PyUnicode_AsUTF8String(PyObject* unicode);
 
 #endif // _PYUNICODEUCS2_H

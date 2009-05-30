@@ -57,7 +57,7 @@ PyUnicodeUCS2::~PyUnicodeUCS2()
     SafeFree(mStr);
 }
 
-bool PyUnicodeUCS2::set( const wchar_t* str, size_t len )
+bool PyUnicodeUCS2::set( const wchar_t *str, size_t len )
 {
     if (str == NULL || len == 0)
         return false;
@@ -72,25 +72,19 @@ bool PyUnicodeUCS2::set( const wchar_t* str, size_t len )
 
 bool PyUnicodeUCS2::resize(size_t newsize)
 {
-#ifndef PACKET_PARSER_MEMORY_ON_DRUGS
+    size_t bufferSize = (newsize + 1) * 2;
     if (mStr != NULL)
-        mStr = (wchar_t*)ASCENT_REALLOC(mStr,(newsize+1) * 2);
+        mStr = (wchar_t*)ASCENT_REALLOC(mStr, bufferSize);
     else
-        mStr = (wchar_t*)ASCENT_MALLOC((newsize+1) * 2);
-#else
-    if (mStr != NULL)
-        sBufferPool.ResizeBuffer((void**)&mStr, (mStrLen+1) * 2, (newsize+1) * 2);
-    else
-        mStr = (wchar_t*)sBufferPool.GetBuffer((newsize+1) * 2);
-#endif
-
-    mStrLen = newsize;
+        mStr = (wchar_t*)ASCENT_MALLOC(bufferSize);
 
     if (mStr == NULL)
     {
         mStrLen = 0;
         return false;
     }
+
+    mStrLen = newsize;
 
     return true;
 }
@@ -164,23 +158,12 @@ PyUnicodeUCS2* PyUnicodeUCS2_FromWideChar(const wchar_t* str, size_t len)
     return string;
 }
 
-/**
- * @brief Python API cloning, converting a UTF8 string to a unicode UCS2 string.
- *
- *
- *
- * @note this isn't as close to the native python implementation... we will see how far this will get us.
- * @param[in] str is the const char string that is fed into the function.
- * @param[in] len is the length of the char string that is converted by this function.
- * @return a freshly generated PyUnicodeUCS2 object from the char string
- * @note yea I know this function lacks 1 parameter, which is "const char *errors"
- */
 PyUnicodeUCS2* PyUnicodeUCS2_DecodeUTF8(const char* str, size_t len)
 {
     // implementation like these sucks....
     size_t nlen = len;
 
-    PyUnicodeUCS2 * retstr = new PyUnicodeUCS2();
+    PyUnicodeUCS2* retstr = new PyUnicodeUCS2();
     retstr->resize(nlen);
     size_t newSize = mbstowcs(retstr->content(), str, nlen);
     retstr->content()[nlen] = '\0';
@@ -196,14 +179,14 @@ PyUnicodeUCS2* PyUnicodeUCS2_DecodeUTF8(const char* str, size_t len)
     return retstr;
 }
 
-PyObject *PyUnicode_AsUTF8String(PyObject *unicode)
+PyObject *PyUnicode_AsUTF8String(PyObject* unicode)
 {
     if (unicode == NULL || unicode->gettype() != PyTypeUnicode)
         return NULL;
 
-    PyUnicodeUCS2 * str = (PyUnicodeUCS2 *)unicode;
+    PyUnicodeUCS2* str = (PyUnicodeUCS2*)unicode;
 
-    PyString * res = new PyString();
+    PyString* res = new PyString();
     res->resize(str->length());
 
     size_t ret_len = wcstombs((char*)&res->content()[0], str->content(), str->length());
