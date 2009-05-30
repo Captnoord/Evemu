@@ -27,7 +27,6 @@
 #include "Common.h"
 #include "NGLog.h"
 #include "Log.h"
-#include "string_map.h"
 
 #include "PyObjects.h"
 #include "PyChameleon.h"
@@ -45,7 +44,7 @@ PyTuple::PyTuple( size_t elementCount ) : mType(PyTypeTuple), mRefcnt(1), mHash(
     if (elementCount > PY_TUPLE_ELEMENT_MAX)
     {
         Log.Error("PyTuple", "constructor is requested to allocate a stupid amount of elements: %d", elementCount);
-        assert(false);
+        ASCENT_ASSERT(false);
         return;
     }
 
@@ -130,7 +129,7 @@ bool PyTuple::resize( size_t newTupleSize )
     /* we need to grow or shrink */
     if (newTupleSize > currentTupleSize)
     {
-        // debug breakpoint for the situation we are resizing a already excisting object
+        // debug breakpoint for the situation we are resizing a already existing object
         if (currentTupleSize != 0)
             ASCENT_HARDWARE_BREAKPOINT;
 
@@ -144,7 +143,7 @@ bool PyTuple::resize( size_t newTupleSize )
     }
     else
     {
-        ASCENT_HARDWARE_BREAKPOINT;
+        ASCENT_HARDWARE_BREAKPOINT;// here because we need to evaluate its workings.
         /* we need to shrink (a bit harder) */
         for(size_t i = currentTupleSize; i > newTupleSize; i--)
         {
@@ -211,7 +210,7 @@ std::string PyTuple::GetString( const int index )
     return str;
 }
 
-bool PyTuple::GetString( const int index, std::string & str )
+bool PyTuple::GetString( const int index, std::string& rStr )
 {
     if (index > (int)mTuple.size())
         return false;
@@ -224,34 +223,34 @@ bool PyTuple::GetString( const int index, std::string & str )
 
     PyString * strobj = (PyString*)object;
 
-    str.clear(); // make sure its empty
-    str.append(strobj->content(), strobj->length());
+    rStr.clear(); // make sure its empty
+    rStr.append(strobj->content(), strobj->length());
 
     return true;
 }
 
 template<typename T>
-void PyTuple::set_item(const int index, T * object)
+void PyTuple::set_item(const int index, T* pObject)
 {
     if (index+1 > (int)mTuple.size())
         mTuple.resize(index+1);
     PyChameleon * itr = mTuple[index];
-    itr->setPyObject((PyObject*)object);
+    itr->setPyObject((PyObject*)pObject);
 }
 
 /* @todo add other variable types */
-int PyTuple::scanf( const char * format, ... )
+int PyTuple::scanf( const char* pFormat, ... )
 {
     /* should not be possible */
-    if (format == NULL || *format == '\0')
+    if (pFormat == NULL || *pFormat == '\0')
         return 0;
 
-    size_t formatLen = strlen(format);
+    size_t formatLen = strlen(pFormat);
     if (formatLen == 0)
         return 0;
 
     va_list ap;
-    va_start(ap, format);
+    va_start(ap, pFormat);
 
     void* pVar = NULL;
     size_t formatIndex = 0;
@@ -271,73 +270,75 @@ int PyTuple::scanf( const char * format, ... )
             return 0;
         }
 
-        char tag = format[formatIndex];
+        char tag = pFormat[formatIndex];
 
-        PyObject* foundObject = mTuple[formatIndex]->getPyObject();
+        PyObject* pFoundObject = mTuple[formatIndex]->getPyObject();
+
+        ASCENT_ASSERT(pFoundObject);
+
         switch(tag)
         {
-            /*unicode string*/
-        case 'u': // std::wstring
-            {
-                if (foundObject->gettype() != PyTypeUnicode)
-                {
-                    va_end(ap);
-                    return 0;
-                }
-
-                std::wstring * str = (std::wstring *)pVar;
-                str->clear();
-
-                size_t len = ((PyUnicodeUCS2*)foundObject)->length();
-                wchar_t * buff = ((PyUnicodeUCS2*)foundObject)->content();
-                str->append(buff, len);
-            }
-            break;
-
         case 'i': // int
             {
-                if (foundObject->gettype() != PyTypeInt)
+                if (pFoundObject->gettype() != PyTypeInt)
                 {
                     va_end(ap);
                     return 0;
                 }
 
-                int32 * num = (int32 *)pVar;
-                *num = ((PyInt*)foundObject)->GetValue();
+                int32* pNum = (int32*)pVar;
+                *pNum = ((PyInt*)pFoundObject)->GetValue();
             }
             break;
 
         case 'f': // double
             {
-                if (foundObject->gettype() != PyTypeReal)
+                if (pFoundObject->gettype() != PyTypeReal)
                 {
                     va_end(ap);
                     return 0;
                 }
 
-                double * num = (double *)pVar;
-                *num = ((PyFloat*)foundObject)->GetValue();
+                double * pNum = (double *)pVar;
+                *pNum = ((PyFloat*)pFoundObject)->GetValue();
             }
             break;
 
         case 's': // std::string
             {
-                if (foundObject->gettype() != PyTypeString)
+                if (pFoundObject->gettype() != PyTypeString)
                 {
                     va_end(ap);
                     return 0;
                 }
 
-                std::string * str = (std::string *)pVar;
-                str->clear();
+                std::string * pStr = (std::string *)pVar;
+                pStr->clear();
 
-                size_t len = ((PyString*)foundObject)->length();
-                const char* buff = ((PyString*)foundObject)->content();
-                str->append(buff, len);
+                size_t len = ((PyString*)pFoundObject)->length();
+                const char* pBuff = ((PyString*)pFoundObject)->content();
+                pStr->append(pBuff, len);
+            }
+            break;
+
+            /*unicode string*/
+        case 'u': // std::wstring
+            {
+                if (pFoundObject->gettype() != PyTypeUnicode)
+                {
+                    va_end(ap);
+                    return 0;
+                }
+
+                std::wstring* pStr = (std::wstring *)pVar;
+                pStr->clear();
+
+                size_t len = ((PyUnicodeUCS2*)pFoundObject)->length();
+                wchar_t* pBuff = ((PyUnicodeUCS2*)pFoundObject)->content();
+                pStr->append(pBuff, len);
             }
             break;
         }
-
         formatIndex++;
     }
 
@@ -349,8 +350,8 @@ void PyTuple::set_str( const int index, const char* str )
 {
     if (index+1 > (int)mTuple.size())
         mTuple.resize(index+1);
-    PyChameleon * itr = mTuple[index];
-    PyString *pStr = new PyString(str);
+    PyChameleon* itr = mTuple[index];
+    PyString* pStr = new PyString(str);
     itr->setPyObject((PyObject*)pStr);
 }
 
@@ -358,7 +359,7 @@ void PyTuple::set_str( const int index, const char* str, const size_t len )
 {
     if (index+1 > (int)mTuple.size())
         mTuple.resize(index+1);
-    PyChameleon * itr = mTuple[index];
+    PyChameleon* itr = mTuple[index];
     itr->setPyObject((PyObject*)new PyString(str, len)); // GCC is not going to like this
 }
 
@@ -366,7 +367,7 @@ void PyTuple::set_int( const int index, const int number )
 {
     if (index+1 > (int)mTuple.size())
         mTuple.resize(index+1);
-    PyChameleon * itr = mTuple[index];
+    PyChameleon* itr = mTuple[index];
     itr->setPyObject((PyObject*)new PyInt(number));
 }
 
@@ -374,6 +375,6 @@ void PyTuple::set_long( const int index, const long number )
 {
     if (index+1 > (int)mTuple.size())
         mTuple.resize(index+1);
-    PyChameleon * itr = mTuple[index];
+    PyChameleon* itr = mTuple[index];
     itr->setPyObject((PyObject*)new PyLong((int64)number));
 }

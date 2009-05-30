@@ -45,11 +45,11 @@ public:
     uint32 hash();
 public:
     explicit PyUnicodeUCS2();
-    explicit PyUnicodeUCS2(const wchar_t* str);
-    explicit PyUnicodeUCS2(const wchar_t* str, size_t len);
-    explicit PyUnicodeUCS2(std::wstring& str);
+    explicit PyUnicodeUCS2(const wchar_t* pStr);
+    explicit PyUnicodeUCS2(const wchar_t* pStr, size_t len);
+    explicit PyUnicodeUCS2(std::wstring& pStr);
     ~PyUnicodeUCS2();
-    bool set(const wchar_t* str, size_t len);
+    bool set(const wchar_t* pStr, size_t len);
     bool resize(size_t newsize);
     wchar_t* content();
     const size_t length();
@@ -64,31 +64,31 @@ private:
 /************************************************************************/
 
 /**
- * @brief Python API cloning, creating a unicode object from a wide character string.
+ * @brief Python API cloning, creating a pUnicode object from a wide character string.
  *
- * @param[in] str is the text that is converted into a python unicode object.
+ * @param[in] pStr is the text that is converted into a python pUnicode object.
  * @param[in] len is the length of the string.
  * @return if successful this functions returns a PyUnicodeUCS2 object containing the fed string.
  * if its unsuccessful this function returns NULL.
  */
-PyUnicodeUCS2* PyUnicodeUCS2_FromWideChar(const wchar_t* str, size_t len);
+PyUnicodeUCS2* PyUnicodeUCS2_FromWideChar(const wchar_t* pStr, size_t len);
 
 /**
- * @brief Python API cloning, converting a UTF8 string to a unicode UCS2 string.
+ * @brief Python API cloning, converting a UTF8 string to a pUnicode UCS2 string.
  *
  * @note this isn't as close to the native python implementation... we will see how far this will get us.
- * @param[in] str is the const char string that is fed into the function.
+ * @param[in] pStr is the const char string that is fed into the function.
  * @param[in] len is the length of the char string that is converted by this function.
  * @return a freshly generated PyUnicodeUCS2 object from the char string
  * @note yea I know this function lacks 1 parameter, which is "const char *errors"
  */
-PyUnicodeUCS2* PyUnicodeUCS2_DecodeUTF8(const char* str, size_t len);
+PyUnicodeUCS2* PyUnicodeUCS2_DecodeUTF8(const char* pStr, size_t len);
 
 /**
- * @brief Python API cloning, converting a unicode string to a utf8 string object.
- * @param[in] unicode is the unicode string that is required to be converted.
+ * @brief Python API cloning, converting a pUnicode string to a utf8 string object.
+ * @param[in] pUnicode is the pUnicode string that is required to be converted.
  * @return if successful this functions returns a valid PyString object and a NULL if unsuccessful.
  */
-PyObject* PyUnicode_AsUTF8String(PyObject* unicode);
+PyObject* PyUnicode_AsUTF8String(PyObject* pUnicode);
 
 #endif // _PYUNICODEUCS2_H

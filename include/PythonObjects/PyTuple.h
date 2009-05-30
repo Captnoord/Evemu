@@ -31,7 +31,7 @@
 /**
  * \class PyTuple
  *
- * @brief PyTuple is one of the most used objects within python. Its a object to store objects in.
+ * @brief PyTuple is one of the most used objects within python. Its a pObject to store objects in.
  *
  * http://en.wikipedia.org/wiki/Tuple
  *
@@ -58,55 +58,79 @@ public:
     ~PyTuple();
 
     /**
-     * \brief operator overload for easy object access and storage
+     * \brief operator overload for easy pObject access and storage
      *
-     * nothing much to tell about this function, it returns a PyChameleon object reference.
+     * nothing much to tell about this function, it returns a PyChameleon pObject reference.
      *
-     * @param[in] index is the location of the required object.
-     * @return always returns a PyChameleon object even if there isn't a object stored (so it can be used to store objects).
+     * @param[in] index is the location of the required pObject.
+     * @return always returns a PyChameleon pObject even if there isn't a pObject stored (so it can be used to store objects).
      */
     PyChameleon &operator[](const int index);
 
+    /**
+     * Generic get pObject function. We shouldn't use this function much as it makes the code a mess
+     * unless we are working with generic objects.
+     */
     PyObject* GetItem(const int index);
 
-    int GetInt(const int index);
-    double GetFloat(const int index);
     /**
-     * Slow GetString function
+     * unsafe get integer function. We shouldn't use this function much as it is unsafe.
+     * use scanf for most of the value retrievers.
+     */
+    int GetInt(const int index);
+
+    /**
+     * unsafe get float function. We shouldn't use this function much as it is unsafe.
+     * use scanf for most of the value retrievers.
+     */
+    double GetFloat(const int index);
+    
+    /**
+     * unsafe get string function. We shouldn't use this function much as it is unsafe.
+     * use scanf for most of the value retrievers.
      */
     std::string GetString(const int index);
 
     /**
-     * get item as std::string
+     * get item as std::string. This function we can consider safe as we can check if a
+     * retrieve action has been successful.
      */
-    bool GetString(const int index, std::string & str);
+    bool GetString(const int index, std::string& rStr);
 
     template<typename T>
-    void set_item(const int index, T * object);
+    void set_item(const int index, T* pObject);
 
-    // generic object setters..... because it makes the code a bit cleaner
-    void set_str(const int index, const char* str);
-    void set_str(const int index, const char* str, const size_t len);
+    // generic pObject setters..... because it makes the code a bit cleaner
+    void set_str(const int index, const char* pStr);
+    void set_str(const int index, const char* pStr, const size_t len);
     void set_int(const int index, const int number);
     void set_long(const int index, const long number);
 
     /**
-     * \brief a VA function for getting multiple object from a tuple.
+     * \brief a VA function for getting multiple pObject from a tuple.
      *
-     * a VA function for getting multiple object from a tuple.
+     * a VA function for getting multiple pObject from a tuple.
      *
-     * @param[in] format is the VA string containing the expected object types.
+     * @param[in] format is the VA string containing the expected pObject types.
      * @param[out] ... this VA field contains the pointers to the VA items.
      * @return the number of 'scanned' objects and 0 of a error has happened.
      */
     int scanf(const char * format, ...);
 
-    // returns the element count
+    /**
+     * @brief this function returns the amount of objects.
+     * @return the element count
+     */
     size_t size();
 
-    // clears the tuple from all objects
+    /**
+     * @brief clears the tuple from all objects
+     */
     void clear();
 
+    /**
+     * @brief this function resizes the tuple. Objects that are lost will get a decrease in there reference.
+     */
     bool resize(size_t elementCount);
 private:
     typedef std::vector<PyChameleon*> TupleVector;
@@ -118,7 +142,9 @@ public:
 private:
     TupleVector mTuple;
 
-    // tuple hash function
+    /**
+     * @brief tuple hash function
+     */ 
     uint32 _hash();
 };
 
