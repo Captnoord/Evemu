@@ -31,8 +31,6 @@
  *
  * @brief utility for read data from a buffer.
  *
- * No long description.
- *
  * @author Captnoord
  * @date February 2009
  */

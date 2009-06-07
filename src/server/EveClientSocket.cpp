@@ -46,14 +46,13 @@ static const uint8 handShakeInitialFunctionBlobSize = 9;
 #  define dlog(x,...) /*x*/
 #endif
 
-EveClientSocket::EveClientSocket(SOCKET fd) : Socket(fd, CLIENTSOCKET_SENDBUF_SIZE, CLIENTOCKET_RECVBUF_SIZE)
+EveClientSocket::EveClientSocket(SOCKET fd) : Socket(fd, CLIENTSOCKET_SENDBUF_SIZE, CLIENTOCKET_RECVBUF_SIZE),
+    mCurrentStateMachine(&EveClientSocket::_authStateHandshake), mSession(NULL), mAccountInfo(NULL), mQueued(false),
+        mAuthed(false), mNagleEanbled(false), mUserName(""), mRemaining(0)
 {
-    mAuthed = false;
-    mQueued = false;            // don't support authorization queue for now
-    mNagleEanbled = false;      // don't enable 'nagle' for now
-    mRemaining = 0;
-    mSession = NULL;
-    mCurrentStateMachine = &EveClientSocket::_authStateHandshake;
+    /* we don't support authorization queue for now
+     * we don't enable 'nagle' for now
+     */
 }
 
 EveClientSocket::~EveClientSocket()
@@ -111,8 +110,7 @@ void EveClientSocket::sendConnectionHandShake()
     send(tulpe);
 }
 
-/**
- * Crypto Context Notify Packet description
+/** Crypto Context Notify Packet description
  *
  * PyString:"OK"
  * PyString:"OK CC"
@@ -227,11 +225,11 @@ void EveClientSocket::_authStateHandshake(PyObject* object)
 
     PyTuple * tuple = (PyTuple*)object;
     // not sure if we need this check because of the scanf function below
-    if (tuple->size() != 6)
+    /*if (tuple->size() != 6)
     {
         dlog("ClientSocket::initial packet isn't a tuple size 6");
         return;
-    }
+    }*/
 
     int32 birthDay;
     int32 machoVersion;

@@ -249,6 +249,9 @@ int PyTuple::scanf( const char* pFormat, ... )
     if (formatLen == 0)
         return 0;
 
+    if (formatLen != size())
+        return 0;
+
     va_list ap;
     va_start(ap, pFormat);
 
