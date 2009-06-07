@@ -261,7 +261,10 @@ int PyTuple::scanf( const char* pFormat, ... )
     {
         pVar = va_arg( ap, void* );
 
-        if (pVar == NULL)
+        char tag = pFormat[formatIndex];
+
+        /* we check for NULL argument pointers but only if the tag isn't a 'ignore' tag*/
+        if (pVar == NULL && tag != '0')
         {
             va_end(ap);
             return 0;
@@ -271,9 +274,7 @@ int PyTuple::scanf( const char* pFormat, ... )
         {
             va_end(ap);
             return 0;
-        }
-
-        char tag = pFormat[formatIndex];
+        }        
 
         PyObject* pFoundObject = mTuple[formatIndex]->getPyObject();
 
@@ -281,6 +282,10 @@ int PyTuple::scanf( const char* pFormat, ... )
 
         switch(tag)
         {
+        case '0': // ignore
+            {
+            } break;
+
         case 'i': // int
             {
                 if (pFoundObject->gettype() != PyTypeInt)
@@ -291,8 +296,7 @@ int PyTuple::scanf( const char* pFormat, ... )
 
                 int32* pNum = (int32*)pVar;
                 *pNum = ((PyInt*)pFoundObject)->GetValue();
-            }
-            break;
+            } break;
 
         case 'f': // double
             {
@@ -304,8 +308,7 @@ int PyTuple::scanf( const char* pFormat, ... )
 
                 double * pNum = (double *)pVar;
                 *pNum = ((PyFloat*)pFoundObject)->GetValue();
-            }
-            break;
+            } break;
 
         case 's': // std::string
             {
@@ -321,8 +324,7 @@ int PyTuple::scanf( const char* pFormat, ... )
                 size_t len = ((PyString*)pFoundObject)->length();
                 const char* pBuff = ((PyString*)pFoundObject)->content();
                 pStr->append(pBuff, len);
-            }
-            break;
+            } break;
 
             /*unicode string*/
         case 'u': // std::wstring
@@ -339,8 +341,38 @@ int PyTuple::scanf( const char* pFormat, ... )
                 size_t len = ((PyUnicodeUCS2*)pFoundObject)->length();
                 wchar_t* pBuff = ((PyUnicodeUCS2*)pFoundObject)->content();
                 pStr->append(pBuff, len);
-            }
-            break;
+            } break;
+
+            /* scanf internal types will be tricky. Are we required to increase
+             * the ref counter when we use the pointer. In a way we are because
+             * that will make everything as flexible as I designed it.
+             * @todo add ref counter increase stuff.
+             */
+        case 't': // PyTuple
+            {
+                if (pFoundObject->gettype() != PyTypeTuple)
+                {
+                    va_end(ap);
+                    return 0;
+                }
+
+                PyTuple** pTuple = (PyTuple **)pVar;
+                (*pTuple) = (PyTuple*)pFoundObject;
+            } break;
+
+            /* same stuff as the PyTuple stuff... tricky
+             */
+        case 'd': // PyDict
+            {
+                if (pFoundObject->gettype() != PyTypeDict)
+                {
+                    va_end(ap);
+                    return 0;
+                }
+
+                PyDict** pDict = (PyDict **)pVar;
+                (*pDict) = (PyDict*)pFoundObject;
+            } break;
         }
         formatIndex++;
     }

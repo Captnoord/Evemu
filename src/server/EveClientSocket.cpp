@@ -30,7 +30,7 @@
 #include "EVEVersion.h"
 
 #ifdef OBJECT_DUMPER_SUPPORT
-#include "PyObjectDumper.h"
+#  include "PyObjectDumper.h"
 #endif//OBJECT_DUMPER_SUPPORT
 
 // Dummy authorization handshake function
@@ -397,28 +397,38 @@ void EveClientSocket::_authStateCryptoChallenge(PyObject* object)
     }
 
     /*  Client-Handshake Packet */
-    PyDict &dict = *(PyDict *)tuple.GetItem(1);
-
-    if(dict.gettype() != PyTypeDict)
+    PyDict * dict = NULL;
+    if (!tuple.scanf("0d", NULL, &dict))
     {
         dlog("AuthStateMachine::_authStateCryptoChallenge received object isn't a dict");
         ResetConnection();
         return;
     }
 
+
+    
+    /*PyDict &dict = *(PyDict *)tuple.GetItem(1);
+
+    if(dict.gettype() != PyTypeDict)
+    {
+        dlog("AuthStateMachine::_authStateCryptoChallenge received object isn't a dict");
+        ResetConnection();
+        return;
+    }*/
+
     std::wstring UserName;
     char UserPasswordHash[20];
 
     /* Client handshake */
     /* the only 2 things we actually need to know for now */
-    if(!dict.scanf("user_name", "u", &UserName))
+    if(!dict->scanf("user_name", "u", &UserName))
     {
         dlog("AuthStateMachine::_authStateCryptoChallenge unable to read username");
         ResetConnection();
         return;
     }
 
-    if(!dict.get_buffer("user_password_hash", (char*)UserPasswordHash, 20))
+    if(!dict->get_buffer("user_password_hash", (char*)UserPasswordHash, 20))
     {
         dlog("AuthStateMachine::_authStateCryptoChallenge unable to read user password hash");
         ResetConnection();
@@ -533,8 +543,6 @@ void EveClientSocket::packetHandler( PyObject* object )
     case PyTypeTuple:
         break;
     }
-
-
 
 
     // small hack to manage to handle the unexpected stuff..
