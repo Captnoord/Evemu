@@ -462,7 +462,7 @@ void EveClientSocket::_authStateCryptoChallenge(PyObject* object)
         PyDict* syncDict = new PyDict();
           syncDict->set_double("boot_version", EveVersionNumber);
           syncDict->set_str("boot_region", EveProjectRegion);
-          syncDict->set_str("challenge_responsehash", "654");
+          syncDict->set_str("challenge_responsehash", "55087");
           syncDict->set_int("cluster_usercount", clusterUserCount);
           syncDict->set_int("user_logonqueueposition", 1);
           syncDict->set_int("macho_version", MachoNetVersion);
