@@ -221,6 +221,8 @@ public:
 	 */
 	PyString * GetAddress();
 
+    bool prepPacket(PyObject* obj);
+
 protected:
 	/************************************************************************/
 	/* Python packet send wrapper functions make the code readable          */

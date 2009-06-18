@@ -239,7 +239,7 @@ void EveClientSocket::_authStateHandshake(PyObject* object)
     std::string projectVersion;
 
     // note for mmcs look what I did :P
-    //                           'i'           'i'          'i'         'f'           'i'              's'
+    //                         'i'        'i'            'i'         'f'         'i'            's'
     if(!tuple->scanf("iiifis", &birthDay, &machoVersion, &userCount, &versionNr, &buildVersion, &projectVersion))
     {
         Log.Error("ClientSocket","unable to read info from tuple");
@@ -524,6 +524,47 @@ void EveClientSocket::_authStateHandshakeSend(PyObject* object)
     mAuthed = true;
 }
 
+enum PacketType
+{
+    PacketTypeCallRsp,// this really should never happen... weird if this one happens:P
+    PacketTypeCallReq,  
+    PacketTypeNotification,
+    PacketTypeException,
+    PacketTypeUnknown,// used for unimplemented packet types.
+};
+
+PacketType GetPacketType(PyObject* object)
+{
+    if (object->gettype() != PyTypeClass)
+        return PacketTypeUnknown;
+
+    PyClass* klass = (PyClass*)object;
+    
+    PyTuple* bases = klass->getbases();
+
+    /* this seems to be valid for both exceptions and calls */
+    int machoType = 0;
+    if (!bases->scanf("i", &machoType))
+        return PacketTypeUnknown;
+
+    /* we do a little convertion just for my own peace of mind */
+    switch(machoType)
+    {
+    case 15:
+        return PacketTypeException;
+    case 6:
+        return PacketTypeCallReq;
+    case 12:
+        return PacketTypeNotification;
+    case 7:
+        return PacketTypeCallRsp;
+    }
+
+    return PacketTypeUnknown;    
+}
+
+
+
 /* 'ingame' packet dispatcher */
 void EveClientSocket::packetHandler( PyObject* object )
 {
@@ -532,6 +573,12 @@ void EveClientSocket::packetHandler( PyObject* object )
     /************************************************************************/
     /* split packet types, classes, tuple's and such                        */
     /************************************************************************/
+
+
+    /* first identify the packet... what is it... is it a client exception.
+       or is it a call.
+    */
+
 
     switch(object->gettype())
     {
@@ -597,4 +644,15 @@ void EveClientSocket::ResetConnection()
      */
     sendConnectionHandShake();
     mCurrentStateMachine = &EveClientSocket::_authStateHandshake;
+}
+
+bool EveClientSocket::prepPacket( PyObject* obj )
+{
+    /* this is crappy but I can not think of another way */
+    if (obj->gettype() != PyTypeClass)
+        return false;
+
+    PyClass & data = *(PyClass*)obj;
+    
+
 }
