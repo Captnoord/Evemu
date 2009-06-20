@@ -560,7 +560,7 @@ PacketType GetPacketType(PyObject* object)
         return PacketTypeCallRsp;
     }
 
-    return PacketTypeUnknown;    
+    return PacketTypeUnknown;
 }
 
 
@@ -570,53 +570,20 @@ void EveClientSocket::packetHandler( PyObject* object )
 {
     Log.Debug("ClientSocket","received packet 'whooo' we passed authorization");
 
-    /************************************************************************/
-    /* split packet types, classes, tuple's and such                        */
-    /************************************************************************/
-
-
-    /* first identify the packet... what is it... is it a client exception.
-       or is it a call.
-    */
-
-
-    switch(object->gettype())
+    /* I know that all packets should first be dumped into a client wise packet queue */
+    switch (GetPacketType(object))
     {
-        /* main stream packets */
-    case PyTypeClass:
+    case PacketTypeCallRsp:
         break;
-
-        /* exceptions and such */
-    case PyTypeTuple:
+    case PacketTypeCallReq:
+        break;
+    case PacketTypeNotification:
+        break;
+    case PacketTypeException:
+        break;
+    case PacketTypeUnknown:
         break;
     }
-
-
-    // small hack to manage to handle the unexpected stuff..
-    // and of course is this not the correct way 'todo' this
-    /*if ( packet->CheckType(PyRep::PackedObject1) == true )
-    {
-        //Log.Debug("AuthStateMachine","Exception debug string:%s", ((PyRepPackedObject1*)packet)->type.c_str());
-
-        //Log.Debug("AuthStateMachine","State changed into StateException");
-        //mCurrentStateMachine = &EveClientSocket::_authStateException;
-        //(this->*mCurrentStateMachine)(recvPyPacket);
-
-        //Log.Debug("AuthStateMachine","Exception noticed");
-        //mCurrentStateMachine(packet);
-        _authStateException(packet);
-        return;
-    }
-
-    //take the PyRep and turn it into a PyPacket
-    PyPacket *pyPacket = new PyPacket;
-    if(pyPacket->Decode(packet) == false)   //packet is consumed here, as in deleted....hehehehe kinda inefficient.. but its ok for now
-    {
-        Log.Error("ClientSocket","%s: Failed to decode packet rep", GetRemoteIP().c_str());
-        return;
-    }
-
-    mSession->QueuePacket(pyPacket);*/
 }
 
 PyString * EveClientSocket::GetAddress()
