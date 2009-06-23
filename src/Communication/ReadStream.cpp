@@ -24,13 +24,7 @@
 */
 
 #include "Common.h"
-#include "DebugTools.h"
-#include "Log.h"
-#include "NGLog.h"
 #include "ReadStream.h"
-
-#include "FastQueue.h"
-#include "BufferPool.h"
 
 ReadStream::ReadStream() : mBuffer(NULL), mSize(0), mReadIndex(0),  mAllocatedMem(0), mPayloadSize(0) {}
 
@@ -164,7 +158,6 @@ bool ReadStream::seek( int32 offset, int origin )
             assert(false);
         } return false;
     }
-    return false;
 }
 
 bool ReadStream::readSizeEx( size_t & size )
