@@ -55,7 +55,7 @@ bool WriteStream::writeSizeEx( size_t size )
 	bool resizeBuffSuccess = reserve(1);
 	if (size > 0xFE)
 	{
-		mBuffer[mWriteIndex++] = -1;
+		mBuffer[mWriteIndex++] = 0xFF;
 		if ((resizeBuffSuccess == true) && (reserve(4) == true))
 		{
 			*((uint32*)(&mBuffer[mWriteIndex])) = (uint32)size;
@@ -117,7 +117,6 @@ bool WriteStream::seek( int32 offset, int origin )
 			assert(false);
 		} return false;
 	}
-	return false;
 }
 
 bool WriteStream::write( const char* buffer, const size_t len )
@@ -150,61 +149,36 @@ bool WriteStream::reserve( size_t size )
 
 bool WriteStream::insert( uint8* buff, size_t buff_len, size_t index )
 {
-	/* I am reserveing tired of this shit, so lets do it the slow way */
+    size_t data_size = size();
 
-	size_t tempBuffSize = size() - index;
-	uint8* tempBuff = (uint8*)ASCENT_MALLOC(tempBuffSize+1);
-	mBuffer = (uint8*)ASCENT_REALLOC(mBuffer, size() + buff_len);
-	ASCENT_MEMCPY(tempBuff, &mBuffer[index], tempBuffSize);					// copy the shit into a temp buffer
-	ASCENT_MEMCPY(&mBuffer[index + buff_len], tempBuff, tempBuffSize);		// copy the buffer to the new location
-	ASCENT_MEMCPY(&mBuffer[index], buff, buff_len);							// copy the new data in place.
+    /* check if the index is bigger than the size of the data */
+    if (index > data_size)
+        return false;
 
-	SafeFree(tempBuff);
-	
-	// save the size
-	/*size_t data_size = size();
+    /* the amount of data that needs to be moved */
+    size_t delta_size = data_size - index;
 
-	// the amount of data that needs to be moved
-	size_t delta_size = data_size - index;*/
+    /* shouldn't be able to move negative count of data */
+    if (delta_size < 0)
+        return false;
 
-	/* tricky shit now... damn */
-	//reserve(allocatedsize() + buff_len); // make sure we have enough room
+    /* make sure we have enough room for the insert */
+    if(reserve(buff_len) == false)
+        return false;
 
-	/*uint8* begin = &mBuffer[index];
-	uint8* delta = &mBuffer[index + buff_len];
-	uint8* end = &mBuffer[data_size + buff_len];
+    uint8* begin = &mBuffer[index];
+    uint8* delta = &mBuffer[index + buff_len];
 
-	for (size_t i = 0; i < delta_size; i++)
-	{
-		*end = *delta;
-		end--;
-		delta--;
-	}*/
+    /* check if the source and destination is valid */
+    if (begin == NULL || delta == NULL)
+        return false;
 
+    memmove(delta, begin, delta_size);
+    memcpy(begin, buff, buff_len);
 
-	/*uint8* startpoint = &content()[index];
-
-	uint8* endpoint = &content()[index + buff_len];
-	uint8* workpoint = &content()[size() + buff_len];
-
-	for (size_t i = 0; i < delta_size; i++)
-	{
-		*workpoint = *endpoint;
-		workpoint--;
-		endpoint--;
-	}*/
-
-	/*while (endpoint != startpoint)
-	{
-		*workpoint = *endpoint;
-		workpoint--;
-		endpoint--;
-	}*/
-
-	/* evil shit */
-	mWriteIndex+=buff_len;
-
-	return true;
+    /* evil shit */
+    mWriteIndex+=buff_len;
+    return true;
 }
 
 uint8* WriteStream::content()
