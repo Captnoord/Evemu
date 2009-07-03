@@ -160,7 +160,7 @@ bool ReadStream::seek( int32 offset, int origin )
     }
 }
 
-bool ReadStream::readSizeEx( size_t & size )
+bool ReadStream::readSizeEx(uint32 & size)
 {
     size_t _size = 0;
     if (!read1(_size))

@@ -1,26 +1,26 @@
 /*
-	------------------------------------------------------------------------------------
-	LICENSE:
-	------------------------------------------------------------------------------------
-	This file is part of EVEmu: EVE Online Server Emulator
-	Copyright 2006 - 2009 The EVEmu Team
-	For the latest information visit http://evemu.mmoforge.org
-	------------------------------------------------------------------------------------
-	This program is free software; you can redistribute it and/or modify it under
-	the terms of the GNU Lesser General Public License as published by the Free Software
-	Foundation; either version 2 of the License, or (at your option) any later
-	version.
+    ------------------------------------------------------------------------------------
+    LICENSE:
+    ------------------------------------------------------------------------------------
+    This file is part of EVEmu: EVE Online Server Emulator
+    Copyright 2006 - 2009 The EVEmu Team
+    For the latest information visit http://evemu.mmoforge.org
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+    Foundation; either version 2 of the License, or (at your option) any later
+    version.
 
-	This program is distributed in the hope that it will be useful, but WITHOUT
-	ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-	FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+    This program is distributed in the hope that it will be useful, but WITHOUT
+    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+    FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
 
-	You should have received a copy of the GNU Lesser General Public License along with
-	this program; if not, write to the Free Software Foundation, Inc., 59 Temple
-	Place - Suite 330, Boston, MA 02111-1307, USA, or go to
-	http://www.gnu.org/copyleft/lesser.txt.
-	------------------------------------------------------------------------------------
-	Author:		Captnoord
+    You should have received a copy of the GNU Lesser General Public License along with
+    this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+    Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+    http://www.gnu.org/copyleft/lesser.txt.
+    ------------------------------------------------------------------------------------
+    Author:     Captnoord
 */
 
 #ifndef FILE_LOGGER_H
@@ -31,7 +31,7 @@
  *
  * @brief a logger class so we can (us developers) dump what we are actualy are sending.
  *
- * 
+ *
  * @todo rename this class into something like PacketLogger ( hell i'm lazy )
  * @author Captnoord
  * @date December 2008
@@ -40,280 +40,280 @@
 class FileLogger : public Singleton<FileLogger>
 {
 public:
-	FileLogger(const char * path) : mEnableFileWrite(false)
-	{
-		fouttxt = fopen(path,"wb");
-	}
+    FileLogger(const char * path) : mEnableFileWrite(false)
+    {
+        fouttxt = fopen(path,"wb");
+    }
 
-	~FileLogger()
-	{
-		fflush(fouttxt);
-		fclose(fouttxt);
-	}
+    ~FileLogger()
+    {
+        fflush(fouttxt);
+        fclose(fouttxt);
+    }
 
-	void enable() {mEnableFileWrite = true;}
-	void disable() {mEnableFileWrite = false;}
+    void enable() {mEnableFileWrite = true;}
+    void disable() {mEnableFileWrite = false;}
 
-	/**
-	 * @brief logPacket is a function that dumps a PyTupleStream to a file.
-	 *
-	 * 
-	 *
-	 * @param[in] packet is the stream that needs to be dumped.
-	 */
-/*	void logPacket(PyTupleStream* packet, int direction)
-	{
-		if (mEnableFileWrite == false)
-			return;
+    /**
+     * @brief logPacket is a function that dumps a PyTupleStream to a file.
+     *
+     *
+     *
+     * @param[in] packet is the stream that needs to be dumped.
+     */
+/*  void logPacket(PyTupleStream* packet, int direction)
+    {
+        if (mEnableFileWrite == false)
+            return;
 
-		if (packet == NULL)
-			return;
+        if (packet == NULL)
+            return;
 
-		logPacket(packet->content(), packet->size(), direction);
-	}
+        logPacket(packet->content(), packet->size(), direction);
+    }
 
-	void logSimplePacket(PyTupleStream* packet, int direction)
-	{
-		if (mEnableFileWrite == false)
-			return;
+    void logSimplePacket(PyTupleStream* packet, int direction)
+    {
+        if (mEnableFileWrite == false)
+            return;
 
-		if (packet == NULL)
-			return;
+        if (packet == NULL)
+            return;
 
-		logSimplePacket(packet->content(), packet->size(), direction);
-	}*/
+        logSimplePacket(packet->content(), packet->size(), direction);
+    }*/
 
 #define ENDING_WINDOWS "\r\n"
 #define ENDING_UNIX "\n"
 // use unix line endings..
 #define LINE_END ENDING_UNIX
-	
-	/**
-	 * @brief logPacket is a function that dumps a buffer
-	 *
-	 * "Part where I credit burlex for using his hex dump function"
-	 *
-	 * @param[in] data is the buffer that contains the data that needs to be written.
-	 * @param[in] size is the length of the data buffer.
-	 * @param[in] direction is the direction of the buffer... if its client -> server or server -> client.
-	 */
-	void logPacket(const unsigned char* data, size_t size, unsigned int direction)
-	{
-		unsigned int line = 1;
-		unsigned int countpos = 0;
-		size_t lenght = size;
 
-		fprintf(fouttxt, "{%s} PacketSize = %u"LINE_END, (direction ? "SERVER" : "CLIENT"), lenght);
-		fprintf(fouttxt, "|------------------------------------------------|----------------|"LINE_END);
-		fprintf(fouttxt, "|00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F |0123456789ABCDEF|"LINE_END);
-		fprintf(fouttxt, "|------------------------------------------------|----------------|"LINE_END);
+    /**
+     * @brief logPacket is a function that dumps a buffer
+     *
+     * "Part where I credit burlex for using his hex dump function"
+     *
+     * @param[in] data is the buffer that contains the data that needs to be written.
+     * @param[in] size is the length of the data buffer.
+     * @param[in] direction is the direction of the buffer... if its client -> server or server -> client.
+     */
+    void logPacket(const unsigned char* data, size_t size, unsigned int direction)
+    {
+        uint32 line = 1;
+        uint32 countpos = 0;
+        uint32 lenght = size;
 
-		if(lenght > 0)
-		{
-			fprintf(fouttxt, "|");
-			for (unsigned int count = 0 ; count < lenght ; count++)
-			{
-				if (countpos == 16)
-				{
-					countpos = 0;
+        fprintf(fouttxt, "{%s} PacketSize = %u"LINE_END, (direction ? "SERVER" : "CLIENT"), lenght);
+        fprintf(fouttxt, "|------------------------------------------------|----------------|"LINE_END);
+        fprintf(fouttxt, "|00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F |0123456789ABCDEF|"LINE_END);
+        fprintf(fouttxt, "|------------------------------------------------|----------------|"LINE_END);
 
-					fprintf(fouttxt,"|");
+        if(lenght > 0)
+        {
+            fprintf(fouttxt, "|");
+            for (unsigned int count = 0 ; count < lenght ; count++)
+            {
+                if (countpos == 16)
+                {
+                    countpos = 0;
 
-					for (unsigned int a = count-16; a < count;a++)
-					{
-						if ((data[a] < 32) || (data[a] > 126))
-							fprintf(fouttxt,".");
-						else
-							fprintf(fouttxt,"%c",data[a]);
-					}
+                    fprintf(fouttxt,"|");
 
-					fprintf(fouttxt,"|"LINE_END);
+                    for (unsigned int a = count-16; a < count;a++)
+                    {
+                        if ((data[a] < 32) || (data[a] > 126))
+                            fprintf(fouttxt,".");
+                        else
+                            fprintf(fouttxt,"%c",data[a]);
+                    }
 
-					line++;
-					fprintf(fouttxt,"|");
-				}
+                    fprintf(fouttxt,"|"LINE_END);
 
-				fprintf(fouttxt,"%02X ",data[count]);
+                    line++;
+                    fprintf(fouttxt,"|");
+                }
 
-				//FIX TO PARSE PACKETS WITH LENGHT < OR = TO 16 BYTES.
-				if (count+1 == lenght && lenght <= 16)
-				{
-					for (unsigned int b = countpos+1; b < 16;b++)
-						fprintf(fouttxt,"   ");
+                fprintf(fouttxt,"%02X ",data[count]);
 
-					fprintf(fouttxt,"|");
+                //FIX TO PARSE PACKETS WITH LENGHT < OR = TO 16 BYTES.
+                if (count+1 == lenght && lenght <= 16)
+                {
+                    for (unsigned int b = countpos+1; b < 16;b++)
+                        fprintf(fouttxt,"   ");
 
-					for (unsigned int a = 0; a < lenght;a++)
-					{
-						if ((data[a] < 32) || (data[a] > 126))
-							fprintf(fouttxt,".");
-						else
-							fprintf(fouttxt,"%c",data[a]);
-					}
+                    fprintf(fouttxt,"|");
 
-					for (unsigned int c = count; c < 15;c++)
-						fprintf(fouttxt," ");
+                    for (unsigned int a = 0; a < lenght;a++)
+                    {
+                        if ((data[a] < 32) || (data[a] > 126))
+                            fprintf(fouttxt,".");
+                        else
+                            fprintf(fouttxt,"%c",data[a]);
+                    }
 
-					fprintf(fouttxt,"|"LINE_END);
-				}
+                    for (unsigned int c = count; c < 15;c++)
+                        fprintf(fouttxt," ");
 
-				//FIX TO PARSE THE LAST LINE OF THE PACKETS WHEN THE LENGHT IS > 16 AND ITS IN THE LAST LINE.
-				if (count+1 == lenght && lenght > 16)
-				{
-					for (unsigned int b = countpos+1; b < 16;b++)
-						fprintf(fouttxt,"   ");
+                    fprintf(fouttxt,"|"LINE_END);
+                }
 
-					fprintf(fouttxt,"|");
+                //FIX TO PARSE THE LAST LINE OF THE PACKETS WHEN THE LENGHT IS > 16 AND ITS IN THE LAST LINE.
+                if (count+1 == lenght && lenght > 16)
+                {
+                    for (unsigned int b = countpos+1; b < 16;b++)
+                        fprintf(fouttxt,"   ");
 
-					unsigned short print = 0;
+                    fprintf(fouttxt,"|");
 
-					for (unsigned int a = line * 16 - 16; a < lenght;a++)
-					{
-						if ((data[a] < 32) || (data[a] > 126))
-							fprintf(fouttxt,".");
-						else
-							fprintf(fouttxt,"%c",data[a]);
+                    unsigned short print = 0;
 
-						print++;
-					}
+                    for (unsigned int a = line * 16 - 16; a < lenght;a++)
+                    {
+                        if ((data[a] < 32) || (data[a] > 126))
+                            fprintf(fouttxt,".");
+                        else
+                            fprintf(fouttxt,"%c",data[a]);
 
-					for (unsigned int c = print; c < 16;c++)
-						fprintf(fouttxt," ");
+                        print++;
+                    }
 
-					fprintf(fouttxt,"|"LINE_END);
-				}
+                    for (unsigned int c = print; c < 16;c++)
+                        fprintf(fouttxt," ");
 
-				countpos++;
-			}
-		}
-		fprintf(fouttxt, "-------------------------------------------------------------------"LINE_END""LINE_END);
-		fflush(fouttxt);
-	}
+                    fprintf(fouttxt,"|"LINE_END);
+                }
 
-	void logRawPacket(void* pData, size_t data_len, int direction)
-	{
-		if (foutraw <= NULL)
-			return;
+                countpos++;
+            }
+        }
+        fprintf(fouttxt, "-------------------------------------------------------------------"LINE_END""LINE_END);
+        fflush(fouttxt);
+    }
 
-		if (pData == NULL || data_len == 0)
-			return;
+    void logRawPacket(void* pData, size_t data_len, int direction)
+    {
+        if (foutraw <= NULL)
+            return;
 
-		fwrite(&direction, 1, 1, foutraw);
-		fwrite(&data_len, 4, 1, foutraw);
-		fwrite(pData, data_len, 1, foutraw);
-	}
+        if (pData == NULL || data_len == 0)
+            return;
 
-	// simple packets are streams we supply the header for its very slow... hehe
-	void logSimplePacket(const unsigned char* xdata, size_t size, unsigned int direction)
-	{
-		unsigned char* data = new unsigned char[size + 5];
-		
-		memcpy(data+5, xdata, size);
-		data[0] = 0x7E;
-		data[1] = 0;
-		data[2] = 0;
-		data[3] = 0;
-		data[4] = 0;
+        fwrite(&direction, 1, 1, foutraw);
+        fwrite(&data_len, 4, 1, foutraw);
+        fwrite(pData, data_len, 1, foutraw);
+    }
 
-		unsigned int line = 1;
-		unsigned int countpos = 0;
-		size_t lenght = size + 5;
+    // simple packets are streams we supply the header for its very slow... hehe
+    void logSimplePacket(const unsigned char* xdata, size_t size, unsigned int direction)
+    {
+        unsigned char* data = new unsigned char[size + 5];
 
-		fprintf(fouttxt, "{%s} PacketSize = %u"LINE_END, (direction ? "SERVER" : "CLIENT"), lenght);
-		fprintf(fouttxt, "|------------------------------------------------|----------------|"LINE_END);
-		fprintf(fouttxt, "|00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F |0123456789ABCDEF|"LINE_END);
-		fprintf(fouttxt, "|------------------------------------------------|----------------|"LINE_END);
+        memcpy(data+5, xdata, size);
+        data[0] = 0x7E;
+        data[1] = 0;
+        data[2] = 0;
+        data[3] = 0;
+        data[4] = 0;
 
-		if(lenght > 0)
-		{
-			fprintf(fouttxt, "|");
-			for (unsigned int count = 0 ; count < lenght ; count++)
-			{
-				if (countpos == 16)
-				{
-					countpos = 0;
+        uint32 line = 1;
+        uint32 countpos = 0;
+        uint32 lenght = size + 5;
 
-					fprintf(fouttxt,"|");
+        fprintf(fouttxt, "{%s} PacketSize = %u"LINE_END, (direction ? "SERVER" : "CLIENT"), lenght);
+        fprintf(fouttxt, "|------------------------------------------------|----------------|"LINE_END);
+        fprintf(fouttxt, "|00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F |0123456789ABCDEF|"LINE_END);
+        fprintf(fouttxt, "|------------------------------------------------|----------------|"LINE_END);
 
-					for (unsigned int a = count-16; a < count;a++)
-					{
-						if ((data[a] < 32) || (data[a] > 126))
-							fprintf(fouttxt,".");
-						else
-							fprintf(fouttxt,"%c",data[a]);
-					}
+        if(lenght > 0)
+        {
+            fprintf(fouttxt, "|");
+            for (unsigned int count = 0 ; count < lenght ; count++)
+            {
+                if (countpos == 16)
+                {
+                    countpos = 0;
 
-					fprintf(fouttxt,"|"LINE_END);
+                    fprintf(fouttxt,"|");
 
-					line++;
-					fprintf(fouttxt,"|");
-				}
+                    for (unsigned int a = count-16; a < count;a++)
+                    {
+                        if ((data[a] < 32) || (data[a] > 126))
+                            fprintf(fouttxt,".");
+                        else
+                            fprintf(fouttxt,"%c",data[a]);
+                    }
 
-				fprintf(fouttxt,"%02X ",data[count]);
+                    fprintf(fouttxt,"|"LINE_END);
 
-				//FIX TO PARSE PACKETS WITH LENGHT < OR = TO 16 BYTES.
-				if (count+1 == lenght && lenght <= 16)
-				{
-					for (unsigned int b = countpos+1; b < 16;b++)
-						fprintf(fouttxt,"   ");
+                    line++;
+                    fprintf(fouttxt,"|");
+                }
 
-					fprintf(fouttxt,"|");
+                fprintf(fouttxt,"%02X ",data[count]);
 
-					for (unsigned int a = 0; a < lenght;a++)
-					{
-						if ((data[a] < 32) || (data[a] > 126))
-							fprintf(fouttxt,".");
-						else
-							fprintf(fouttxt,"%c",data[a]);
-					}
+                //FIX TO PARSE PACKETS WITH LENGHT < OR = TO 16 BYTES.
+                if (count+1 == lenght && lenght <= 16)
+                {
+                    for (unsigned int b = countpos+1; b < 16;b++)
+                        fprintf(fouttxt,"   ");
 
-					for (unsigned int c = count; c < 15;c++)
-						fprintf(fouttxt," ");
+                    fprintf(fouttxt,"|");
 
-					fprintf(fouttxt,"|"LINE_END);
-				}
+                    for (unsigned int a = 0; a < lenght;a++)
+                    {
+                        if ((data[a] < 32) || (data[a] > 126))
+                            fprintf(fouttxt,".");
+                        else
+                            fprintf(fouttxt,"%c",data[a]);
+                    }
 
-				//FIX TO PARSE THE LAST LINE OF THE PACKETS WHEN THE LENGHT IS > 16 AND ITS IN THE LAST LINE.
-				if (count+1 == lenght && lenght > 16)
-				{
-					for (unsigned int b = countpos+1; b < 16;b++)
-						fprintf(fouttxt,"   ");
+                    for (unsigned int c = count; c < 15;c++)
+                        fprintf(fouttxt," ");
 
-					fprintf(fouttxt,"|");
+                    fprintf(fouttxt,"|"LINE_END);
+                }
 
-					unsigned short print = 0;
+                //FIX TO PARSE THE LAST LINE OF THE PACKETS WHEN THE LENGHT IS > 16 AND ITS IN THE LAST LINE.
+                if (count+1 == lenght && lenght > 16)
+                {
+                    for (unsigned int b = countpos+1; b < 16;b++)
+                        fprintf(fouttxt,"   ");
 
-					for (unsigned int a = line * 16 - 16; a < lenght;a++)
-					{
-						if ((data[a] < 32) || (data[a] > 126))
-							fprintf(fouttxt,".");
-						else
-							fprintf(fouttxt,"%c",data[a]);
+                    fprintf(fouttxt,"|");
 
-						print++;
-					}
+                    unsigned short print = 0;
 
-					for (unsigned int c = print; c < 16;c++)
-						fprintf(fouttxt," ");
+                    for (unsigned int a = line * 16 - 16; a < lenght;a++)
+                    {
+                        if ((data[a] < 32) || (data[a] > 126))
+                            fprintf(fouttxt,".");
+                        else
+                            fprintf(fouttxt,"%c",data[a]);
 
-					fprintf(fouttxt,"|"LINE_END);
-				}
+                        print++;
+                    }
 
-				countpos++;
-			}
-		}
-		fprintf(fouttxt, "-------------------------------------------------------------------"LINE_END""LINE_END);
-		fflush(fouttxt);
-	}
+                    for (unsigned int c = print; c < 16;c++)
+                        fprintf(fouttxt," ");
+
+                    fprintf(fouttxt,"|"LINE_END);
+                }
+
+                countpos++;
+            }
+        }
+        fprintf(fouttxt, "-------------------------------------------------------------------"LINE_END""LINE_END);
+        fflush(fouttxt);
+    }
 
 protected:
 
-	FILE * fouttxt;
-	FILE * foutraw;
-	bool mEnableFileWrite;
+    FILE * fouttxt;
+    FILE * foutraw;
+    bool mEnableFileWrite;
 
 #ifdef WIN32
-	HANDLE mStdoutHandle, mStderrHandle;
+    HANDLE mStdoutHandle, mStderrHandle;
 #endif
 };
 

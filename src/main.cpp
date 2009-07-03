@@ -62,7 +62,7 @@ static const char* default_config_file = "evemu-server.conf";
 Database* Database_dynamic;
 Database* Database_static;
 
-int main(int /*argc*/, char * /*argv[]*/)
+int main(int argc, char *argv[])
 {
     /* set the global time variable */
     UNIXTIME = time(NULL);

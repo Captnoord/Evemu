@@ -3,12 +3,6 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 
-CREATE DATABASE /*!32312 IF NOT EXISTS*/`evemu_rewrite_dynamic` /*!40100 DEFAULT CHARACTER SET utf8 */;
-
-USE `evemu_rewrite_dynamic`;
-
-/*Table structure for table `account` */
-
 DROP TABLE IF EXISTS `account`;
 
 CREATE TABLE `account` (

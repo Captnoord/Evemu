@@ -14,74 +14,74 @@
  */
 
 typedef enum {
-	DBTYPE_I1			= 0x10,
-	DBTYPE_UI1			= 0x11,
-	DBTYPE_BOOL			= 0x0B,
-	DBTYPE_I2			= 0x02,
-	DBTYPE_UI2			= 0x12,
-	DBTYPE_I4			= 0x03,
-	DBTYPE_UI4			= 0x13,
-	DBTYPE_R4			= 0x04,
-	DBTYPE_I8			= 0x14,
-	DBTYPE_R8			= 0x05,
-	DBTYPE_UI8			= 0x15,
-	DBTYPE_CY			= 0x06, //money
-	DBTYPE_FILETIME		= 0x40, //64 bits
-	DBTYPE_BYTES		= 0x80,
-	DBTYPE_STR			= 0x81,
-	DBTYPE_WSTR			= 0x82,
-	DBTYPE_VIRTUAL		= 0x00, // virtual db field..
+    DBTYPE_I1           = 0x10,
+    DBTYPE_UI1          = 0x11,
+    DBTYPE_BOOL         = 0x0B,
+    DBTYPE_I2           = 0x02,
+    DBTYPE_UI2          = 0x12,
+    DBTYPE_I4           = 0x03,
+    DBTYPE_UI4          = 0x13,
+    DBTYPE_R4           = 0x04,
+    DBTYPE_I8           = 0x14,
+    DBTYPE_R8           = 0x05,
+    DBTYPE_UI8          = 0x15,
+    DBTYPE_CY           = 0x06, //money
+    DBTYPE_FILETIME     = 0x40, //64 bits
+    DBTYPE_BYTES        = 0x80,
+    DBTYPE_STR          = 0x81,
+    DBTYPE_WSTR         = 0x82,
+    DBTYPE_VIRTUAL      = 0x00, // virtual db field..
 } DBTYPE;
 
 #define MARSHALSTREAM_RETURN(p) {PyObject * x = ((PyObject*)p); assert(x != NULL); return x;}
 
-static size_t mReadIndex;
-static uint8* mReadBuffer;
-static size_t mReadBufferSize;
-static size_t mVirtualFieldCount;
+extern size_t mReadIndex;
+extern uint8* mReadBuffer;
+extern size_t mReadBufferSize;
+extern size_t mVirtualFieldCount;
 
 class DBRowModule
 {
 public:
-	DBRowModule();
-	~DBRowModule();
+    DBRowModule();
+    ~DBRowModule();
 
 
-	/* strings and buffers seem to be stored in a itr sequence after the raw part, these are simply skipped
-	  
-	*/
+    /* strings and buffers seem to be stored in a itr sequence after the raw part, these are simply skipped
 
-	static PyObject* ReadRawDbField(MarshalStream& stream, PyInt &type, size_t &virtualFieldCount);
+    */
 
-	static PyObject* parseraw(MarshalStream& stream, PyObject* header, uint8 * data, size_t len, size_t & virtualFieldCount, size_t & fieldCount);
+    static PyObject* ReadRawDbField(MarshalStream& stream, PyInt &type, size_t &virtualFieldCount);
 
-	static size_t GetRawFieldSizeFromHeader(PyObject* tuple);
+    static PyObject* parseraw(MarshalStream& stream, PyObject* header, uint8 * data, size_t len, size_t & virtualFieldCount, size_t & fieldCount);
 
-	static size_t GetFieldSizeFromType(uint8 type);
+    static size_t GetRawFieldSizeFromHeader(PyObject* tuple);
 
-	// keeps track of the read offset in the raw buffer.
-	/*static size_t mReadIndex;
-	static uint8* mReadBuffer;
-	static size_t mReadBufferSize;*/
+    static size_t GetFieldSizeFromType(uint8 type);
+
+    // keeps track of the read offset in the raw buffer.
+    /*static size_t mReadIndex;
+    static uint8* mReadBuffer;
+    static size_t mReadBufferSize;*/
 
 private:
 
-	// LOL DIT IS HELEMAAL VERKEERT..... database header zooi enzo...
-	class DBRowField
-	{
-	public:
-		DBRowField(PyObject* object);
-		~DBRowField();
-	private:
-		PyObject* mObject;
-	};
+    // LOL DIT IS HELEMAAL VERKEERT..... database header zooi enzo...
+    class DBRowField
+    {
+    public:
+        DBRowField(PyObject* object);
+        ~DBRowField();
+    private:
+        PyObject* mObject;
+    };
 
-	int mParamCount; // guessed, something like this
+    int mParamCount; // guessed, something like this
 
-	typedef std::vector<DBRowField*>	RowContainer;
-	typedef RowContainer::iterator		RowContainerItr;
+    typedef std::vector<DBRowField*>    RowContainer;
+    typedef RowContainer::iterator      RowContainerItr;
 
-	RowContainer mDBRow;
+    RowContainer mDBRow;
 };
 
 #undef MARSHALSTREAM_RETURN

@@ -22,32 +22,32 @@
 
 #ifdef WIN32
 //#  pragma warning(disable:4996)
-#  pragma warning(disable:4251)							// 'dll'-interface warning, related to objects that doesn't have a 'declspec' definition
+#  pragma warning(disable:4251)                         // 'dll'-interface warning, related to objects that doesn't have a 'declspec' definition
 
 // VC9 related 'CRT' warnings
 // TODO check if these warnings can be fixed in a cross platform way
 #  define _CRT_SECURE_NO_WARNINGS 1
 #  define _CRT_SECURE_NO_DEPRECATE 1
 #  define _CRT_SECURE_COPP_OVERLOAD_STANDARD_NAMES 1
-//#  define _HAS_ITERATOR_DEBUGGING 0						// Speeds up debug build
+//#  define _HAS_ITERATOR_DEBUGGING 0                       // Speeds up debug build
 #endif//WIN32
 
 enum TimeVariables
 {
-	TIME_SECOND = 1,
-	TIME_MINUTE = TIME_SECOND * 60,
-	TIME_HOUR   = TIME_MINUTE * 60,
-	TIME_DAY	= TIME_HOUR * 24,
-	TIME_MONTH	= TIME_DAY * 30,
-	TIME_YEAR	= TIME_MONTH * 12,
+    TIME_SECOND = 1,
+    TIME_MINUTE = TIME_SECOND * 60,
+    TIME_HOUR   = TIME_MINUTE * 60,
+    TIME_DAY    = TIME_HOUR * 24,
+    TIME_MONTH  = TIME_DAY * 30,
+    TIME_YEAR   = TIME_MONTH * 12,
 };
 
 enum MsTimeVariables
 {
-	MSTIME_SECOND = 1000,
-	MSTIME_MINUTE = MSTIME_SECOND * 60,
-	MSTIME_HOUR   = MSTIME_MINUTE * 60,
-	MSTIME_DAY	= MSTIME_HOUR * 24,
+    MSTIME_SECOND = 1000,
+    MSTIME_MINUTE = MSTIME_SECOND * 60,
+    MSTIME_HOUR   = MSTIME_MINUTE * 60,
+    MSTIME_DAY  = MSTIME_HOUR * 24,
 };
 
 /* 'inlined' functions can improve performance, the compiler will judge how this will be handled.
@@ -104,7 +104,7 @@ enum MsTimeVariables
 
 #ifdef CONFIG_USE_SELECT
 #  undef  FD_SETSIZE
-#  define FD_SETSIZE 2048 
+#  define FD_SETSIZE 2048
 #endif
 
 #if defined( __WIN32__ ) || defined( WIN32 ) || defined( _WIN32 )
@@ -141,7 +141,7 @@ enum MsTimeVariables
 #endif
 
 #define COMPILER_MICROSOFT 0
-#define COMPILER_GNU	   1
+#define COMPILER_GNU       1
 #define COMPILER_BORLAND   2
 
 #ifdef _MSC_VER
@@ -200,14 +200,6 @@ enum MsTimeVariables
 #  define PLATFORM_AND_ARCH_TEXT PLATFORM_TEXT"/"ARCH
 #endif
 
-/*#if ASCENT_COMPILER == COMPILER_MICROSOFT
-#  pragma warning( disable : 4267 ) // conversion from 'size_t' to 'int', possible loss of data
-#  pragma warning( disable : 4311 ) // 'type cast': pointer truncation from HMODULE to uint32
-#  pragma warning( disable : 4786 ) // identifier was truncated to '255' characters in the debug information
-#  pragma warning( disable : 4146 )
-#  pragma warning( disable : 4800 )
-#endif*/
-
 /* TODO check out why this here */
 #if ASCENT_PLATFORM == PLATFORM_WIN32
 #  define STRCASECMP stricmp
@@ -265,27 +257,27 @@ enum MsTimeVariables
 
 #if defined (__GNUC__)
 #  define GCC_VERSION (__GNUC__ * 10000 \
-					   + __GNUC_MINOR__ * 100 \
-					   + __GNUC_PATCHLEVEL__)
+                       + __GNUC_MINOR__ * 100 \
+                       + __GNUC_PATCHLEVEL__)
 #endif
 
 #ifndef WIN32
 #  ifndef X64
 #    if defined (__GNUC__)
-#	   if GCC_VERSION >= 30400
+#      if GCC_VERSION >= 30400
 #        ifdef HAVE_DARWIN
-#	       define __fastcall
+#          define __fastcall
 #        else
-#    	   define __fastcall __attribute__((__fastcall__))
+#          define __fastcall __attribute__((__fastcall__))
 #        endif
-#	   else
-#	     define __fastcall __attribute__((__regparm__(3)))
-#	   endif
+#      else
+#        define __fastcall __attribute__((__regparm__(3)))
+#      endif
 #    else
-#	   define __fastcall __attribute__((__fastcall__))
+#      define __fastcall __attribute__((__fastcall__))
 #    endif
 #  else
-#    define __fastcall  
+#    define __fastcall
 #  endif
 #endif
 
@@ -324,10 +316,9 @@ enum MsTimeVariables
   typedef uint32_t uint32;
   typedef uint16_t uint16;
   typedef uint8_t uint8;
-  typedef uint32_t DWORD;
 #endif
 
-/* 
+/*
 Scripting system exports/imports
 */
 
@@ -340,8 +331,8 @@ Scripting system exports/imports
 #    define SCRIPT_DECL __declspec(dllexport)
 #  endif
 #else
-#  define SERVER_DECL 
-#  define SCRIPT_DECL 
+#  define SERVER_DECL
+#  define SCRIPT_DECL
 #endif
 
 // Include all threading files
@@ -358,7 +349,6 @@ Scripting system exports/imports
 #  define I64FMTD "%I64u"
 #  define SI64FMTD "%I64d"
 #  define snprintf _snprintf
-#  define atoll __atoi64
 
 // ISO C++ related macros
 #  if _MSC_VER >= 1400
@@ -373,10 +363,6 @@ Scripting system exports/imports
 #  define SI64FMTD "%lld"
 #endif
 
-#define atol(a) strtoul( a, NULL, 10)
-
-#define STRINGIZE(a) #a
-
 #if ASCENT_COMPILER == COMPILER_MICROSOFT
 #  if _MSC_VER >= 1400
 #    pragma float_control(push)
@@ -389,31 +375,31 @@ Scripting system exports/imports
 // fast int abs
 static ASCENT_FORCEINLINE int int32abs( const int value )
 {
-	return (value ^ (value >> 31)) - (value >> 31);
+    return (value ^ (value >> 31)) - (value >> 31);
 }
 
 // fast int abs and recast to unsigned
 static ASCENT_FORCEINLINE uint32 int32abs2uint32( const int value )
 {
-	return (uint32)(value ^ (value >> 31)) - (value >> 31);
+    return (uint32)(value ^ (value >> 31)) - (value >> 31);
 }
 
 /// Fastest Method of float2int32
 static ASCENT_FORCEINLINE int float2int32(const float value)
 {
-#if !defined(X64) && ASCENT_COMPILER == COMPILER_MICROSOFT 
-	int i;
-	__asm {
-		fld value
-		frndint
-		fistp i
-	}
-	return i;
+#if !defined(X64) && ASCENT_COMPILER == COMPILER_MICROSOFT
+    int i;
+    __asm {
+        fld value
+        frndint
+        fistp i
+    }
+    return i;
 #else
-	union { int asInt[2]; double asDouble; } n;
-	n.asDouble = value + 6755399441055744.0;
+    union { int asInt[2]; double asDouble; } n;
+    n.asDouble = value + 6755399441055744.0;
 
-	return n.asInt [0];
+    return n.asInt [0];
 #endif
 }
 
@@ -421,13 +407,13 @@ static ASCENT_FORCEINLINE int float2int32(const float value)
 static ASCENT_FORCEINLINE int double2int32(const double value)
 {
 #if !defined(X64) && ASCENT_COMPILER == COMPILER_MICROSOFT
-	int i;
-	__asm {
-		fld value
-		frndint
-		fistp i
-	}
-	return i;
+    int i;
+    __asm {
+        fld value
+        frndint
+        fistp i
+    }
+    return i;
 #else
   union { int asInt[2]; double asDouble; } n;
   n.asDouble = value + 6755399441055744.0;
@@ -446,9 +432,9 @@ static ASCENT_FORCEINLINE int double2int32(const double value)
 #ifndef WIN32
 ASCENT_INLINE uint32 GetTickCount()
 {
-	struct timeval tv;
-	gettimeofday(&tv, NULL);
-	return (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    return (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
 }
 #endif//!WIN32
 
@@ -461,36 +447,17 @@ ASCENT_INLINE uint32 GetTickCount()
 #  define Sleep(ms) usleep(1000*ms)
 #endif
 
-/*#ifdef WIN32
-#  ifndef __SHOW_STUPID_WARNINGS__
-#    pragma warning(disable:4018)
-#    pragma warning(disable:4244)
-#    pragma warning(disable:4305) 
-#    pragma warning(disable:4748)
-#    pragma warning(disable:4800) 
-#    pragma warning(disable:4996)
-#    pragma warning(disable:4251)
-#  endif	  
-#endif
-
-#undef INTEL_COMPILER
-#ifdef INTEL_COMPILER
-#  pragma warning(disable:279)
-#  pragma warning(disable:1744)
-#  pragma warning(disable:1740)
-#endif*/
-
 ASCENT_FORCEINLINE void ASCENT_TOLOWER(std::string& str)
 {
-	const size_t count = str.length();
-	for(size_t i = 0; i < count; ++i)
-		str[i] = (char)tolower(str[i]);
+    const size_t count = str.length();
+    for(size_t i = 0; i < count; ++i)
+        str[i] = (char)tolower(str[i]);
 };
 
 ASCENT_FORCEINLINE void ASCENT_TOUPPER(std::string& str)
 {
-	for(size_t i = 0; i < str.length(); ++i)
-		str[i] = (char)toupper(str[i]);
+    for(size_t i = 0; i < str.length(); ++i)
+        str[i] = (char)toupper(str[i]);
 };
 
 /* stuff for pragma message, so we can show file and line number */

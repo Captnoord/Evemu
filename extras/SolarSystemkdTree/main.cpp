@@ -67,7 +67,7 @@ Database* Database_dynamic;
 double speed = CAMSPEEDLIGHT;
 float ratio;
 // GLUT_BITMAP_HELVETICA_10
-int font=(int)GLUT_BITMAP_HELVETICA_10;
+void* font = GLUT_BITMAP_HELVETICA_10;
 
 CCamera Camera;
 
@@ -369,10 +369,10 @@ SolarSystemObject* Load_SolarSystem_fromDB(uint64 solarsystemID,uint32 *solarSiz
 
     printf("getting solarsystemID info.\n");
 
-    result = StaticDatabase.Query("SELECT x,y,z,xMin,yMin,zMin,xMax,yMax,zMax FROM mapSolarSystems WHERE SolarSystemID = %u", solarsystemID);
+    result = StaticDatabase.Query("SELECT x,y,z,xMin,yMin,zMin,xMax,yMax,zMax FROM mapsolarsystems WHERE SolarSystemID = %u", solarsystemID);
     if(!result)
     {
-        sLog.String("Query failed: SELECT x,y,z,xMin,yMin,zMin,xMax,yMax,zMax FROM mapSolarSystems WHERE SolarSystemID = %u", solarsystemID);
+        sLog.String("Query failed: SELECT x,y,z,xMin,yMin,zMin,xMax,yMax,zMax FROM mapsolarsystems WHERE SolarSystemID = %u", solarsystemID);
         return NULL;
     }
 
@@ -403,10 +403,10 @@ SolarSystemObject* Load_SolarSystem_fromDB(uint64 solarsystemID,uint32 *solarSiz
     printf("getting objects by solarsystemID.\n");
 
     delete result;
-    result = StaticDatabase.Query("SELECT itemID,itemName,typeID,groupID,x,y,z,radius FROM mapDenormalize WHERE SolarSystemID = %u", solarsystemID);
+    result = StaticDatabase.Query("SELECT itemID,itemName,typeID,groupID,x,y,z,radius FROM mapdenormalize WHERE SolarSystemID = %u", solarsystemID);
     if(!result)
     {
-        sLog.String("Query failed: select itemID,itemName,typeID,groupID,x,y,z,radius from mapDenormalize WHERE SolarSystemID = %u", solarsystemID);
+        sLog.String("Query failed: select itemID,itemName,typeID,groupID,x,y,z,radius from mapdenormalize WHERE SolarSystemID = %u", solarsystemID);
         return NULL;
     }
 
@@ -501,7 +501,7 @@ int main(int argc, char ** argv)
 
         for(uint32 i = 0; i< solarSize; i++)
         {
-            renderBitmapCharacter(mysolarData[i].x,mysolarData[i].y+mysolarData[i].radius*1.5f,mysolarData[i].z,(void *)font,mysolarData[i].objectName);
+            renderBitmapCharacter(mysolarData[i].x,mysolarData[i].y+mysolarData[i].radius*1.5f,mysolarData[i].z,font,mysolarData[i].objectName);
             glPushMatrix();
                 glColor3f(0,1.0f-(i%8)*0.1f,0.2+(i%8)*0.1f);
                 glTranslatef(mysolarData[i].x,mysolarData[i].y,mysolarData[i].z);

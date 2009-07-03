@@ -725,7 +725,7 @@ PyObject* MarshalStream::ReadPackedRow( ReadStream & stream )
 
     assert(obj1->gettype() == PyTypeClass);
 
-    size_t size;
+    uint32 size;
     if (!stream.readSizeEx(size))
     {
         obj1->DecRef();
@@ -1251,7 +1251,7 @@ bool MarshalStream::marshal( PyObject * object, WriteStream & stream )
                 return stream.write1(str[0]);
             }
 
-            size_t str_index = sPyStringTable.LookupIndex(str.content());
+            int32 str_index = sPyStringTable.LookupIndex(str.content());
             if (str_index != -1)
             {
                 if (!stream.writeOpcode(Op_PyStringTableItem))
