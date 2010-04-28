@@ -39,8 +39,8 @@ ADD_EXECUTABLE( "${COMPONENT_NAME}"
                 ${INCLUDE} ${SOURCE} )
 
 TARGET_PRECOMPILED_HEADER( "${COMPONENT_NAME}"
-                           "${COMPONENT_INCLUDE_DIR}/EVEToolPCH.h"
-                           "${COMPONENT_SOURCE_DIR}/main.cpp" )
+                           "EVEToolPCH.h"
+                           "main.cpp" )
 TARGET_LINK_LIBRARIES( "${COMPONENT_NAME}"
                        "eve-common" "common" "dep"
                        ${MYSQL_LIBRARIES} ${ZLIB_LIBRARIES}

@@ -441,8 +441,8 @@ ADD_EXECUTABLE( "${COMPONENT_NAME}"
                 ${tutorial_INCLUDE}       ${tutorial_SOURCE} )
 
 TARGET_PRECOMPILED_HEADER( "${COMPONENT_NAME}"
-                           "${COMPONENT_INCLUDE_DIR}/EVEServerPCH.h"
-                           "${COMPONENT_SOURCE_DIR}/main.cpp" )
+                           "EVEServerPCH.h"
+                           "main.cpp" )
 TARGET_LINK_LIBRARIES( "${COMPONENT_NAME}"
                        "eve-common" "common" "dep"
                        ${MYSQL_LIBRARIES} ${ZLIB_LIBRARIES}

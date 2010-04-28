@@ -222,8 +222,8 @@ ADD_LIBRARY( "${COMPONENT_NAME}"
              ${utils_INCLUDE}          ${utils_SOURCE} )
 
 TARGET_PRECOMPILED_HEADER( "${COMPONENT_NAME}"
-                           "${COMPONENT_INCLUDE_DIR}/EVECommonPCH.h"
-                           "${COMPONENT_SOURCE_DIR}/utils/EVEUtils.cpp" )
+                           "EVECommonPCH.h"
+                           "utils/EVEUtils.cpp" )
 
 ######################
 # Export directories #

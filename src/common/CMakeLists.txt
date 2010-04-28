@@ -116,8 +116,8 @@ ADD_LIBRARY( "${COMPONENT_NAME}"
              ${utils_INCLUDE}     ${utils_SOURCE} )
 
 TARGET_PRECOMPILED_HEADER( "${COMPONENT_NAME}"
-                           "${COMPONENT_INCLUDE_DIR}/CommonPCH.h"
-                           "${COMPONENT_SOURCE_DIR}/common.cpp" )
+                           "CommonPCH.h"
+                           "common.cpp" )
 
 ######################
 # Export directories #

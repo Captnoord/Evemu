@@ -52,8 +52,8 @@ ADD_EXECUTABLE( "${COMPONENT_NAME}"
                 ${INCLUDE} ${SOURCE} )
 
 TARGET_PRECOMPILED_HEADER( "${COMPONENT_NAME}"
-                           "${COMPONENT_INCLUDE_DIR}/XMLPktGenPCH.h"
-                           "${COMPONENT_SOURCE_DIR}/main.cpp" )
+                           "XMLPktGenPCH.h"
+                           "main.cpp" )
 TARGET_LINK_LIBRARIES( "${COMPONENT_NAME}"
                        "common" "dep"
                        ${PROJECT_STANDARD_LIBRARIES} )
