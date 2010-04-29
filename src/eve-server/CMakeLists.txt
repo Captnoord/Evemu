@@ -440,13 +440,10 @@ ADD_EXECUTABLE( "${COMPONENT_NAME}"
                 ${system_INCLUDE}         ${system_SOURCE}
                 ${tutorial_INCLUDE}       ${tutorial_SOURCE} )
 
-TARGET_PRECOMPILED_HEADER( "${COMPONENT_NAME}"
-                           "EVEServerPCH.h"
-                           "main.cpp" )
+TARGET_BUILD_PCH( "${COMPONENT_NAME}" "EVEServerPCH.h" "main.cpp" )
 TARGET_LINK_LIBRARIES( "${COMPONENT_NAME}"
                        "eve-common" "common" "dep"
-                       ${MYSQL_LIBRARIES} ${ZLIB_LIBRARIES}
-                       ${PROJECT_STANDARD_LIBRARIES} )
+                       ${MYSQL_LIBRARIES} ${ZLIB_LIBRARIES} )
 
 ######################
 # Export directories #

@@ -38,13 +38,10 @@ SOURCE_GROUP( "src"     FILES ${SOURCE} )
 ADD_EXECUTABLE( "${COMPONENT_NAME}"
                 ${INCLUDE} ${SOURCE} )
 
-TARGET_PRECOMPILED_HEADER( "${COMPONENT_NAME}"
-                           "EVEToolPCH.h"
-                           "main.cpp" )
+TARGET_BUILD_PCH( "${COMPONENT_NAME}" "EVEToolPCH.h" "main.cpp" )
 TARGET_LINK_LIBRARIES( "${COMPONENT_NAME}"
                        "eve-common" "common" "dep"
-                       ${MYSQL_LIBRARIES} ${ZLIB_LIBRARIES}
-                       ${PROJECT_STANDARD_LIBRARIES} )
+                       ${MYSQL_LIBRARIES} ${ZLIB_LIBRARIES} )
 
 ######################
 # Export directories #

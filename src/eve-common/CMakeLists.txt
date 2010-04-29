@@ -202,8 +202,8 @@ SOURCE_GROUP( "src\\utils"           FILES ${utils_SOURCE} )
 FILE( MAKE_DIRECTORY "${COMPONENT_PACKETS_DIR}/packets" )
 ADD_CUSTOM_COMMAND( OUTPUT ${packets_INCLUDE} ${packets_SOURCE}
                     COMMAND "xmlpktgen"
-                    ARGS "-I" "${COMPONENT_PACKETS_DIR}/packets"
-                         "-S" "${COMPONENT_PACKETS_DIR}/packets"
+                    ARGS -I "${COMPONENT_PACKETS_DIR}/packets"
+                         -S "${COMPONENT_PACKETS_DIR}/packets"
                          ${packets_XMLP}
                     DEPENDS "xmlpktgen"
                     COMMENT "Generating packet files..." )
@@ -221,9 +221,7 @@ ADD_LIBRARY( "${COMPONENT_NAME}"
              ${tables_INCLUDE}         ${tables_SOURCE}
              ${utils_INCLUDE}          ${utils_SOURCE} )
 
-TARGET_PRECOMPILED_HEADER( "${COMPONENT_NAME}"
-                           "EVECommonPCH.h"
-                           "utils/EVEUtils.cpp" )
+TARGET_BUILD_PCH( "${COMPONENT_NAME}" "EVECommonPCH.h" "utils/EVEUtils.cpp" )
 
 ######################
 # Export directories #

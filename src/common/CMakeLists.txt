@@ -115,9 +115,7 @@ ADD_LIBRARY( "${COMPONENT_NAME}"
              ${threading_INCLUDE} ${threading_SOURCE}
              ${utils_INCLUDE}     ${utils_SOURCE} )
 
-TARGET_PRECOMPILED_HEADER( "${COMPONENT_NAME}"
-                           "CommonPCH.h"
-                           "common.cpp" )
+TARGET_BUILD_PCH( "${COMPONENT_NAME}" "CommonPCH.h" "common.cpp" )
 
 ######################
 # Export directories #
