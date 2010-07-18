@@ -24,6 +24,7 @@
 */
 
 #include "EVEServerPCH.h"
+#include "inventory/AttributeEnum.h"
 
 PyCallable_Make_InnerDispatcher(CharacterService)
 
@@ -225,7 +226,7 @@ PyResult CharacterService::Handle_CreateCharacter2(PyCallArgs &call) {
     cdata.regionID = 10000016;
 
     cdata.bounty = 0;
-    cdata.balance = sConfig.character.startBalance;
+    cdata.balance = sConfig.server.startBalance;
     cdata.securityRating = 0;
     cdata.logonMinutes = 0;
     cdata.title = "No Title";
@@ -260,11 +261,17 @@ PyResult CharacterService::Handle_CreateCharacter2(PyCallArgs &call) {
 
     // add attribute bonuses
     // (use Set_##_persist to properly persist attributes into DB)
-    char_item->Set_intelligence_persist(intelligence);
+    /*char_item->Set_intelligence_persist(intelligence);
     char_item->Set_charisma_persist(charisma);
     char_item->Set_perception_persist(perception);
     char_item->Set_memory_persist(memory);
-    char_item->Set_willpower_persist(willpower);
+    char_item->Set_willpower_persist(willpower);*/
+
+    char_item->SetAttribute(AttrIntelligence, intelligence);
+    char_item->SetAttribute(AttrCharisma, charisma);
+    char_item->SetAttribute(AttrPerception, perception);
+    char_item->SetAttribute(AttrMemory, memory);
+    char_item->SetAttribute(AttrWillpower, willpower);
 
     // register name
     m_db.add_name_validation_set(char_item->itemName().c_str(), char_item->itemID());
@@ -282,9 +289,11 @@ PyResult CharacterService::Handle_CreateCharacter2(PyCallArgs &call) {
             continue;
         }
 
-        _log(CLIENT__MESSAGE, "Training skill %u to level %d (%d points)", i->typeID(), i->skillLevel(), i->skillPoints());
-        i->Set_skillLevel( cur->second );
-        i->Set_skillPoints( i->GetSPForLevel( cur->second ) );
+        //_log(CLIENT__MESSAGE, "Training skill %u to level %d (%d points)", i->typeID(), i->skillLevel(), i->skillPoints());
+        //i->Set_skillLevel( cur->second );
+        i->SetAttribute(AttrSkillLevel, cur->second);
+        //i->Set_skillPoints( i->GetSPForLevel( cur->second ) );
+        i->SetAttribute(AttrSkillPoints, i->GetSPForLevel( EvilNumber((uint64)cur->second )));
     }
 
     //now set up some initial inventory:

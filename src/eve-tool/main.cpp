@@ -29,15 +29,15 @@
 #include "Commands.h"
 
 const char* const CACHE_DIR =         EVEMU_ROOT_DIR"/cache";
-const char* const LOG_FILE =          EVEMU_ROOT_DIR"/log/eve-tool.log";
+const char* const LOG_FILE =          EVEMU_ROOT_DIR"log/eve-tool.log";
 const char* const LOG_SETTINGS_FILE = EVEMU_ROOT_DIR"/etc/log.ini";
 
 int main( int argc, char* argv[] )
 {
-#if defined( MSVC ) && !defined( NDEBUG )
-    // Under Visual Studio setup memory leak detection
+#if defined( WIN32 ) && !defined( NDEBUG )
+    // Under Windows setup memory leak detection
     _CrtSetDbgFlag( _CRTDBG_LEAK_CHECK_DF | _CrtSetDbgFlag( _CRTDBG_REPORT_FLAG ) );
-#endif /* defined( MSVC ) && !defined( NDEBUG ) */
+#endif /* defined( WIN32 ) && !defined( NDEBUG ) */
 
     // Load server log settings ( will be removed )
     if( !load_log_settings( LOG_SETTINGS_FILE ) )

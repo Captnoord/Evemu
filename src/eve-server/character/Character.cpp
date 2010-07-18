@@ -24,6 +24,7 @@
 */
 
 #include "EVEServerPCH.h"
+#include "inventory/AttributeEnum.h"
 
 /*
  * CharacterTypeData
@@ -489,21 +490,33 @@ SkillRef Character::GetSkillInTraining() const
     return SkillRef::StaticCast( item );
 }
 
-double Character::GetSPPerMin(SkillRef skill) const
+double Character::GetSPPerMin( SkillRef skill )
 {
-    double primaryVal = attributes.GetReal( (EVEAttributeMgr::Attr)skill->primaryAttribute() );
-    double secondaryVal = attributes.GetReal( (EVEAttributeMgr::Attr)skill->secondaryAttribute() );
+    //double primaryVal = attributes.GetReal( (EVEAttributeMgr::Attr)skill->primaryAttribute() );
+    //double secondaryVal = attributes.GetReal( (EVEAttributeMgr::Attr)skill->secondaryAttribute() );
 
-    uint8 skillLearningLevel = 0;
+    EvilNumber primaryVal = mAttributeMap.GetAttribute(AttrPrimaryAttribute);
+    EvilNumber secondaryVal = mAttributeMap.GetAttribute(AttrSecondaryAttribute);
+
+    EvilNumber skillLearningLevel(0);
 
     //3374 - Skill Learning
     SkillRef skillLearning = GetSkill( 3374 );
     if( skillLearning )
-        skillLearningLevel = skillLearning->skillLevel();
+        skillLearningLevel = skillLearning->GetAttribute(AttrSkillLevel);
 
-    return (primaryVal + secondaryVal / 2.0)
-         * (1.0 + 0.02 * skillLearningLevel)
-         *  2.0; /* this is hacky and should be applied only if total SP < 1.6M */
+    primaryVal = primaryVal + secondaryVal / 2.0f;
+    primaryVal = primaryVal * (EvilNumber(1.0f) + EvilNumber(0.02f) * skillLearningLevel);
+    primaryVal = primaryVal * 2.0f; /* this is hacky and should be applied only if total SP < 1.6M */
+
+
+
+    // pure guess that it is a float
+    return primaryVal.get_float();
+
+    //return (primaryVal + secondaryVal / 2.0f)
+      //   * (1.0f + 0.02f * skillLearningLevel)
+        // *  2.0f;
 }
 
 uint64 Character::GetEndOfTraining() const
@@ -512,7 +525,8 @@ uint64 Character::GetEndOfTraining() const
     if( !skill )
         return 0;
 
-    return skill->expiryTime();
+    // major bleh.. it also supports int64 shit:S
+    return skill->GetAttribute(AttrExpiryTime).get_int();
 }
 
 bool Character::InjectSkillIntoBrain(SkillRef skill)
@@ -572,9 +586,13 @@ bool Character::InjectSkillIntoBrain(SkillRef skill, uint8 level)
     if( oldSkill )
     {
 
-		oldSkill->attributes.SetNotify(true);
-		oldSkill->Set_skillLevel( level );
-		oldSkill->Set_skillPoints( pow(2, ( 2.5 * level ) - 2.5 ) * SKILL_BASE_POINTS * ( oldSkill->attributes.GetInt( oldSkill->attributes.Attr_skillTimeConstant ) ) );
+		//oldSkill->attributes.SetNotify(true);
+		//oldSkill->Set_skillLevel( level );
+		//oldSkill->Set_skillPoints( pow(2, ( 2.5 * level ) - 2.5 ) * SKILL_BASE_POINTS * ( oldSkill->attributes.GetInt( oldSkill->attributes.Attr_skillTimeConstant ) ) );
+        
+        oldSkill->SetAttribute(AttrSkillPoints, level);
+        EvilNumber eTmp = skill->GetAttribute(AttrSkillTimeConstant) * ( pow(2,( 2.5 * level) - 2.5 ) * EVIL_SKILL_BASE_POINTS );
+        skill->SetAttribute(AttrSkillPoints, eTmp);
 
 		return true;
     }
@@ -596,12 +614,16 @@ bool Character::InjectSkillIntoBrain(SkillRef skill, uint8 level)
     else
 		skill->MoveInto( *this, flagSkill );
 
-	skill->Set_skillLevel( level );
+    skill->SetAttribute(AttrSkillLevel, level);
 	//TODO: get right number of skill points
-	//skill->Set_skillPoints( SKILL_BASE_POINTS * skillTimeConstant() * pow(32, (level - 1) / 2.0) );
-	skill->Set_skillPoints( pow(2,( 2.5 * level) - 2.5 ) * SKILL_BASE_POINTS * ( skill->attributes.GetInt( skill->attributes.Attr_skillTimeConstant ) ) );
 	
-	
+	//skill->Set_skillPoints( pow(2,( 2.5 * level) - 2.5 ) * SKILL_BASE_POINTS * ( skill->attributes.GetInt( skill->attributes.Attr_skillTimeConstant ) ) );
+
+    EvilNumber tmp = pow(2,( 2.5 * level) - 2.5 ) * EVIL_SKILL_BASE_POINTS;
+    EvilNumber eTmp = skill->GetAttribute(AttrSkillTimeConstant);
+    eTmp = eTmp * tmp;
+    skill->SetAttribute(AttrSkillPoints, eTmp);
+
     return true;
 }
 
@@ -635,6 +657,7 @@ void Character::UpdateSkillQueue()
             // stop training:
             _log( ITEM__ERROR, "%s (%u): Stopping training of skill %s (%u).", itemName().c_str(), itemID(), currentTraining->itemName().c_str(), currentTraining->itemID() );
 
+            /*
             uint64 timeEndTrain = currentTraining->expiryTime();
             if(timeEndTrain != 0)
             {
@@ -646,6 +669,19 @@ void Character::UpdateSkillQueue()
             }
 
             currentTraining->Clear_expiryTime();
+            */
+
+            EvilNumber timeEndTrain = currentTraining->GetAttribute(AttrExpiryTime);
+            if (timeEndTrain != 0) {
+                EvilNumber nextLevelSP = currentTraining->GetSPForLevel( currentTraining->GetAttribute(AttrSkillLevel) + 1 );
+                EvilNumber SPPerMinute = GetSPPerMin( currentTraining );
+                EvilNumber minRemaining = (timeEndTrain - EvilNumber(Win32TimeNow())) / (double)Win32Time_Minute;
+
+                //currentTraining->Set_skillPoints( nextLevelSP - (minRemaining * SPPerMinute) );
+                currentTraining->SetAttribute(AttrSkillPoints, nextLevelSP - (minRemaining * SPPerMinute));
+            }
+
+            currentTraining->SetAttribute(AttrExpiryTime, 0);
 
             currentTraining->MoveInto( *this, flagSkill, true );
 
@@ -667,7 +703,8 @@ void Character::UpdateSkillQueue()
         }
     }
 
-    uint64 nextStartTime = Win32TimeNow();
+    EvilNumber nextStartTime = EvilTimeNow();
+    
     while( !m_skillQueue.empty() )
     {
         if( !currentTraining )
@@ -685,18 +722,21 @@ void Character::UpdateSkillQueue()
             _log( ITEM__TRACE, "%s (%u): Starting training of skill %s (%u).", m_itemName.c_str(), m_itemID, currentTraining->itemName().c_str(), currentTraining->itemID() );
 
             double SPPerMinute = GetSPPerMin( currentTraining );
-            double SPToNextLevel = currentTraining->GetSPForLevel( currentTraining->skillLevel() + 1 ) - currentTraining->skillPoints();
+            //  double SPToNextLevel = currentTraining->GetSPForLevel( currentTraining->skillLevel() + 1 ) - currentTraining->skillPoints();
+            EvilNumber SPToNextLevel = currentTraining->GetSPForLevel( currentTraining->GetAttribute(AttrSkillLevel) + 1) - currentTraining->GetAttribute(AttrSkillPoints);
 
-            uint64 timeTraining = nextStartTime + Win32Time_Minute * SPToNextLevel / SPPerMinute;
+            //uint64 timeTraining = nextStartTime + Win32Time_Minute * SPToNextLevel / SPPerMinute;
+            EvilNumber timeTraining = nextStartTime + EvilTime_Minute * SPToNextLevel / SPPerMinute;
 
             currentTraining->MoveInto( *this, flagSkillInTraining );
-            currentTraining->Set_expiryTime( timeTraining );
+            //currentTraining->Set_expiryTime( timeTraining );
+            currentTraining->SetAttribute(AttrExpiryTime, timeTraining);
 
             if( c != NULL )
             {
                 OnSkillStartTraining osst;
                 osst.itemID = currentTraining->itemID();
-                osst.endOfTraining = timeTraining;
+                osst.endOfTraining = timeTraining.get_int();
 
                 PyTuple* tmp = osst.Encode();
                 c->QueueDestinyEvent( &tmp );
@@ -706,16 +746,22 @@ void Character::UpdateSkillQueue()
             }
         }
 
-        if( currentTraining->expiryTime() <= Win32TimeNow() )
-        {
+        //if( currentTraining->expiryTime() <= Win32TimeNow() )
+        if( currentTraining->GetAttribute(AttrExpiryTime) <= EvilTimeNow() ) {
             // training has been finished:
             _log( ITEM__ERROR, "%s (%u): Finishing training of skill %s (%u).", itemName().c_str(), itemID(), currentTraining->itemName().c_str(), currentTraining->itemID() );
 
-            currentTraining->Set_skillLevel( currentTraining->skillLevel() + 1 );
-            currentTraining->Set_skillPoints( currentTraining->GetSPForLevel( currentTraining->skillLevel() ) );
+            //currentTraining->Set_skillLevel( currentTraining->skillLevel() + 1 );
+            //currentTraining->Set_skillPoints( currentTraining->GetSPForLevel( currentTraining->skillLevel() ) );
 
-            nextStartTime = currentTraining->expiryTime();
-            currentTraining->Clear_expiryTime();
+            //nextStartTime = currentTraining->expiryTime();
+            //currentTraining->Clear_expiryTime();
+
+            currentTraining->SetAttribute(AttrSkillLevel, currentTraining->GetAttribute(AttrSkillLevel) + 1 );
+            currentTraining->SetAttribute(AttrSkillPoints,  currentTraining->GetSPForLevel( currentTraining->GetAttribute(AttrSkillLevel) ) );
+
+            nextStartTime = currentTraining->GetAttribute(AttrExpiryTime);
+            currentTraining->SetAttribute(AttrExpiryTime, 0);
 
             currentTraining->MoveInto( *this, flagSkill, true );
 
@@ -836,11 +882,11 @@ void Character::AddItem(InventoryItemRef item)
                 // Make it singleton and set initial skill values.
                 skill->ChangeSingleton( true );
 
-                skill->Set_skillLevel( 0 );
-                skill->Set_skillPoints( 0 );
+                skill->SetAttribute(AttrSkillLevel, 0);
+                skill->SetAttribute(AttrSkillPoints, 0);
 
                 if( skill->flag() != flagSkillInTraining )
-                    skill->Clear_expiryTime();
+                    skill->SetAttribute(AttrExpiryTime, 0);
             }
         }
     }
@@ -901,6 +947,3 @@ void Character::SaveSkillQueue() const {
         m_skillQueue
     );
 }
-
-
-

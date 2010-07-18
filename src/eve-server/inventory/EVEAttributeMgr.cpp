@@ -24,7 +24,6 @@
 */
 
 #include "EVEServerPCH.h"
-#include "ship/dgmtypeattributeinfo.h"
 
 /*
  * EVEAttributeMgr
@@ -345,7 +344,13 @@ void ItemAttributeMgr::_SendAttributeChange(Attr attr, PyRep *oldValue, PyRep *n
 /************************************************************************/
 /* Start of new attribute system                                        */
 /************************************************************************/
-bool AttributeMap::SetAttribute( uint32 attributeId, EvilNumber& num )
+AttributeMap::AttributeMap( InventoryItem & item ) : mItem(item)
+{
+    // load the initial attributes for this item
+    //Load();
+}
+
+bool AttributeMap::SetAttribute( uint32 attributeId, EvilNumber &num, bool nofity /*= true*/ )
 {
     AttrMapItr itr = mAttributes.find(attributeId);
     if (itr == mAttributes.end()) {
@@ -359,8 +364,9 @@ bool AttributeMap::SetAttribute( uint32 attributeId, EvilNumber& num )
 
     // notify dogma to change the attribute, if we are unable to queue the change
     // event. Don't change the value.
-    if (!Change(attributeId, itr->second, num))
-        return false;
+    if (nofity)
+        if (!Change(attributeId, itr->second, num))
+            return false;
 
     itr->second = num;
     return true;
@@ -370,8 +376,8 @@ bool AttributeMap::Change( uint32 attributeID, EvilNumber& old_val, EvilNumber& 
 {
     PyTuple* AttrChange = new PyTuple(7);
     AttrChange->SetItem(0, new PyString("OnModuleAttributeChange"));
-    AttrChange->SetItem(1, new PyInt(mItem->ownerID()));
-    AttrChange->SetItem(2, new PyInt(mItem->itemID()));
+    AttrChange->SetItem(1, new PyInt(mItem.ownerID()));
+    AttrChange->SetItem(2, new PyInt(mItem.itemID()));
     AttrChange->SetItem(3, new PyInt(attributeID));
     AttrChange->SetItem(4, new PyLong(Win32TimeNow()));
     AttrChange->SetItem(5, old_val.GetPyObject());
@@ -384,8 +390,8 @@ bool AttributeMap::Add( uint32 attributeID, EvilNumber& num )
 {
     PyTuple* AttrChange = new PyTuple(7);
     AttrChange->SetItem(0, new PyString("OnModuleAttributeChange"));
-    AttrChange->SetItem(1, new PyInt(mItem->ownerID()));
-    AttrChange->SetItem(2, new PyInt(mItem->itemID()));
+    AttrChange->SetItem(1, new PyInt(mItem.ownerID()));
+    AttrChange->SetItem(2, new PyInt(mItem.itemID()));
     AttrChange->SetItem(3, new PyInt(attributeID));
     AttrChange->SetItem(4, new PyLong(Win32TimeNow()));
     AttrChange->SetItem(5, num.GetPyObject());
@@ -398,19 +404,127 @@ bool AttributeMap::SendAttributeChanges( PyTuple* attrChange )
 {
     if (attrChange == NULL)
     {
-        sLog.Error("AttributeMap", "unable to find client");
+        sLog.Error("AttributeMap", "unable to send NULL packet");
         return false;
     }
 
     // O hell this character finding needs to be optimized ( redesigned so its not needed.. ).
-    Client *client = sEntityList.FindCharacter(mItem->ownerID());
+    Client *client = sEntityList.FindCharacter(mItem.ownerID());
+
+    /*if (client == NULL)
+    {
+        client = sEntityList.FindByShip(mItem.ownerID());
+    }*/
+
     if (client == NULL) {
-        sLog.Error("AttributeMap", "unable to find client");
+        sLog.Error("AttributeMap", "unable to find client:%u", mItem.ownerID());
         return false;
     }
 
     client->QueueDestinyEvent(&attrChange);
     return true;
+}
+
+
+
+bool AttributeMap::Load()
+{
+    /*DBQueryResult res;
+
+    if(!sDatabase.RunQuery(res,"SELECT * FROM dgmtypeattributes ORDER BY typeID")) {
+    sLog.Error("DgmTypeAttrMgr", "Error in db load query: %s", res.error.c_str());
+    return;
+    }
+
+    uint32 currentID = 0;
+    DgmTypeAttributeSet * entry = NULL;
+    DBResultRow row;
+
+    int amount = res.GetRowCount();
+    for (int i = 0; i < amount; i++)
+    {
+    res.GetRow(row);
+    uint32 typeID = row.GetUInt(0);
+
+    // need a better sollution for this
+    if (currentID == 0) {
+    currentID = typeID;
+    entry = new DgmTypeAttributeSet;
+    }
+
+    if (currentID != typeID) {
+    mDgmTypeAttrInfo.insert(std::make_pair(currentID, entry));
+    currentID = typeID;
+    entry = new DgmTypeAttributeSet;
+    }
+
+    DmgTypeAttribute * attr_entry = new DmgTypeAttribute();
+    attr_entry->attributeID = row.GetUInt(1);
+    if (row.IsNull(2) == true) {
+    attr_entry->number = EvilNumber(row.GetFloat(3));
+    } else {
+    attr_entry->number = EvilNumber(row.GetInt(2));
+    }
+
+    entry->attributeset.push_back(attr_entry);
+    }
+    }*/
+
+    DBQueryResult res;
+
+    if(!sDatabase.RunQuery(res,"SELECT * FROM entity_attributes WHERE itemID='%u'", mItem.itemID())) {
+        sLog.Error("AttributeMap", "Error in db load query: %s", res.error.c_str());
+        return false;
+    }
+
+    DBResultRow row;
+
+    int amount = res.GetRowCount();
+    for (int i = 0; i < amount; i++)
+    {
+        res.GetRow(row);
+        uint32 attributeID = row.GetUInt(1);
+        int64 int_val = row.GetInt64(2);
+        Add(attributeID, EvilNumber(int_val));
+    }
+
+
+    DgmTypeAttributeSet *attr_set = sDgmTypeAttrMgr.GetDmgTypeAttributeSet( mItem.typeID() );
+    if (attr_set == NULL)
+        return false;
+
+    DgmTypeAttributeSet::AttrSetItr itr = attr_set->attributeset.begin();
+    
+    for (; itr != attr_set->attributeset.end(); itr++)
+        SetAttribute((*itr)->attributeID, (*itr)->number, false);
+
+    return true;
+}
+
+EvilNumber AttributeMap::GetAttribute( uint32 attributeId )
+{
+    AttrMapItr itr = mAttributes.find(attributeId);
+    if (itr != mAttributes.end()) {
+        return itr->second;
+    }
+    else
+    {
+        sLog.Error("AttributeMap", "unable to find attribute: %u", attributeId);
+        return EvilNumber(0);
+    }
+}
+
+EvilNumber AttributeMap::GetAttribute( const uint32 attributeId ) const
+{
+    AttrMapConstItr itr = mAttributes.find(attributeId);
+    if (itr != mAttributes.end()) {
+        return itr->second;
+    }
+    else
+    {
+        sLog.Error("AttributeMap", "unable to find attribute: %u", attributeId);
+        return EvilNumber(0);
+    }
 }
 
 /************************************************************************/

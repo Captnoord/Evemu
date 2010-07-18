@@ -1,26 +1,26 @@
 /*
-    ------------------------------------------------------------------------------------
-    LICENSE:
-    ------------------------------------------------------------------------------------
-    This file is part of EVEmu: EVE Online Server Emulator
-    Copyright 2006 - 2008 The EVEmu Team
-    For the latest information visit http://evemu.mmoforge.org
-    ------------------------------------------------------------------------------------
-    This program is free software; you can redistribute it and/or modify it under
-    the terms of the GNU Lesser General Public License as published by the Free Software
-    Foundation; either version 2 of the License, or (at your option) any later
-    version.
+	------------------------------------------------------------------------------------
+	LICENSE:
+	------------------------------------------------------------------------------------
+	This file is part of EVEmu: EVE Online Server Emulator
+	Copyright 2006 - 2008 The EVEmu Team
+	For the latest information visit http://evemu.mmoforge.org
+	------------------------------------------------------------------------------------
+	This program is free software; you can redistribute it and/or modify it under
+	the terms of the GNU Lesser General Public License as published by the Free Software
+	Foundation; either version 2 of the License, or (at your option) any later
+	version.
 
-    This program is distributed in the hope that it will be useful, but WITHOUT
-    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-    FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+	This program is distributed in the hope that it will be useful, but WITHOUT
+	ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+	FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
 
-    You should have received a copy of the GNU Lesser General Public License along with
-    this program; if not, write to the Free Software Foundation, Inc., 59 Temple
-    Place - Suite 330, Boston, MA 02111-1307, USA, or go to
-    http://www.gnu.org/copyleft/lesser.txt.
-    ------------------------------------------------------------------------------------
-    Author:     Zhur
+	You should have received a copy of the GNU Lesser General Public License along with
+	this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+	Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+	http://www.gnu.org/copyleft/lesser.txt.
+	------------------------------------------------------------------------------------
+	Author:		Zhur
 */
 
 #include "CommonPCH.h"
@@ -91,17 +91,17 @@ bool TCPConnection::Connect( uint32 rIP, uint16 rPort, char* errbuf )
     if( errbuf )
         errbuf[0] = 0;
 
-    MutexLock lock( mMSock );
+    LockMutex lock( &mMSock );
 
     state_t oldState = GetState();
     if( oldState == STATE_DISCONNECTED )
     {
-        mMSock.Unlock();
+        mMSock.unlock();
 
         // Wait for working thread to stop.
         WaitLoop();
 
-        mMSock.Lock();
+        mMSock.lock();
     }
 
     oldState = GetState();
@@ -154,17 +154,17 @@ bool TCPConnection::Connect( uint32 rIP, uint16 rPort, char* errbuf )
 void TCPConnection::AsyncConnect( uint32 rIP, uint16 rPort )
 {
     // Changing state; acquire mutex
-    MutexLock lock( mMSock );
+    LockMutex lock( &mMSock );
 
     state_t state = GetState();
     if( state == STATE_DISCONNECTED )
     {
-        mMSock.Unlock();
+        mMSock.unlock();
 
         // Wait for working thread to stop.
         WaitLoop();
 
-        mMSock.Lock();
+        mMSock.lock();
     }
 
     state = GetState();
@@ -182,7 +182,7 @@ void TCPConnection::AsyncConnect( uint32 rIP, uint16 rPort )
 
 void TCPConnection::Disconnect()
 {
-    MutexLock lock( mMSock );
+    LockMutex lock( &mMSock );
 
     state_t state = GetState();
     if( state != STATE_CONNECTING && state != STATE_CONNECTED )
@@ -199,7 +199,7 @@ bool TCPConnection::Send( Buffer** data )
     *data = NULL;
 
     // Check we are in STATE_CONNECTED
-    MutexLock sockLock( mMSock );
+    LockMutex sockLock( &mMSock );
 
     state_t state = GetState();
     if( state != STATE_CONNECTED )
@@ -210,7 +210,7 @@ bool TCPConnection::Send( Buffer** data )
     }
 
     // Push buffer to the send queue
-    MutexLock queueLock( mMSendQueue );
+    LockMutex queueLock( &mMSendQueue );
 
     mSendQueue.push_back( buf );
     buf = NULL;
@@ -232,8 +232,8 @@ void TCPConnection::StartLoop()
 void TCPConnection::WaitLoop()
 {
     // Block calling thread until work thread terminates
-    mMLoopRunning.Lock();
-    mMLoopRunning.Unlock();
+    mMLoopRunning.lock();
+    mMLoopRunning.unlock();
 }
 
 /* This is always called from an IO thread. Either the server socket's thread, or a
@@ -242,7 +242,7 @@ bool TCPConnection::Process()
 {
     char errbuf[ TCPCONN_ERRBUF_SIZE ];
 
-    MutexLock lock( mMSock );
+    LockMutex lock( &mMSock );
     switch( GetState() )
     {
         case STATE_DISCONNECTED:
@@ -314,18 +314,18 @@ bool TCPConnection::SendData( char* errbuf )
     if( errbuf )
     errbuf[0] = 0;
 
-    MutexLock lock( mMSock );
+    LockMutex lock( &mMSock );
 
     state_t state = GetState();
     if( state != STATE_CONNECTED && state != STATE_DISCONNECTING )
         return false;
 
-    mMSendQueue.Lock();
+    mMSendQueue.lock();
     while( !mSendQueue.empty() )
     {
         Buffer* buf = mSendQueue.front();
         mSendQueue.pop_front();
-        mMSendQueue.Unlock();
+        mMSendQueue.unlock();
 
         int status = mSock->send( &(*buf)[ 0 ], buf->size(), MSG_NOSIGNAL );
 
@@ -367,7 +367,7 @@ bool TCPConnection::SendData( char* errbuf )
             if( status > 0 )
                 buf->AssignSeq( buf->begin<uint8>() + status, buf->end<uint8>() );
 
-            MutexLock queueLock( mMSendQueue );
+            LockMutex queueLock( &mMSendQueue );
 
             mSendQueue.push_front( buf );
             buf = NULL;
@@ -377,9 +377,9 @@ bool TCPConnection::SendData( char* errbuf )
             SafeDelete( buf );
         }
 
-        mMSendQueue.Lock();
+        mMSendQueue.lock();
     }
-    mMSendQueue.Unlock();
+    mMSendQueue.unlock();
 
     return true;
 }
@@ -389,7 +389,7 @@ bool TCPConnection::RecvData( char* errbuf )
     if( errbuf != NULL )
         errbuf[0] = 0;
 
-    MutexLock lock( mMSock );
+    LockMutex lock( &mMSock );
 
     state_t state = GetState();
     if( state != STATE_CONNECTED && state != STATE_DISCONNECTING )
@@ -444,7 +444,7 @@ bool TCPConnection::RecvData( char* errbuf )
 
 void TCPConnection::DoDisconnect()
 {
-    MutexLock lock( mMSock );
+    LockMutex lock( &mMSock );
 
     state_t state = GetState();
     if( state != STATE_CONNECTED && state != STATE_DISCONNECTING )
@@ -459,7 +459,7 @@ void TCPConnection::DoDisconnect()
 
 void TCPConnection::ClearBuffers()
 {
-    MutexLock lock( mMSendQueue );
+    LockMutex lock( &mMSendQueue );
 
     while( !mSendQueue.empty() )
     {
@@ -490,7 +490,7 @@ thread_return_t TCPConnection::TCPConnectionLoop()
     sLog.Log( "Threading", "Starting TCPConnectionLoop with thread ID %d", pthread_self() );
 #endif
 
-    mMLoopRunning.Lock();
+    mMLoopRunning.lock();
 
     uint32 start = GetTickCount();
     uint32 etime;
@@ -509,7 +509,7 @@ thread_return_t TCPConnection::TCPConnectionLoop()
         start = GetTickCount();
     }
 
-    mMLoopRunning.Unlock();
+    mMLoopRunning.unlock();
 
 #ifndef WIN32
     sLog.Log( "Threading", "Ending TCPConnectionLoop with thread ID %d", pthread_self() );

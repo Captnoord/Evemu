@@ -29,17 +29,20 @@
 static void SetupSignals();
 static void CatchSignal( int sig_num );
 
-static const char* const CONFIG_FILE = EVEMU_ROOT_DIR"/etc/eve-server.xml";
+#define EVEMU_ROOT_DIR ""
+
+static const char* const CONFIG_FILE = EVEMU_ROOT_DIR"eve-server.xml";
 static const uint32 MAIN_LOOP_DELAY = 10; // delay 10 ms.
 
 static volatile bool RunLoops = true;
+dgmtypeattributemgr * _sDgmTypeAttrMgr;
 
 int main( int argc, char* argv[] )
 {
-#if defined( MSVC ) && !defined( NDEBUG )
-    // Under Visual Studio setup memory leak detection
+#if defined( WIN32 ) && !defined( NDEBUG )
+    // Under Windows setup memory leak detection
     _CrtSetDbgFlag( _CRTDBG_LEAK_CHECK_DF | _CrtSetDbgFlag( _CRTDBG_REPORT_FLAG ) );
-#endif /* defined( MSVC ) && !defined( NDEBUG ) */
+#endif /* defined( WIN32 ) && !defined( NDEBUG ) */
 
     printf("Copyright (C) 2006-2009 EVEmu Team. http://evemu.mmoforge.org/\n");
     printf("This program is free software; you can redistribute it and/or modify it under\n");
@@ -78,18 +81,26 @@ int main( int argc, char* argv[] )
     }
 
     // Load server log settings ( will be removed )
-    if( load_log_settings( sConfig.files.logSettings.c_str() ) )
-        sLog.Success( "server init", "Log settings loaded from %s", sConfig.files.logSettings.c_str() );
+    if(!load_log_settings(sConfig.files.logSettings.c_str()))
+    {
+        sLog.Warning("server init", "Unable to read %s (this file is optional)", sConfig.files.logSettings.c_str());
+    }
     else
-        sLog.Warning( "server init", "Unable to read %s (this file is optional)", sConfig.files.logSettings.c_str() );
+    {
+        sLog.Success("server init", "Log settings loaded from %s", sConfig.files.logSettings.c_str());
+    }
 
     // open up the log file if specified ( will be removed )
-    if( !sConfig.files.log.empty() )
+    if(!sConfig.files.log.empty())
     {
-        if( log_open_logfile( sConfig.files.log.c_str() ) )
-            sLog.Success( "server init", "Opened log file %s", sConfig.files.log.c_str() );
+        if(log_open_logfile(sConfig.files.log.c_str()))
+        {
+            sLog.Success("server init", "Opened log file %s", sConfig.files.log.c_str());
+        }
         else
-            sLog.Warning( "server init", "Unable to open log file '%s', only logging to the screen now.", sConfig.files.log.c_str() );
+        {
+            sLog.Warning("server init", "Unable to open log file '%s', only logging to the screen now.", sConfig.files.log.c_str());
+        }
     }
 
     //connect to the database...
@@ -105,19 +116,19 @@ int main( int argc, char* argv[] )
         return 1;
     }
 
-    dgmtypeattributemgr * _sDgmTypeAttrMgr = new dgmtypeattributemgr(); // needs to be after db init as its using it
+    _sDgmTypeAttrMgr = new dgmtypeattributemgr(); // needs to be after db init as its using it
 
     //Start up the TCP server
     EVETCPServer tcps;
 
     char errbuf[ TCPCONN_ERRBUF_SIZE ];
-    if( tcps.Open( sConfig.net.port, errbuf ) )
+    if( tcps.Open( sConfig.server.port, errbuf ) )
     {
-        sLog.Success( "server init", "TCP listener started on port %u.", sConfig.net.port );
+        sLog.Success("server init", "TCP listener started on port %u.", sConfig.server.port);
     }
     else
     {
-        sLog.Error( "server init", "Failed to start TCP listener on port %u: %s.", sConfig.net.port, errbuf );
+        sLog.Error("server init", "Failed to start TCP listener on port %u:\n\t%s", sConfig.server.port, errbuf);
         return 1;
     }
 	//make the item factory

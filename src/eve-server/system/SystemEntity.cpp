@@ -24,6 +24,8 @@
 */
 
 #include "EVEServerPCH.h"
+#include "inventory/AttributeEnum.h"
+#include "../../../include/eve-common/utils/EvilNumber.h"
 
 using namespace Destiny;
 
@@ -80,9 +82,12 @@ void ItemSystemEntity::_SetSelf(InventoryItemRef self) {
 	//we properly persist ship attributes into the DB, we are just
 	//going to do it here. Could be exploited. oh well.
 	// TODO: use the ship aggregate value.
-	int sc = m_self->shieldCapacity();
+	/*int sc = m_self->shieldCapacity();
 	if( sc > 0 )	//avoid polluting the attribute list with worthless entries.
-		m_self->Set_shieldCharge( sc );
+		m_self->Set_shieldCharge( sc );*/
+    EvilNumber sc = m_self->GetAttribute(AttrShieldCapacity);
+    if (sc > 0)
+        m_self->SetAttribute(AttrShieldCharge, sc);
 }
 
 const char *ItemSystemEntity::GetName() const {
@@ -94,7 +99,8 @@ const char *ItemSystemEntity::GetName() const {
 double ItemSystemEntity::GetRadius() const {
 	if(m_self == NULL)
 		return(1.0f);
-	return(m_self->radius());
+	//return(m_self->radius());
+    return m_self->GetAttribute(AttrRadius).get_float();
 }
 
 const GPoint &ItemSystemEntity::GetPosition() const {
@@ -146,19 +152,19 @@ const GPoint &DynamicSystemEntity::GetPosition() const {
 double DynamicSystemEntity::GetMass() const {
 	if(Item() == NULL)
 		return(0.0f);
-	return(Item()->mass());
+	return Item()->GetAttribute(AttrMass).get_float();
 }
 
 double DynamicSystemEntity::GetMaxVelocity() const {
 	if(Item() == NULL)
 		return(0.0f);
-	return(Item()->maxVelocity());
+    return Item()->GetAttribute(AttrMaxVelocity).get_float();
 }
 
 double DynamicSystemEntity::GetAgility() const {
 	if(Item() == NULL)
 		return(0.0f);
-	return(Item()->agility());
+	return Item()->GetAttribute(AttrAgility).get_float();
 }
 
 //TODO: ask the destiny manager to do this for us!
@@ -265,10 +271,10 @@ void DynamicSystemEntity::EncodeDestiny( Buffer& into ) const
 }
 
 void ItemSystemEntity::MakeDamageState(DoDestinyDamageState &into) const {
-	into.shield = m_self->shieldCharge() / m_self->shieldCapacity();
+	into.shield = (m_self->GetAttribute(AttrShieldCharge) / m_self->GetAttribute(AttrShieldCapacity)).get_float();
 	into.tau = 100000;	//no freaking clue.
 	into.timestamp = Win32TimeNow();
 //	armor damage isn't working...
-	into.armor = 1.0 - (m_self->armorDamage() / m_self->armorHP());
-	into.structure = 1.0 - (m_self->damage() / m_self->hp());
+	into.armor = 1.0 - (m_self->GetAttribute(AttrArmorDamage) / m_self->GetAttribute(AttrArmorHP)).get_float();
+	into.structure = 1.0 - (m_self->GetAttribute(AttrDamage) / m_self->GetAttribute(AttrHp)).get_float();
 }

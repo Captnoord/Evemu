@@ -37,6 +37,8 @@ static const char *const EVEProjectVersion = "EVE-EVE-RELEASE@ccp";
 
 static const int32 EVEBirthday = 170472;
 
+#define EVEMU_REVISION "666"
+
 
 #endif
 

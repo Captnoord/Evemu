@@ -24,6 +24,7 @@
 */
 
 #include "EVEServerPCH.h"
+#include "inventory\AttributeEnum.h"
 
 uint32 GetAsteroidType( double p, const std::map<double, uint32>& roids );
 void SpawnAsteroid( SystemManager* system, uint32 typeID, double radius, const GVector& position );
@@ -133,7 +134,8 @@ void SpawnAsteroid( SystemManager* system, uint32 typeID, double radius, const G
 	if( !i )
 		throw PyException( MakeCustomError( "Unable to spawn item of type %u.", typeID ) );
 
-	i->Set_radius( radius );
+	//i->Set_radius( radius );
+    i->SetAttribute(AttrRadius, radius);
 
 	Asteroid* new_roid = new Asteroid( system, i );	//takes a ref.
 	//TODO: check for a local asteroid belt object?

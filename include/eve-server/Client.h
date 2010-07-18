@@ -315,21 +315,15 @@ private:
 	//FunctorTimerQueue m_delayQueue;
 	
 	uint32 m_nextNotifySequence;
+
+
+    /************************************************************************/
+    /* new system for MultiEvents                                           */
+    /************************************************************************/
+    bool ScatterEvent(const char* event_name, PyRep* packet);
+
+    bool DoDestinyUpdate();
+    std::list<PyTuple*> mDogmaMessages;
 };
-
-
-//simple functor for void calls.
-//not needed right now
-/*class SimpleClientFunctor : public ClientFunctor {
-public:
-	typedef void (Client::* clientCall)();
-	SimpleClientFunctor(Client *c, clientCall call) : ClientFunctor(c), m_call(call) {}
-	virtual ~SimpleClientFunctor() {}
-	virtual void operator()() {
-		(m_client->*m_call)();
-	}
-public:
-	const clientCall m_call;
-};*/
 
 #endif

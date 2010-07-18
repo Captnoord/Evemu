@@ -356,7 +356,8 @@ PySubStream *CachedObjectMgr::LoadCachedFile(PyRep *key, const char *oname) {
     std::string fname;
     GetCacheFileName(key, fname);
 
-    std::string abs_fname = "../data/cache/";
+    //std::string abs_fname = "../data/cache/";
+    std::string abs_fname = "cache/";
     abs_fname += fname;
 
     return(LoadCachedFile(abs_fname.c_str(), oname));
@@ -371,7 +372,7 @@ PySubStream* CachedObjectMgr::LoadCachedFile( const char* abs_fname, const char*
         return false;
     }
 
-    uint32 file_length = filesize( f );
+    uint32 file_length = (uint32)filesize( f );
     if( file_length == 0 )
     {
 		sLog.Error("CachedObjectMgr","Unable to stat cache file '%s' for oname '%s'", abs_fname, oname );

@@ -46,7 +46,8 @@ class ItemRowset_Row;
  * however, the creation and destruction time logic is why it has not been done.
  */
 
-extern const uint32 SKILL_BASE_POINTS;
+//extern const uint32 SKILL_BASE_POINTS;
+extern const EvilNumber EVIL_SKILL_BASE_POINTS;
 
 /*
  * Simple container for raw item data.
@@ -129,12 +130,12 @@ public:
     /*
      * Primary public packet builders:
      */
-    bool Populate(Rsp_CommonGetInfo_Entry &into) const;
+    bool Populate(Rsp_CommonGetInfo_Entry &into);
 
     PyPackedRow* GetItemRow() const;
     void GetItemRow( PyPackedRow* into ) const;
 
-    PyObject *ItemGetInfo() const;
+    PyObject *ItemGetInfo();
 
     /*
      * Public Fields:
@@ -162,14 +163,22 @@ public:
     /*
      * Attribute access:
      */
-    ItemAttributeMgr attributes;
+    //ItemAttributeMgr attributes;
 
     /************************************************************************/
     /* start experimental new attribute system ( not operational )          */
     /************************************************************************/
     AttributeMap mAttributeMap;
     bool SetAttribute(uint32 attributeID, int num);
-    bool SetAttribute(uint32 attributeID, float num);
+    bool SetAttribute(uint32 attributeID, uint32 num);
+    bool SetAttribute(uint32 attributeID, int64 num);
+    bool SetAttribute(uint32 attributeID, uint64 num);
+    bool SetAttribute(uint32 attributeID, double num);
+    bool SetAttribute(uint32 attributeID, EvilNumber& num);
+    
+
+    EvilNumber GetAttribute(uint32 attributeID);
+    EvilNumber GetAttribute(const uint32 attributeID) const;
     /************************************************************************/
     /* end experimental new attribute system                                */
     /************************************************************************/
@@ -178,7 +187,7 @@ public:
     /*
      * Redirections
      */
-    #define ATTRFUNC(name, type) \
+    /*#define ATTRFUNC(name, type) \
         inline type name() const { \
             return(attributes.name()); \
         } \
@@ -196,6 +205,7 @@ public:
     #define ATTRD(ID, name, default_value, persistent) \
         ATTRFUNC(name, double)
     #include "EVEAttributes.h"
+    */
 
 protected:
     InventoryItem(
@@ -279,6 +289,10 @@ protected:
     uint32              m_quantity;
     GPoint              m_position;
     std::string         m_customInfo;
+    Client*             m_client;
+
+    void set_client(Client* _client) {m_client = _client;}
+    Client* get_cient() {return m_client;}
 };
 
 #endif

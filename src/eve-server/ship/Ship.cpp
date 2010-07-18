@@ -24,6 +24,8 @@
 */
 
 #include "EVEServerPCH.h"
+#include "inventory/AttributeEnum.h"
+#include "../eve-common/utils/EvilNumber.h"
 
 /*
  * ShipTypeData
@@ -147,10 +149,16 @@ void Ship::Delete()
 double Ship::GetCapacity(EVEItemFlags flag) const
 {
     switch( flag ) {
-        case flagCargoHold:     return capacity();
+        /*case flagCargoHold:     return capacity();
         case flagDroneBay:      return droneCapacity();
         case flagShipHangar:    return shipMaintenanceBayCapacity();
-        case flagHangar:        return corporateHangarCapacity();
+        case flagHangar:        return corporateHangarCapacity();*/
+
+        // the .get_float() part is a evil hack.... as this function should return a EvilNumber.
+        case flagCargoHold:     return GetAttribute(AttrCapacity).get_float();
+        case flagDroneBay:      return GetAttribute(AttrDroneCapacity).get_float();
+        case flagShipHangar:    return GetAttribute(AttrShipMaintenanceBayCapacity).get_float();
+        case flagHangar:        return GetAttribute(AttrCorporateHangarCapacity).get_float();
         default:                return 0.0;
     }
 }
@@ -167,7 +175,7 @@ void Ship::ValidateAddItem(EVEItemFlags flag, InventoryItemRef item, Client *c)
     }
     else if( flag == flagShipHangar )
     {
-		if( !c->GetShip()->attributes.Attr_hasShipMaintenanceBay )
+		if( c->GetShip()->GetAttribute(AttrHasShipMaintenanceBay ) != 0)
             // We have no ship maintenance bay
 			throw PyException( MakeCustomError( "%s has no ship maintenance bay.", item->itemName().c_str() ) );
         if( item->categoryID() != EVEDB::invCategories::Ship )
@@ -176,20 +184,20 @@ void Ship::ValidateAddItem(EVEItemFlags flag, InventoryItemRef item, Client *c)
     }
     else if( flag == flagHangar )
     {
-		if( !c->GetShip()->attributes.Attr_hasCorporateHangars )
+		if( c->GetShip()->GetAttribute(AttrHasCorporateHangars ) != 0)
             // We have no corporate hangars
             throw PyException( MakeCustomError( "%s has no corporate hangars.", item->itemName().c_str() ) );
     }
     else if( flag == flagCargoHold )
 	{
 		//get all items in cargohold
-		uint32 capacityUsed = 0;
+		EvilNumber capacityUsed(0);
 		std::vector<InventoryItemRef> items;
 		c->GetShip()->FindByFlag(flag, items);
 		for(uint32 i = 0; i < items.size(); i++){
-			capacityUsed += items[i]->volume();
+			capacityUsed += items[i]->GetAttribute(AttrVolume);
 		}
-		if( capacityUsed + item->volume() > c->GetShip()->capacity() )
+		if( capacityUsed + item->GetAttribute(AttrVolume) > c->GetShip()->GetAttribute(AttrCapacity) )
 			throw PyException( MakeCustomError( "Not enough cargo space!") );
 
 	}
@@ -202,9 +210,9 @@ void Ship::ValidateAddItem(EVEItemFlags flag, InventoryItemRef item, Client *c)
 		if(item->categoryID() == EVEDB::invCategories::Charge) {
 			InventoryItemRef module;
 			c->GetShip()->FindSingleByFlag(flag, module);
-			if(module->chargeSize() != item->chargeSize() )
+			if(module->GetAttribute(AttrChargeSize) != item->GetAttribute(AttrChargeSize) )
 				throw PyException( MakeCustomError( "The charge is not the correct size for this module." ) );
-			if(module->chargeGroup1() != item->groupID())
+			if(module->GetAttribute(AttrChargeGroup1) != item->groupID())
 				throw PyException( MakeCustomError( "Incorrect charge type for this module.") );
 		}
 	}
@@ -212,9 +220,9 @@ void Ship::ValidateAddItem(EVEItemFlags flag, InventoryItemRef item, Client *c)
 	{
 		if(!Skill::FitModuleSkillCheck(item, character))
 			throw PyException( MakeCustomError( "You do not have the required skills to fit this \n%s", item->itemName().c_str() ) );
-		if(c->GetShip()->rigSize() != item->rigSize())
+		if(c->GetShip()->GetAttribute(AttrRigSize) != item->GetAttribute(AttrRigSize))
 			throw PyException( MakeCustomError( "Your ship cannot fit this size module" ) );
-		if( c->GetShip()->upgradeLoad() + item->upgradeCost() > c->GetShip()->upgradeCapacity() )
+		if( c->GetShip()->GetAttribute(AttrUpgradeLoad) + item->GetAttribute(AttrUpgradeCost) > c->GetShip()->GetAttribute(AttrUpgradeCapacity) )
 			throw PyException( MakeCustomError( "Your ship cannot handle the extra calibration" ) );
 	}
 	else if( flag > flagSubSystem0  &&  flag < flagSubSystem7 )
@@ -286,72 +294,72 @@ void Ship::AddItem(InventoryItemRef item)
 
 bool Ship::ValidateBoardShip(ShipRef ship, CharacterRef character)
 {
-
 	SkillRef requiredSkill;
-	
+
 	//Primary Skill
-	if(!ship->requiredSkill1() == 0)
+	if(ship->GetAttribute(AttrRequiredSkill1) != 0)
 	{
-		requiredSkill = character->GetSkill( ship->requiredSkill1() );
+        // the .get_int() part is a hack...
+		requiredSkill = character->GetSkill( ship->GetAttribute(AttrRequiredSkill1).get_int() );
 		if( !requiredSkill )
 			return false;
 
-		if( ship->requiredSkill1Level() > requiredSkill->skillLevel() )
+		if( ship->GetAttribute(AttrRequiredSkill1Level) > requiredSkill->GetAttribute(AttrSkillLevel) )
 			return false;
 	}
 
 	//Secondary Skill
-	if(!ship->requiredSkill2() == 0)
+	if(ship->GetAttribute(AttrRequiredSkill2) != 0)
 	{
-		requiredSkill = character->GetSkill( ship->requiredSkill2() );
+		requiredSkill = character->GetSkill( ship->GetAttribute(AttrRequiredSkill2).get_int() );
 		if( !requiredSkill )
 			return false;
 
-		if( ship->requiredSkill2Level() > requiredSkill->skillLevel() )
+		if( ship->GetAttribute(AttrRequiredSkill2Level) > requiredSkill->GetAttribute(AttrSkillLevel) )
 			return false;
 	}
 	
 	//Tertiary Skill
-	if(!ship->requiredSkill3() == 0)
+	if(ship->GetAttribute(AttrRequiredSkill3) != 0)
 	{
-		requiredSkill = character->GetSkill( ship->requiredSkill3() );
+		requiredSkill = character->GetSkill( ship->GetAttribute(AttrRequiredSkill3).get_int() );
 		if( !requiredSkill )
 			return false;
 
-		if( ship->requiredSkill3Level() > requiredSkill->skillLevel() )
+		if( ship->GetAttribute(AttrRequiredSkill3Level) > requiredSkill->GetAttribute(AttrSkillLevel) )
 			return false;
 	}
 	
 	//Quarternary Skill
-	if(!ship->requiredSkill4() == 0)
+	if(ship->GetAttribute(AttrRequiredSkill4) != 0)
 	{
-		requiredSkill = character->GetSkill( ship->requiredSkill4() );
+		requiredSkill = character->GetSkill( ship->GetAttribute(AttrRequiredSkill4).get_int() );
 		if( !requiredSkill )
 			return false;
 
-		if( ship->requiredSkill4Level() > requiredSkill->skillLevel() )
+		if( ship->GetAttribute(AttrRequiredSkill4Level) > requiredSkill->GetAttribute(AttrSkillLevel) )
 			return false;
 	}
 	
 	//Quinary Skill
-	if(!ship->requiredSkill5() == 0)
+	if(ship->GetAttribute(AttrRequiredSkill5) != 0)
 	{
-		requiredSkill = character->GetSkill( ship->requiredSkill5() );
+		requiredSkill = character->GetSkill( ship->GetAttribute(AttrRequiredSkill5).get_int() );
 		if( !requiredSkill )
 			return false;
 
-		if( ship->requiredSkill5Level() > requiredSkill->skillLevel() )
+		if( ship->GetAttribute(AttrRequiredSkill5Level) > requiredSkill->GetAttribute(AttrSkillLevel) )
 			return false;
 	}
 	
 	//Senary Skill
-	if(!ship->requiredSkill6() == 0)
+	if(ship->GetAttribute(AttrRequiredSkill6) != 0)
 	{
-		requiredSkill = character->GetSkill( ship->requiredSkill6() );
+		requiredSkill = character->GetSkill( ship->GetAttribute(AttrRequiredSkill6).get_int() );
 		if( !requiredSkill )
 			return false;
 
-		if( ship->requiredSkill6Level() > requiredSkill->skillLevel() )
+		if( ship->GetAttribute(AttrRequiredSkill6Level) > requiredSkill->GetAttribute(AttrSkillLevel) )
 			return false;
 	}
 
@@ -363,14 +371,14 @@ bool Ship::ValidateItemSpecifics(Client *c, InventoryItemRef equip) {
 	//declaring explicitly as int...not sure if this is needed or not
 	int groupID = c->GetShip()->groupID();
 	int typeID = c->GetShip()->typeID();
-	int canFitShipGroup1 = equip->canFitShipGroup1();
-	int canFitShipGroup2 = equip->canFitShipGroup2();
-	int canFitShipGroup3 = equip->canFitShipGroup3();
-	int canFitShipGroup4 = equip->canFitShipGroup4();
-	int canFitShipType1 = equip->canFitShipType1();
-	int canFitShipType2 = equip->canFitShipType2();
-	int canFitShipType3 = equip->canFitShipType3();
-	int canFitShipType4 = equip->canFitShipType4();
+	EvilNumber canFitShipGroup1 = equip->GetAttribute(AttrCanFitShipGroup1);
+	EvilNumber canFitShipGroup2 = equip->GetAttribute(AttrCanFitShipGroup2);
+	EvilNumber canFitShipGroup3 = equip->GetAttribute(AttrCanFitShipGroup3);
+	EvilNumber canFitShipGroup4 = equip->GetAttribute(AttrCanFitShipGroup4);
+	EvilNumber canFitShipType1 = equip->GetAttribute(AttrCanFitShipType1);
+	EvilNumber canFitShipType2 = equip->GetAttribute(AttrCanFitShipType2);
+	EvilNumber canFitShipType3 = equip->GetAttribute(AttrCanFitShipType3);
+	EvilNumber canFitShipType4 = equip->GetAttribute(AttrCanFitShipType4);
 
 	if( canFitShipGroup1 != 0 )
 		if( canFitShipGroup1 != groupID )

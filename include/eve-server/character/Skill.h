@@ -68,7 +68,9 @@ public:
 	 * @param[in] level Level to calculate SP for.
 	 * @return Amount of SP required.
 	 */
-	uint32 GetSPForLevel(uint8 level);
+	//uint32 GetSPForLevel(uint8 level);
+
+    EvilNumber GetSPForLevel(EvilNumber level);
 	/**
 	 * Checks whether requirements of skill has been fulfilled.
 	 *

@@ -26,6 +26,8 @@
 #ifndef __COMMON_PCH_H__INCL__
 #define __COMMON_PCH_H__INCL__
 
+#define EVEMU_ROOT_DIR ""
+
 #include "common.h"
 
 /************************************************************************/

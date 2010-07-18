@@ -24,6 +24,7 @@
 */
 
 #include "EVEServerPCH.h"
+#include "inventory/AttributeEnum.h"
 
 /*
  * Inventory
@@ -361,7 +362,8 @@ void Inventory::StackAll(EVEItemFlags locFlag, uint32 forOwner)
 
 double Inventory::GetStoredVolume(EVEItemFlags locationFlag) const
 {
-    double totalVolume = 0.0;
+    //double totalVolume = 0.0;
+    EvilNumber totalVolume(0.0);
     //TODO: And implement Sizes for packaged ships
 
     std::map<uint32, InventoryItemRef>::const_iterator cur, end;
@@ -370,10 +372,12 @@ double Inventory::GetStoredVolume(EVEItemFlags locationFlag) const
     for(; cur != end; cur++)
     {
         if( cur->second->flag() == locationFlag )
-            totalVolume += cur->second->quantity() * cur->second->volume();
+            //totalVolume += cur->second->quantity() * cur->second->volume();
+            totalVolume += cur->second->GetAttribute(AttrQuantity) * cur->second->GetAttribute(AttrVolume);
     }
 
-    return totalVolume;
+    // this is crap... bleh... as it should return a EvilNumber
+    return totalVolume.get_float();
 }
 
 /*
@@ -381,14 +385,15 @@ double Inventory::GetStoredVolume(EVEItemFlags locationFlag) const
  */
 void InventoryEx::ValidateAddItem(EVEItemFlags flag, InventoryItemRef item) const
 {
-    double volume = item->quantity() * item->volume();
+    //double volume = item->quantity() * item->volume();
+    EvilNumber volume = item->GetAttribute(AttrQuantity) * item->GetAttribute(AttrVolume);
     double capacity = GetRemainingCapacity( flag );
     if( volume > capacity )
     {
         std::map<std::string, PyRep *> args;
 
         args["available"] = new PyFloat( capacity );
-        args["volume"] = new PyFloat( volume );
+        args["volume"] = volume.GetPyObject();
 
         throw PyException( MakeUserError( "NotEnoughCargoSpace", args ) );
     }

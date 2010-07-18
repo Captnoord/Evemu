@@ -29,6 +29,7 @@
 #include "Client.h"
 #include "inventory/InventoryDB.h"
 #include "inventory/InventoryItem.h"
+#include "inventory/AttributeEnum.h"
 
 PyResult Command_create( Client* who, CommandDB* db, PyServiceMgr* services, const Seperator& args )
 {
@@ -472,7 +473,8 @@ PyResult Command_getattr( Client* who, CommandDB* db, PyServiceMgr* services, co
 	if( !item )
 		throw PyException( MakeCustomError( "Failed to load item %u.", itemID ) );
 
-	return item->attributes.PyGet( attribute );
+	//return item->attributes.PyGet( attribute );
+    return item->GetAttribute(attribute).GetPyObject();
 }
 
 PyResult Command_setattr( Client* who, CommandDB* db, PyServiceMgr* services, const Seperator& args )
@@ -497,7 +499,8 @@ PyResult Command_setattr( Client* who, CommandDB* db, PyServiceMgr* services, co
 	if( !item )
 		throw PyException( MakeCustomError( "Failed to load item %u.", itemID ) );
 
-	item->attributes.SetReal( attribute, value );
+	//item->attributes.SetReal( attribute, value );
+    item->SetAttribute(attribute, (float)value);
 
 	return new PyString( "Operation successfull." );
 }
@@ -575,7 +578,8 @@ PyResult Command_giveskill( Client* who, CommandDB* db, PyServiceMgr* services, 
 	CharacterRef character;
 	EVEItemFlags flag;
 	uint32 gty = 1;
-	uint8 oldSkillLevel = 0;
+	//uint8 oldSkillLevel = 0;
+    EvilNumber oldSkillLevel(0);
 	uint32 ownerID = 0;
 
 	if( args.argCount() == 4 )
@@ -631,19 +635,17 @@ PyResult Command_giveskill( Client* who, CommandDB* db, PyServiceMgr* services, 
 	if( !item )
 		throw PyException( MakeCustomError( "Unable to create item of type %s.", item->typeID() ) );
 	
-	if(character->HasSkill( skill->typeID() ) )
-	{
+	if( character->HasSkill( skill->typeID() ) ) {
 		SkillRef oldSkill = character->GetSkill( skill->typeID() );
-		oldSkillLevel = oldSkill->attributes.GetInt( oldSkill->attributes.Attr_skillLevel );
+        oldSkillLevel = oldSkill->GetAttribute( AttrSkillLevel );
 	}
 		
-	if( level > oldSkillLevel )
+	//if( level > oldSkillLevel )
+    if( oldSkillLevel < level )
 	{
 		character->InjectSkillIntoBrain( skill, level);
 		return new PyString ( "Gifting skills complete" );
 	}
-
-
 
 	return new PyString ("Skill Gifting Failure");
 }
@@ -732,9 +734,13 @@ PyResult Command_heal( Client* who, CommandDB* db, PyServiceMgr* services, const
 {
 	if( args.argCount()== 1 )
 	{
-		who->GetShip()->Set_armorDamage(0);
+		/*who->GetShip()->Set_armorDamage(0);
 		who->GetShip()->Set_damage(0);
-		who->GetShip()->Set_shieldCharge(who->GetShip()->shieldCapacity());
+		who->GetShip()->Set_shieldCharge(who->GetShip()->shieldCapacity());*/
+
+        who->GetShip()->SetAttribute(AttrArmorDamage, 0);
+        who->GetShip()->SetAttribute(AttrDamage, 0);
+        who->GetShip()->SetAttribute(AttrShieldCharge, who->GetShip()->GetAttribute(AttrShieldCapacity));
 	}
 	if( args.argCount() == 2 )
 	{
@@ -747,9 +753,10 @@ PyResult Command_heal( Client* who, CommandDB* db, PyServiceMgr* services, const
 		Client *target = services->entity_list.FindCharacter( entity );
 		if(target == NULL)
 			throw PyException( MakeCustomError( "Cannot find Character by the entity %d", entity ) );
-		target->GetShip()->Set_armorDamage(0);
-		target->GetShip()->Set_damage(0);
-		target->GetShip()->Set_shieldCharge(who->GetShip()->shieldCapacity());
+		
+        who->GetShip()->SetAttribute(AttrArmorDamage, 0);
+        who->GetShip()->SetAttribute(AttrDamage, 0);
+        who->GetShip()->SetAttribute(AttrShieldCharge, who->GetShip()->GetAttribute(AttrShieldCapacity));
 	}
 
 	return(new PyString("Heal successful!"));

@@ -24,6 +24,9 @@
 */
 
 #include "EVEServerPCH.h"
+#include "ship/dgmtypeattributeinfo.h"
+#include "inventory/AttributeEnum.h"
+
 
 TargetManager::TargetManager(SystemEntity *self)
 : m_destroyed(false),
@@ -409,9 +412,10 @@ PyList *TargetManager::GetTargeters() const {
 
 	return result;
 }
+
 uint32 TargetManager::TimeToLock(ShipRef ship, SystemEntity *target) const {
 
-	double scanRes = ship->attributes.GetReal( ship->attributes.Attr_scanResolution );
+	/*double scanRes = ship->attributes.GetReal( ship->attributes.Attr_scanResolution );
 	double sigRad = 25;
 	
 		if( target->IsClient() || target->IsNPC() )
@@ -423,25 +427,15 @@ uint32 TargetManager::TimeToLock(ShipRef ship, SystemEntity *target) const {
 	if( time > 180 )
 		time = 180;
 
-	return time;
+	return time;*/
+
+    EvilNumber scanRes = ship->GetAttribute(AttrScanResolution);
+    EvilNumber sigRad(25);
+
+    if( target->IsClient() || target->IsNPC() )
+        sigRad = target->Item()->GetAttribute(AttrSignatureRadius);
+
+    EvilNumber time = ( EvilNumber(40000) / ( scanRes ) ) /( e_pow( e_log( sigRad + e_sqrt( sigRad * sigRad + 1) ), 2) );
+
+    return time.get_int(); // hack...
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

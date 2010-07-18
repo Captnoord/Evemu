@@ -35,13 +35,15 @@
  *
  *   a) the target platform
  *        X64, (x86)
+ *        BIG_ENDIAN, (little endian)
  *        WIN32, CYGWIN, FREE_BSD, APPLE, (other)
  *   b) the compiler
- *        MSVC, GNUC, MINGW, (other)
+ *        MSVC, GNUC, (other)
  *   c) the configuration
  *        NDEBUG, (debug)
  *        EVEMU_ROOT_DIR
  *        EVEMU_VERSION
+ *        EVEMU_SERVER_SHOW_LOGIN_MESSAGE
  *        TINYXML_USE_STL
  *
  * The rest of code relies on these defines.
@@ -50,18 +52,17 @@
 #   include "config.h"
 #endif /* HAVE_CONFIG_H */
 
-/*************************************************************************/
-/* Pre-include                                                           */
-/*************************************************************************/
+/*
+ * Pre-include
+ */
 
 /*
  * Pre-include platform-specific
  */
 
-// Define basic Windows configuration
 #ifdef WIN32
 #   define WIN32_LEAN_AND_MEAN
-#   define _WIN32_WINNT 0x0500 // building for Win2k
+#   define _WIN32_WINNT 0x0500
 #   define NOMINMAX
 #endif /* !WIN32 */
 
@@ -69,11 +70,9 @@
  * Pre-include compiler-specific
  */
 
-// Visual Studio configuration
+// Visual Studio 'errors'/'warnings'
 #ifdef MSVC
-// 'identifier' : class 'type' needs to have dll-interface to be used by clients of class 'type2'
-//#   pragma warning( disable : 4251 )
-// 'function': was declared deprecated
+//#   pragma warning( disable : 4251 ) // dll-interface bullshit
 //#   pragma warning( disable : 4996 )
 
 #   define _CRT_SECURE_NO_WARNINGS                  1
@@ -86,10 +85,6 @@
 
 #   define _SCL_SECURE_NO_WARNINGS 1
 #endif /* _MSC_VER */
-
-/*************************************************************************/
-/* Include                                                               */
-/*************************************************************************/
 
 /*
  * Standard library includes
@@ -144,34 +139,30 @@
  */
 
 #ifdef WIN32
-#   include <process.h>
 #   include <windows.h>
 #   include <winsock2.h>
+#   include <sys/stat.h>
+#   include <sys/timeb.h>
+#   include <io.h>
+#   include <process.h>
 #else /* !WIN32 */
 #   include <arpa/inet.h>
+#   include <netinet/in.h>
+#   include <sys/socket.h>
+#   include <sys/stat.h>
+#   include <sys/time.h>
+#   include <sys/types.h>
 #   include <dirent.h>
 #   include <execinfo.h>
 #   include <fcntl.h>
 #   include <netdb.h>
-#   include <netinet/in.h>
 #   include <pthread.h>
-#   include <sys/socket.h>
 #   include <unistd.h>
 #endif /* !WIN32 */
 
 /*
  * Compiler-dependent includes.
  */
-
-#ifdef MSVC
-#   include <io.h>
-#   include <sys/stat.h>
-#   include <sys/timeb.h>
-#else /* !MSVC */
-#   include <sys/stat.h>
-#   include <sys/time.h>
-#   include <sys/types.h>
-#endif /* !MSVC */
 
 // Visual Studio memory leak detection includes
 #ifdef MSVC
@@ -180,11 +171,11 @@
 //#       include <vld.h>  // Only enable if you have VLD installed
 #       define new new( _NORMAL_BLOCK, __FILE__, __LINE__ )
 #   endif /* !NDEBUG */
-#endif /* MSVC */
+#endif /* WIN32 */
 
-/*************************************************************************/
-/* Post-include                                                          */
-/*************************************************************************/
+/*
+ * Post-include
+ */
 
 // 'undefine' min / max so that there won't be major conflicts regarding std
 #ifdef min
@@ -198,21 +189,20 @@
 // if not defined, define va_copy
 // using memcpy() because of possible array implementation
 #ifndef va_copy
-#   define va_copy( a, b ) \
-    ( memcpy( &( a ), &( b ), sizeof( va_list ) ) )
+#   define va_copy( a, b ) memcpy( &( a ), &( b ), sizeof( va_list ) )
 #endif /* !va_copy */
 
 // define finite() and isnan()
-#if defined( MSVC ) || defined( MINGW )
+#if defined( MSVC )
 #   define finite _finite
 #   define isnan  _isnan
-#elif defined( FREE_BSD ) || defined( APPLE )
+#elif ( defined( FREE_BSD ) || defined( APPLE ) )
 using std::finite;
 using std::isnan;
-#else /* !MSVC && !MINGW && !APPLE && !FREE_BSD */
+#else /* !APPLE && !FREE_BSD && !WIN32 */
 #   define finite __finite
 #   define isnan  __isnan
-#endif /* !MSVC && !MINGW && !APPLE && !FREE_BSD */
+#endif /* !APPLE && !FREE_BSD && !WIN32 */
 
 // dll interface stuff
 #ifdef MSVC
@@ -222,7 +212,7 @@ using std::isnan;
 #endif /* !WIN32 */
 
 // Typedefs for integers
-#if defined( MSVC ) || defined( MINGW )
+#ifdef MSVC
 
 typedef signed __int64 int64;
 typedef signed __int32 int32;
@@ -234,7 +224,7 @@ typedef unsigned __int32 uint32;
 typedef unsigned __int16 uint16;
 typedef unsigned __int8  uint8;
 
-#else /* !MSVC && !MINGW */
+#else /* !MSVC */
 
 typedef int64_t int64;
 typedef int32_t int32;
@@ -246,7 +236,7 @@ typedef uint32_t uint32;
 typedef uint16_t uint16;
 typedef uint8_t  uint8;
 
-#endif /* !MSVC && !MINGW */
+#endif /* !MSVC */
 
 // for printf() compatibility, I don't like this but its needed.
 #if defined( WIN32 )
@@ -307,6 +297,9 @@ typedef void* thread_return_t;
  * Post-include platform-dependent
  */
 #ifdef WIN32
+#   define S_IRWXU      0
+#   define S_IRWXG      0
+#   define S_IRWXO      0
 #   define MSG_NOSIGNAL 0
 
 int gettimeofday( timeval* tv, void* reserved );
@@ -353,10 +346,6 @@ char* strlwr( char* tmp );
  */
 
 #ifdef MSVC
-#   define S_IRWXU      0
-#   define S_IRWXG      0
-#   define S_IRWXO      0
-
 #   define snprintf            _snprintf
 #   define strncasecmp         _strnicmp
 #   define strcasecmp          _stricmp
@@ -370,18 +359,5 @@ char* strlwr( char* tmp );
 #       endif /* !strdup */
 #   endif /* _MSC_VER >= 1500 */
 #endif /* MSVC */
-
-#ifdef MINGW
-/*
- * Define localtime_r as a call to localtime.
- *
- * The page below says that MS's version of localtime uses
- * thread-specific storage, so this should not be a problem.
- *
- * http://msdn.microsoft.com/en-us/library/bf12f0hc(VS.80).aspx
- */
-#   define localtime_r( x, y ) \
-    ( (tm*)( memcpy( ( y ), localtime( x ), sizeof( tm ) ) ) )
-#endif /* MINGW */
 
 #endif /* !__COMMON_H__INCL__ */

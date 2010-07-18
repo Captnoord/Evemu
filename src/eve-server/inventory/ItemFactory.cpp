@@ -35,7 +35,7 @@ ItemFactory::~ItemFactory() {
         end = m_items.end();
         for(; cur != end; cur++) {
             // save attributes of item (because of rechargable attributes)
-            cur->second->attributes.Save();
+            //cur->second->attributes.Save();
         }
     }
     // types

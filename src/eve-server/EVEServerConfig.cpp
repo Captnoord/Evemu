@@ -1,26 +1,26 @@
 /*
-    ------------------------------------------------------------------------------------
-    LICENSE:
-    ------------------------------------------------------------------------------------
-    This file is part of EVEmu: EVE Online Server Emulator
-    Copyright 2006 - 2008 The EVEmu Team
-    For the latest information visit http://evemu.mmoforge.org
-    ------------------------------------------------------------------------------------
-    This program is free software; you can redistribute it and/or modify it under
-    the terms of the GNU Lesser General Public License as published by the Free Software
-    Foundation; either version 2 of the License, or (at your option) any later
-    version.
+	------------------------------------------------------------------------------------
+	LICENSE:
+	------------------------------------------------------------------------------------
+	This file is part of EVEmu: EVE Online Server Emulator
+	Copyright 2006 - 2008 The EVEmu Team
+	For the latest information visit http://evemu.mmoforge.org
+	------------------------------------------------------------------------------------
+	This program is free software; you can redistribute it and/or modify it under
+	the terms of the GNU Lesser General Public License as published by the Free Software
+	Foundation; either version 2 of the License, or (at your option) any later
+	version.
 
-    This program is distributed in the hope that it will be useful, but WITHOUT
-    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-    FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+	This program is distributed in the hope that it will be useful, but WITHOUT
+	ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+	FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
 
-    You should have received a copy of the GNU Lesser General Public License along with
-    this program; if not, write to the Free Software Foundation, Inc., 59 Temple
-    Place - Suite 330, Boston, MA 02111-1307, USA, or go to
-    http://www.gnu.org/copyleft/lesser.txt.
-    ------------------------------------------------------------------------------------
-    Author:     Zhur, Bloody.Rabbit
+	You should have received a copy of the GNU Lesser General Public License along with
+	this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+	Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+	http://www.gnu.org/copyleft/lesser.txt.
+	------------------------------------------------------------------------------------
+	Author:		Zhur
 */
 
 #include "EVEServerPCH.h"
@@ -28,33 +28,20 @@
 /*************************************************************************/
 /* EVEServerConfig                                                       */
 /*************************************************************************/
+EXPORT_SINGLETON( EVEServerConfig );
+
 EVEServerConfig::EVEServerConfig()
 {
     // register needed parsers
-    AddMemberParser( "eve-server", &EVEServerConfig::ProcessEveServer );
+    AddMemberParser( "eve", &EVEServerConfig::ProcessEve );
 
     // Set sane defaults
 
-    // account
-    account.autoAccountRole = 0;
-    account.loginMessage =
-        "<html>"
-            "<head>"
-            "</head>"
-            "<body>"
-                "Welcome to <b>EVEmu server</b>.<br>"
-                "<br>"
-                "You can find a lot of interesting information about this project at <a href=\"http://forum.evemu.org/\">forum.evemu.org</a>.<br>"
-                "<br>"
-                "You can also join our IRC channel at <b>irc.mmoforge.org:6667</b>, channel <b>#evemu</b>.<br>"
-                "<br>"
-                "Best wishes,<br>"
-                "EVEmu development team"
-           "</body>"
-        "</html>";
-
-    // character
-    character.startBalance = 6666000000.0f;
+    // server
+    server.port = 26001;
+    server.startBalance = 6666000000.0f;
+    server.autoAccount = false;
+    server.autoAccountRole = 2;
 
     // database
     database.host = "localhost";
@@ -64,102 +51,89 @@ EVEServerConfig::EVEServerConfig()
     database.db = "eve";
 
     // files
-    files.log = "../log/eve-server.log";
-    files.logSettings = "../etc/log.ini";
+    files.log = "log/eve-server.log";
+    files.logSettings = "log.ini";
     files.cacheDir = "";
-
-    // net
-    net.port = 26001;
 }
 
-bool EVEServerConfig::ProcessEveServer( const TiXmlElement* ele )
+bool EVEServerConfig::ProcessEve( const TiXmlElement* ele )
 {
     // entering element, extend allowed syntax
-    AddMemberParser( "account",   &EVEServerConfig::ProcessAccount );
-    AddMemberParser( "character", &EVEServerConfig::ProcessCharacter );
-    AddMemberParser( "database",  &EVEServerConfig::ProcessDatabase );
-    AddMemberParser( "files",     &EVEServerConfig::ProcessFiles );
-    AddMemberParser( "net",       &EVEServerConfig::ProcessNet );
+    AddMemberParser( "server",   &EVEServerConfig::ProcessServer );
+    AddMemberParser( "database", &EVEServerConfig::ProcessDatabase );
+    AddMemberParser( "files",    &EVEServerConfig::ProcessFiles );
 
     // parse the element
     const bool result = ParseElementChildren( ele );
 
     // leaving element, reduce allowed syntax
-    RemoveParser( "account" );
-    RemoveParser( "character" );
+    RemoveParser( "server" );
     RemoveParser( "database" );
     RemoveParser( "files" );
-    RemoveParser( "net" );
 
     // return status of parsing
     return result;
 }
 
-bool EVEServerConfig::ProcessAccount( const TiXmlElement* ele )
+bool EVEServerConfig::ProcessServer( const TiXmlElement* ele )
 {
-    AddValueParser( "autoAccountRole", account.autoAccountRole );
-    AddValueParser( "loginMessage",    account.loginMessage );
+    // entering element, extend allowed syntax
+    AddValueParser( "port",            server.port );
+    AddValueParser( "startBalance",    server.startBalance );
+    AddValueParser( "autoAccount",     server.autoAccount );
+    AddValueParser( "autoAccountRole", server.autoAccountRole );
 
+    // parse the element
     const bool result = ParseElementChildren( ele );
 
-    RemoveParser( "autoAccountRole" );
-    RemoveParser( "loginMessage" );
-
-    return result;
-}
-
-bool EVEServerConfig::ProcessCharacter( const TiXmlElement* ele )
-{
-    AddValueParser( "startBalance", character.startBalance );
-
-    const bool result = ParseElementChildren( ele );
-
+    // leaving element, reduce allowed syntax
+    RemoveParser( "port" );
     RemoveParser( "startBalance" );
+    RemoveParser( "autoAccount" );
+    RemoveParser( "autoAccountRole" );
 
+    // return status of parsing
     return result;
 }
 
 bool EVEServerConfig::ProcessDatabase( const TiXmlElement* ele )
 {
+    // entering element, extend allowed syntax
     AddValueParser( "host",     database.host );
     AddValueParser( "port",     database.port );
     AddValueParser( "username", database.username );
     AddValueParser( "password", database.password );
     AddValueParser( "db",       database.db );
 
+    // parse the element
     const bool result = ParseElementChildren( ele );
 
+    // leaving element, reduce allowed syntax
     RemoveParser( "host" );
     RemoveParser( "port" );
     RemoveParser( "username" );
     RemoveParser( "password" );
     RemoveParser( "db" );
 
+    // return status of parsing
     return result;
 }
 
 bool EVEServerConfig::ProcessFiles( const TiXmlElement* ele )
 {
+    // entering element, extend allowed syntax
     AddValueParser( "log",         files.log );
     AddValueParser( "logSettings", files.logSettings );
     AddValueParser( "cacheDir",    files.cacheDir );
 
+    // parse the element
     const bool result = ParseElementChildren( ele );
 
+    // leaving element, reduce allowed syntax
     RemoveParser( "log" );
     RemoveParser( "logSettings" );
     RemoveParser( "cacheDir" );
 
-    return result;
-}
-
-bool EVEServerConfig::ProcessNet( const TiXmlElement* ele )
-{
-    AddValueParser( "port", net.port );
-
-    const bool result = ParseElementChildren( ele );
-
-    RemoveParser( "port" );
-
+    // return status of parsing
     return result;
 }

@@ -27,34 +27,34 @@
 
 #include "log/LogNew.h"
 
-/*************************************************************************/
-/* NewLog                                                                */
-/*************************************************************************/
+EXPORT_SINGLETON( NewLog );
+
+// console output colors
 #ifdef WIN32
-const WORD NewLog::COLOR_TABLE[ COLOR_COUNT ] =
-{
-    ( FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE                        ), // COLOR_DEFAULT
-    ( 0                                                                          ), // COLOR_BLACK
-    ( FOREGROUND_RED                                      | FOREGROUND_INTENSITY ), // COLOR_RED
-    (                  FOREGROUND_GREEN                   | FOREGROUND_INTENSITY ), // COLOR_GREEN
-    ( FOREGROUND_RED | FOREGROUND_GREEN                   | FOREGROUND_INTENSITY ), // COLOR_YELLOW
-    (                                     FOREGROUND_BLUE | FOREGROUND_INTENSITY ), // COLOR_BLUE
-    ( FOREGROUND_RED                    | FOREGROUND_BLUE | FOREGROUND_INTENSITY ), // COLOR_MAGENTA
-    (                  FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY ), // COLOR_CYAN
-    ( FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY )  // COLOR_WHITE
-};
+#   define TRED    ( FOREGROUND_RED | FOREGROUND_INTENSITY )
+#   define TGREEN  ( FOREGROUND_GREEN | FOREGROUND_INTENSITY )
+#   define TYELLOW ( FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY )
+#   define TNORMAL ( FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_BLUE )
+#   define TWHITE  ( TNORMAL | FOREGROUND_INTENSITY )
+#   define TBLUE   ( FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY )
 #else /* !WIN32 */
-const char* const NewLog::COLOR_TABLE[ COLOR_COUNT ] =
+#   define TRED    1
+#   define TGREEN  2
+#   define TYELLOW 3
+#   define TNORMAL 4
+#   define TWHITE  5
+#   define TBLUE   6
+
+const char* colorstrings[ TBLUE + 1 ] =
 {
-    "\033[" "00"    "m", // COLOR_DEFAULT
-    "\033[" "30;22" "m", // COLOR_BLACK
-    "\033[" "31;22" "m", // COLOR_RED
-    "\033[" "32;22" "m", // COLOR_GREEN
-    "\033[" "33;01" "m", // COLOR_YELLOW
-    "\033[" "34;01" "m", // COLOR_BLUE
-    "\033[" "35;22" "m", // COLOR_MAGENTA
-    "\033[" "36;01" "m", // COLOR_CYAN
-    "\033[" "37;01" "m"  // COLOR_WHITE
+    "",
+    "\033[22;31m",
+    "\033[22;32m",
+    "\033[01;33m",
+    //"\033[22;37m",
+    "\033[0m",
+    "\033[01;37m",
+    "\033[1;34m",
 };
 #endif /* !WIN32 */
 
@@ -82,117 +82,174 @@ NewLog::~NewLog()
 
 void NewLog::Log( const char* source, const char* fmt, ... )
 {
+    LockMutex l( &mMutex );
+
+    PrintTime();
+
+    SetColor( TNORMAL );
+    Print( " L " );
+
+    if( source && *source )
+    {
+        SetColor( TWHITE );
+        Print( "%s: ", source );
+
+        SetColor( TNORMAL );
+    }
+
     va_list ap;
     va_start( ap, fmt );
 
-    PrintMsg( COLOR_DEFAULT, 'L', source, fmt, ap );
+    PrintVa( fmt, ap );
+    Print( "\n" );
 
     va_end( ap );
+
+    SetColor( TNORMAL );
 }
 
 void NewLog::Error( const char* source, const char* fmt, ... )
 {
+    LockMutex l( &mMutex );
+
+    PrintTime();
+
+    SetColor( TRED );
+    Print( " E " );
+
+    if( source && *source )
+    {
+        SetColor( TWHITE );
+        Print( "%s: ", source );
+
+        SetColor( TRED );
+    }
+
     va_list ap;
     va_start( ap, fmt );
 
-    PrintMsg( COLOR_RED, 'E', source, fmt, ap );
+    PrintVa( fmt, ap );
+    Print( "\n" );
 
     va_end( ap );
+
+    SetColor( TNORMAL );
 }
 
 void NewLog::Warning( const char* source, const char* fmt, ... )
 {
+    LockMutex l( &mMutex );
+
+    PrintTime();
+
+    SetColor( TYELLOW );
+    Print( " W " );
+
+    if( source && *source )
+    {
+        SetColor( TWHITE );
+        Print( "%s: ", source );
+
+        SetColor( TYELLOW );
+    }
+
     va_list ap;
     va_start( ap, fmt );
 
-    PrintMsg( COLOR_YELLOW, 'W', source, fmt, ap );
+    PrintVa( fmt, ap );
+    Print( "\n" );
 
     va_end( ap );
+
+    SetColor( TNORMAL );
 }
 
 void NewLog::Success( const char* source, const char* fmt, ... )
 {
+    LockMutex l( &mMutex );
+
+    PrintTime();
+
+    SetColor( TGREEN );
+    Print( " S " );
+
+    if( source && *source )
+    {
+        SetColor( TWHITE );
+        Print( "%s: ", source );
+
+        SetColor( TGREEN );
+    }
+
     va_list ap;
     va_start( ap, fmt );
 
-    PrintMsg( COLOR_GREEN, 'S', source, fmt, ap );
+    PrintVa( fmt, ap );
+    Print( "\n" );
 
     va_end( ap );
+
+    SetColor( TNORMAL );
 }
 
 void NewLog::Debug( const char* source, const char* fmt, ... )
 {
 #ifndef NDEBUG
+    LockMutex l( &mMutex );
+
+    PrintTime();
+
+    SetColor( TBLUE );
+    Print( " D " );
+
+    if( source && *source )
+    {
+        SetColor( TWHITE );
+        Print( "%s: ", source );
+
+        SetColor( TBLUE );
+    }
+
     va_list ap;
     va_start( ap, fmt );
 
-    PrintMsg( COLOR_CYAN, 'D', source, fmt, ap );
+    PrintVa( fmt, ap );
+    Print( "\n" );
 
     va_end( ap );
+
+    SetColor( TNORMAL );
 #endif /* !NDEBUG */
 }
 
 bool NewLog::SetLogfile( const char* filename )
 {
-    MutexLock l( mMutex );
+    LockMutex l( &mMutex );
 
-    FILE* file = NULL;
+    // if we got NULL, don't try to open it, pass it directly instead
+    if( NULL == filename )
+        return SetLogfile( (FILE*)NULL );
 
-    if( NULL != filename )
-    {
-        file = fopen( filename, "w" );
-        if( NULL == file )
-            return false;
-    }
+    // open the new logfile
+    FILE* file = fopen( filename, "w" );
+    if( NULL == file )
+        return false;
 
+    // pass the new logfile
     return SetLogfile( file );
 }
 
 bool NewLog::SetLogfile( FILE* file )
 {
-    MutexLock l( mMutex );
+    LockMutex l( &mMutex );
 
+    // if we already have a logfile, close it first
     if( NULL != mLogfile )
         assert( 0 == fclose( mLogfile ) );
 
+    // set the new logfile
     mLogfile = file;
     return true;
-}
-
-void NewLog::PrintMsg( Color color, char pfx, const char* source, const char* fmt, va_list ap )
-{
-    MutexLock l( mMutex );
-
-    PrintTime();
-
-    SetColor( color );
-    Print( " %c ", pfx );
-
-    if( source && *source )
-    {
-        SetColor( COLOR_WHITE );
-        Print( "%s: ", source );
-
-        SetColor( color );
-    }
-
-    PrintVa( fmt, ap );
-    Print( "\n" );
-
-    SetColor( COLOR_DEFAULT );
-}
-
-void NewLog::PrintTime()
-{
-    MutexLock l( mMutex );
-
-    // this will be replaced my a timing thread somehow
-    SetTime( time( NULL ) );
-
-    tm t;
-    localtime_r( &mTime, &t );
-
-    Print( "%02u:%02u:%02u", t.tm_hour, t.tm_min, t.tm_sec );
 }
 
 void NewLog::Print( const char* fmt, ... )
@@ -207,7 +264,7 @@ void NewLog::Print( const char* fmt, ... )
 
 void NewLog::PrintVa( const char* fmt, va_list ap )
 {
-    MutexLock l( mMutex );
+    LockMutex l( &mMutex );
 
     if( NULL != mLogfile )
     {
@@ -228,22 +285,33 @@ void NewLog::PrintVa( const char* fmt, va_list ap )
     vprintf( fmt, ap );
 }
 
-void NewLog::SetColor( Color color )
+void NewLog::PrintTime()
 {
-    assert( 0 <= color && color < COLOR_COUNT );
+    LockMutex l( &mMutex );
 
-    MutexLock l( mMutex );
+    // this will be replaced my a timing thread somehow
+    SetTime( time( NULL ) );
+
+    tm t;
+    localtime_r( &mTime, &t );
+
+    Print( "%02u:%02u:%02u", t.tm_hour, t.tm_min, t.tm_sec );
+}
+
+void NewLog::SetColor( unsigned int color )
+{
+    LockMutex l( &mMutex );
 
 #ifdef WIN32
-    SetConsoleTextAttribute( mStdOutHandle, COLOR_TABLE[ color ] );
+    SetConsoleTextAttribute( mStdOutHandle, (WORD)color );
 #else /* !WIN32 */
-    fputs( COLOR_TABLE[ color ], stdout );
+    fputs( colorstrings[ color ], stdout );
 #endif /* !WIN32 */
 }
 
 void NewLog::SetLogfileDefault()
 {
-    MutexLock l( mMutex );
+    LockMutex l( &mMutex );
 
     // set initial log system time
     SetTime( time( NULL ) );
@@ -253,7 +321,7 @@ void NewLog::SetLogfileDefault()
 
     // open default logfile
     char filename[ MAX_PATH + 1 ];
-    snprintf( filename, MAX_PATH + 1, EVEMU_ROOT_DIR"/log/log_%02u-%02u-%04u-%02u-%02u.log",
+    snprintf( filename, MAX_PATH + 1, "log/log_%02u-%02u-%04u-%02u-%02u.log",
               t.tm_mday, t.tm_mon + 1, t.tm_year + 1900, t.tm_hour, t.tm_min );
 
     if( SetLogfile( filename ) )

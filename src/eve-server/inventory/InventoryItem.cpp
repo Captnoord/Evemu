@@ -25,12 +25,14 @@
 
 #include "EVEServerPCH.h"
 #include "ship/dgmtypeattributeinfo.h"
+#include "inventory/AttributeEnum.h"
 
 #ifndef INT_MAX
 #   define INT_MAX 0x7FFFFFFF
 #endif
 
-const uint32 SKILL_BASE_POINTS = 250;
+//const uint32 SKILL_BASE_POINTS = 250;
+const EvilNumber EVIL_SKILL_BASE_POINTS(250);
 
 /*
  * ItemData
@@ -111,7 +113,8 @@ InventoryItem::InventoryItem(
     const ItemType &_type,
     const ItemData &_data)
 : RefObject( 0 ),
-  attributes(_factory, *this, true, true),
+  //attributes(_factory, *this, true, true),
+  mAttributeMap(*this),
   m_factory(_factory),
   m_itemID(_itemID),
   m_itemName(_data.name),
@@ -123,7 +126,9 @@ InventoryItem::InventoryItem(
   m_singleton(_data.singleton),
   m_quantity(_data.quantity),
   m_position(_data.position),
-  m_customInfo(_data.customInfo)
+  m_customInfo(_data.customInfo),
+  m_client(NULL)
+  
 {
     // assert for data consistency
     assert(_data.typeID == _type.id());
@@ -218,8 +223,10 @@ RefPtr<_Ty> InventoryItem::_LoadItem(ItemFactory &factory, uint32 itemID,
 bool InventoryItem::_Load()
 {
     // load attributes
-    if(!attributes.Load())
-        return false;
+    //if(!attributes.Load())
+    //    return false;
+    mAttributeMap.Load();
+    
 
     // update inventory
     Inventory *inventory = m_factory.GetInventory( locationID(), false );
@@ -340,7 +347,7 @@ void InventoryItem::Delete() {
     ChangeOwner( 2 );
 
     //take ourself out of the DB
-    attributes.Delete();
+    //attributes.Delete();
     m_factory.db().DeleteItem( itemID() );
 
     //delete ourselves from factory cache
@@ -382,7 +389,7 @@ void InventoryItem::GetItemRow( PyPackedRow* into ) const
     into->SetField( "customInfo", new PyString( customInfo() ) );
 }
 
-bool InventoryItem::Populate( Rsp_CommonGetInfo_Entry& result ) const
+bool InventoryItem::Populate( Rsp_CommonGetInfo_Entry &result )
 {
     //itemID:
     result.itemID = itemID();
@@ -392,7 +399,7 @@ bool InventoryItem::Populate( Rsp_CommonGetInfo_Entry& result ) const
     result.invItem = GetItemRow();
 
     //hacky, but it doesn't really hurt anything.
-    if( 0 != isOnline() )
+    if( GetAttribute(AttrIsOnline).get_int() != 0 )
     {
         //there is an effect that goes along with this. We should
         //probably be properly tracking the effect due to some
@@ -416,7 +423,7 @@ bool InventoryItem::Populate( Rsp_CommonGetInfo_Entry& result ) const
     //result..activeEffects[id] = List[11];
 
     //attributes:
-    attributes.EncodeAttributes( result.attributes );
+    //attributes.EncodeAttributes( result.attributes );
 
     //no idea what time this is supposed to be
     result.time = Win32TimeNow();
@@ -424,7 +431,8 @@ bool InventoryItem::Populate( Rsp_CommonGetInfo_Entry& result ) const
     return true;
 }
 
-PyObject *InventoryItem::ItemGetInfo() const {
+PyObject * InventoryItem::ItemGetInfo()
+{
     Rsp_ItemGetInfo result;
 
     if(!Populate(result.entry))
@@ -660,36 +668,40 @@ void InventoryItem::SendItemChange(uint32 toID, std::map<int32, PyRep *> &change
 
 void InventoryItem::SetOnline(bool newval) {
     //bool old = isOnline();
-    Set_isOnline(newval);
+    //Set_isOnline(newval);
+    SetAttribute(AttrIsOnline, int(newval));
 
-    Client *c = m_factory.entity_list.FindCharacter(m_ownerID);
+    Client *c = sEntityList.FindCharacter(m_ownerID);
     if(c == NULL)
-        return; //not found or not online...
+    {
+        sLog.Error("InventoryItem", "unable to set outselfs online//offline because we can't find the client");
+        return;
+    }
 
     Notify_OnModuleAttributeChange omac;
     omac.ownerID = m_ownerID;
     omac.itemKey = m_itemID;
-    omac.attributeID = ItemAttributeMgr::Attr_isOnline;
+    omac.attributeID = AttrIsOnline;
     omac.time = Win32TimeNow();
     omac.newValue = new PyInt(newval?1:0);
     omac.oldValue = new PyInt(newval?0:1);   //hack... should use old, but its not cooperating today.
 
     Notify_OnGodmaShipEffect ogf;
-    ogf.itemID = m_itemID;
-    ogf.effectID = effectOnline;
-    ogf.when = Win32TimeNow();
-    ogf.start = newval?1:0;
-    ogf.active = newval?1:0;
-    ogf.env_itemID = ogf.itemID;
-    ogf.env_charID = m_ownerID; //??
-    ogf.env_shipID = m_locationID;
-    ogf.env_target = m_locationID;
-    ogf.env_effectID = ogf.effectID;
-    ogf.startTime = ogf.when;
-    ogf.duration = INT_MAX; //I think this should be infinity (0x07 may be infinity?)
-    ogf.repeat = 0;
-    ogf.randomSeed = new PyNone();
-    ogf.error = new PyNone();
+    ogf.itemID = m_itemID; //0
+    ogf.effectID = effectOnline; //1
+    ogf.when = Win32TimeNow(); //2
+    ogf.start = newval?1:0; //3
+    ogf.active = newval?1:0; //4
+    ogf.env_itemID = ogf.itemID; //5
+    ogf.env_charID = m_ownerID; //5
+    ogf.env_shipID = m_locationID; //5
+    ogf.env_target = m_locationID; //5
+    ogf.env_effectID = ogf.effectID; //5
+    ogf.startTime = ogf.when; //6
+    ogf.duration = INT_MAX; //7 //I think this should be infinity (0x07 may be infinity?)
+    ogf.repeat = 0; //8
+    ogf.randomSeed = new PyNone(); //9
+    ogf.error = new PyNone(); //10
 
     Notify_OnMultiEvent multi;
     multi.events = new PyList;
@@ -698,8 +710,6 @@ void InventoryItem::SetOnline(bool newval) {
 
     PyTuple* tmp = multi.Encode();   //this is consumed below
     c->SendNotification("OnMultiEvent", "clientID", &tmp);
-
-
 }
 
 void InventoryItem::SetCustomInfo(const char *ci) {
@@ -719,14 +729,47 @@ void InventoryItem::Relocate(const GPoint &pos) {
     SaveItem();
 }
 
+bool InventoryItem::SetAttribute( uint32 attributeID, int64 num )
+{
+    EvilNumber devil_number(num);
+    return mAttributeMap.SetAttribute(attributeID, devil_number);
+}
+
+bool InventoryItem::SetAttribute( uint32 attributeID, double num )
+{
+    EvilNumber devil_number(num);
+    return mAttributeMap.SetAttribute(attributeID, devil_number);
+}
+
+bool InventoryItem::SetAttribute( uint32 attributeID, EvilNumber& num )
+{
+    return mAttributeMap.SetAttribute(attributeID, num);
+}
+
 bool InventoryItem::SetAttribute( uint32 attributeID, int num )
 {
     EvilNumber devil_number(num);
     return mAttributeMap.SetAttribute(attributeID, devil_number);
 }
 
-bool InventoryItem::SetAttribute( uint32 attributeID, float num )
+bool InventoryItem::SetAttribute( uint32 attributeID, uint64 num )
 {
-    EvilNumber devil_number(num);
+    EvilNumber devil_number(*((int64*)&num));
     return mAttributeMap.SetAttribute(attributeID, devil_number);
+}
+
+bool InventoryItem::SetAttribute( uint32 attributeID, uint32 num )
+{
+    EvilNumber devil_number((int64)num);
+    return mAttributeMap.SetAttribute(attributeID, devil_number);
+}
+
+EvilNumber InventoryItem::GetAttribute( uint32 attributeID )
+{
+    return mAttributeMap.GetAttribute(attributeID);
+}
+
+EvilNumber InventoryItem::GetAttribute( const uint32 attributeID ) const
+{
+     return mAttributeMap.GetAttribute(attributeID);
 }

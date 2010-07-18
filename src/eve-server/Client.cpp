@@ -24,6 +24,7 @@
 */
 
 #include "EVEServerPCH.h"
+#include "inventory/AttributeEnum.h"
 
 static const uint32 PING_INTERVAL_US = 60000;
 
@@ -909,17 +910,29 @@ double Client::GetPropulsionStrength() const {
         return(3.0f);
     //just making shit up, I think skills modify this, as newbies
     //tend to end up with 3.038 instead of the base 3.0 on their ship..
-    double res;
-    res =  GetShip()->propulsionFusionStrength();
+    //double res;
+    EvilNumber res;
+    res = GetShip()->GetAttribute(AttrPropulsionFusionStrength);
+    res += GetShip()->GetAttribute(AttrPropulsionIonStrength);
+    res += GetShip()->GetAttribute(AttrPropulsionMagpulseStrength);
+    res += GetShip()->GetAttribute(AttrPropulsionPlasmaStrength);
+    res += GetShip()->GetAttribute(AttrPropulsionFusionStrengthBonus);
+    res += GetShip()->GetAttribute(AttrPropulsionIonStrengthBonus);
+    res += GetShip()->GetAttribute(AttrPropulsionMagpulseStrengthBonus);
+    res += GetShip()->GetAttribute(AttrPropulsionPlasmaStrengthBonus);
+
+    /*res =  GetShip()->propulsionFusionStrength();
     res += GetShip()->propulsionIonStrength();
     res += GetShip()->propulsionMagpulseStrength();
     res += GetShip()->propulsionPlasmaStrength();
     res += GetShip()->propulsionFusionStrengthBonus();
     res += GetShip()->propulsionIonStrengthBonus();
     res += GetShip()->propulsionMagpulseStrengthBonus();
-    res += GetShip()->propulsionPlasmaStrengthBonus();
+    res += GetShip()->propulsionPlasmaStrengthBonus();*/
     res += 0.038f;
-    return res;
+    
+    // watch out... we know for a fact that it returns a float... but... only because we do "res += 0.038f;".
+    return res.get_float();
 }
 
 void Client::TargetAdded( SystemEntity* who )
@@ -1475,81 +1488,17 @@ void Client::UpdateSession(const char *sessionType, int value)
 	mSession.SetInt(sessionType, value);
 }
 
-/*
-FunctorTimerQueue::TimerID Client::Delay( uint32 time_in_ms, void (Client::* clientCall)() ) {
-    Functor *f = new SimpleClientFunctor(this, clientCall);
-    return(m_delayQueue.Schedule( &f, time_in_ms ));
-}
-
-FunctorTimerQueue::TimerID Client::Delay( uint32 time_in_ms, ClientFunctor **functor ) {
-    Functor *f = *functor;
-    *functor = NULL;
-    return(m_delayQueue.Schedule( &f, time_in_ms ));
-}
-
-
-
-
-FunctorTimerQueue::FunctorTimerQueue()
-: m_nextID(0)
+bool Client::DoDestinyUpdate()
 {
-}
+    // simple update for scattering events
+    
+    std::list<PyTuple*>::iterator itr = mDogmaMessages.begin();
+    for (; itr != mDogmaMessages.end(); itr++) {
 
-FunctorTimerQueue::~FunctorTimerQueue() {
-    std::vector<Entry *>::iterator cur, end;
-    cur = m_queue.begin();
-    end = m_queue.end();
-    for(; cur != end; cur++) {
-        delete *cur;
+
+
     }
-}
 
-FunctorTimerQueue::TimerID FunctorTimerQueue::Schedule(Functor **what, uint32 in_how_many_ms) {
-    Entry *e = new Entry(++m_nextID, *what, in_how_many_ms);
-    *what = NULL;
-    m_queue.push_back(e);
-    return(e->id);
-}
 
-bool FunctorTimerQueue::Cancel(TimerID id) {
-    std::vector<Entry *>::iterator cur, end;
-    cur = m_queue.begin();
-    end = m_queue.end();
-    for(; cur != end; cur++) {
-        if((*cur)->id == id) {
-            m_queue.erase(cur);
-            return true;
-        }
-    }
     return false;
 }
-
-void FunctorTimerQueue::Process() {
-    std::vector<Entry *>::iterator cur, tmp;
-    cur = m_queue.begin();
-    while(cur != m_queue.end()) {
-        Entry *e = *cur;
-        if(e->when.Check(false)) {
-            //call the functor.
-            (*e->func)();
-            //we are done with this crap.
-            delete e;
-            cur = m_queue.erase(cur);
-        } else {
-            cur++;
-        }
-    }
-}
-
-FunctorTimerQueue::Entry::Entry(TimerID _id, Functor *_func, uint32 time_ms)
-: id(_id),
-  func(_func),
-  when(time_ms)
-{
-    when.Start();
-}
-
-FunctorTimerQueue::Entry::~Entry() {
-    delete func;
-}
-*/
