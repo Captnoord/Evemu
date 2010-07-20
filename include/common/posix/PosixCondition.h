@@ -23,64 +23,69 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __POSIX__POSIX_MUTEX_H__INCL__
-#define __POSIX__POSIX_MUTEX_H__INCL__
+#ifndef __POSIX__POSIX_CONDITION_H__INCL__
+#define __POSIX__POSIX_CONDITION_H__INCL__
+
+#include "posix/PosixMutex.h"
 
 /**
- * @brief Wrapper around @c pthread_mutex_t.
+ * @brief A wrapper around @c pthread_cond_t.
  *
  * @author Bloody.Rabbit
  */
-class PosixMutex
+class PosixCondition
 {
-    friend class PosixCondition;
-
 public:
     class Attribute;
 
-    /// The default attribute of new mutexes.
+    /// A default attribute used for new conditions.
     static const Attribute DEFAULT_ATTRIBUTE;
 
     /**
-     * @brief The primary constructor.
+     * @brief A primary constructor.
      *
-     * @param[in] attr The mutex attribute to use.
+     * @param[in] attr An attribute for the condition.
      */
-    PosixMutex( const Attribute& attr = DEFAULT_ATTRIBUTE );
+    PosixCondition( const Attribute& attr = DEFAULT_ATTRIBUTE );
     /**
      * @brief A destructor.
      */
-    ~PosixMutex();
+    ~PosixCondition();
 
     /**
-     * @brief Locks the mutex.
+     * @brief Signals the condition.
      *
-     * Blocks until the mutex is successfully locked or
-     * an error is encountered.
-     *
-     * @return A value returned by @c pthread_mutex_lock.
+     * @return A value returned by @c pthread_cond_signal.
      */
-    int Lock();
+    int Signal();
     /**
-     * @brief Tries to lock the mutex.
+     * @brief Broadcasts the condition.
      *
-     * Returns immediately; the return value indicates
-     * whether the mutex has been locked or not.
-     *
-     * @return A value returned by @c pthread_mutex_trylock.
+     * @return A value returned by @c pthread_cond_broadcast.
      */
-    int TryLock();
+    int Broadcast();
 
     /**
-     * @brief Unlocks the mutex.
+     * @brief Waits for the condition.
      *
-     * @return A value returned by @c pthread_mutex_unlock.
+     * @param[in] mutex The mutex this condition is bound to.
+     *
+     * @return A value returned by @c pthread_cond_wait.
      */
-    int Unlock();
+    int Wait( PosixMutex& mutex );
+    /**
+     * @brief Waits for the condition with timeout.
+     *
+     * @param[in] mutex The mutex this condition is bound to.
+     * @param[in] time  Time until which to wait.
+     *
+     * @return A value returned by @c pthread_cond_timedwait.
+     */
+    int TimedWait( PosixMutex& mutex, const timespec* time );
 
 protected:
-    /// The mutex itself.
-    pthread_mutex_t mMutex;
+    /// The condition variable itself.
+    pthread_cond_t mCondition;
 };
 
-#endif /* !__POSIX__POSIX_MUTEX_H__INCL__ */
+#endif /* !__POSIX__POSIX_CONDITION_H__INCL__ */

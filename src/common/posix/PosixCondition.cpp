@@ -23,64 +23,48 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __POSIX__POSIX_MUTEX_H__INCL__
-#define __POSIX__POSIX_MUTEX_H__INCL__
+#include "CommonPCH.h"
 
-/**
- * @brief Wrapper around @c pthread_mutex_t.
- *
- * @author Bloody.Rabbit
- */
-class PosixMutex
+#include "posix/PosixCondition.h"
+#include "posix/PosixConditionAttribute.h"
+
+/*************************************************************************/
+/* PosixCondition                                                        */
+/*************************************************************************/
+const PosixCondition::Attribute PosixCondition::DEFAULT_ATTRIBUTE;
+
+PosixCondition::PosixCondition( const Attribute& attr )
 {
-    friend class PosixCondition;
+    int code;
 
-public:
-    class Attribute;
+    code = ::pthread_cond_init( &mCondition, &attr.mAttribute );
+    assert( 0 == code );
+}
 
-    /// The default attribute of new mutexes.
-    static const Attribute DEFAULT_ATTRIBUTE;
+PosixCondition::~PosixCondition()
+{
+    int code;
 
-    /**
-     * @brief The primary constructor.
-     *
-     * @param[in] attr The mutex attribute to use.
-     */
-    PosixMutex( const Attribute& attr = DEFAULT_ATTRIBUTE );
-    /**
-     * @brief A destructor.
-     */
-    ~PosixMutex();
+    code = ::pthread_cond_destroy( &mCondition );
+    assert( 0 == code );
+}
 
-    /**
-     * @brief Locks the mutex.
-     *
-     * Blocks until the mutex is successfully locked or
-     * an error is encountered.
-     *
-     * @return A value returned by @c pthread_mutex_lock.
-     */
-    int Lock();
-    /**
-     * @brief Tries to lock the mutex.
-     *
-     * Returns immediately; the return value indicates
-     * whether the mutex has been locked or not.
-     *
-     * @return A value returned by @c pthread_mutex_trylock.
-     */
-    int TryLock();
+int PosixCondition::Signal()
+{
+    return ::pthread_cond_signal( &mCondition );
+}
 
-    /**
-     * @brief Unlocks the mutex.
-     *
-     * @return A value returned by @c pthread_mutex_unlock.
-     */
-    int Unlock();
+int PosixCondition::Broadcast()
+{
+    return ::pthread_cond_broadcast( &mCondition );
+}
 
-protected:
-    /// The mutex itself.
-    pthread_mutex_t mMutex;
-};
+int PosixCondition::Wait( PosixMutex& mutex )
+{
+    return ::pthread_cond_wait( &mCondition, &mutex.mMutex );
+}
 
-#endif /* !__POSIX__POSIX_MUTEX_H__INCL__ */
+int PosixCondition::TimedWait( PosixMutex& mutex, const timespec* time )
+{
+    return ::pthread_cond_timedwait( &mCondition, &mutex.mMutex, time );
+}

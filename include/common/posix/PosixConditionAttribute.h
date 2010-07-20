@@ -23,64 +23,56 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __POSIX__POSIX_MUTEX_H__INCL__
-#define __POSIX__POSIX_MUTEX_H__INCL__
+#ifndef __POSIX__POSIX_CONDITION_ATTRIBUTE_H__INCL__
+#define __POSIX__POSIX_CONDITION_ATTRIBUTE_H__INCL__
+
+#include "posix/PosixCondition.h"
 
 /**
- * @brief Wrapper around @c pthread_mutex_t.
+ * @brief A wrapper around @c pthread_condattr_t.
  *
  * @author Bloody.Rabbit
  */
-class PosixMutex
+class PosixCondition::Attribute
 {
     friend class PosixCondition;
 
 public:
-    class Attribute;
-
-    /// The default attribute of new mutexes.
-    static const Attribute DEFAULT_ATTRIBUTE;
-
     /**
-     * @brief The primary constructor.
-     *
-     * @param[in] attr The mutex attribute to use.
+     * @brief A default constructor.
      */
-    PosixMutex( const Attribute& attr = DEFAULT_ATTRIBUTE );
+    Attribute();
+    /**
+     * @brief A primary constructor.
+     *
+     * @param[in] processShared The value for process-shared attribute.
+     */
+    Attribute( int processShared );
     /**
      * @brief A destructor.
      */
-    ~PosixMutex();
+    ~Attribute();
 
     /**
-     * @brief Locks the mutex.
+     * @brief Obtains a value of process-shared attribute.
      *
-     * Blocks until the mutex is successfully locked or
-     * an error is encountered.
+     * @param[out] processShared A variable which receives the value.
      *
-     * @return A value returned by @c pthread_mutex_lock.
+     * @return A value returned by @c pthread_condattr_getpshared.
      */
-    int Lock();
+    int GetProcessShared( int* processShared ) const;
     /**
-     * @brief Tries to lock the mutex.
+     * @brief Sets the value of process-shared attribute.
      *
-     * Returns immediately; the return value indicates
-     * whether the mutex has been locked or not.
+     * @param[in] processShared A value of process-shared attribute to set.
      *
-     * @return A value returned by @c pthread_mutex_trylock.
+     * @return A value returned by @c pthread_condattr_setpshared.
      */
-    int TryLock();
-
-    /**
-     * @brief Unlocks the mutex.
-     *
-     * @return A value returned by @c pthread_mutex_unlock.
-     */
-    int Unlock();
+    int SetProcessShared( int processShared );
 
 protected:
-    /// The mutex itself.
-    pthread_mutex_t mMutex;
+    /// The condition attribute itself.
+    pthread_condattr_t mAttribute;
 };
 
-#endif /* !__POSIX__POSIX_MUTEX_H__INCL__ */
+#endif /* !__POSIX__POSIX_CONDITION_ATTRIBUTE_H__INCL__ */

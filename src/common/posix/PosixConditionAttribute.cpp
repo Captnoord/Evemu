@@ -23,64 +23,46 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __POSIX__POSIX_MUTEX_H__INCL__
-#define __POSIX__POSIX_MUTEX_H__INCL__
+#include "CommonPCH.h"
 
-/**
- * @brief Wrapper around @c pthread_mutex_t.
- *
- * @author Bloody.Rabbit
- */
-class PosixMutex
+#include "posix/PosixConditionAttribute.h"
+
+/*************************************************************************/
+/* PosixCondition::Attribute                                             */
+/*************************************************************************/
+PosixCondition::Attribute::Attribute()
 {
-    friend class PosixCondition;
+    int code;
 
-public:
-    class Attribute;
+    code = ::pthread_condattr_init( &mAttribute );
+    assert( 0 == code );
+}
 
-    /// The default attribute of new mutexes.
-    static const Attribute DEFAULT_ATTRIBUTE;
+PosixCondition::Attribute::Attribute( int processShared )
+{
+    int code;
 
-    /**
-     * @brief The primary constructor.
-     *
-     * @param[in] attr The mutex attribute to use.
-     */
-    PosixMutex( const Attribute& attr = DEFAULT_ATTRIBUTE );
-    /**
-     * @brief A destructor.
-     */
-    ~PosixMutex();
+    code = ::pthread_condattr_init( &mAttribute );
+    assert( 0 == code );
 
-    /**
-     * @brief Locks the mutex.
-     *
-     * Blocks until the mutex is successfully locked or
-     * an error is encountered.
-     *
-     * @return A value returned by @c pthread_mutex_lock.
-     */
-    int Lock();
-    /**
-     * @brief Tries to lock the mutex.
-     *
-     * Returns immediately; the return value indicates
-     * whether the mutex has been locked or not.
-     *
-     * @return A value returned by @c pthread_mutex_trylock.
-     */
-    int TryLock();
+    code = SetProcessShared( processShared );
+    assert( 0 == code );
+}
 
-    /**
-     * @brief Unlocks the mutex.
-     *
-     * @return A value returned by @c pthread_mutex_unlock.
-     */
-    int Unlock();
+PosixCondition::Attribute::~Attribute()
+{
+    int code;
 
-protected:
-    /// The mutex itself.
-    pthread_mutex_t mMutex;
-};
+    code = ::pthread_condattr_destroy( &mAttribute );
+    assert( 0 == code );
+}
 
-#endif /* !__POSIX__POSIX_MUTEX_H__INCL__ */
+int PosixCondition::Attribute::GetProcessShared( int* processShared ) const
+{
+    return ::pthread_condattr_getpshared( &mAttribute, processShared );
+}
+
+int PosixCondition::Attribute::SetProcessShared( int processShared )
+{
+    return ::pthread_condattr_setpshared( &mAttribute, processShared );
+}
