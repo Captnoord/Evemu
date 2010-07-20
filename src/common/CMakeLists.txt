@@ -127,9 +127,11 @@ IF( WIN32 )
     SET( win_INCLUDE
          "${TARGET_INCLUDE_DIR}/win/WinCommon.h"
          "${TARGET_INCLUDE_DIR}/win/WinCriticalSection.h"
+         "${TARGET_INCLUDE_DIR}/win/WinEvent.h"
          "${TARGET_INCLUDE_DIR}/win/WinHandle.h" )
     SET( win_SOURCE
          "${TARGET_SOURCE_DIR}/win/WinCriticalSection.cpp"
+         "${TARGET_SOURCE_DIR}/win/WinEvent.cpp"
          "${TARGET_SOURCE_DIR}/win/WinHandle.cpp" )
 ENDIF( WIN32 )
 
