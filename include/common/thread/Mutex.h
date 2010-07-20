@@ -20,13 +20,19 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:     Zhur
+    Author:     Bloody.Rabbit
 */
 
 #ifndef __THREAD__MUTEX_H__INCL__
 #define __THREAD__MUTEX_H__INCL__
 
 #include "utils/Lock.h"
+
+#ifdef WIN32
+#   include "win/WinCriticalSection.h"
+#else /* !WIN32 */
+#   include "posix/PosixMutex.h"
+#endif /* !WIN32 */
 
 /**
  * @brief Common wrapper for platform-specific mutexes.
@@ -37,15 +43,6 @@ class Mutex
 : public Lockable
 {
 public:
-    /**
-     * @brief Primary contructor.
-     */
-    Mutex();
-    /**
-     * @brief Destructor, releases allocated resources.
-     */
-    ~Mutex();
-
     /**
      * @brief Locks the mutex.
      */
@@ -66,39 +63,14 @@ public:
 protected:
 #ifdef WIN32
     /// A critical section used for mutex implementation on Windows.
-    CRITICAL_SECTION mCriticalSection;
+    WinCriticalSection mCriticalSection;
 #else
     /// A pthread mutex used for mutex implementation using pthread library.
-    pthread_mutex_t mMutex;
+    PosixMutex mMutex;
 #endif
 };
 
 /// Convenience typedef for Mutex's lock.
 typedef Lock< Mutex > MutexLock;
-
-// Somewhat untested...
-// Multi-read, single write Mutex
-class MRMutex {
-public:
-    MRMutex();
-    ~MRMutex();
-
-    void    ReadLock();
-    bool    TryReadLock();
-    void    UnReadLock();
-
-    void    WriteLock();
-    bool    TryWriteLock();
-    void    UnWriteLock();
-
-    int32    ReadLockCount();
-    int32    WriteLockCount();
-
-private:
-    int32    rl;    // read locks in effect
-    int32    wr;    // write lock requests pending
-    int32    wl;    // write locks in effect (should never be more than 1)
-    Mutex    MCounters;
-};
 
 #endif /* !__THREAD__MUTEX_H__INCL__ */

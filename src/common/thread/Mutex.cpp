@@ -26,170 +26,38 @@
 #include "CommonPCH.h"
 
 #include "thread/Mutex.h"
-#include "time/TimeUtils.h"
 
 /*************************************************************************/
 /* Mutex                                                                 */
 /*************************************************************************/
-Mutex::Mutex()
-{
-#ifdef WIN32
-    InitializeCriticalSection( &mCriticalSection );
-#else
-    pthread_mutexattr_t attr;
-    pthread_mutexattr_init( &attr );
-
-#   if defined( CYGWIN ) || defined( APPLE )
-    pthread_mutexattr_settype( &attr, PTHREAD_MUTEX_RECURSIVE );
-#   else
-    pthread_mutexattr_settype( &attr, PTHREAD_MUTEX_RECURSIVE_NP );
-#   endif
-
-    pthread_mutex_init( &mMutex, &attr );
-    pthread_mutexattr_destroy( &attr );
-#endif
-}
-
-Mutex::~Mutex()
-{
-#ifdef WIN32
-    DeleteCriticalSection( &mCriticalSection );
-#else
-    pthread_mutex_destroy( &mMutex );
-#endif
-}
-
 void Mutex::Lock()
 {
 #ifdef WIN32
-    EnterCriticalSection( &mCriticalSection );
+    mCriticalSection.Enter();
 #else
-    pthread_mutex_lock( &mMutex );
+    int code = mMutex.Lock();
+    assert( 0 == code );
 #endif
 }
 
 bool Mutex::TryLock()
 {
 #ifdef WIN32
-    return TRUE == TryEnterCriticalSection( &mCriticalSection );
+    return TRUE == mCriticalSection.TryEnter();
 #else
-    return 0 == pthread_mutex_trylock( &mMutex );
+    int code = mMutex.TryLock();
+    assert( 0 == code || EBUSY == code );
+
+    return 0 == code;
 #endif
 }
 
 void Mutex::Unlock()
 {
 #ifdef WIN32
-    LeaveCriticalSection( &mCriticalSection );
+    mCriticalSection.Leave();
 #else
-    pthread_mutex_unlock( &mMutex );
+    int code = mMutex.Unlock();
+    assert( 0 == code );
 #endif
-}
-
-/*************************************************************************/
-/* MRMutex                                                               */
-/*************************************************************************/
-MRMutex::MRMutex() {
-    rl = 0;
-    wr = 0;
-    rl = 0;
-}
-
-MRMutex::~MRMutex() {
-#ifdef _EQDEBUG
-    if (wl || rl) {
-        cout << "MRMutex::~MRMutex: poor cleanup detected: rl=" << rl << ", wl=" << wl << endl;
-    }
-#endif
-}
-
-void MRMutex::ReadLock() {
-    while (!TryReadLock()) {
-        Sleep(1);
-    }
-}
-
-bool MRMutex::TryReadLock() {
-    MCounters.Lock();
-    if (!wr && !wl) {
-        rl++;
-        MCounters.Unlock();
-        return true;
-    }
-    else {
-        MCounters.Unlock();
-        return false;
-    }
-}
-
-void MRMutex::UnReadLock() {
-    MCounters.Lock();
-    rl--;
-#ifdef _EQDEBUG
-    if (rl < 0) {
-        ThrowError("rl < 0 in MRMutex::UnReadLock()");
-    }
-#endif
-    MCounters.Unlock();
-}
-
-void MRMutex::WriteLock() {
-    MCounters.Lock();
-    if (!rl && !wl) {
-        wl++;
-        MCounters.Unlock();
-        return;
-    }
-    else {
-        wr++;
-        MCounters.Unlock();
-        while (1) {
-            Sleep(1);
-            MCounters.Lock();
-            if (!rl && !wl) {
-                wr--;
-                MCounters.Unlock();
-                return;
-            }
-            MCounters.Lock();
-        }
-    }
-}
-
-bool MRMutex::TryWriteLock() {
-    MCounters.Lock();
-    if (!rl && !wl) {
-        wl++;
-        MCounters.Unlock();
-        return true;
-    }
-    else {
-        MCounters.Unlock();
-        return false;
-    }
-}
-
-void MRMutex::UnWriteLock() {
-    MCounters.Lock();
-    wl--;
-#ifdef _EQDEBUG
-    if (wl < 0) {
-        ThrowError("wl < 0 in MRMutex::UnWriteLock()");
-    }
-#endif
-    MCounters.Unlock();
-}
-
-int32 MRMutex::ReadLockCount() {
-    MCounters.Lock();
-    int32 ret = rl;
-    MCounters.Unlock();
-    return ret;
-}
-
-int32 MRMutex::WriteLockCount() {
-    MCounters.Lock();
-    int32 ret = wl;
-    MCounters.Unlock();
-    return ret;
 }
