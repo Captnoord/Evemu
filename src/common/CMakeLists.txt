@@ -68,9 +68,12 @@ SET( net_SOURCE
 
 IF( NOT WIN32 )
     SET( posix_INCLUDE
-         "${TARGET_INCLUDE_DIR}/posix/PosixCommon.h" )
+         "${TARGET_INCLUDE_DIR}/posix/PosixCommon.h"
+         "${TARGET_INCLUDE_DIR}/posix/PosixMutex.h"
+         "${TARGET_INCLUDE_DIR}/posix/PosixMutexAttribute.h" )
     SET( posix_SOURCE
-         "" )
+         "${TARGET_SOURCE_DIR}/posix/PosixMutex.cpp"
+         "${TARGET_SOURCE_DIR}/posix/PosixMutexAttribute.cpp" )
 ENDIF( NOT WIN32 )
 
 SET( std_INCLUDE
