@@ -72,12 +72,16 @@ IF( NOT WIN32 )
          "${TARGET_INCLUDE_DIR}/posix/PosixCondition.h"
          "${TARGET_INCLUDE_DIR}/posix/PosixConditionAttribute.h"
          "${TARGET_INCLUDE_DIR}/posix/PosixMutex.h"
-         "${TARGET_INCLUDE_DIR}/posix/PosixMutexAttribute.h" )
+         "${TARGET_INCLUDE_DIR}/posix/PosixMutexAttribute.h"
+         "${TARGET_INCLUDE_DIR}/posix/PosixThread.h"
+         "${TARGET_INCLUDE_DIR}/posix/PosixThreadAttribute.h" )
     SET( posix_SOURCE
          "${TARGET_SOURCE_DIR}/posix/PosixCondition.cpp"
          "${TARGET_SOURCE_DIR}/posix/PosixConditionAttribute.cpp"
          "${TARGET_SOURCE_DIR}/posix/PosixMutex.cpp"
-         "${TARGET_SOURCE_DIR}/posix/PosixMutexAttribute.cpp" )
+         "${TARGET_SOURCE_DIR}/posix/PosixMutexAttribute.cpp"
+         "${TARGET_SOURCE_DIR}/posix/PosixThread.cpp"
+         "${TARGET_SOURCE_DIR}/posix/PosixThreadAttribute.cpp" )
 ENDIF( NOT WIN32 )
 
 SET( std_INCLUDE
