@@ -125,9 +125,10 @@ SET( utils_SOURCE
 
 IF( WIN32 )
     SET( win_INCLUDE
-         "${TARGET_INCLUDE_DIR}/win/WinCommon.h" )
+         "${TARGET_INCLUDE_DIR}/win/WinCommon.h"
+         "${TARGET_INCLUDE_DIR}/win/WinCriticalSection.h" )
     SET( win_SOURCE
-         "" )
+         "${TARGET_SOURCE_DIR}/win/WinCriticalSection.cpp" )
 ENDIF( WIN32 )
 
 SET( xml_INCLUDE
