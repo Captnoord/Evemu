@@ -129,12 +129,14 @@ IF( WIN32 )
          "${TARGET_INCLUDE_DIR}/win/WinCondition.h"
          "${TARGET_INCLUDE_DIR}/win/WinCriticalSection.h"
          "${TARGET_INCLUDE_DIR}/win/WinEvent.h"
-         "${TARGET_INCLUDE_DIR}/win/WinHandle.h" )
+         "${TARGET_INCLUDE_DIR}/win/WinHandle.h"
+         "${TARGET_INCLUDE_DIR}/win/WinThread.h" )
     SET( win_SOURCE
          "${TARGET_SOURCE_DIR}/win/WinCondition.cpp"
          "${TARGET_SOURCE_DIR}/win/WinCriticalSection.cpp"
          "${TARGET_SOURCE_DIR}/win/WinEvent.cpp"
-         "${TARGET_SOURCE_DIR}/win/WinHandle.cpp" )
+         "${TARGET_SOURCE_DIR}/win/WinHandle.cpp"
+         "${TARGET_SOURCE_DIR}/win/WinThread.cpp" )
 ENDIF( WIN32 )
 
 SET( xml_INCLUDE
