@@ -25,8 +25,8 @@
 
 #include "CommonPCH.h"
 
+#include "log/HexUtils.h"
 #include "log/logsys.h"
-#include "utils/utils_hex.h"
 
 FILE *logsys_log_file = NULL;
 

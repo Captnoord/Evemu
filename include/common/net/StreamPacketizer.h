@@ -23,48 +23,27 @@
     Author:     Zhur
 */
 
-#ifndef __MISC_H__INCL__
-#define __MISC_H__INCL__
+#ifndef __NET__STREAM_PACKETIZER_H__INCL__
+#define __NET__STREAM_PACKETIZER_H__INCL__
 
-/**
- * This is functionally equivalent to python's binascii.crc_hqx.
- *
- * @param[in] data Binary data to be checksumed.
- * @param[in] len  Length of binary data.
- * @param[in] crc  CRC value to start with.
- *
- * @return CRC-16 checksum.
- */
-uint16 crc_hqx( const uint8* data, size_t len, uint16 crc = 0 );
+#include "utils/Buffer.h"
 
-/**
- * @brief Calculates next (greater or equal)
- *        power-of-two number.
- *
- * @param[in] num Base number.
- *
- * @return Power-of-two number which is greater than or
- *         equal to the base number.
- */
-uint64 npowof2( uint64 num );
+class StreamPacketizer
+{
+public:
+    ~StreamPacketizer();
 
-/**
- * @brief Generates random integer from interval [low; high].
- *
- * @param[in] low  Low boundary of interval.
- * @param[in] high High boundary of interval.
- *
- * @return The generated integer.
- */
-int64 MakeRandomInt( int64 low = 0, int64 high = RAND_MAX );
-/**
- * @brief Generates random real from interval [low; high].
- *
- * @param[in] low  Low boundary of interval.
- * @param[in] high High boundary of interval.
- *
- * @return The generated real.
- */
-double MakeRandomFloat( double low = 0, double high = 1 );
+    void InputData( const Buffer& data );
+    void Process();
 
-#endif /* !__MISC_H__INCL__ */
+    Buffer* PopPacket();
+
+    void ClearBuffers();
+
+protected:
+    Buffer mBuffer;
+
+    std::queue<Buffer*> mPackets;
+};
+
+#endif /* !__NET__STREAM_PACKETIZER_H__INCL__ */

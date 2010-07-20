@@ -20,51 +20,48 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:     Zhur
+    Author:     Bloody.Rabbit
 */
 
-#ifndef __MISC_H__INCL__
-#define __MISC_H__INCL__
+#ifndef __NET__SOCKET_H__INCL__
+#define __NET__SOCKET_H__INCL__
+
+#include "net/NetUtils.h"
 
 /**
- * This is functionally equivalent to python's binascii.crc_hqx.
+ * @brief Simple wrapper for sockets.
  *
- * @param[in] data Binary data to be checksumed.
- * @param[in] len  Length of binary data.
- * @param[in] crc  CRC value to start with.
- *
- * @return CRC-16 checksum.
+ * @author Bloody.Rabbit
  */
-uint16 crc_hqx( const uint8* data, size_t len, uint16 crc = 0 );
+class Socket
+{
+public:
+    Socket( int af, int type, int protocol );
+    ~Socket();
 
-/**
- * @brief Calculates next (greater or equal)
- *        power-of-two number.
- *
- * @param[in] num Base number.
- *
- * @return Power-of-two number which is greater than or
- *         equal to the base number.
- */
-uint64 npowof2( uint64 num );
+    int connect( const sockaddr* name, unsigned int namelen );
 
-/**
- * @brief Generates random integer from interval [low; high].
- *
- * @param[in] low  Low boundary of interval.
- * @param[in] high High boundary of interval.
- *
- * @return The generated integer.
- */
-int64 MakeRandomInt( int64 low = 0, int64 high = RAND_MAX );
-/**
- * @brief Generates random real from interval [low; high].
- *
- * @param[in] low  Low boundary of interval.
- * @param[in] high High boundary of interval.
- *
- * @return The generated real.
- */
-double MakeRandomFloat( double low = 0, double high = 1 );
+    unsigned int recv( void* buf, unsigned int len, int flags );
+    unsigned int recvfrom( void* buf, unsigned int len, int flags, sockaddr* from, unsigned int* fromlen );
+    unsigned int send( const void* buf, unsigned int len, int flags );
+    unsigned int sendto( const void* buf, unsigned int len, int flags, const sockaddr* to, unsigned int tolen );
 
-#endif /* !__MISC_H__INCL__ */
+    int bind( const sockaddr* name, unsigned int namelen );
+    int listen( int backlog = SOMAXCONN );
+
+    Socket* accept( sockaddr* addr, unsigned int* addrlen );
+
+    int setopt( int level, int optname, const void* optval, unsigned int optlen );
+#ifdef WIN32
+    int ioctl( long cmd, unsigned long* argp );
+#else
+    int fcntl( int cmd, long arg );
+#endif /* !WIN32 */
+
+protected:
+    Socket( SOCKET sock );
+
+    SOCKET mSock;
+};
+
+#endif /* !__NET__SOCKET_H__INCL__ */

@@ -26,7 +26,7 @@
 #ifndef __XMLPKTGEN_H__INCL__
 #define __XMLPKTGEN_H__INCL__
 
-#include "common.h"
+#include "Common.h"
 
 /************************************************************************/
 /* dep includes                                                         */

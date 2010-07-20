@@ -23,48 +23,27 @@
     Author:     Zhur
 */
 
-#ifndef __MISC_H__INCL__
-#define __MISC_H__INCL__
+#ifndef __TIME__TIME_WIN_H__INCL__
+#define __TIME__TIME_WIN_H__INCL__
 
-/**
- * This is functionally equivalent to python's binascii.crc_hqx.
- *
- * @param[in] data Binary data to be checksumed.
- * @param[in] len  Length of binary data.
- * @param[in] crc  CRC value to start with.
- *
- * @return CRC-16 checksum.
- */
-uint16 crc_hqx( const uint8* data, size_t len, uint16 crc = 0 );
+/*
+SEC = 10000000L
+MIN = (SEC * 60L)
+HOUR = (MIN * 60L)
+DAY = (HOUR * 24L)
+MONTH = (30 * DAY)
+YEAR = (12 * MONTH)
+*/
+extern const uint64 Win32Time_Second;
+extern const uint64 Win32Time_Minute;
+extern const uint64 Win32Time_Hour;
+extern const uint64 Win32Time_Day;
+extern const uint64 Win32Time_Month;
+extern const uint64 Win32Time_Year;
 
-/**
- * @brief Calculates next (greater or equal)
- *        power-of-two number.
- *
- * @param[in] num Base number.
- *
- * @return Power-of-two number which is greater than or
- *         equal to the base number.
- */
-uint64 npowof2( uint64 num );
+extern uint64 UnixTimeToWin32Time( time_t sec, uint32 nsec );
+extern uint64 Win32TimeNow();
+extern void Win32TimeToUnixTime( uint64 win32t, time_t &unix_time, uint32 &nsec );
+extern std::string Win32TimeToString(uint64 win32t);
 
-/**
- * @brief Generates random integer from interval [low; high].
- *
- * @param[in] low  Low boundary of interval.
- * @param[in] high High boundary of interval.
- *
- * @return The generated integer.
- */
-int64 MakeRandomInt( int64 low = 0, int64 high = RAND_MAX );
-/**
- * @brief Generates random real from interval [low; high].
- *
- * @param[in] low  Low boundary of interval.
- * @param[in] high High boundary of interval.
- *
- * @return The generated real.
- */
-double MakeRandomFloat( double low = 0, double high = 1 );
-
-#endif /* !__MISC_H__INCL__ */
+#endif /* !__TIME__TIME_WIN_H__INCL__ */

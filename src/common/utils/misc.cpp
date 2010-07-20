@@ -71,26 +71,6 @@ uint16 crc_hqx( const uint8* data, size_t len, uint16 crc )
     return crc;
 }
 
-uint64 filesize( const char* filename )
-{
-    FILE* fd = fopen( filename, "r" );
-    if( fd == NULL )
-        return 0;
-
-    return filesize( fd );
-}
-
-uint64 filesize( FILE* fd )
-{
-#ifdef WIN32
-	return _filelength( _fileno( fd ) );
-#else
-	struct stat file_stat;
-	fstat( fileno( fd ), &file_stat );
-	return file_stat.st_size;
-#endif
-}
-
 uint64 npowof2( uint64 num )
 {
     --num;

@@ -20,51 +20,45 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:     Zhur
+    Author:     Bloody.Rabbit
 */
 
-#ifndef __MISC_H__INCL__
-#define __MISC_H__INCL__
+#include "CommonPCH.h"
 
-/**
- * This is functionally equivalent to python's binascii.crc_hqx.
- *
- * @param[in] data Binary data to be checksumed.
- * @param[in] len  Length of binary data.
- * @param[in] crc  CRC value to start with.
- *
- * @return CRC-16 checksum.
- */
-uint16 crc_hqx( const uint8* data, size_t len, uint16 crc = 0 );
+#include "db/DbType.h"
 
-/**
- * @brief Calculates next (greater or equal)
- *        power-of-two number.
- *
- * @param[in] num Base number.
- *
- * @return Power-of-two number which is greater than or
- *         equal to the base number.
- */
-uint64 npowof2( uint64 num );
+uint8 DBTYPE_GetSizeBits( DBTYPE type )
+{
+    switch( type )
+    {
+        case DBTYPE_I8:
+        case DBTYPE_UI8:
+        case DBTYPE_R8:
+        case DBTYPE_CY:
+        case DBTYPE_FILETIME:
+            return 64;
+        case DBTYPE_I4:
+        case DBTYPE_UI4:
+        case DBTYPE_R4:
+            return 32;
+        case DBTYPE_I2:
+        case DBTYPE_UI2:
+            return 16;
+        case DBTYPE_I1:
+        case DBTYPE_UI1:
+            return 8;
+        case DBTYPE_BOOL:
+            return 1;
+        case DBTYPE_BYTES:
+        case DBTYPE_STR:
+        case DBTYPE_WSTR:
+            return 0;
+    }
 
-/**
- * @brief Generates random integer from interval [low; high].
- *
- * @param[in] low  Low boundary of interval.
- * @param[in] high High boundary of interval.
- *
- * @return The generated integer.
- */
-int64 MakeRandomInt( int64 low = 0, int64 high = RAND_MAX );
-/**
- * @brief Generates random real from interval [low; high].
- *
- * @param[in] low  Low boundary of interval.
- * @param[in] high High boundary of interval.
- *
- * @return The generated real.
- */
-double MakeRandomFloat( double low = 0, double high = 1 );
+    return 0;
+}
 
-#endif /* !__MISC_H__INCL__ */
+uint8 DBTYPE_GetSizeBytes( DBTYPE type )
+{
+    return ( ( DBTYPE_GetSizeBits( type ) + 7 ) >> 3 );
+}

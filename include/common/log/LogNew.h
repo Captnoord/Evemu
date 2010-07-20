@@ -26,7 +26,7 @@
 #ifndef __LOG__LOG_NEW_H__INCL__
 #define __LOG__LOG_NEW_H__INCL__
 
-#include "threading/Mutex.h"
+#include "thread/Mutex.h"
 #include "utils/Singleton.h"
 
 /**

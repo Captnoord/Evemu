@@ -23,48 +23,65 @@
     Author:     Zhur
 */
 
-#ifndef __MISC_H__INCL__
-#define __MISC_H__INCL__
+#include "CommonPCH.h"
 
-/**
- * This is functionally equivalent to python's binascii.crc_hqx.
- *
- * @param[in] data Binary data to be checksumed.
- * @param[in] len  Length of binary data.
- * @param[in] crc  CRC value to start with.
- *
- * @return CRC-16 checksum.
- */
-uint16 crc_hqx( const uint8* data, size_t len, uint16 crc = 0 );
+#include "net/StreamPacketizer.h"
 
-/**
- * @brief Calculates next (greater or equal)
- *        power-of-two number.
- *
- * @param[in] num Base number.
- *
- * @return Power-of-two number which is greater than or
- *         equal to the base number.
- */
-uint64 npowof2( uint64 num );
+StreamPacketizer::~StreamPacketizer()
+{
+    ClearBuffers();
+}
 
-/**
- * @brief Generates random integer from interval [low; high].
- *
- * @param[in] low  Low boundary of interval.
- * @param[in] high High boundary of interval.
- *
- * @return The generated integer.
- */
-int64 MakeRandomInt( int64 low = 0, int64 high = RAND_MAX );
-/**
- * @brief Generates random real from interval [low; high].
- *
- * @param[in] low  Low boundary of interval.
- * @param[in] high High boundary of interval.
- *
- * @return The generated real.
- */
-double MakeRandomFloat( double low = 0, double high = 1 );
+void StreamPacketizer::InputData( const Buffer& data )
+{
+    mBuffer.AppendSeq( data.begin<uint8>(), data.end<uint8>() );
+}
 
-#endif /* !__MISC_H__INCL__ */
+void StreamPacketizer::Process()
+{
+    Buffer::const_iterator<uint8> cur, end;
+    cur = mBuffer.begin<uint8>();
+    end = mBuffer.end<uint8>();
+    while( true )
+    {
+        if( sizeof( uint32 ) > ( end - cur ) )
+            break;
+
+        const Buffer::const_iterator<uint32> len = cur.As<uint32>();
+        const Buffer::const_iterator<uint8> start = ( len + 1 ).As<uint8>();
+
+        if( *len > (uint32)( end - start ) )
+            break;
+
+        mPackets.push( new Buffer( start, start + *len ) );
+        cur = ( start + *len );
+    }
+
+    if( cur != mBuffer.begin<uint8>() )
+        mBuffer.AssignSeq( cur, end );
+}
+
+Buffer* StreamPacketizer::PopPacket()
+{
+    Buffer* ret = NULL;
+    if( !mPackets.empty() )
+    {
+        ret = mPackets.front();
+        mPackets.pop();
+    }
+
+    return ret;
+}
+
+void StreamPacketizer::ClearBuffers()
+{
+    Buffer* buf;
+    while( ( buf = PopPacket() ) )
+        SafeDelete( buf );
+}
+
+
+
+
+
+

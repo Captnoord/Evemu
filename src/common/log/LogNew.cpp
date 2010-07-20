@@ -252,8 +252,8 @@ void NewLog::SetLogfileDefault()
     localtime_r( &mTime, &t );
 
     // open default logfile
-    char filename[ MAX_PATH + 1 ];
-    snprintf( filename, MAX_PATH + 1, EVEMU_ROOT_DIR"/log/log_%02u-%02u-%04u-%02u-%02u.log",
+    char filename[ FILENAME_MAX + 1 ];
+    snprintf( filename, FILENAME_MAX + 1, EVEMU_ROOT_DIR"/log/log_%02u-%02u-%04u-%02u-%02u.log",
               t.tm_mday, t.tm_mon + 1, t.tm_year + 1900, t.tm_hour, t.tm_min );
 
     if( SetLogfile( filename ) )

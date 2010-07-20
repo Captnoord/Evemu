@@ -20,51 +20,39 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:     Zhur
+    Author:     Aim, Captnoord, Zhur, Bloody.Rabbit
 */
 
-#ifndef __MISC_H__INCL__
-#define __MISC_H__INCL__
+#include "CommonPCH.h"
 
-/**
- * This is functionally equivalent to python's binascii.crc_hqx.
- *
- * @param[in] data Binary data to be checksumed.
- * @param[in] len  Length of binary data.
- * @param[in] crc  CRC value to start with.
- *
- * @return CRC-16 checksum.
- */
-uint16 crc_hqx( const uint8* data, size_t len, uint16 crc = 0 );
+#include "fs/FsUtils.h"
 
-/**
- * @brief Calculates next (greater or equal)
- *        power-of-two number.
- *
- * @param[in] num Base number.
- *
- * @return Power-of-two number which is greater than or
- *         equal to the base number.
- */
-uint64 npowof2( uint64 num );
+uint64 filesize( const char* filename )
+{
+    FILE* fd = fopen( filename, "r" );
+    if( fd == NULL )
+        return 0;
 
-/**
- * @brief Generates random integer from interval [low; high].
- *
- * @param[in] low  Low boundary of interval.
- * @param[in] high High boundary of interval.
- *
- * @return The generated integer.
- */
-int64 MakeRandomInt( int64 low = 0, int64 high = RAND_MAX );
-/**
- * @brief Generates random real from interval [low; high].
- *
- * @param[in] low  Low boundary of interval.
- * @param[in] high High boundary of interval.
- *
- * @return The generated real.
- */
-double MakeRandomFloat( double low = 0, double high = 1 );
+    return filesize( fd );
+}
 
-#endif /* !__MISC_H__INCL__ */
+uint64 filesize( FILE* fd )
+{
+#ifdef WIN32
+	return _filelength( _fileno( fd ) );
+#else
+	struct stat file_stat;
+	fstat( fileno( fd ), &file_stat );
+	return file_stat.st_size;
+#endif
+}
+
+#ifdef WIN32
+int mkdir( const char* pathname, int mode ) 
+{ 
+    int result = CreateDirectory( pathname, NULL ); 
+
+    // mkdir returns 0 for success, opposite of CreateDirectory().
+    return ( result ? 0 : -1 ); 
+} 
+#endif /* WIN32 */

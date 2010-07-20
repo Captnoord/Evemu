@@ -20,51 +20,37 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:     Zhur
+    Author:     Aim, Captnoord, Zhur, Bloody.Rabbit
 */
 
-#ifndef __MISC_H__INCL__
-#define __MISC_H__INCL__
+#ifndef __FS__FS_UTILS_H__INCL__
+#define __FS__FS_UTILS_H__INCL__
+
+#ifdef MSVC
+#   define S_IRWXU 0
+#   define S_IRWXG 0
+#   define S_IRWXO 0
+#endif /* MSVC */
 
 /**
- * This is functionally equivalent to python's binascii.crc_hqx.
+ * @brief Obtains filesize.
  *
- * @param[in] data Binary data to be checksumed.
- * @param[in] len  Length of binary data.
- * @param[in] crc  CRC value to start with.
+ * @param[in] filename Name of file to examine.
  *
- * @return CRC-16 checksum.
+ * @return Size of file.
  */
-uint16 crc_hqx( const uint8* data, size_t len, uint16 crc = 0 );
-
+uint64 filesize( const char* filename );
 /**
- * @brief Calculates next (greater or equal)
- *        power-of-two number.
+ * @brief Obtains filesize.
  *
- * @param[in] num Base number.
+ * @param[in] fd Descriptor of file to examine.
  *
- * @return Power-of-two number which is greater than or
- *         equal to the base number.
+ * @return Size of file.
  */
-uint64 npowof2( uint64 num );
+uint64 filesize( FILE* fd );
 
-/**
- * @brief Generates random integer from interval [low; high].
- *
- * @param[in] low  Low boundary of interval.
- * @param[in] high High boundary of interval.
- *
- * @return The generated integer.
- */
-int64 MakeRandomInt( int64 low = 0, int64 high = RAND_MAX );
-/**
- * @brief Generates random real from interval [low; high].
- *
- * @param[in] low  Low boundary of interval.
- * @param[in] high High boundary of interval.
- *
- * @return The generated real.
- */
-double MakeRandomFloat( double low = 0, double high = 1 );
+#ifdef WIN32
+int mkdir( const char* pathname, int mode );
+#endif /* !WIN32 */
 
-#endif /* !__MISC_H__INCL__ */
+#endif /* !__FS__FS_UTILS_H__INCL__ */

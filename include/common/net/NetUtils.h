@@ -20,51 +20,42 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:     Zhur
+    Author:     Aim, Captnoord, Zhur, Bloody.Rabbit
 */
 
-#ifndef __MISC_H__INCL__
-#define __MISC_H__INCL__
+#ifndef __NET__NET_UTILS_H__INCL__
+#define __NET__NET_UTILS_H__INCL__
 
-/**
- * This is functionally equivalent to python's binascii.crc_hqx.
- *
- * @param[in] data Binary data to be checksumed.
- * @param[in] len  Length of binary data.
- * @param[in] crc  CRC value to start with.
- *
- * @return CRC-16 checksum.
- */
-uint16 crc_hqx( const uint8* data, size_t len, uint16 crc = 0 );
+#ifdef WIN32
+#   define MSG_NOSIGNAL 0
+#else /* !WIN32 */
+#   define INVALID_SOCKET ( -1 )
+#   define SOCKET_ERROR   ( -1 )
 
-/**
- * @brief Calculates next (greater or equal)
- *        power-of-two number.
- *
- * @param[in] num Base number.
- *
- * @return Power-of-two number which is greater than or
- *         equal to the base number.
- */
-uint64 npowof2( uint64 num );
+#   if defined( FREE_BSD )
+#       define MSG_NOSIGNAL 0
+#   elif defined( APPLE )
+#       define MSG_NOSIGNAL SO_NOSIGPIPE
+#   endif
 
-/**
- * @brief Generates random integer from interval [low; high].
- *
- * @param[in] low  Low boundary of interval.
- * @param[in] high High boundary of interval.
- *
- * @return The generated integer.
- */
-int64 MakeRandomInt( int64 low = 0, int64 high = RAND_MAX );
-/**
- * @brief Generates random real from interval [low; high].
- *
- * @param[in] low  Low boundary of interval.
- * @param[in] high High boundary of interval.
- *
- * @return The generated real.
- */
-double MakeRandomFloat( double low = 0, double high = 1 );
+typedef int SOCKET;
 
-#endif /* !__MISC_H__INCL__ */
+#endif /* !WIN32 */
+
+#ifndef ERRBUF_SIZE
+#   define ERRBUF_SIZE 1024
+#endif
+
+uint32 ResolveIP( const char* hostname, char* errbuf = NULL );
+//bool ParseAddress( const char* iAddress, int32* oIP, int16* oPort, char* errbuf = NULL );
+
+#ifdef WIN32
+class InitWinsock
+{
+public:
+    InitWinsock();
+    ~InitWinsock();
+};
+#endif
+
+#endif /* !__NET__NET_UTILS_H__INCL__ */

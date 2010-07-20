@@ -26,18 +26,19 @@
 #ifndef __COMMON_PCH_H__INCL__
 #define __COMMON_PCH_H__INCL__
 
-#include "common.h"
+/*************************************************************************/
+/* common includes                                                       */
+/*************************************************************************/
+#include "Common.h"
 
-/************************************************************************/
-/* dep includes                                                         */
-/************************************************************************/
-#include <mysql.h>
-#include <mysqld_error.h>
-#include <errmsg.h>
+#include "gangsta/GaCommon.h"
+#include "xml/XmlCommon.h"
+#include "zlib/ZlibCommon.h"
 
-#include <tinyxml.h>
-
-#include <zlib.h>
+#include "db/DbCommon.h"
+#include "fs/FsCommon.h"
+#include "net/NetCommon.h"
+#include "time/TimeCommon.h"
 
 #endif /* !__COMMON_PCH_H__INCL__ */
 

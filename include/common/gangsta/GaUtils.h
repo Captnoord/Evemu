@@ -20,51 +20,78 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:     Zhur
+    Author:     Bloody.Rabbit
 */
 
-#ifndef __MISC_H__INCL__
-#define __MISC_H__INCL__
+#ifndef __GANGSTA__GA_UTILS_H__INCL__
+#define __GANGSTA__GA_UTILS_H__INCL__
 
-/**
- * This is functionally equivalent to python's binascii.crc_hqx.
- *
- * @param[in] data Binary data to be checksumed.
- * @param[in] len  Length of binary data.
- * @param[in] crc  CRC value to start with.
- *
- * @return CRC-16 checksum.
- */
-uint16 crc_hqx( const uint8* data, size_t len, uint16 crc = 0 );
+//typedef Ga::GaVec3 GPoint;
 
-/**
- * @brief Calculates next (greater or equal)
- *        power-of-two number.
- *
- * @param[in] num Base number.
- *
- * @return Power-of-two number which is greater than or
- *         equal to the base number.
- */
-uint64 npowof2( uint64 num );
+class GPoint
+: public Ga::GaVec3
+{
+public:
+    GPoint()
+    : Ga::GaVec3()
+    {
+    }
+    GPoint( Ga::GaFloat v )
+    : Ga::GaVec3( v )
+    {
+    }
+    GPoint( const Ga::GaFloat* v )
+    : Ga::GaVec3( v )
+    {
+    }
+    GPoint( Ga::GaFloat X, Ga::GaFloat Y, Ga::GaFloat Z )
+    : Ga::GaVec3( X, Y, Z )
+    {
+    }
+    GPoint( const GPoint& oth )
+    : Ga::GaVec3( oth )
+    {
+    }
+    GPoint( const Ga::GaVec3& oth )
+    : Ga::GaVec3( oth )
+    {
+    }
+};
 
-/**
- * @brief Generates random integer from interval [low; high].
- *
- * @param[in] low  Low boundary of interval.
- * @param[in] high High boundary of interval.
- *
- * @return The generated integer.
- */
-int64 MakeRandomInt( int64 low = 0, int64 high = RAND_MAX );
-/**
- * @brief Generates random real from interval [low; high].
- *
- * @param[in] low  Low boundary of interval.
- * @param[in] high High boundary of interval.
- *
- * @return The generated real.
- */
-double MakeRandomFloat( double low = 0, double high = 1 );
+class GVector
+: public Ga::GaVec3
+{
+public:
+    GVector()
+    : Ga::GaVec3()
+    {
+    }
+    GVector( Ga::GaFloat v )
+    : Ga::GaVec3( v )
+    {
+    }
+    GVector( const Ga::GaFloat* v )
+    : Ga::GaVec3( v )
+    {
+    }
+    GVector( Ga::GaFloat X, Ga::GaFloat Y, Ga::GaFloat Z )
+    : Ga::GaVec3( X, Y, Z )
+    {
+    }
+    GVector( const GPoint& oth )
+    : Ga::GaVec3( oth )
+    {
+    }
+    GVector( const Ga::GaVec3& oth )
+    : Ga::GaVec3( oth )
+    {
+    }
+    GVector( const GPoint& from, const GPoint& to )
+    : Ga::GaVec3( ( to.x - from.x ),
+                  ( to.y - from.y ),
+                  ( to.z - from.z ) )
+    {
+    }
+};
 
-#endif /* !__MISC_H__INCL__ */
+#endif /* !__GANGSTA__GA_UTILS_H__INCL__ */

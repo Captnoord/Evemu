@@ -23,48 +23,28 @@
     Author:     Zhur
 */
 
-#ifndef __MISC_H__INCL__
-#define __MISC_H__INCL__
+#ifndef __LOG__HEX_UTILS_H__INCL__
+#define __LOG__HEX_UTILS_H__INCL__
+
+#include "log/logsys.h"
+
+/// The maximal number of bytes printed by pfxHexDumpPreview.
+extern const uint32 HEX_DUMP_PREVIEW_LIMIT;
 
 /**
- * This is functionally equivalent to python's binascii.crc_hqx.
+ * @brief Build a printable line suitable for hex dump.
  *
- * @param[in] data Binary data to be checksumed.
- * @param[in] len  Length of binary data.
- * @param[in] crc  CRC value to start with.
- *
- * @return CRC-16 checksum.
+ * @param[in]  buffer  Buffer which is being dumped.
+ * @param[in]  length  Length of buffer.
+ * @param[in]  offset  Offset at which the dump should start.
+ * @param[out] ret     Array where result is stored.
+ * @param[in]  padding Padding to be used when printing offset.
  */
-uint16 crc_hqx( const uint8* data, size_t len, uint16 crc = 0 );
+void build_hex_line( const uint8* buffer, size_t length, size_t offset, char* ret, unsigned int padding = 4 );
 
-/**
- * @brief Calculates next (greater or equal)
- *        power-of-two number.
- *
- * @param[in] num Base number.
- *
- * @return Power-of-two number which is greater than or
- *         equal to the base number.
- */
-uint64 npowof2( uint64 num );
+void pfxHexDump( const char* pfx, FILE* into, const uint8* data, uint32 length );
+void pfxHexDump( const char* pfx, LogType type, const uint8* data, uint32 length );
+void pfxHexDumpPreview( const char* pfx, FILE* into, const uint8* data, uint32 length );
+void pfxHexDumpPreview( const char* pfx, LogType type, const uint8* data, uint32 length );
 
-/**
- * @brief Generates random integer from interval [low; high].
- *
- * @param[in] low  Low boundary of interval.
- * @param[in] high High boundary of interval.
- *
- * @return The generated integer.
- */
-int64 MakeRandomInt( int64 low = 0, int64 high = RAND_MAX );
-/**
- * @brief Generates random real from interval [low; high].
- *
- * @param[in] low  Low boundary of interval.
- * @param[in] high High boundary of interval.
- *
- * @return The generated real.
- */
-double MakeRandomFloat( double low = 0, double high = 1 );
-
-#endif /* !__MISC_H__INCL__ */
+#endif /* !__LOG__HEX_UTILS_H__INCL__ */
