@@ -23,23 +23,13 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __COMMON_PCH_H__INCL__
-#define __COMMON_PCH_H__INCL__
+#ifndef __THREAD__THREAD_COMMON_H__INCL__
+#define __THREAD__THREAD_COMMON_H__INCL__
 
-/*************************************************************************/
-/* common includes                                                       */
-/*************************************************************************/
-#include "Common.h"
+#ifdef WIN32
+#   include "win/WinCommon.h"
+#else /* !WIN32 */
+#   include "posix/PosixCommon.h"
+#endif /* !WIN32 */
 
-#include "gangsta/GaCommon.h"
-#include "xml/XmlCommon.h"
-#include "zlib/ZlibCommon.h"
-
-#include "db/DbCommon.h"
-#include "fs/FsCommon.h"
-#include "net/NetCommon.h"
-#include "thread/ThreadCommon.h"
-#include "time/TimeCommon.h"
-
-#endif /* !__COMMON_PCH_H__INCL__ */
-
+#endif /* !__THREAD__THREAD_COMMON_H__INCL__ */

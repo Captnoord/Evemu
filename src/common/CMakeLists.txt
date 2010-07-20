@@ -93,6 +93,7 @@ SET( std_SOURCE
 
 SET( thread_INCLUDE
      "${TARGET_INCLUDE_DIR}/thread/Mutex.h"
+     "${TARGET_INCLUDE_DIR}/thread/ThreadCommon.h"
      "${TARGET_INCLUDE_DIR}/thread/ThreadUtils.h" )
 SET( thread_SOURCE
      "${TARGET_SOURCE_DIR}/thread/Mutex.cpp" )
