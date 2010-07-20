@@ -27,7 +27,7 @@
 
 #include "utils/misc.h"
 
-static uint16 crc16_table[ 256 ] =
+static uint16 crc16_table[ 0x100 ] =
 {
     0x0000, 0x1021, 0x2042, 0x3063, 0x4084, 0x50a5, 0x60c6, 0x70e7,
     0x8108, 0x9129, 0xa14a, 0xb16b, 0xc18c, 0xd1ad, 0xe1ce, 0xf1ef,
@@ -96,7 +96,7 @@ uint64 npowof2( uint64 num )
 
 int64 MakeRandomInt( int64 low, int64 high )
 {
-	return (int64)MakeRandomFloat( (double)low, (double)high );
+    return (int64)MakeRandomFloat( (double)low, (double)high );
 }
 
 double MakeRandomFloat( double low, double high )
@@ -105,16 +105,15 @@ double MakeRandomFloat( double low, double high )
         std::swap( low, high );
 
     double diff = high - low;
-	if( diff == 0 )
-		return low;
+    if( diff == 0 )
+        return low;
 
-	static bool seeded = false;
-	if( !seeded )
-	{
-		SeedRandom( (unsigned int)time(0) * (unsigned int)( time(0) % (int)diff ) );
-		seeded = true;
-	}
+    static bool seeded = false;
+    if( !seeded )
+    {
+        SeedRandom( (unsigned int)time(0) * (unsigned int)( time(0) % (int)diff ) );
+        seeded = true;
+    }
 
     return ( low + diff * ( (double)GenerateRandom() / (double)RAND_MAX ) );
 }
-

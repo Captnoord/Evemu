@@ -23,8 +23,8 @@
     Author:     Zhur
 */
 
-#ifndef __MISC_H__INCL__
-#define __MISC_H__INCL__
+#ifndef __UTILS__MISC_H__INCL__
+#define __UTILS__MISC_H__INCL__
 
 /**
  * This is functionally equivalent to python's binascii.crc_hqx.
@@ -67,4 +67,4 @@ int64 MakeRandomInt( int64 low = 0, int64 high = RAND_MAX );
  */
 double MakeRandomFloat( double low = 0, double high = 1 );
 
-#endif /* !__MISC_H__INCL__ */
+#endif /* !__UTILS__MISC_H__INCL__ */
