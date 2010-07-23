@@ -94,11 +94,13 @@ SET( std_SOURCE
 SET( thread_INCLUDE
      "${TARGET_INCLUDE_DIR}/thread/Condition.h"
      "${TARGET_INCLUDE_DIR}/thread/Mutex.h"
+     "${TARGET_INCLUDE_DIR}/thread/Thread.h"
      "${TARGET_INCLUDE_DIR}/thread/ThreadCommon.h"
      "${TARGET_INCLUDE_DIR}/thread/ThreadUtils.h" )
 SET( thread_SOURCE
      "${TARGET_SOURCE_DIR}/thread/Condition.cpp"
-     "${TARGET_SOURCE_DIR}/thread/Mutex.cpp" )
+     "${TARGET_SOURCE_DIR}/thread/Mutex.cpp"
+     "${TARGET_SOURCE_DIR}/thread/Thread.cpp" )
 
 SET( time_INCLUDE
      "${TARGET_INCLUDE_DIR}/time/TimeCommon.h"
