@@ -23,56 +23,58 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __THREAD__MUTEX_H__INCL__
-#define __THREAD__MUTEX_H__INCL__
+#include "CommonPCH.h"
 
-#include "utils/Lock.h"
+#include "thread/Condition.h"
+#include "time/TimeTimespec.h"
 
-#ifdef WIN32
-#   include "win/WinCriticalSection.h"
-#else /* !WIN32 */
-#   include "posix/PosixMutex.h"
-#endif /* !WIN32 */
-
-/**
- * @brief Common wrapper for platform-specific mutexes.
- *
- * @author Zhur, Bloody.Rabbit
- */
-class Mutex
-: public Lockable
+/*************************************************************************/
+/* Condition                                                             */
+/*************************************************************************/
+void Condition::Signal()
 {
-    friend class Condition;
-
-public:
-    /**
-     * @brief Locks the mutex.
-     */
-    void Lock();
-    /**
-     * @brief Attempts to lock the mutex.
-     *
-     * @retval true  Mutex successfully locked.
-     * @retval false Mutex locked by another thread.
-     */
-    bool TryLock();
-
-    /**
-     * @brief Unlocks the mutex.
-     */
-    void Unlock();
-
-protected:
 #ifdef WIN32
-    /// A critical section used for mutex implementation on Windows.
-    WinCriticalSection mCriticalSection;
-#else
-    /// A pthread mutex used for mutex implementation using pthread library.
-    PosixMutex mMutex;
-#endif
-};
+    BOOL success = mCondition.Signal();
+    assert( TRUE == success );
+#else /* !WIN32 */
+    int code = mCondition.Signal();
+    assert( 0 == code );
+#endif /* !WIN32 */
+}
 
-/// Convenience typedef for Mutex's lock.
-typedef Lock< Mutex > MutexLock;
+void Condition::Broadcast()
+{
+#ifdef WIN32
+    BOOL success = mCondition.Broadcast();
+    assert( TRUE == success );
+#else /* !WIN32 */
+    int code = mCondition.Broadcast();
+    assert( 0 == code );
+#endif /* !WIN32 */
+}
 
-#endif /* !__THREAD__MUTEX_H__INCL__ */
+void Condition::Wait( Mutex& mutex )
+{
+#ifdef WIN32
+    BOOL success = mCondition.Wait( mutex.mCriticalSection );
+    assert( TRUE == success );
+#else /* !WIN32 */
+    int code = mCondition.Wait( mutex.mMutex );
+    assert( 0 == code );
+#endif /* !WIN32 */
+}
+
+void Condition::TimedWait( Mutex& mutex, size_t timeout )
+{
+#ifdef WIN32
+    BOOL success = mCondition.Wait( mutex.mCriticalSection,
+                                    static_cast< DWORD >( timeout ) );
+    assert( TRUE == success );
+#else /* !WIN32 */
+    timespec ts;
+    SetTimespecByMsec( ts, timeout );
+
+    int code = mCondition.TimedWait( mutex.mMutex, &ts );
+    assert( 0 == code );
+#endif /* !WIN32 */
+}

@@ -23,56 +23,56 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __THREAD__MUTEX_H__INCL__
-#define __THREAD__MUTEX_H__INCL__
+#ifndef __THREAD__CONDITION_H__INCL__
+#define __THREAD__CONDITION_H__INCL__
 
-#include "utils/Lock.h"
+#include "thread/Mutex.h"
 
 #ifdef WIN32
-#   include "win/WinCriticalSection.h"
+#   include "win/WinCondition.h"
 #else /* !WIN32 */
-#   include "posix/PosixMutex.h"
+#   include "posix/PosixCondition.h"
 #endif /* !WIN32 */
 
 /**
- * @brief Common wrapper for platform-specific mutexes.
+ * @brief A wrapper around platform-specific conditions.
  *
- * @author Zhur, Bloody.Rabbit
+ * @author Bloody.Rabbit
  */
-class Mutex
-: public Lockable
+class Condition
 {
-    friend class Condition;
-
 public:
     /**
-     * @brief Locks the mutex.
+     * @brief Signals the condition.
      */
-    void Lock();
+    void Signal();
     /**
-     * @brief Attempts to lock the mutex.
-     *
-     * @retval true  Mutex successfully locked.
-     * @retval false Mutex locked by another thread.
+     * @brief Broadcasts the condition.
      */
-    bool TryLock();
+    void Broadcast();
 
     /**
-     * @brief Unlocks the mutex.
+     * @brief Waits on the condition variable.
+     *
+     * @param[in] mutex The mutex this condition is bound to.
      */
-    void Unlock();
+    void Wait( Mutex& mutex );
+    /**
+     * @brief Waits on the condition variable with a timeout.
+     *
+     * @param[in] mutex   The mutex this condition is bound to.
+     * @param[in] timeout The timeout (in milliseconds).
+     */
+    void TimedWait( Mutex& mutex, size_t timeout );
 
 protected:
 #ifdef WIN32
-    /// A critical section used for mutex implementation on Windows.
-    WinCriticalSection mCriticalSection;
-#else
-    /// A pthread mutex used for mutex implementation using pthread library.
-    PosixMutex mMutex;
-#endif
+    /// Windows condition variable.
+    WinCondition mCondition;
+#else /* !WIN32 */
+    /// pthread condition variable.
+    PosixCondition mCondition;
+#endif /* !WIN32 */
 };
 
-/// Convenience typedef for Mutex's lock.
-typedef Lock< Mutex > MutexLock;
-
-#endif /* !__THREAD__MUTEX_H__INCL__ */
+#endif /* !__THREAD__CONDITION_H__INCL__ */
