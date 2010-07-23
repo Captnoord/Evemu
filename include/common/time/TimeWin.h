@@ -20,30 +20,27 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:     Zhur
+    Author:     Bloody.Rabbit
 */
 
 #ifndef __TIME__TIME_WIN_H__INCL__
 #define __TIME__TIME_WIN_H__INCL__
 
-/*
-SEC = 10000000L
-MIN = (SEC * 60L)
-HOUR = (MIN * 60L)
-DAY = (HOUR * 24L)
-MONTH = (30 * DAY)
-YEAR = (12 * MONTH)
-*/
-extern const uint64 Win32Time_Second;
-extern const uint64 Win32Time_Minute;
-extern const uint64 Win32Time_Hour;
-extern const uint64 Win32Time_Day;
-extern const uint64 Win32Time_Month;
-extern const uint64 Win32Time_Year;
+/// Typedef for Win32Time.
+typedef uint64 Win32Time;
 
-extern uint64 UnixTimeToWin32Time( time_t sec, uint32 nsec );
-extern uint64 Win32TimeNow();
-extern void Win32TimeToUnixTime( uint64 win32t, time_t &unix_time, uint32 &nsec );
-extern std::string Win32TimeToString(uint64 win32t);
+/**
+ * @brief Obtains representation of "now" in Win32Time.
+ *
+ * @param[out] t Where to store the result.
+ */
+void SetWin32TimeByNow( Win32Time& t );
+/**
+ * @brief Obtains representation of @a tv in Win32Time.
+ *
+ * @param[out] t  Where to store the result.
+ * @param[in]  tv The @c timeval to convert.
+ */
+void SetWin32TimeByTimeval( Win32Time& t, const timeval& tv );
 
 #endif /* !__TIME__TIME_WIN_H__INCL__ */

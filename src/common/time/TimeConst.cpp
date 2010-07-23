@@ -20,17 +20,26 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:     Aim, Captnoord, Zhur, Bloody.Rabbit
+    Author:     Bloody.Rabbit
 */
 
-#ifndef __TIME__TIME_UTILS_H__INCL__
-#define __TIME__TIME_UTILS_H__INCL__
+#include "CommonPCH.h"
 
-#ifdef WIN32
-int gettimeofday( timeval* tv, void* reserved );
-#else /* !WIN32 */
-void Sleep( uint32 x );
-uint32 GetTickCount();
-#endif /* !WIN32 */
+#include "time/TimeConst.h"
 
-#endif /* !__TIME__TIME_UTILS_H__INCL__ */
+/*
+ * Even though these values might seem oversimplified, do not
+ * alter them! Win32Time-related calculations depend on these
+ * specific values.
+ */
+const size_t NSEC_PER_USEC = 1000;
+const size_t USEC_PER_MSEC = 1000;
+const size_t MSEC_PER_SEC = 1000;
+const size_t SEC_PER_MIN = 60;
+const size_t MIN_PER_HOUR = 60;
+const size_t HOUR_PER_DAY = 24;
+const size_t DAY_PER_MONTH = 30;
+const size_t MONTH_PER_YEAR = 12;
+
+const size_t WIN32TIME_PER_USEC = 10;
+const size_t WIN32TIME_SEC_EPOCH_DIFF = SEC_PER_MIN * MIN_PER_HOUR * HOUR_PER_DAY * 134774;

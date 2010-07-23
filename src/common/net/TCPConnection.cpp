@@ -29,7 +29,7 @@
 #include "log/LogNew.h"
 #include "net/NetUtils.h"
 #include "net/TCPConnection.h"
-#include "time/Timer.h"
+#include "thread/Thread.h"
 #include "time/TimeUtils.h"
 
 const uint32 TCPCONN_RECVBUF_SIZE = 0x1000;
@@ -505,7 +505,7 @@ thread_return_t TCPConnection::TCPConnectionLoop()
 
         // do the stuff for thread sleeping
         if( TCPCONN_LOOP_GRANULARITY > etime )
-            Sleep( TCPCONN_LOOP_GRANULARITY - etime );
+            Thread::Sleep( TCPCONN_LOOP_GRANULARITY - etime );
 
         start = GetTickCount();
     }

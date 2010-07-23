@@ -23,29 +23,29 @@
     Author:     Bloody.Rabbit
 */
 
-#include "CommonPCH.h"
+#ifndef __TIME__TIME_CONST_H__INCL__
+#define __TIME__TIME_CONST_H__INCL__
 
-#include "time/TimeConst.h"
-#include "time/TimeTimeval.h"
-#include "time/TimeWin.h"
+/// Number of nanoseconds in a microsecond.
+extern const size_t NSEC_PER_USEC;
+/// Number of microseconds in a millisecond.
+extern const size_t USEC_PER_MSEC;
+/// Number of milliseconds in a second.
+extern const size_t MSEC_PER_SEC;
+/// Number of seconds in a minute.
+extern const size_t SEC_PER_MIN;
+/// Number of minutes in an hour.
+extern const size_t MIN_PER_HOUR;
+/// Number of hours in a day.
+extern const size_t HOUR_PER_DAY;
+/// Number of days in a month.
+extern const size_t DAY_PER_MONTH;
+/// Number of months in a year.
+extern const size_t MONTH_PER_YEAR;
 
-void SetWin32TimeByNow( Win32Time& t )
-{
-#ifdef WIN32
-    FILETIME ft;
-    ::GetSystemTimeAsFileTime( &ft );
+/// Number of Win32Time-units per microsecond.
+extern const size_t WIN32TIME_PER_USEC;
+/// Number of seconds between Unix Epoch (January 1, 1970) and Windows Epoch (January 1, 1601).
+extern const size_t WIN32TIME_SEC_EPOCH_DIFF;
 
-    t = ( ( (Win32Time)ft.dwHighDateTime << 32 ) | (Win32Time)ft.dwLowDateTime );
-#else /* !WIN32 */
-    timeval tv;
-    SetTimevalByNow( tv );
-
-    SetWin32TimeByTimeval( t, tv );
-#endif /* !WIN32 */
-}
-
-void SetWin32TimeByTimeval( Win32Time& t, const timeval& tv )
-{
-    t  = WIN32TIME_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC * ( tv.tv_sec + WIN32TIME_SEC_EPOCH_DIFF );
-    t += WIN32TIME_PER_USEC * tv.tv_usec;
-}
+#endif /* !__TIME__TIME_CONST_H__INCL__ */

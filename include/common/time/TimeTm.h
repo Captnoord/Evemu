@@ -23,29 +23,14 @@
     Author:     Bloody.Rabbit
 */
 
-#include "CommonPCH.h"
+#ifndef __TIME__TIME_TM_H__INCL__
+#define __TIME__TIME_TM_H__INCL__
 
-#include "time/TimeConst.h"
-#include "time/TimeTimeval.h"
-#include "time/TimeWin.h"
+/**
+ * @brief Obtains representation of "now" in @c tm.
+ *
+ * @param[out] t Where to store the result.
+ */
+void SetTmByNow( tm& t );
 
-void SetWin32TimeByNow( Win32Time& t )
-{
-#ifdef WIN32
-    FILETIME ft;
-    ::GetSystemTimeAsFileTime( &ft );
-
-    t = ( ( (Win32Time)ft.dwHighDateTime << 32 ) | (Win32Time)ft.dwLowDateTime );
-#else /* !WIN32 */
-    timeval tv;
-    SetTimevalByNow( tv );
-
-    SetWin32TimeByTimeval( t, tv );
-#endif /* !WIN32 */
-}
-
-void SetWin32TimeByTimeval( Win32Time& t, const timeval& tv )
-{
-    t  = WIN32TIME_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC * ( tv.tv_sec + WIN32TIME_SEC_EPOCH_DIFF );
-    t += WIN32TIME_PER_USEC * tv.tv_usec;
-}
+#endif /* !__TIME__TIME_TM_H__INCL__ */

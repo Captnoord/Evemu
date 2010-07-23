@@ -20,36 +20,20 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:     Aim, Captnoord, Zhur, Bloody.Rabbit
+    Author:     Bloody.Rabbit
 */
 
-#include "CommonPCH.h"
+#ifndef __TIME__TIME_TIMESPEC_H__INCL__
+#define __TIME__TIME_TIMESPEC_H__INCL__
 
-#include "time/TimeUtils.h"
-
-#ifdef WIN32
-int gettimeofday( timeval* tp, void* reserved )
-{
-    timeb tb;
-    ftime( &tb );
-
-    tp->tv_sec  = (long)tb.time;
-    tp->tv_usec = tb.millitm * 1000;
-
-    return 0;
-}
-#else /* !WIN32 */
-void Sleep( uint32 x )
-{
-    if( 0 < x )
-        usleep( 1000 * x );
-}
-
-uint32 GetTickCount()
-{
-    timeval tv;
-    gettimeofday( &tv, NULL );
-
-    return ( tv.tv_sec * 1000 ) + ( tv.tv_usec / 1000 );
-}
+#ifndef WIN32
+/**
+ * @brief Obtains representation of @a msec in @c timespec.
+ *
+ * @param[out] ts   Where to store the result.
+ * @param[in]  msec Number of milliseconds to convert.
+ */
+void SetTimespecByMsec( timespec& t, const size_t& msec );
 #endif /* !WIN32 */
+
+#endif /* !__TIME__TIME_TIMESPEC_H__INCL__ */

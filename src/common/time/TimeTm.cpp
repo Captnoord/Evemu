@@ -25,27 +25,12 @@
 
 #include "CommonPCH.h"
 
-#include "time/TimeConst.h"
-#include "time/TimeTimeval.h"
-#include "time/TimeWin.h"
+#include "time/TimeTm.h"
 
-void SetWin32TimeByNow( Win32Time& t )
+void SetTmByNow( tm& t )
 {
-#ifdef WIN32
-    FILETIME ft;
-    ::GetSystemTimeAsFileTime( &ft );
+    time_t tt;
+    ::time( &tt );
 
-    t = ( ( (Win32Time)ft.dwHighDateTime << 32 ) | (Win32Time)ft.dwLowDateTime );
-#else /* !WIN32 */
-    timeval tv;
-    SetTimevalByNow( tv );
-
-    SetWin32TimeByTimeval( t, tv );
-#endif /* !WIN32 */
-}
-
-void SetWin32TimeByTimeval( Win32Time& t, const timeval& tv )
-{
-    t  = WIN32TIME_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC * ( tv.tv_sec + WIN32TIME_SEC_EPOCH_DIFF );
-    t += WIN32TIME_PER_USEC * tv.tv_usec;
+    ::localtime_r( &tt, &t );
 }

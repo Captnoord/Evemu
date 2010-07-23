@@ -27,6 +27,7 @@
 
 #include "net/TCPServer.h"
 #include "log/LogNew.h"
+#include "thread/Thread.h"
 #include "time/TimeUtils.h"
 
 const uint32 TCPSRV_ERRBUF_SIZE = 1024;
@@ -237,7 +238,7 @@ thread_return_t BaseTCPServer::TCPServerLoop()
 
         // do the stuff for thread sleeping
         if( TCPSRV_LOOP_GRANULARITY > etime )
-            Sleep( TCPSRV_LOOP_GRANULARITY - etime );
+            Thread::Sleep( TCPSRV_LOOP_GRANULARITY - etime );
 
         start = GetTickCount();
     }

@@ -100,12 +100,20 @@ SET( thread_SOURCE
 
 SET( time_INCLUDE
      "${TARGET_INCLUDE_DIR}/time/TimeCommon.h"
+     "${TARGET_INCLUDE_DIR}/time/TimeConst.h"
+     "${TARGET_INCLUDE_DIR}/time/TimeMsec.h"
      "${TARGET_INCLUDE_DIR}/time/Timer.h"
-     "${TARGET_INCLUDE_DIR}/time/TimeUtils.h"
+     "${TARGET_INCLUDE_DIR}/time/TimeTimespec.h"
+     "${TARGET_INCLUDE_DIR}/time/TimeTimeval.h"
+     "${TARGET_INCLUDE_DIR}/time/TimeTm.h"
      "${TARGET_INCLUDE_DIR}/time/TimeWin.h" )
 SET( time_SOURCE
+     "${TARGET_SOURCE_DIR}/time/TimeConst.cpp"
+     "${TARGET_SOURCE_DIR}/time/TimeMsec.cpp"
      "${TARGET_SOURCE_DIR}/time/Timer.cpp"
-     "${TARGET_SOURCE_DIR}/time/TimeUtils.cpp"
+     "${TARGET_SOURCE_DIR}/time/TimeTimespec.cpp"
+     "${TARGET_SOURCE_DIR}/time/TimeTimeval.cpp"
+     "${TARGET_SOURCE_DIR}/time/TimeTm.cpp"
      "${TARGET_SOURCE_DIR}/time/TimeWin.cpp" )
 
 SET( utils_INCLUDE

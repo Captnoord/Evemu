@@ -29,23 +29,21 @@
 #include "time/TimeTimeval.h"
 #include "time/TimeWin.h"
 
-void SetWin32TimeByNow( Win32Time& t )
+void SetTimevalByNow( timeval& tv )
 {
 #ifdef WIN32
-    FILETIME ft;
-    ::GetSystemTimeAsFileTime( &ft );
+    Win32Time t;
+    SetWin32TimeByNow( t );
 
-    t = ( ( (Win32Time)ft.dwHighDateTime << 32 ) | (Win32Time)ft.dwLowDateTime );
+    SetTimevalByWin32Time( tv, t );
 #else /* !WIN32 */
-    timeval tv;
-    SetTimevalByNow( tv );
-
-    SetWin32TimeByTimeval( t, tv );
+    int code = ::gettimeofday( &tv, NULL );
+    assert( 0 == code );
 #endif /* !WIN32 */
 }
 
-void SetWin32TimeByTimeval( Win32Time& t, const timeval& tv )
+void SetTimevalByWin32Time( timeval& tv, const Win32Time& t )
 {
-    t  = WIN32TIME_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC * ( tv.tv_sec + WIN32TIME_SEC_EPOCH_DIFF );
-    t += WIN32TIME_PER_USEC * tv.tv_usec;
+    tv.tv_sec = t / ( WIN32TIME_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC );
+    tv.tv_usec = ( t % ( WIN32TIME_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC ) ) / WIN32TIME_PER_USEC;
 }
