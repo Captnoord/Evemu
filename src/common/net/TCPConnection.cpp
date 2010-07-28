@@ -29,8 +29,7 @@
 #include "log/LogNew.h"
 #include "net/NetUtils.h"
 #include "net/TCPConnection.h"
-#include "thread/Thread.h"
-#include "time/TimeUtils.h"
+#include "time/Timer.h"
 
 const uint32 TCPCONN_RECVBUF_SIZE = 0x1000;
 const uint32 TCPCONN_LOOP_GRANULARITY = 5;
@@ -493,22 +492,11 @@ thread_return_t TCPConnection::TCPConnectionLoop()
 
     mMLoopRunning.Lock();
 
-    uint32 start = GetTickCount();
-    uint32 etime;
-    uint32 last_time;
+    Timer timer( TCPCONN_LOOP_GRANULARITY );
 
+    timer.Start();
     while( Process() )
-    {
-        /* UPDATE */
-        last_time = GetTickCount();
-        etime = last_time - start;
-
-        // do the stuff for thread sleeping
-        if( TCPCONN_LOOP_GRANULARITY > etime )
-            Thread::Sleep( TCPCONN_LOOP_GRANULARITY - etime );
-
-        start = GetTickCount();
-    }
+        timer.Sleep();
 
     mMLoopRunning.Unlock();
 

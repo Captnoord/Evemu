@@ -27,8 +27,7 @@
 
 #include "net/TCPServer.h"
 #include "log/LogNew.h"
-#include "thread/Thread.h"
-#include "time/TimeUtils.h"
+#include "time/Timer.h"
 
 const uint32 TCPSRV_ERRBUF_SIZE = 1024;
 const uint32 TCPSRV_LOOP_GRANULARITY = 5;
@@ -226,22 +225,11 @@ thread_return_t BaseTCPServer::TCPServerLoop()
 
     mMLoopRunning.Lock();
 
-    uint32 start = GetTickCount();
-    uint32 etime;
-    uint32 last_time;
+    Timer timer( TCPSRV_LOOP_GRANULARITY );
 
+    timer.Start();
     while( Process() )
-    {
-        /* UPDATE */
-        last_time = GetTickCount();
-        etime = last_time - start;
-
-        // do the stuff for thread sleeping
-        if( TCPSRV_LOOP_GRANULARITY > etime )
-            Thread::Sleep( TCPSRV_LOOP_GRANULARITY - etime );
-
-        start = GetTickCount();
-    }
+        timer.Sleep();
 
     mMLoopRunning.Unlock();
 
