@@ -38,66 +38,59 @@ WinCondition::WinCondition()
 
 BOOL WinCondition::Signal()
 {
-    BOOL success;
+    MutexLock lock( mMutex );
 
-    {
-        MutexLock lock( mMutex );
-
-        mToFreeCount = std::min( mToFreeCount + 1, mCurrentCount );
-
-        if( 0 < mToFreeCount )
-            success = mWaitEvent.Set();
-        else
-            success = TRUE;
-    }
-
-    return success;
+    mToFreeCount = std::min( mToFreeCount + 1, mCurrentCount );
+    return ( 0 < mToFreeCount ? mWaitEvent.Set() : TRUE );
 }
 
 BOOL WinCondition::Broadcast()
 {
-    BOOL success;
+    MutexLock lock( mMutex );
 
-    {
-        MutexLock lock( mMutex );
-
-        mToFreeCount = mCurrentCount;
-
-        if( 0 < mToFreeCount )
-            success = mWaitEvent.Set();
-        else
-            success = TRUE;
-    }
-
-    return success;
+    mToFreeCount = mCurrentCount;
+    return ( 0 < mToFreeCount ? mWaitEvent.Set() : TRUE );
 }
 
 DWORD WinCondition::Wait( WinCriticalSection& criticalSection, DWORD timeout )
 {
-    DWORD code = WAIT_OBJECT_0;
-
-    MutexLock lock( mMutex );
-    ++mCurrentCount;
-
-    while( WAIT_OBJECT_0 == code
-           && 0 == mToFreeCount )
     {
-        lock.Unlock();
-
-        criticalSection.Leave();
-        code = mWaitEvent.Wait( timeout );
-        criticalSection.Enter();
-
-        lock.Relock();
+        MutexLock lock( mMutex );
+        ++mCurrentCount;
     }
 
-    if( 0 < mToFreeCount )
-        --mToFreeCount;
+    criticalSection.Leave();
+    DWORD code = mWaitEvent.Wait( timeout );
+    criticalSection.Enter();
 
-    if( 0 < mToFreeCount )
-        mWaitEvent.Set();
+    {
+        MutexLock lock( mMutex );
+        assert( mToFreeCount <= mCurrentCount );
 
-    --mCurrentCount;
+        /* It is important to do the stuff below ONLY IF
+           we have been woken up intentionally. */
+        if( WAIT_OBJECT_0 == code )
+        {
+            assert( 0 < mToFreeCount );
+            --mToFreeCount;
+
+            if( 0 < mToFreeCount )
+                mWaitEvent.Set();
+            else
+                mWaitEvent.Reset();
+        }
+        /* We failed to wait, so act like we've never been
+           here. However, we still need to keep integrity. */
+        else if( mToFreeCount == mCurrentCount )
+        {
+            --mToFreeCount;
+
+            if( 0 == mToFreeCount )
+                mWaitEvent.Reset();
+        }
+
+        --mCurrentCount;
+    }
 
     return code;
 }

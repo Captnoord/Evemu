@@ -26,6 +26,7 @@
 #include "CommonPCH.h"
 
 #include "thread/Condition.h"
+#include "time/TimeMsec.h"
 #include "time/TimeTimespec.h"
 
 /*************************************************************************/
@@ -71,8 +72,14 @@ void Condition::TimedWait( Mutex& mutex, size_t timeout )
                                     static_cast< DWORD >( timeout ) );
     assert( TRUE == success );
 #else /* !WIN32 */
+    // make absolute time
+    size_t msec;
+    SetMsecByNow( msec );
+    msec += timeout;
+
+    // convert it to timespec
     timespec ts;
-    SetTimespecByMsec( ts, timeout );
+    SetTimespecByMsec( ts, msec );
 
     int code = mCondition.TimedWait( mutex.mMutex, &ts );
     assert( 0 == code );
