@@ -52,6 +52,17 @@ SET( log_SOURCE
      "${TARGET_SOURCE_DIR}/log/LogNew.cpp"
      "${TARGET_SOURCE_DIR}/log/logsys.cpp" )
 
+SET( mt_INCLUDE
+     "${TARGET_INCLUDE_DIR}/mt/Condition.h"
+     "${TARGET_INCLUDE_DIR}/mt/MtCommon.h"
+     "${TARGET_INCLUDE_DIR}/mt/MtUtils.h"
+     "${TARGET_INCLUDE_DIR}/mt/Mutex.h"
+     "${TARGET_INCLUDE_DIR}/mt/Thread.h" )
+SET( mt_SOURCE
+     "${TARGET_SOURCE_DIR}/mt/Condition.cpp"
+     "${TARGET_SOURCE_DIR}/mt/Mutex.cpp"
+     "${TARGET_SOURCE_DIR}/mt/Thread.cpp" )
+
 SET( net_INCLUDE
      "${TARGET_INCLUDE_DIR}/net/NetCommon.h"
      "${TARGET_INCLUDE_DIR}/net/NetUtils.h"
@@ -90,17 +101,6 @@ SET( std_INCLUDE
      "${TARGET_INCLUDE_DIR}/std/StdUtils.h" )
 SET( std_SOURCE
      "${TARGET_SOURCE_DIR}/std/StdUtils.cpp" )
-
-SET( thread_INCLUDE
-     "${TARGET_INCLUDE_DIR}/thread/Condition.h"
-     "${TARGET_INCLUDE_DIR}/thread/Mutex.h"
-     "${TARGET_INCLUDE_DIR}/thread/Thread.h"
-     "${TARGET_INCLUDE_DIR}/thread/ThreadCommon.h"
-     "${TARGET_INCLUDE_DIR}/thread/ThreadUtils.h" )
-SET( thread_SOURCE
-     "${TARGET_SOURCE_DIR}/thread/Condition.cpp"
-     "${TARGET_SOURCE_DIR}/thread/Mutex.cpp"
-     "${TARGET_SOURCE_DIR}/thread/Thread.cpp" )
 
 SET( time_INCLUDE
      "${TARGET_INCLUDE_DIR}/time/TimeCommon.h"
@@ -180,10 +180,10 @@ SOURCE_GROUP( "include\\db"      FILES ${db_INCLUDE} )
 SOURCE_GROUP( "include\\fs"      FILES ${fs_INCLUDE} )
 SOURCE_GROUP( "include\\gangsta" FILES ${gangsta_INCLUDE} )
 SOURCE_GROUP( "include\\log"     FILES ${log_INCLUDE} )
+SOURCE_GROUP( "include\\mt"      FILES ${mt_INCLUDE} )
 SOURCE_GROUP( "include\\net"     FILES ${net_INCLUDE} )
 SOURCE_GROUP( "include\\posix"   FILES ${posix_INCLUDE} )
 SOURCE_GROUP( "include\\std"     FILES ${std_INCLUDE} )
-SOURCE_GROUP( "include\\thread"  FILES ${thread_INCLUDE} )
 SOURCE_GROUP( "include\\time"    FILES ${time_INCLUDE} )
 SOURCE_GROUP( "include\\utils"   FILES ${utils_INCLUDE} )
 SOURCE_GROUP( "include\\win"     FILES ${win_INCLUDE} )
@@ -195,10 +195,10 @@ SOURCE_GROUP( "src\\db"      FILES ${db_SOURCE} )
 SOURCE_GROUP( "src\\fs"      FILES ${fs_SOURCE} )
 SOURCE_GROUP( "src\\gangsta" FILES ${gangsta_SOURCE} )
 SOURCE_GROUP( "src\\log"     FILES ${log_SOURCE} )
+SOURCE_GROUP( "src\\mt"      FILES ${mt_SOURCE} )
 SOURCE_GROUP( "src\\net"     FILES ${net_SOURCE} )
 SOURCE_GROUP( "src\\posix"   FILES ${posix_SOURCE} )
 SOURCE_GROUP( "src\\std"     FILES ${std_SOURCE} )
-SOURCE_GROUP( "src\\thread"  FILES ${thread_SOURCE} )
 SOURCE_GROUP( "src\\time"    FILES ${time_SOURCE} )
 SOURCE_GROUP( "src\\utils"   FILES ${utils_SOURCE} )
 SOURCE_GROUP( "src\\win"     FILES ${win_SOURCE} )
@@ -211,10 +211,10 @@ ADD_LIBRARY( "${TARGET_NAME}"
              ${fs_INCLUDE}      ${fs_SOURCE}
              ${gangsta_INCLUDE} ${gangsta_SOURCE}
              ${log_INCLUDE}     ${log_SOURCE}
+             ${mt_INCLUDE}      ${mt_SOURCE}
              ${net_INCLUDE}     ${net_SOURCE}
              ${posix_INCLUDE}   ${posix_SOURCE}
              ${std_INCLUDE}     ${std_SOURCE}
-             ${thread_INCLUDE}  ${thread_SOURCE}
              ${time_INCLUDE}    ${time_SOURCE}
              ${utils_INCLUDE}   ${utils_SOURCE}
              ${win_INCLUDE}     ${win_SOURCE}

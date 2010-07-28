@@ -30,7 +30,7 @@
 //if you can get over the SQL incompatibilities and mysql auto increment problems.
 
 #include "db/DbType.h"
-#include "thread/Mutex.h"
+#include "mt/Mutex.h"
 #include "utils/Singleton.h"
 
 class DbCore;

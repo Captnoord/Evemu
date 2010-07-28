@@ -23,8 +23,8 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __THREAD__THREAD_COMMON_H__INCL__
-#define __THREAD__THREAD_COMMON_H__INCL__
+#ifndef __MT__MT_COMMON_H__INCL__
+#define __MT__MT_COMMON_H__INCL__
 
 #ifdef WIN32
 #   include "win/WinCommon.h"
@@ -32,4 +32,4 @@
 #   include "posix/PosixCommon.h"
 #endif /* !WIN32 */
 
-#endif /* !__THREAD__THREAD_COMMON_H__INCL__ */
+#endif /* !__MT__MT_COMMON_H__INCL__ */

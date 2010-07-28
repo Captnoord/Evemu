@@ -20,22 +20,59 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:     Aim, Captnoord, Zhur, Bloody.Rabbit
+    Author:     Bloody.Rabbit
 */
 
-#ifndef __THREAD__THREAD_UTILS_H__INCL__
-#define __THREAD__THREAD_UTILS_H__INCL__
+#ifndef __MT__MUTEX_H__INCL__
+#define __MT__MUTEX_H__INCL__
 
-// Return thread macro's
-// URL: http://msdn.microsoft.com/en-us/library/hw264s73(VS.80).aspx
-// Important Quote: "_endthread and _endthreadex cause C++ destructors pending in the thread not to be called."
-// Result: mem leaks under windows
+#include "utils/Lock.h"
+
 #ifdef WIN32
-#   define THREAD_RETURN( x ) ( x )
-typedef void thread_return_t;
+#   include "win/WinCriticalSection.h"
 #else /* !WIN32 */
-#   define THREAD_RETURN( x ) return ( x )
-typedef void* thread_return_t;
+#   include "posix/PosixMutex.h"
 #endif /* !WIN32 */
 
-#endif /* !__THREAD__THREAD_UTILS_H__INCL__ */
+/**
+ * @brief Common wrapper for platform-specific mutexes.
+ *
+ * @author Zhur, Bloody.Rabbit
+ */
+class Mutex
+: public Lockable
+{
+    friend class Condition;
+
+public:
+    /**
+     * @brief Locks the mutex.
+     */
+    void Lock();
+    /**
+     * @brief Attempts to lock the mutex.
+     *
+     * @retval true  Mutex successfully locked.
+     * @retval false Mutex locked by another thread.
+     */
+    bool TryLock();
+
+    /**
+     * @brief Unlocks the mutex.
+     */
+    void Unlock();
+
+protected:
+#ifdef WIN32
+    /// A critical section used for mutex implementation on Windows.
+    WinCriticalSection mCriticalSection;
+#else
+    /// A pthread mutex used for mutex implementation using pthread library.
+    PosixMutex mMutex;
+#endif
+};
+
+/// Convenience typedef for Mutex's lock.
+typedef Lock< Mutex > MutexLock;
+
+#endif /* !__MT__MUTEX_H__INCL__ */

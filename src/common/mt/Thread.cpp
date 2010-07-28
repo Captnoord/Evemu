@@ -25,7 +25,7 @@
 
 #include "CommonPCH.h"
 
-#include "thread/Thread.h"
+#include "mt/Thread.h"
 #include "time/TimeConst.h"
 
 /*************************************************************************/

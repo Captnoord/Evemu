@@ -26,9 +26,9 @@
 #ifndef __NET__TCP_SERVER_H__INCL__
 #define __NET__TCP_SERVER_H__INCL__
 
+#include "mt/MtUtils.h"
+#include "mt/Mutex.h"
 #include "net/Socket.h"
-#include "thread/Mutex.h"
-#include "thread/ThreadUtils.h"
 
 /** Size of error buffer BaseTCPServer uses. */
 extern const uint32 TCPSRV_ERRBUF_SIZE;

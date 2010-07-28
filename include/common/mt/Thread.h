@@ -23,8 +23,8 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __THREAD__THREAD_H__INCL__
-#define __THREAD__THREAD_H__INCL__
+#ifndef __MT__THREAD_H__INCL__
+#define __MT__THREAD_H__INCL__
 
 #ifdef WIN32
 #   include "win/WinThread.h"
@@ -171,4 +171,4 @@ protected:
 #endif /* !WIN32 */
 };
 
-#endif /* !__THREAD__THREAD_H__INCL__ */
+#endif /* !__MT__THREAD_H__INCL__ */

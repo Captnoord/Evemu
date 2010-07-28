@@ -23,56 +23,65 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __THREAD__CONDITION_H__INCL__
-#define __THREAD__CONDITION_H__INCL__
+#include "CommonPCH.h"
 
-#include "thread/Mutex.h"
+#include "mt/Condition.h"
+#include "time/TimeMsec.h"
+#include "time/TimeTimespec.h"
 
-#ifdef WIN32
-#   include "win/WinCondition.h"
-#else /* !WIN32 */
-#   include "posix/PosixCondition.h"
-#endif /* !WIN32 */
-
-/**
- * @brief A wrapper around platform-specific conditions.
- *
- * @author Bloody.Rabbit
- */
-class Condition
+/*************************************************************************/
+/* Condition                                                             */
+/*************************************************************************/
+void Condition::Signal()
 {
-public:
-    /**
-     * @brief Signals the condition.
-     */
-    void Signal();
-    /**
-     * @brief Broadcasts the condition.
-     */
-    void Broadcast();
-
-    /**
-     * @brief Waits on the condition variable.
-     *
-     * @param[in] mutex The mutex this condition is bound to.
-     */
-    void Wait( Mutex& mutex );
-    /**
-     * @brief Waits on the condition variable with a timeout.
-     *
-     * @param[in] mutex   The mutex this condition is bound to.
-     * @param[in] timeout The timeout (in milliseconds).
-     */
-    void TimedWait( Mutex& mutex, size_t timeout );
-
-protected:
 #ifdef WIN32
-    /// Windows condition variable.
-    WinCondition mCondition;
+    BOOL success = mCondition.Signal();
+    assert( TRUE == success );
 #else /* !WIN32 */
-    /// pthread condition variable.
-    PosixCondition mCondition;
+    int code = mCondition.Signal();
+    assert( 0 == code );
 #endif /* !WIN32 */
-};
+}
 
-#endif /* !__THREAD__CONDITION_H__INCL__ */
+void Condition::Broadcast()
+{
+#ifdef WIN32
+    BOOL success = mCondition.Broadcast();
+    assert( TRUE == success );
+#else /* !WIN32 */
+    int code = mCondition.Broadcast();
+    assert( 0 == code );
+#endif /* !WIN32 */
+}
+
+void Condition::Wait( Mutex& mutex )
+{
+#ifdef WIN32
+    BOOL success = mCondition.Wait( mutex.mCriticalSection );
+    assert( TRUE == success );
+#else /* !WIN32 */
+    int code = mCondition.Wait( mutex.mMutex );
+    assert( 0 == code );
+#endif /* !WIN32 */
+}
+
+void Condition::TimedWait( Mutex& mutex, size_t timeout )
+{
+#ifdef WIN32
+    BOOL success = mCondition.Wait( mutex.mCriticalSection,
+                                    static_cast< DWORD >( timeout ) );
+    assert( TRUE == success );
+#else /* !WIN32 */
+    // make absolute time
+    size_t msec;
+    SetMsecByNow( msec );
+    msec += timeout;
+
+    // convert it to timespec
+    timespec ts;
+    SetTimespecByMsec( ts, msec );
+
+    int code = mCondition.TimedWait( mutex.mMutex, &ts );
+    assert( 0 == code );
+#endif /* !WIN32 */
+}

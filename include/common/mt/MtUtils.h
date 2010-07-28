@@ -20,44 +20,22 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:     Zhur
+    Author:     Aim, Captnoord, Zhur, Bloody.Rabbit
 */
 
-#include "CommonPCH.h"
+#ifndef __MT__MT_UTILS_H__INCL__
+#define __MT__MT_UTILS_H__INCL__
 
-#include "thread/Mutex.h"
-
-/*************************************************************************/
-/* Mutex                                                                 */
-/*************************************************************************/
-void Mutex::Lock()
-{
+// Return thread macro's
+// URL: http://msdn.microsoft.com/en-us/library/hw264s73(VS.80).aspx
+// Important Quote: "_endthread and _endthreadex cause C++ destructors pending in the thread not to be called."
+// Result: mem leaks under windows
 #ifdef WIN32
-    mCriticalSection.Enter();
-#else
-    int code = mMutex.Lock();
-    assert( 0 == code );
-#endif
-}
+#   define THREAD_RETURN( x ) ( x )
+typedef void thread_return_t;
+#else /* !WIN32 */
+#   define THREAD_RETURN( x ) return ( x )
+typedef void* thread_return_t;
+#endif /* !WIN32 */
 
-bool Mutex::TryLock()
-{
-#ifdef WIN32
-    return TRUE == mCriticalSection.TryEnter();
-#else
-    int code = mMutex.TryLock();
-    assert( 0 == code || EBUSY == code );
-
-    return 0 == code;
-#endif
-}
-
-void Mutex::Unlock()
-{
-#ifdef WIN32
-    mCriticalSection.Leave();
-#else
-    int code = mMutex.Unlock();
-    assert( 0 == code );
-#endif
-}
+#endif /* !__MT__MT_UTILS_H__INCL__ */

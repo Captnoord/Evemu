@@ -26,9 +26,9 @@
 #ifndef __NET__TCP_CONNECTION_H__INCL__
 #define __NET__TCP_CONNECTION_H__INCL__
 
+#include "mt/MtUtils.h"
+#include "mt/Mutex.h"
 #include "net/Socket.h"
-#include "thread/Mutex.h"
-#include "thread/ThreadUtils.h"
 #include "utils/Buffer.h"
 
 /** Size of error buffer TCPConnection uses. */

@@ -20,68 +20,44 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:     Bloody.Rabbit
+    Author:     Zhur
 */
 
 #include "CommonPCH.h"
 
-#include "thread/Condition.h"
-#include "time/TimeMsec.h"
-#include "time/TimeTimespec.h"
+#include "mt/Mutex.h"
 
 /*************************************************************************/
-/* Condition                                                             */
+/* Mutex                                                                 */
 /*************************************************************************/
-void Condition::Signal()
+void Mutex::Lock()
 {
 #ifdef WIN32
-    BOOL success = mCondition.Signal();
-    assert( TRUE == success );
-#else /* !WIN32 */
-    int code = mCondition.Signal();
+    mCriticalSection.Enter();
+#else
+    int code = mMutex.Lock();
     assert( 0 == code );
-#endif /* !WIN32 */
+#endif
 }
 
-void Condition::Broadcast()
+bool Mutex::TryLock()
 {
 #ifdef WIN32
-    BOOL success = mCondition.Broadcast();
-    assert( TRUE == success );
-#else /* !WIN32 */
-    int code = mCondition.Broadcast();
-    assert( 0 == code );
-#endif /* !WIN32 */
+    return TRUE == mCriticalSection.TryEnter();
+#else
+    int code = mMutex.TryLock();
+    assert( 0 == code || EBUSY == code );
+
+    return 0 == code;
+#endif
 }
 
-void Condition::Wait( Mutex& mutex )
+void Mutex::Unlock()
 {
 #ifdef WIN32
-    BOOL success = mCondition.Wait( mutex.mCriticalSection );
-    assert( TRUE == success );
-#else /* !WIN32 */
-    int code = mCondition.Wait( mutex.mMutex );
+    mCriticalSection.Leave();
+#else
+    int code = mMutex.Unlock();
     assert( 0 == code );
-#endif /* !WIN32 */
-}
-
-void Condition::TimedWait( Mutex& mutex, size_t timeout )
-{
-#ifdef WIN32
-    BOOL success = mCondition.Wait( mutex.mCriticalSection,
-                                    static_cast< DWORD >( timeout ) );
-    assert( TRUE == success );
-#else /* !WIN32 */
-    // make absolute time
-    size_t msec;
-    SetMsecByNow( msec );
-    msec += timeout;
-
-    // convert it to timespec
-    timespec ts;
-    SetTimespecByMsec( ts, msec );
-
-    int code = mCondition.TimedWait( mutex.mMutex, &ts );
-    assert( 0 == code );
-#endif /* !WIN32 */
+#endif
 }
