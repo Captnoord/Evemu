@@ -20,51 +20,90 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:     Zhur
+    Author:     Bloody.Rabbit
 */
 
 #ifndef __TIME__TIMER_H__INCL__
 #define __TIME__TIMER_H__INCL__
 
+/**
+ * @brief A simple timer.
+ *
+ * @author Bloody.Rabbit
+ */
 class Timer
 {
 public:
-    Timer(int32 timer_time, bool iUseAcurateTiming = false);
-    Timer(int32 start, int32 timer, bool iUseAcurateTiming);
-    ~Timer() { }
+    /**
+     * @brief A primary constructor.
+     *
+     * @param[in] period   The timer period.
+     * @param[in] accurate Use accurate timing.
+     */
+    Timer( size_t period, bool accurate = false );
+    /**
+     * @brief A destructor.
+     */
+    ~Timer();
 
-    bool Check(bool iReset = true);
-    void Enable();
-    void Disable();
-    void Start(int32 set_timer_time=0, bool ChangeResetTimer = true);
-    void SetTimer(int32 set_timer_time=0);
-    int32 GetRemainingTime() const;
-    inline const int32& GetTimerTime()        { return timer_time; }
-    inline const int32& GetSetAtTrigger()    { return set_at_trigger; }
-    void Trigger();
-    void SetAtTrigger(int32 set_at_trigger, bool iEnableIfDisabled = false);
+    /// Obtains timer period.
+    size_t period() const { return mPeriod; }
+    /// Obtains accurate timing option.
+    bool accurate() const { return mAccurate; }
 
-    inline bool Enabled() const { return enabled; }
-    inline int32 GetStartTime() const { return(start_time); }
-    inline int32 GetDuration() const { return(timer_time); }
+    /**
+     * @brief Starts the timer.
+     *
+     * After starting the timer, you can check if the
+     * @a period has passed by calling Check().
+     *
+     * If the timer is not accurate, it simply makes the
+     * Check() return @c true after exactly @a period from now.
+     *
+     * If the timer is accurate and this is the first call,
+     * the behavior is same as if the timer is not accurate.
+     *
+     * If the timer is accurate and this is some subsequent
+     * call, it takes the target end time from before and
+     * advances it into future by @a period.
+     */
+    void Start();
+    /**
+     * @brief Checks the timer.
+     *
+     * Checks if the @a period has passed since the last
+     * call of Start().
+     *
+     * @param[in] restart Pass @c true to have the timer restarted
+     *                    when the @a period has passed. It has the
+     *                    same effect as calling Start() right after
+     *                    the Check() returns @c true.
+     *
+     * @retval true  The period has already passed.
+     * @retval false The period has not passed yet.
+     */
+    bool Check( bool restart = true );
+    /**
+     * @brief Suspends the calling thread.
+     *
+     * The calling thread is made to sleep until the
+     * @a period passes.
+     *
+     * @param[in] restart Pass @c true to have the timer restarted
+     *                    when the @a period has passed. It has the
+     *                    same effect as calling Start() right after
+     *                    the Sleep() returns.
+     */
+    void Sleep( bool restart = true );
 
-    static const int32 SetCurrentTime();
-    static const int32 GetCurrentTime();
-    static const int32 GetTimeSeconds();
+protected:
+    /// The end time.
+    size_t mEnd;
 
-private:
-    int32    start_time;
-    int32    timer_time;
-    bool    enabled;
-    int32    set_at_trigger;
-
-    // Tells the timer to be more accurate about happening every X ms.
-    // Instead of Check() setting the start_time = now,
-    // it it sets it to start_time += timer_time
-    bool    pUseAcurateTiming;
-
-    //static int32 current_time;
-    //static int32 last_time;
+    /// The timer period.
+    const size_t mPeriod;
+    /// True if accurate.
+    const bool mAccurate;
 };
 
 #endif /* !__TIME__TIMER_H__INCL__ */

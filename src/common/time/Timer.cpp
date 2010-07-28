@@ -25,150 +25,56 @@
 
 #include "CommonPCH.h"
 
+#include "thread/Thread.h"
+#include "time/TimeMsec.h"
 #include "time/Timer.h"
 
-static int32 current_time = 0;
-static int32 current_seconds = 0;
-static int32 last_time = 0;
-
-Timer::Timer(int32 in_timer_time, bool iUseAcurateTiming) {
-    timer_time = in_timer_time;
-    start_time = current_time;
-    set_at_trigger = timer_time;
-    pUseAcurateTiming = iUseAcurateTiming;
-    if (timer_time == 0) {
-        enabled = false;
-    }
-    else {
-        enabled = true;
-    }
-}
-
-Timer::Timer(int32 start, int32 timer, bool iUseAcurateTiming = false) {
-    timer_time = timer;
-    start_time = start;
-    set_at_trigger = timer_time;
-    pUseAcurateTiming = iUseAcurateTiming;
-    if (timer_time == 0) {
-        enabled = false;
-    }
-    else {
-        enabled = true;
-    }
-}
-
-/* This function checks if the timer triggered */
-bool Timer::Check(bool iReset)
+/*************************************************************************/
+/* Timer                                                                 */
+/*************************************************************************/
+Timer::Timer( size_t period, bool accurate )
+: mEnd( 0 ),
+  mPeriod( period ),
+  mAccurate( accurate )
 {
-    //_CP(Timer_Check);
-    if (this==0) { 
-                printf( "Null timer during ->Check()!?\n" );
-        return true; 
-    }
-    if (enabled && current_time-start_time > timer_time) {
-        if (iReset) {
-            if (pUseAcurateTiming)
-                start_time += timer_time;
-            else
-                start_time = current_time; // Reset timer
-            timer_time = set_at_trigger;
-        }
+}
+
+Timer::~Timer()
+{
+}
+
+void Timer::Start()
+{
+    if( !accurate() || 0 == mEnd )
+        SetMsecByNow( mEnd );
+
+    mEnd += period();
+}
+
+bool Timer::Check( bool restart )
+{
+    size_t msec;
+    SetMsecByNow( msec );
+
+    if( mEnd <= msec )
+    {
+        if( restart )
+            Start();
+
         return true;
     }
-    
-    return false;
-}
-
-/* This function disables the timer */
-void Timer::Disable() {
-    enabled = false;
-}
-
-void Timer::Enable() {
-    enabled = true;
-}
-
-/* This function set the timer and restart it */
-void Timer::Start(int32 set_timer_time, bool ChangeResetTimer) {    
-    start_time = current_time;
-    enabled = true;
-    if (set_timer_time != 0)
-    {    
-        timer_time = set_timer_time;
-        if (ChangeResetTimer == true)
-            set_at_trigger = set_timer_time;
-    }
-}
-
-/* This timer updates the timer without restarting it */
-void Timer::SetTimer(int32 set_timer_time) {
-    /* If we were disabled before => restart the timer */
-    if (!enabled) {
-        start_time = current_time;
-        enabled = true;
-    }
-    if (set_timer_time != 0) {
-        timer_time = set_timer_time;
-        set_at_trigger = set_timer_time;
-    }
-}
-
-int32 Timer::GetRemainingTime() const {
-    if (enabled) {
-        if (current_time-start_time > timer_time)
-            return 0;
-        else
-            return (start_time + timer_time) - current_time;
-    }
-    else {
-        return 0xFFFFFFFF;
-    }
-}
-
-void Timer::SetAtTrigger(int32 in_set_at_trigger, bool iEnableIfDisabled) {
-    set_at_trigger = in_set_at_trigger;
-    if (!Enabled() && iEnableIfDisabled) {
-        Enable();
-    }
-}
-
-void Timer::Trigger()
-{
-    enabled = true;
-
-    timer_time = set_at_trigger;
-    start_time = current_time-timer_time-1;
-}
-
-const int32 Timer::GetCurrentTime()
-{    
-    return current_time;
-}
-
-//just to keep all time related crap in one place... not really related to timers.
-const int32 Timer::GetTimeSeconds() {
-    return(current_seconds);
-}
-
-const int32 Timer::SetCurrentTime()
-{
-    struct timeval read_time;    
-    int32 this_time;
-
-    gettimeofday(&read_time,0);
-    this_time = read_time.tv_sec * 1000 + read_time.tv_usec / 1000;
-
-    if (last_time == 0)
-    {
-        current_time = 0;
-    }
     else
-    {
-        current_time += this_time - last_time;
-    }
-    
-    last_time = this_time;
-    current_seconds = read_time.tv_sec;
+        return false;
+}
 
-    return current_time;
+void Timer::Sleep( bool restart )
+{
+    size_t msec;
+    SetMsecByNow( msec );
+
+    if( msec < mEnd )
+        Thread::Sleep( mEnd - msec );
+
+    if( restart )
+        Start();
 }
