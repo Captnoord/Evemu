@@ -58,11 +58,13 @@ SET( mt_INCLUDE
      "${TARGET_INCLUDE_DIR}/mt/MtUtils.h"
      "${TARGET_INCLUDE_DIR}/mt/Mutex.h"
      "${TARGET_INCLUDE_DIR}/mt/Thread.h"
+     "${TARGET_INCLUDE_DIR}/mt/ThreadMgr.h"
      "${TARGET_INCLUDE_DIR}/mt/Worker.h" )
 SET( mt_SOURCE
      "${TARGET_SOURCE_DIR}/mt/Condition.cpp"
      "${TARGET_SOURCE_DIR}/mt/Mutex.cpp"
      "${TARGET_SOURCE_DIR}/mt/Thread.cpp"
+     "${TARGET_SOURCE_DIR}/mt/ThreadMgr.cpp"
      "${TARGET_SOURCE_DIR}/mt/Worker.cpp" )
 
 SET( net_INCLUDE
