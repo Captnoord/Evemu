@@ -26,34 +26,57 @@
 #ifndef __NET__NET_UTILS_H__INCL__
 #define __NET__NET_UTILS_H__INCL__
 
+/*
+ * Define some common interface.
+ */
 #ifdef WIN32
 #   define MSG_NOSIGNAL 0
+
+#   define close closesocket
+
+#   define SHUT_RD   SD_RECEIVE
+#   define SHUT_WR   SD_SEND
+#   define SHUT_RDWR SD_BOTH
 #else /* !WIN32 */
-#   define INVALID_SOCKET ( -1 )
-#   define SOCKET_ERROR   ( -1 )
+typedef int SOCKET;
+
+#   define INVALID_SOCKET ( (SOCKET)-1 )
+#   define SOCKET_ERROR   ( (SOCKET)-1 )
 
 #   if defined( FREE_BSD )
 #       define MSG_NOSIGNAL 0
 #   elif defined( APPLE )
 #       define MSG_NOSIGNAL SO_NOSIGPIPE
 #   endif
-
-typedef int SOCKET;
-
 #endif /* !WIN32 */
 
-#ifndef ERRBUF_SIZE
-#   define ERRBUF_SIZE 1024
-#endif
-
-uint32 ResolveIP( const char* hostname, char* errbuf = NULL );
-//bool ParseAddress( const char* iAddress, int32* oIP, int16* oPort, char* errbuf = NULL );
+/*
+ * Define NET_ERRNO and H_NET_ERRNO.
+ */
+#ifdef WIN32
+#   define   NET_ERRNO ( (int)WSAGetLastError() )
+#   define H_NET_ERRNO NET_ERRNO
+#else /* !WIN32 */
+#   define   NET_ERRNO ( (int)errno )
+#   define H_NET_ERRNO ( (int)h_errno )
+#endif /* !WIN32 */
 
 #ifdef WIN32
+/**
+ * @brief Winsock initialization class.
+ *
+ * Utility class to initialize Winsock. Winsock is
+ * initialized as long as there is at least one
+ * instance of this class.
+ *
+ * @author Zhur
+ */
 class InitWinsock
 {
 public:
+    /// A primary constructor.
     InitWinsock();
+    /// A destructor.
     ~InitWinsock();
 };
 #endif

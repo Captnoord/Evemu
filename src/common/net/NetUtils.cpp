@@ -27,57 +27,6 @@
 
 #include "net/NetUtils.h"
 
-uint32 ResolveIP( const char* hostname, char* errbuf )
-{
-#ifdef WIN32
-    static InitWinsock ws;
-#endif
-
-    if( errbuf )
-        errbuf[0] = 0;
-
-    if( hostname == NULL )
-    {
-        if( errbuf )
-            snprintf(errbuf, ERRBUF_SIZE, "ResolveIP(): hostname == NULL");
-        return 0;
-    }
-
-    hostent* phostent = gethostbyname( hostname );
-    if( phostent == NULL)
-    {
-#ifdef WIN32
-        if( errbuf )
-            snprintf( errbuf, ERRBUF_SIZE, "Unable to get the host name. Error: %i", WSAGetLastError() );
-#else
-        if( errbuf )
-            snprintf( errbuf, ERRBUF_SIZE, "Unable to get the host name. Error: %s", strerror( errno ) );
-#endif
-        return 0;
-    }
-
-    in_addr addr;
-    memcpy( &addr, phostent->h_addr, phostent->h_length );
-
-    return addr.s_addr;
-}
-
-/*
-bool ParseAddress(const char* iAddress, int32* oIP, int16* oPort, char* errbuf)
-{
-    Seperator sep(iAddress, ':', 2, 250, false, 0, 0);
-    if (sep.argnum == 1 && sep.IsNumber(1)) {
-        *oIP = ResolveIP(sep.arg[0], errbuf);
-        if (*oIP == 0)
-            return false;
-        if (oPort)
-            *oPort = atoi(sep.arg[1]);
-        return true;
-    }
-    return false;
-}
-*/
-
 #ifdef WIN32
 /*************************************************************************/
 /* InitWinsock                                                           */
