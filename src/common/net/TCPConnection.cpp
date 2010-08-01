@@ -25,7 +25,6 @@
 
 #include "CommonPCH.h"
 
-#include "log/logsys.h"
 #include "log/LogNew.h"
 #include "net/NetUtils.h"
 #include "net/TCPConnection.h"

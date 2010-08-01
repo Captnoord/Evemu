@@ -43,14 +43,9 @@ SET( gangsta_SOURCE
      "" )
 
 SET( log_INCLUDE
-     "${TARGET_INCLUDE_DIR}/log/HexUtils.h"
-     "${TARGET_INCLUDE_DIR}/log/LogNew.h"
-     "${TARGET_INCLUDE_DIR}/log/logsys.h"
-     "${TARGET_INCLUDE_DIR}/log/logtypes.h" )
+     "${TARGET_INCLUDE_DIR}/log/LogNew.h" )
 SET( log_SOURCE
-     "${TARGET_SOURCE_DIR}/log/HexUtils.cpp"
-     "${TARGET_SOURCE_DIR}/log/LogNew.cpp"
-     "${TARGET_SOURCE_DIR}/log/logsys.cpp" )
+     "${TARGET_SOURCE_DIR}/log/LogNew.cpp" )
 
 SET( mt_INCLUDE
      "${TARGET_INCLUDE_DIR}/mt/Condition.h"

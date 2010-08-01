@@ -27,7 +27,6 @@
 
 #include "db/DbCore.h"
 #include "log/LogNew.h"
-#include "log/logsys.h"
 #include "utils/StrConv.h"
 
 //#define COLUMN_BOUNDS_CHECKING
