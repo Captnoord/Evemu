@@ -26,6 +26,7 @@
 #include "CommonPCH.h"
 
 #include "log/LogNew.h"
+#include "utils/StrUtils.h"
 
 /*************************************************************************/
 /* NewLog                                                                */
@@ -85,7 +86,7 @@ void NewLog::Log( const char* source, const char* fmt, ... )
     va_list ap;
     va_start( ap, fmt );
 
-    PrintMsg( COLOR_DEFAULT, 'L', source, fmt, ap );
+    PrintMsgVa( COLOR_DEFAULT, 'L', source, fmt, ap );
 
     va_end( ap );
 }
@@ -95,7 +96,7 @@ void NewLog::Error( const char* source, const char* fmt, ... )
     va_list ap;
     va_start( ap, fmt );
 
-    PrintMsg( COLOR_RED, 'E', source, fmt, ap );
+    PrintMsgVa( COLOR_RED, 'E', source, fmt, ap );
 
     va_end( ap );
 }
@@ -105,7 +106,7 @@ void NewLog::Warning( const char* source, const char* fmt, ... )
     va_list ap;
     va_start( ap, fmt );
 
-    PrintMsg( COLOR_YELLOW, 'W', source, fmt, ap );
+    PrintMsgVa( COLOR_YELLOW, 'W', source, fmt, ap );
 
     va_end( ap );
 }
@@ -115,7 +116,7 @@ void NewLog::Success( const char* source, const char* fmt, ... )
     va_list ap;
     va_start( ap, fmt );
 
-    PrintMsg( COLOR_GREEN, 'S', source, fmt, ap );
+    PrintMsgVa( COLOR_GREEN, 'S', source, fmt, ap );
 
     va_end( ap );
 }
@@ -126,9 +127,61 @@ void NewLog::Debug( const char* source, const char* fmt, ... )
     va_list ap;
     va_start( ap, fmt );
 
-    PrintMsg( COLOR_CYAN, 'D', source, fmt, ap );
+    PrintMsgVa( COLOR_CYAN, 'D', source, fmt, ap );
 
     va_end( ap );
+#endif /* !NDEBUG */
+}
+
+void NewLog::Dump( const char* source, const void* data, size_t len, const char* fmt, ... )
+{
+#ifndef NDEBUG
+    va_list ap;
+    va_start( ap, fmt );
+
+    PrintMsgVa( COLOR_MAGENTA, 'H', source, fmt, ap );
+
+    va_end( ap );
+
+    for( size_t i = 0; i < len; i += 0x10 )
+    {
+        char line[ 80 ];
+        size_t lineLen = 0;
+
+        char printable[ 0x10 ];
+
+        for( size_t j = 0; j < 0x10; ++j )
+        {
+            if( 0x08 == j )
+            {
+                lineLen += snprintf( &line[ lineLen ],
+                                     sizeof( line ) - lineLen,
+                                     " -" );
+            }
+
+            if( ( i + j ) < len )
+            {
+                const uint8 b = *( static_cast< const uint8* >( data ) + i + j );
+
+                lineLen += snprintf( &line[ lineLen ],
+                                     sizeof( line ) - lineLen,
+                                     " %02X", b );
+                printable[ j ] = ( IsPrintable( b )
+                                   ? static_cast< const char >( b )
+                                   : '.' );
+            }
+            else
+            {
+                lineLen += snprintf( &line[ lineLen ],
+                                     sizeof( line ) - lineLen,
+                                     "   " );
+                printable[ j ] = ' ';
+            }
+        }
+
+        PrintMsg( COLOR_MAGENTA, 'H', source, "%04X:%.*s | %.*s",
+                  i, lineLen, line, sizeof( printable ), printable );
+    }
 #endif /* !NDEBUG */
 }
 
@@ -159,7 +212,17 @@ bool NewLog::SetLogfile( FILE* file )
     return true;
 }
 
-void NewLog::PrintMsg( Color color, char pfx, const char* source, const char* fmt, va_list ap )
+void NewLog::PrintMsg( Color color, char pfx, const char* source, const char* fmt, ... )
+{
+    va_list ap;
+    va_start( ap, fmt );
+
+    PrintMsgVa( color, pfx, source, fmt, ap );
+
+    va_end( ap );
+}
+
+void NewLog::PrintMsgVa( Color color, char pfx, const char* source, const char* fmt, va_list ap )
 {
     MutexLock l( mMutex );
 

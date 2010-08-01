@@ -84,6 +84,15 @@ public:
      * @param[in] fmt is the message itself.
      */
     void Debug( const char* source, const char* fmt, ... );
+    /**
+     * @brief Print a hex dump with custom message to file and console.
+     *
+     * @param[in] source is the source from where the message is printed.
+     * @param[in] data is the data to be dumped.
+     * @param[in] len is the length of data.
+     * @param[in] fmt is the custom message.
+     */
+    void Dump( const char* source, const void* data, size_t len, const char* fmt, ... );
 
     /**
      * @brief Sets the logfile to be used.
@@ -139,9 +148,22 @@ protected:
      * @param[in] pfx    Single-character prefix/identificator.
      * @param[in] source Origin of message.
      * @param[in] fmt    The format string.
+     * @param[in] ...    The arguments.
+     */
+    void PrintMsg( Color color, char pfx, const char* source, const char* fmt, ... );
+    /**
+     * @brief Prints a message.
+     *
+     * This prints a generic message.
+     *
+     * @param[in] color  Color of the message.
+     * @param[in] pfx    Single-character prefix/identificator.
+     * @param[in] source Origin of message.
+     * @param[in] fmt    The format string.
      * @param[in] ap     The arguments.
      */
-    void PrintMsg( Color color, char pfx, const char* source, const char* fmt, va_list ap );
+    void PrintMsgVa( Color color, char pfx, const char* source, const char* fmt, va_list ap );
+
     /**
      * @brief Prints current time.
      */
