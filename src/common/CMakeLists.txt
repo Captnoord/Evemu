@@ -74,6 +74,7 @@ SET( net_INCLUDE
      "${TARGET_INCLUDE_DIR}/net/NetUtils.h"
      "${TARGET_INCLUDE_DIR}/net/Socket.h"
      "${TARGET_INCLUDE_DIR}/net/StreamPacketizer.h"
+     "${TARGET_INCLUDE_DIR}/net/StreamSocket.h"
      "${TARGET_INCLUDE_DIR}/net/TCPConnection.h"
      "${TARGET_INCLUDE_DIR}/net/TCPServer.h" )
 SET( net_SOURCE
