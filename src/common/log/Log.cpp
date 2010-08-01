@@ -25,14 +25,14 @@
 
 #include "CommonPCH.h"
 
-#include "log/LogNew.h"
+#include "log/Log.h"
 #include "utils/StrUtils.h"
 
 /*************************************************************************/
-/* NewLog                                                                */
+/* Log                                                                   */
 /*************************************************************************/
 #ifdef WIN32
-const WORD NewLog::COLOR_TABLE[ COLOR_COUNT ] =
+const WORD Log::COLOR_TABLE[ COLOR_COUNT ] =
 {
     ( FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE                        ), // COLOR_DEFAULT
     ( 0                                                                          ), // COLOR_BLACK
@@ -45,7 +45,7 @@ const WORD NewLog::COLOR_TABLE[ COLOR_COUNT ] =
     ( FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY )  // COLOR_WHITE
 };
 #else /* !WIN32 */
-const char* const NewLog::COLOR_TABLE[ COLOR_COUNT ] =
+const char* const Log::COLOR_TABLE[ COLOR_COUNT ] =
 {
     "\033[" "00"    "m", // COLOR_DEFAULT
     "\033[" "30;22" "m", // COLOR_BLACK
@@ -59,7 +59,7 @@ const char* const NewLog::COLOR_TABLE[ COLOR_COUNT ] =
 };
 #endif /* !WIN32 */
 
-NewLog::NewLog()
+Log::Log()
 : mLogfile( NULL ),
   mTime( 0 )
 #ifdef WIN32
@@ -73,7 +73,7 @@ NewLog::NewLog()
     Debug( "Log", "Log system initiated" );
 }
 
-NewLog::~NewLog()
+Log::~Log()
 {
     Debug( "Log", "Log system shutting down" );
 
@@ -81,7 +81,7 @@ NewLog::~NewLog()
     SetLogfile( (FILE*)NULL );
 }
 
-void NewLog::Log( const char* source, const char* fmt, ... )
+void Log::Message( const char* source, const char* fmt, ... )
 {
     va_list ap;
     va_start( ap, fmt );
@@ -91,7 +91,7 @@ void NewLog::Log( const char* source, const char* fmt, ... )
     va_end( ap );
 }
 
-void NewLog::Error( const char* source, const char* fmt, ... )
+void Log::Error( const char* source, const char* fmt, ... )
 {
     va_list ap;
     va_start( ap, fmt );
@@ -101,7 +101,7 @@ void NewLog::Error( const char* source, const char* fmt, ... )
     va_end( ap );
 }
 
-void NewLog::Warning( const char* source, const char* fmt, ... )
+void Log::Warning( const char* source, const char* fmt, ... )
 {
     va_list ap;
     va_start( ap, fmt );
@@ -111,7 +111,7 @@ void NewLog::Warning( const char* source, const char* fmt, ... )
     va_end( ap );
 }
 
-void NewLog::Success( const char* source, const char* fmt, ... )
+void Log::Success( const char* source, const char* fmt, ... )
 {
     va_list ap;
     va_start( ap, fmt );
@@ -121,7 +121,7 @@ void NewLog::Success( const char* source, const char* fmt, ... )
     va_end( ap );
 }
 
-void NewLog::Debug( const char* source, const char* fmt, ... )
+void Log::Debug( const char* source, const char* fmt, ... )
 {
 #ifndef NDEBUG
     va_list ap;
@@ -133,7 +133,7 @@ void NewLog::Debug( const char* source, const char* fmt, ... )
 #endif /* !NDEBUG */
 }
 
-void NewLog::Dump( const char* source, const void* data, size_t len, const char* fmt, ... )
+void Log::Dump( const char* source, const void* data, size_t len, const char* fmt, ... )
 {
 #ifndef NDEBUG
     va_list ap;
@@ -185,7 +185,7 @@ void NewLog::Dump( const char* source, const void* data, size_t len, const char*
 #endif /* !NDEBUG */
 }
 
-bool NewLog::SetLogfile( const char* filename )
+bool Log::SetLogfile( const char* filename )
 {
     MutexLock l( mMutex );
 
@@ -201,7 +201,7 @@ bool NewLog::SetLogfile( const char* filename )
     return SetLogfile( file );
 }
 
-bool NewLog::SetLogfile( FILE* file )
+bool Log::SetLogfile( FILE* file )
 {
     MutexLock l( mMutex );
 
@@ -212,7 +212,7 @@ bool NewLog::SetLogfile( FILE* file )
     return true;
 }
 
-void NewLog::PrintMsg( Color color, char pfx, const char* source, const char* fmt, ... )
+void Log::PrintMsg( Color color, char pfx, const char* source, const char* fmt, ... )
 {
     va_list ap;
     va_start( ap, fmt );
@@ -222,7 +222,7 @@ void NewLog::PrintMsg( Color color, char pfx, const char* source, const char* fm
     va_end( ap );
 }
 
-void NewLog::PrintMsgVa( Color color, char pfx, const char* source, const char* fmt, va_list ap )
+void Log::PrintMsgVa( Color color, char pfx, const char* source, const char* fmt, va_list ap )
 {
     MutexLock l( mMutex );
 
@@ -245,7 +245,7 @@ void NewLog::PrintMsgVa( Color color, char pfx, const char* source, const char* 
     SetColor( COLOR_DEFAULT );
 }
 
-void NewLog::PrintTime()
+void Log::PrintTime()
 {
     MutexLock l( mMutex );
 
@@ -258,7 +258,7 @@ void NewLog::PrintTime()
     Print( "%02u:%02u:%02u", t.tm_hour, t.tm_min, t.tm_sec );
 }
 
-void NewLog::Print( const char* fmt, ... )
+void Log::Print( const char* fmt, ... )
 {
     va_list ap;
     va_start( ap, fmt );
@@ -268,7 +268,7 @@ void NewLog::Print( const char* fmt, ... )
     va_end( ap );
 }
 
-void NewLog::PrintVa( const char* fmt, va_list ap )
+void Log::PrintVa( const char* fmt, va_list ap )
 {
     MutexLock l( mMutex );
 
@@ -291,7 +291,7 @@ void NewLog::PrintVa( const char* fmt, va_list ap )
     vprintf( fmt, ap );
 }
 
-void NewLog::SetColor( Color color )
+void Log::SetColor( Color color )
 {
     assert( 0 <= color && color < COLOR_COUNT );
 
@@ -304,7 +304,7 @@ void NewLog::SetColor( Color color )
 #endif /* !WIN32 */
 }
 
-void NewLog::SetLogfileDefault()
+void Log::SetLogfileDefault()
 {
     MutexLock l( mMutex );
 

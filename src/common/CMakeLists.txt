@@ -43,9 +43,9 @@ SET( gangsta_SOURCE
      "" )
 
 SET( log_INCLUDE
-     "${TARGET_INCLUDE_DIR}/log/LogNew.h" )
+     "${TARGET_INCLUDE_DIR}/log/Log.h" )
 SET( log_SOURCE
-     "${TARGET_SOURCE_DIR}/log/LogNew.cpp" )
+     "${TARGET_SOURCE_DIR}/log/Log.cpp" )
 
 SET( mt_INCLUDE
      "${TARGET_INCLUDE_DIR}/mt/Condition.h"

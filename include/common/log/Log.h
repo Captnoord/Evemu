@@ -23,8 +23,8 @@
     Author:     Captnoord
 */
 
-#ifndef __LOG__LOG_NEW_H__INCL__
-#define __LOG__LOG_NEW_H__INCL__
+#ifndef __LOG__LOG_H__INCL__
+#define __LOG__LOG_H__INCL__
 
 #include "mt/Mutex.h"
 #include "utils/Singleton.h"
@@ -38,14 +38,14 @@
  * @author Captnoord.
  * @date August 2009
  */
-class NewLog
-: public Singleton< NewLog >
+class Log
+: public Singleton< Log >
 {
 public:
     /// Primary constructor, initializes logging.
-    NewLog();
+    Log();
     /// Destructor, closes the logfile.
-    ~NewLog();
+    ~Log();
 
     /**
      * @brief Logs a message to file.
@@ -53,7 +53,7 @@ public:
      * @param[in] source is the source from where the message is printed.
      * @param[in] fmt is the message itself.
      */
-    void Log( const char* source, const char* fmt, ... );
+    void Message( const char* source, const char* fmt, ... );
     /**
      * @brief Logs error message to console and file.
      *
@@ -222,8 +222,8 @@ protected:
 #endif /* !WIN32 */
 };
 
-/// Evaluates to a NewLog instance.
+/// Evaluates to a Log instance.
 #define sLog \
-    ( NewLog::get() )
+    ( Log::get() )
 
-#endif /* !__LOG__LOG_NEW_H__INCL__ */
+#endif /* !__LOG__LOG_H__INCL__ */

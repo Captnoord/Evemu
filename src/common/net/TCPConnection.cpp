@@ -25,7 +25,7 @@
 
 #include "CommonPCH.h"
 
-#include "log/LogNew.h"
+#include "log/Log.h"
 #include "net/NetUtils.h"
 #include "net/TCPConnection.h"
 #include "time/Timer.h"

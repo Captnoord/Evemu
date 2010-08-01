@@ -25,7 +25,7 @@
 
 #include "CommonPCH.h"
 
-#include "log/LogNew.h"
+#include "log/Log.h"
 #include "utils/StrUtils.h"
 
 const std::string NULL_STRING = "NULL";

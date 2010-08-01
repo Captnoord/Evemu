@@ -26,7 +26,7 @@
 #include "CommonPCH.h"
 
 #include "net/TCPServer.h"
-#include "log/LogNew.h"
+#include "log/Log.h"
 #include "time/Timer.h"
 
 const uint32 TCPSRV_ERRBUF_SIZE = 1024;

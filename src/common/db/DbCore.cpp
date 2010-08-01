@@ -26,7 +26,7 @@
 #include "CommonPCH.h"
 
 #include "db/DbCore.h"
-#include "log/LogNew.h"
+#include "log/Log.h"
 #include "utils/StrConv.h"
 
 //#define COLUMN_BOUNDS_CHECKING
@@ -284,7 +284,14 @@ bool DbCore::Open_locked(int32* errnum, char* errbuf) {
     if (pHost.empty())
         return false;
 
-    sLog.Log("dbcore", "Connecting to\n\tDB:\t%s\n\tserver:\t%s:%d\n\tuser:\t%s", pDatabase.c_str(), pHost.c_str(), pPort, pUser.c_str());
+    sLog.Message( "dbcore",
+                  "Connecting to\n"
+                  "    DB:     %s\n"
+                  "    server: %s:%d\n"
+                  "    user:   %s",
+                  pDatabase.c_str(),
+                  pHost.c_str(), pPort,
+                  pUser.c_str() );
 
     /*
     Quagmire - added CLIENT_FOUND_ROWS flag to the connect
