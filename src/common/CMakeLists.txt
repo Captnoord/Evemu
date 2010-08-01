@@ -68,6 +68,8 @@ SET( mt_SOURCE
      "${TARGET_SOURCE_DIR}/mt/Worker.cpp" )
 
 SET( net_INCLUDE
+     "${TARGET_INCLUDE_DIR}/net/Ip4.h"
+     "${TARGET_INCLUDE_DIR}/net/Ip6.h"
      "${TARGET_INCLUDE_DIR}/net/NetCommon.h"
      "${TARGET_INCLUDE_DIR}/net/NetUtils.h"
      "${TARGET_INCLUDE_DIR}/net/Socket.h"
@@ -75,6 +77,8 @@ SET( net_INCLUDE
      "${TARGET_INCLUDE_DIR}/net/TCPConnection.h"
      "${TARGET_INCLUDE_DIR}/net/TCPServer.h" )
 SET( net_SOURCE
+     "${TARGET_SOURCE_DIR}/net/Ip4.cpp"
+     "${TARGET_SOURCE_DIR}/net/Ip6.cpp"
      "${TARGET_SOURCE_DIR}/net/NetUtils.cpp"
      "${TARGET_SOURCE_DIR}/net/Socket.cpp"
      "${TARGET_SOURCE_DIR}/net/StreamPacketizer.cpp"
