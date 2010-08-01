@@ -80,7 +80,6 @@ SET( net_SOURCE
      "${TARGET_SOURCE_DIR}/net/Ip4.cpp"
      "${TARGET_SOURCE_DIR}/net/Ip6.cpp"
      "${TARGET_SOURCE_DIR}/net/NetUtils.cpp"
-     "${TARGET_SOURCE_DIR}/net/Socket.cpp"
      "${TARGET_SOURCE_DIR}/net/StreamPacketizer.cpp"
      "${TARGET_SOURCE_DIR}/net/TCPConnection.cpp"
      "${TARGET_SOURCE_DIR}/net/TCPServer.cpp" )
