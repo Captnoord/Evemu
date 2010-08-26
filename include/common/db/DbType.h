@@ -45,6 +45,11 @@
 0x82 = "DBTYPE_WSTR"
 */
 
+/*
+ * @brief Describles type of DB field.
+ *
+ * @author Bloody.Rabbit, Captnoord
+ */
 enum DBTYPE
 {
     //DBTYPE_EMPTY        = 0x00, // not supported
@@ -97,7 +102,7 @@ enum DBTYPE
  * @param[in] type Type of fields.
  * @return Length of field (in bits).
  */
-extern uint8 DBTYPE_GetSizeBits( DBTYPE type );
+uint8 DBTYPE_GetSizeBits( DBTYPE type );
 
 /**
  * Returns length of field of given type.
@@ -105,6 +110,6 @@ extern uint8 DBTYPE_GetSizeBits( DBTYPE type );
  * @param[in] type Type of fields.
  * @return Length of field (in bytes).
  */
-extern uint8 DBTYPE_GetSizeBytes( DBTYPE type );
+uint8 DBTYPE_GetSizeBytes( DBTYPE type );
 
 #endif /* !__DB__DBTYPE_H__INCL__ */

@@ -50,7 +50,7 @@ public:
     DbError();
 
     /// @return An error number.
-    uint32 no() const { return mErrNo; }
+    unsigned int no() const { return mErrNo; }
     /// @return An error message.
     const char* msg() const { return mErrMsg; }
 
@@ -61,14 +61,14 @@ protected:
      * @param[in] errNo  An error number.
      * @param[in] errMsg A description of the error, must be static.
      */
-    void SetError( uint32 errNo, const char* errMsg );
+    void SetError( unsigned int errNo, const char* errMsg );
     /**
      * @brief Clears the error.
      */
     void ClearError();
 
     /// An error number.
-    uint32 mErrNo;
+    unsigned int mErrNo;
     /// A static string describing the error.
     const char* mErrMsg;
 };
@@ -208,7 +208,7 @@ public:
     /**
      * @brief Obtains a next result row.
      *
-     * @param[in] into Where to store the result.
+     * @param[out] into Where to store the result.
      *
      * @retval true  Operation successfull.
      * @return false Operation failed (most likely no more rows left).
@@ -241,59 +241,225 @@ protected:
     static const DBTYPE MYSQL_DBTYPE_TABLE_UNSIGNED[];
 };
 
+/**
+ * @brief A database service.
+ *
+ * @author Zhur.
+ */
 class DbCore
-: public Singleton<DbCore>
+: public Singleton< DbCore >
 {
 public:
-    enum eStatus { Closed, Connected, Error };
+    /// Describes current status of MySQL connection.
+    enum Status
+    {
+        /// No connection.
+        STATUS_CLOSED,
+        /// Successfully connected.
+        STATUS_CONNECTED,
+        /// An error occurred.
+        STATUS_ERROR
+    };
 
-    DbCore(bool compress=false, bool ssl=false);
+    /**
+     * @brief Checks for characters which might cause SQL problems.
+     *
+     * @param[in] str A string to check.
+     *
+     * @retval true  The string is dangerous.
+     * @retval false The string is OK.
+     */
+    static bool IsSafeString( const char* str );
+
+    /**
+     * @brief A primary constructor.
+     *
+     * @param[in] compress Use compression during transmission.
+     * @param[in] ssl      Use encryption during transmission.
+     */
+    DbCore( bool compress = false, bool ssl = false );
+    /// A destructor.
     ~DbCore();
-    eStatus GetStatus() const { return pStatus; }
 
-    //new shorter syntax:
-    //query which returns a result (error is stored in the result if it occurs)
-    bool    RunQuery(DbQueryResult &into, const char *query_fmt, ...);
-    //query which returns no information except error status
-    bool    RunQuery(DbError &err, const char *query_fmt, ...);
-    //query which returns affected rows:
-    bool    RunQuery(DbError &err, uint32 &affected_rows, const char *query_fmt, ...);
-    //query which returns last insert ID:
-    bool    RunQueryLID(DbError &err, uint32 &last_insert_id, const char *query_fmt, ...);
+    /// Obtains current status of MySQL connection.
+    Status status() const { return mMysqlStatus; }
 
-    //old style to be used with MakeAnyLengthString
-    bool    RunQuery(const char* query, int32 querylen, char* errbuf = 0, MYSQL_RES** result = 0, int32* affected_rows = 0, int32* last_insert_id = 0, int32* errnum = 0, bool retry = true);
+    /**
+     * @brief Runs a query.
+     *
+     * @param[out] into     Where to store the result.
+     * @param[in]  queryFmt Format string of the query.
+     * @param[in]  ...      Arguments to embed into @a queryFmt.
+     *
+     * @retval true  Query successfull.
+     * @retval false Query failed.
+     */
+    bool RunQuery( DbQueryResult& into, const char* queryFmt, ... );
+    /**
+     * @brief Runs a query, ignoring any returned data.
+     *
+     * @param[out] err      Where to store an error (if any occurs).
+     * @param[in]  queryFmt Format string of the query.
+     * @param[in]  ...      Arguments to embed into @a queryFmt.
+     *
+     * @retval true  Query successfull.
+     * @retval false Query failed.
+     */
+    bool RunQuery( DbError& err, const char* queryFmt, ... );
+    /**
+     * @brief Runs a query, obtaining a number of affected rows.
+     *
+     * @param[out] err          Where to store an error (if any occurs).
+     * @param[out] affectedRows Where to store the number of affected rows.
+     * @param[in]  queryFmt     Format string of the query.
+     * @param[in]  ...          Arguments to embed into @a queryFmt.
+     *
+     * @retval true  Query successfull.
+     * @retval false Query failed.
+     */
+    bool RunQuery( DbError& err, size_t& affectedRows, const char* queryFmt, ... );
+    /**
+     * @brief Runs a query, obtaining a last inserted ID.
+     *
+     * @param[out] err          Where to store an error (if any occurs).
+     * @param[out] lastInsertId Where to store the last inserted ID.
+     * @param[in]  queryFmt     Format string of the query.
+     * @param[in]  ...          Arguments to embed into @a queryFmt.
+     *
+     * @retval true  Query successfull.
+     * @retval false Query failed.
+     */
+    bool RunQueryLID( DbError& err, uint64& lastInsertId, const char* queryFmt, ... );
 
-    int32   DoEscapeString(char* tobuf, const char* frombuf, int32 fromlen);
-    void    DoEscapeString(std::string &to, const std::string &from);
-    static bool IsSafeString(const char *str);
-    void    ping();
+    /**
+     * @brief Runs a query.
+     *
+     * @param[in]  query        The query to run.
+     * @param[in]  queryLen     A length of the query.
+     * @param[out] result       Where to store the result of the query.
+     * @param[out] errNo        Where to store an error ID (if an error occurs).
+     * @param[out] errMsg       Where to store an error message (if an error occurs).
+     * @param[out] affectedRows Where to store a number of affected rows.
+     * @param[out] lastInsertId Where to store a last inserted ID.
+     * @param[in]  retry        Try connecting again if a connection is lost.
+     *
+     * @retval true  Query successfull.
+     * @retval false Query failed.
+     */
+    bool RunQuery( const char* query, size_t queryLen, MYSQL_RES** result = NULL,
+                   unsigned int* errNo = NULL, char* errMsg = NULL, size_t* affectedRows = NULL,
+                   uint64* lastInsertId = NULL, bool retry = true );
 
-//  static bool ReadDBINI(char *host, char *user, char *pass, char *db, int32 &port, bool &compress, bool *items);
-    bool    Open(const char* iHost, const char* iUser, const char* iPassword, const char* iDatabase, int16 iPort, int32* errnum = 0, char* errbuf = 0, bool iCompress = false, bool iSSL = false);
-    bool    Open(DbError &err, const char* iHost, const char* iUser, const char* iPassword, const char* iDatabase, int16 iPort, bool iCompress = false, bool iSSL = false);
+    /**
+     * @brief Escapes a string.
+     *
+     * @param[out] to   Where to store the escaped string.
+     * @param[in]  from The string to escape.
+     * @param[in]  len  A length of the string to escape.
+     *
+     * @return A length of the escaped string.
+     */
+    size_t DoEscapeString( char* to, const char* from, size_t len );
+    /**
+     * @brief Escapes a string.
+     *
+     * @param[out] to   Where to store the escaped string.
+     * @param[in]  from The string to escape.
+     */
+    void DoEscapeString( std::string& to, const std::string& from );
+    /**
+     * @brief Pings the server.
+     */
+    void Ping();
 
-protected:
-    MYSQL*  getMySQL(){ return &mysql; }
+    /**
+     * @brief Opens a connection to a MySQL server.
+     *
+     * @param[in]  host     A hostname of the server.
+     * @param[in]  user     A username for authentication.
+     * @param[in]  password A password for authentication.
+     * @param[in]  database A name of the database to use.
+     * @param[in]  port     A port on which the server is listening.
+     * @param[out] errNo    Where to store an error ID (if an error occurs).
+     * @param[out] errMsg   Where to store an error message (if an error occurs).
+     * @param[in]  compress Use compression during transmission.
+     * @param[in]  ssl      Use encryption during transmission.
+     *
+     */
+    bool Open( const char* host, const char* user, const char* password,
+               const char* database, int16 port, unsigned int* errNo = NULL,
+               char* errMsg = NULL, bool compress = false, bool ssl = false );
+    /**
+     * @brief Opens a connection to a MySQL server.
+     *
+     * @param[out] err      Where to store an error (if any occurs).
+     * @param[in]  host     A hostname of the server.
+     * @param[in]  user     A username for authentication.
+     * @param[in]  password A password for authentication.
+     * @param[in]  database A name of the database to use.
+     * @param[in]  port     A port on which the server is listening.
+     * @param[in]  compress Use compression during transmission.
+     * @param[in]  ssl      Use encryption during transmission.
+     *
+     * @retval true  Connection successfull.
+     * @retval false Connection failed.
+     */
+    bool Open( DbError& err, const char* host, const char* user, const char* password,
+               const char* database, int16 port, bool compress = false, bool ssl = false );
 
 private:
-    //MDatabase must be locked before these calls:
-    bool    Open_locked(int32* errnum = 0, char* errbuf = 0);
-    bool    DoQuery_locked(DbError &err, const char *query, int32 querylen, bool retry = true);
+    /**
+     * @brief Opens a connection to the MySQL server.
+     *
+     * mMysqlMutex must be locked prior calling to this method.
+     *
+     * @param[out] errNo  Where to store an error ID (if an error occurs).
+     * @param[out] errMsg Where to store an error message (if an error occurs).
+     *
+     * @retval true  Connection successfull.
+     * @retval false Connection failed.
+     */
+    bool OpenLocked( unsigned int* errNo = 0, char* errMsg = 0 );
+    /**
+     * @brief Runs a query.
+     *
+     * mMysqlMutex must be locked prior calling to this method.
+     *
+     * @param[out] err      Where to store an error (if any occurs).
+     * @param[in]  query    The query to run.
+     * @param[in]  queryLen A length of the query.
+     * @param[in]  retry    Try connecting again if a connection is lost.
+     * 
+     * @retval true  Query successfull.
+     * @retval false Query failed.
+     */
+    bool RunQueryLocked( DbError& err, const char* query, size_t queryLen, bool retry = true );
 
-    MYSQL   mysql;
-    Mutex   MDatabase;
-    eStatus pStatus;
+    /// The MYSQL object we're using.
+    MYSQL mMysql;
+    /// A mutex to protect mMysql.
+    Mutex mMysqlMutex;
+    /// A status of mMysql.
+    Status mMysqlStatus;
 
-    std::string pHost;
-    std::string pUser;
-    std::string pPassword;
-    std::string pDatabase;
-    bool    pCompress;
-    int16   pPort;
-    bool    pSSL;
+    /// A hostname of MySQL server.
+    std::string mHost;
+    /// An authentication username.
+    std::string mUser;
+    /// An authentication password.
+    std::string mPassword;
+    /// A database name to use.
+    std::string mDatabase;
+    /// A port the MySQL server is running on.
+    int16 mPort;
+
+    /// Use compression during transmission.
+    bool mCompress;
+    /// Use encryption during transmission.
+    bool mSSL;
 };
 
+/// A macro for easing access to the DbCore object.
 #define sDatabase \
     ( DbCore::get() )
 

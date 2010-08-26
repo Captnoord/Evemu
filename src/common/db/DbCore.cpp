@@ -37,7 +37,7 @@ DbError::DbError()
     ClearError();
 }
 
-void DbError::SetError( uint32 errNo, const char* errMsg )
+void DbError::SetError( unsigned int errNo, const char* errMsg )
 {
     mErrNo = errNo;
     mErrMsg = errMsg;
@@ -193,7 +193,7 @@ const char* DbQueryResult::columnName( size_t index ) const
 DBTYPE DbQueryResult::columnType( size_t index ) const
 {
     assert( index < columnCount() );
-    uint32 columnType = mFields[ index ]->type;
+    unsigned int columnType = mFields[ index ]->type;
 
     /* tricky needs to be checked */
     if ( columnType > MYSQL_TYPE_BIT )
@@ -276,239 +276,266 @@ void DbQueryResult::SetResult( MYSQL_RES** res, size_t colCount )
 /*************************************************************************/
 /* DbCore                                                                */
 /*************************************************************************/
-DbCore::DbCore(bool compress, bool ssl) : pCompress(compress), pSSL(ssl)
+bool DbCore::IsSafeString( const char* str )
 {
-    mysql_init(&mysql);
-    pStatus = Closed;
+    for(; *str != '\0'; ++str )
+    {
+        switch( *str )
+        {
+            case '\'':
+            case '\\':
+                return false;
+        }
+    }
+
+    return true;
+}
+
+DbCore::DbCore( bool compress, bool ssl )
+: mMysqlStatus( STATUS_CLOSED ),
+  mCompress( compress ),
+  mSSL( ssl )
+{
+    mysql_init( &mMysql );
 }
 
 DbCore::~DbCore()
 {
-    mysql_close(&mysql);
+    mysql_close( &mMysql );
 }
 
-// Sends the MySQL server a ping
-void DbCore::ping()
+bool DbCore::RunQuery( DbQueryResult& into, const char* queryFmt, ... )
+{
+    va_list ap;
+    va_start( ap, queryFmt );
+
+    char* query = NULL;
+    size_t queryLen = vasprintf( &query, queryFmt, ap );
+
+    va_end( ap );
+
+    bool result = false;
+    {
+        MutexLock lock( mMysqlMutex );
+
+        if( RunQueryLocked( into.error, query, queryLen ) )
+        {
+            size_t colCount = mysql_field_count( &mMysql );
+            if( 0 == colCount )
+            {
+                into.error.SetError( 0xFFFF, "DbCore::RunQuery: No Result" );
+                sLog.Error( "DbCore Query", "Query: %s failed because did not return a result", query );
+            }
+            else
+            {
+                MYSQL_RES* res = mysql_store_result( &mMysql );
+                into.SetResult( &res, colCount );
+
+                result = true;
+            }
+        }
+    }
+
+    SafeFree( query );
+    return result;
+}
+
+bool DbCore::RunQuery( DbError& err, const char* queryFmt, ... )
+{
+    va_list ap;
+    va_start( ap, queryFmt );
+
+    char* query = NULL;
+    size_t queryLen = vasprintf( &query, queryFmt, ap );
+
+    va_end( ap );
+
+    bool result = false;
+    {
+        MutexLock lock( mMysqlMutex );
+        result = RunQueryLocked( err, query, queryLen );
+    }
+
+    SafeFree( query );
+    return result;
+}
+
+bool DbCore::RunQuery( DbError& err, size_t& affectedRows, const char* queryFmt, ... )
+{
+    va_list ap;
+    va_start( ap, queryFmt );
+
+    char* query = NULL;
+    size_t queryLen = vasprintf( &query, queryFmt, ap );
+
+    va_end( ap );
+
+    bool result = false;
+    {
+        MutexLock lock( mMysqlMutex );
+
+        if( RunQueryLocked( err, query, queryLen ) )
+        {
+            affectedRows = mysql_affected_rows( &mMysql );
+            result = true;
+        }
+    }
+
+    SafeFree( query );
+    return result;
+}
+
+bool DbCore::RunQueryLID( DbError& err, uint64& lastInsertId, const char* queryFmt, ... )
+{
+    va_list ap;
+    va_start( ap, queryFmt );
+
+    char* query = NULL;
+    size_t queryLen = vasprintf( &query, queryFmt, ap );
+
+    va_end( ap );
+
+    bool result = false;
+    {
+        MutexLock lock( mMysqlMutex );
+
+        if( RunQueryLocked( err, query, queryLen ) )
+        {
+            lastInsertId = mysql_insert_id( &mMysql );
+            result = true;
+        }
+    }
+
+    SafeFree( query );
+    return result;
+}
+
+bool DbCore::RunQuery( const char* query, size_t queryLen, MYSQL_RES** result,
+                       unsigned int* errNo, char* errMsg, size_t* affectedRows,
+                       uint64* lastInsertId, bool retry )
+{
+    if( NULL != errNo )
+        *errNo = 0;
+
+    if( NULL != errMsg )
+        errMsg[0] = 0;
+
+    {
+        MutexLock lock( mMysqlMutex );
+
+        DbError err;
+        if( !RunQueryLocked( err, query, queryLen, retry ) )
+        {
+            sLog.Error( "DbCore Query", "Query: %s failed", query );
+
+            if( NULL != errNo )
+                *errNo = err.no();
+
+            if( NULL != errMsg )
+                strcpy( errMsg, err.msg() );
+
+            return false;
+        }
+
+        if( result )
+        {
+            if( 0 != mysql_field_count( &mMysql ) )
+                *result = mysql_store_result( &mMysql );
+            else
+            {
+                *result = NULL;
+
+                if( NULL != errNo )
+                    *errNo = UINT_MAX;
+
+                if( NULL != errMsg )
+                    strcpy( errMsg, "DbCore::RunQuery: No Result" );
+
+                sLog.Error( "DbCore Query", "Query: %s failed because it should return a result", query );
+                return false;
+            }
+        }
+
+        if( NULL != affectedRows )
+            *affectedRows = mysql_affected_rows( &mMysql );
+
+        if( NULL != lastInsertId )
+            *lastInsertId = mysql_insert_id( &mMysql );
+    }
+
+    return true;
+}
+
+size_t DbCore::DoEscapeString( char* to, const char* from, size_t len )
+{
+    MutexLock lock( mMysqlMutex );
+
+    return mysql_real_escape_string( &mMysql, to, from, len );
+}
+
+void DbCore::DoEscapeString( std::string& to, const std::string& from )
+{
+    // make enough room
+    size_t len = from.length();
+    to.resize( 2 * len + 1 );
+
+    {
+        MutexLock lock( mMysqlMutex );
+
+        len = mysql_real_escape_string( &mMysql, &to[0], &from[0], len );
+    }
+
+    to.resize( len + 1 );
+}
+
+void DbCore::Ping()
 {
     // well, if it's locked, someone's using it. If someone's using it, it doesn't need a ping
-    if( MDatabase.TryLock() )
+    if( mMysqlMutex.TryLock() )
     {
-        mysql_ping( &mysql );
-        MDatabase.Unlock();
+        mysql_ping( &mMysql );
+        mMysqlMutex.Unlock();
     }
 }
 
-//query which returns a result (error is stored in the result if it occurs)
-bool DbCore::RunQuery(DbQueryResult &into, const char *query_fmt, ...) {
-    MutexLock lock(MDatabase);
-
-    char query[16384];
-    va_list vlist;
-    va_start(vlist, query_fmt);
-    uint32 querylen = vsnprintf(query, 16384, query_fmt, vlist);
-    va_end(vlist);
-
-    if(!DoQuery_locked(into.error, query, querylen)) {
-        return false;
-    }
-
-    uint32 col_count = mysql_field_count(&mysql);
-    if(col_count == 0) {
-        into.error.SetError(0xFFFF, "DbCore::RunQuery: No Result");
-        sLog.Error("DbCore Query", "Query: %s failed because did not return a result", query);
-        return false;
-    }
-
-    MYSQL_RES *result = mysql_store_result(&mysql);
-
-    //give them the result set.
-    into.SetResult(&result, col_count);
-
-    return true;
-}
-
-//query which returns no information except error status
-bool DbCore::RunQuery(DbError &err, const char *query_fmt, ...) {
-    MutexLock lock(MDatabase);
-
-    va_list args;
-    va_start(args, query_fmt);
-    char *query = NULL;
-    uint32 querylen = vasprintf(&query, query_fmt, args);
-    va_end(args);
-
-    if(!DoQuery_locked(err, query, querylen)) {
-        free(query);
-        return false;
-    }
-
-    free(query);
-    return true;
-}
-
-//query which returns affected rows:
-bool DbCore::RunQuery(DbError &err, uint32 &affected_rows, const char *query_fmt, ...) {
-    MutexLock lock(MDatabase);
-
-    va_list args;
-    va_start(args, query_fmt);
-    char *query = NULL;
-    uint32 querylen = vasprintf(&query, query_fmt, args);
-    va_end(args);
-
-    if(!DoQuery_locked(err, query, querylen)) {
-        free(query);
-        return false;
-    }
-    free(query);
-
-    affected_rows = mysql_affected_rows(&mysql);
-
-    return true;
-}
-
-//query which returns last insert ID:
-bool DbCore::RunQueryLID(DbError &err, uint32 &last_insert_id, const char *query_fmt, ...) {
-    MutexLock lock(MDatabase);
-
-    va_list args;
-    va_start(args, query_fmt);
-    char *query = NULL;
-    uint32 querylen = vasprintf(&query, query_fmt, args);
-    va_end(args);
-
-    if(!DoQuery_locked(err, query, querylen)) {
-        free(query);
-        return false;
-    }
-    free(query);
-
-    last_insert_id = mysql_insert_id(&mysql);
-
-    return true;
-}
-
-bool DbCore::DoQuery_locked(DbError &err, const char *query, int32 querylen, bool retry)
+bool DbCore::Open( const char* host, const char* user, const char* password,
+                   const char* database, int16 port, unsigned int* errNo, char* errMsg,
+                   bool compress, bool ssl )
 {
-    if (pStatus != Connected)
-        Open_locked();
+    MutexLock lock( mMysqlMutex );
 
-    if (mysql_real_query(&mysql, query, querylen)) {
-        int num = mysql_errno(&mysql);
+    mHost = host;
+    mUser = user;
+    mPassword = password;
+    mDatabase = database;
+    mPort = port;
 
-        if (num == CR_SERVER_GONE_ERROR)
-            pStatus = Error;
+    mCompress = compress;
+    mSSL = ssl;
 
-        if (retry && (num == CR_SERVER_LOST || num == CR_SERVER_GONE_ERROR))
-        {
-            sLog.Error("DbCore", "Lost connection, attempting to recover....");
-            return DoQuery_locked(err, query, querylen, false);
-        }
-
-        pStatus = Error;
-        err.SetError(num, mysql_error(&mysql));
-        sLog.Error("DbCore Query", "#%d in '%s': %s", err.GetErrNo(), query, err.c_str());
-        return false;
-    }
-
-    err.ClearError();
-    return true;
+    return OpenLocked( errNo, errMsg );
 }
 
+bool DbCore::Open( DbError& err, const char* host, const char* user, const char* password,
+                   const char* database, int16 port, bool compress, bool ssl )
+{
+    MutexLock lock( mMysqlMutex );
 
-bool DbCore::RunQuery(const char* query, int32 querylen, char* errbuf, MYSQL_RES** result, int32* affected_rows, int32* last_insert_id, int32* errnum, bool retry) {
-    if (errnum)
-        *errnum = 0;
-    if (errbuf)
-        errbuf[0] = 0;
-    MutexLock lock(MDatabase);
+    mHost = host;
+    mUser = user;
+    mPassword = password;
+    mDatabase = database;
+    mPort = port;
 
-    DbError err;
-    if(!DoQuery_locked(err, query, querylen, retry))
+    mCompress = compress;
+    mSSL = ssl;
+
+    unsigned int errNo;
+    char errMsg[ 0x400 ];
+
+    if( !OpenLocked( &errNo, errMsg ) )
     {
-        sLog.Error("DbCore Query", "Query: %s failed", query);
-        if(errnum != NULL)
-            *errnum = err.GetErrNo();
-        if(errbuf != NULL)
-            strcpy(errbuf, err.c_str());
-        return false;
-    }
-
-    if (result) {
-        if(mysql_field_count(&mysql)) {
-            *result = mysql_store_result(&mysql);
-        } else {
-            *result = NULL;
-            if (errnum)
-                *errnum = UINT_MAX;
-            if (errbuf)
-                strcpy(errbuf, "DbCore::RunQuery: No Result");
-            sLog.Error("DbCore Query", "Query: %s failed because it should return a result", query);
-            return false;
-        }
-    }
-    if (affected_rows)
-        *affected_rows = mysql_affected_rows(&mysql);
-    if (last_insert_id)
-        *last_insert_id = mysql_insert_id(&mysql);
-    return true;
-}
-
-int32 DbCore::DoEscapeString(char* tobuf, const char* frombuf, int32 fromlen)
-{
-    return mysql_real_escape_string(&mysql, tobuf, frombuf, fromlen);
-}
-
-void DbCore::DoEscapeString(std::string &to, const std::string &from)
-{
-    uint32 len = (uint32)from.length();
-    to.resize(len*2 + 1);   // make enough room
-    uint32 esc_len = mysql_real_escape_string(&mysql, &to[0], from.c_str(), len);
-    to.resize(esc_len+1); // optional.
-}
-
-//look for things in the string which might cause SQL problems
-bool DbCore::IsSafeString(const char *str) {
-    for(; *str != '\0'; str++) {
-        switch(*str) {
-        case '\'':
-        case '\\':
-            return false;
-        }
-    }
-    return true;
-}
-
-bool DbCore::Open(const char* iHost, const char* iUser, const char* iPassword, const char* iDatabase, int16 iPort, int32* errnum, char* errbuf, bool iCompress, bool iSSL) {
-    MutexLock lock(MDatabase);
-
-    pHost = iHost;
-    pUser = iUser;
-    pPassword = iPassword;
-    pDatabase = iDatabase;
-    pCompress = iCompress;
-    pPort = iPort;
-    pSSL = iSSL;
-
-    return Open_locked(errnum, errbuf);
-}
-
-bool DbCore::Open(DbError &err, const char* iHost, const char* iUser, const char* iPassword, const char* iDatabase, int16 iPort, bool iCompress, bool iSSL) {
-    MutexLock lock(MDatabase);
-
-    pHost = iHost;
-    pUser = iUser;
-    pPassword = iPassword;
-    pDatabase = iDatabase;
-    pCompress = iCompress;
-    pPort = iPort;
-    pSSL = iSSL;
-
-    int32 errnum;
-    char errbuf[1024];
-
-    if(!Open_locked(&errnum, errbuf)) {
-        err.SetError(errnum, errbuf);
+        err.SetError( errNo, errMsg );
         return false;
     }
 
@@ -516,14 +543,18 @@ bool DbCore::Open(DbError &err, const char* iHost, const char* iUser, const char
 }
 
 
-bool DbCore::Open_locked(int32* errnum, char* errbuf) {
-    if (errbuf)
-        errbuf[0] = 0;
-    if (GetStatus() == Connected)
+bool DbCore::OpenLocked( unsigned int* errNo, char* errMsg )
+{
+    if( NULL != errMsg )
+        errMsg[0] = 0;
+
+    if( STATUS_CONNECTED == status() )
         return true;
-    if (GetStatus() == Error)
-        mysql_close(&mysql);    //do we need to call init again?
-    if (pHost.empty())
+    else if( STATUS_ERROR == status() )
+        //do we need to call init again?
+        mysql_close( &mMysql );
+
+    if( mHost.empty() )
         return false;
 
     sLog.Message( "dbcore",
@@ -531,40 +562,88 @@ bool DbCore::Open_locked(int32* errnum, char* errbuf) {
                   "    DB:     %s\n"
                   "    server: %s:%d\n"
                   "    user:   %s",
-                  pDatabase.c_str(),
-                  pHost.c_str(), pPort,
-                  pUser.c_str() );
+                  mDatabase.c_str(),
+                  mHost.c_str(), mPort,
+                  mUser.c_str() );
 
     /*
     Quagmire - added CLIENT_FOUND_ROWS flag to the connect
     otherwise DB update calls would say 0 rows affected when the value already equaled
     what the function was trying to set it to, therefore the function would think it failed
     */
-    int32 flags = CLIENT_FOUND_ROWS;
-    if (pCompress)
+    unsigned long flags = CLIENT_FOUND_ROWS;
+
+    if( mCompress )
         flags |= CLIENT_COMPRESS;
-    if (pSSL)
+
+    if( mSSL )
         flags |= CLIENT_SSL;
-    if (mysql_real_connect(&mysql, pHost.c_str(), pUser.c_str(), pPassword.c_str(), pDatabase.c_str(), pPort, 0, flags)) {
-        pStatus = Connected;
-    } else {
-        pStatus = Error;
-        if (errnum)
-            *errnum = mysql_errno(&mysql);
-        if (errbuf)
-            snprintf(errbuf, MYSQL_ERRMSG_SIZE, "#%i: %s", mysql_errno(&mysql), mysql_error(&mysql));
+
+    if( mysql_real_connect( &mMysql, mHost.c_str(), mUser.c_str(), mPassword.c_str(),
+                            mDatabase.c_str(), mPort, 0, flags ) )
+    {
+        mMysqlStatus = STATUS_CONNECTED;
+    }
+    else
+    {
+        mMysqlStatus = STATUS_ERROR;
+
+        if( NULL != errNo )
+            *errNo = mysql_errno( &mMysql );
+
+        if( NULL != errMsg )
+            snprintf( errMsg, MYSQL_ERRMSG_SIZE, "#%i: %s",
+                      mysql_errno( &mMysql ), mysql_error( &mMysql ) );
+
         return false;
     }
 
-    // Setup character set we wish to use
-    if(mysql_set_character_set(&mysql, "utf8") != 0) {
-        pStatus = Error;
-        if(errnum)
-            *errnum = mysql_errno(&mysql);
-        if(errbuf)
-            snprintf(errbuf, MYSQL_ERRMSG_SIZE, "#%i: %s", mysql_errno(&mysql), mysql_error(&mysql));
+    // Turn on UTF-8 character encoding
+    if( 0 != mysql_set_character_set( &mMysql, "utf8" ) )
+    {
+        mMysqlStatus = STATUS_ERROR;
+
+        if( NULL != errNo )
+            *errNo = mysql_errno( &mMysql );
+
+        if( NULL != errMsg )
+            snprintf( errMsg, MYSQL_ERRMSG_SIZE, "#%i: %s",
+                      mysql_errno( &mMysql ), mysql_error( &mMysql ) );
+
         return false;
     }
 
+    return true;
+}
+
+bool DbCore::RunQueryLocked( DbError& err, const char* query, size_t queryLen, bool retry )
+{
+    if( STATUS_CONNECTED != status() )
+        OpenLocked();
+
+    if( mysql_real_query( &mMysql, query, queryLen ) )
+    {
+        unsigned int errNo = mysql_errno( &mMysql );
+
+        if( CR_SERVER_GONE_ERROR == errNo )
+            mMysqlStatus = STATUS_ERROR;
+
+        if( retry && ( CR_SERVER_LOST == errNo
+                       || CR_SERVER_GONE_ERROR == errNo ) )
+        {
+            sLog.Error( "DbCore", "Lost connection, attempting to recover...." );
+
+            return RunQueryLocked( err, query, queryLen, false );
+        }
+
+        mMysqlStatus = STATUS_ERROR;
+        err.SetError( errNo, mysql_error( &mMysql ) );
+
+        sLog.Error( "DbCore Query", "#%d in '%s': %s",
+                    err.no(), query, err.msg() );
+        return false;
+    }
+
+    err.ClearError();
     return true;
 }
