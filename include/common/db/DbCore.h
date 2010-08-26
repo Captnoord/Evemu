@@ -32,97 +32,213 @@
 #include "db/DbType.h"
 #include "mt/Mutex.h"
 #include "utils/Singleton.h"
+#include "utils/StrConv.h"
 
-class DbCore;
+class DbQueryResult;
 
+/**
+ * @brief Represents an error during DB query.
+ *
+ * @author Zhur
+ */
 class DbError
 {
+    friend class DbCore;
+
 public:
+    /// A primary constructor.
     DbError();
 
-    uint32 GetErrNo() const { return mErrNo; }
-    const char* GetError() const { return mErrStr.c_str(); }
-
-    const char* c_str() const { return GetError(); }
+    /// @return An error number.
+    uint32 no() const { return mErrNo; }
+    /// @return An error message.
+    const char* msg() const { return mErrMsg; }
 
 protected:
-    //for DbCore:
-    friend class DbCore;
-    void SetError( uint32 err, const char* str );
+    /**
+     * @brief Sets the error.
+     *
+     * @param[in] errNo  An error number.
+     * @param[in] errMsg A description of the error, must be static.
+     */
+    void SetError( uint32 errNo, const char* errMsg );
+    /**
+     * @brief Clears the error.
+     */
     void ClearError();
 
-    std::string mErrStr;
+    /// An error number.
     uint32 mErrNo;
+    /// A static string describing the error.
+    const char* mErrMsg;
 };
 
-
-class DbResultRow;
-class DbQueryResult
-{
-public:
-    DbQueryResult();
-    ~DbQueryResult();
-
-    /* error during the query, if RunQuery returned false. */
-    DbError error;
-
-    bool GetRow( DbResultRow& into );
-    size_t GetRowCount() { return mResult->row_count; }
-    void Reset();
-
-    uint32 ColumnCount() const { return mColumnCount; }
-    const char* ColumnName( uint32 index ) const;
-    DBTYPE ColumnType( uint32 index ) const;
-
-    bool IsUnsigned( uint32 index ) const;
-    bool IsBinary( uint32 index ) const;
-
-protected:
-    //for DbCore:
-    friend class DbCore;
-    void SetResult( MYSQL_RES** res, uint32 colCount );
-
-    uint32 mColumnCount;
-    MYSQL_RES* mResult;
-    MYSQL_FIELD** mFields;
-
-    static const DBTYPE MYSQL_DBTYPE_TABLE_SIGNED[];
-    static const DBTYPE MYSQL_DBTYPE_TABLE_UNSIGNED[];
-};
-
+/**
+ * @brief A single row in a result.
+ *
+ * @author Zhur
+ */
 class DbResultRow
 {
+    friend class DbQueryResult;
+
 public:
+    /// A primary constructor.
     DbResultRow();
 
-    bool IsNull( uint32 index ) const { return ( NULL == GetText( index ) ); }
+    /// @see DbQueryResult::columnCount().
+    size_t count() const;
+    /// @see DbQueryResult::columnName( size_t ).
+    const char* name( size_t index ) const;
+    /// @see DbQueryResult::columnType( size_t ).
+    DBTYPE type( size_t index ) const;
+    /**
+     * @brief Obtains length of a column.
+     *
+     * @param[in] index An index of the column.
+     *
+     * @return The length.
+     */
+    size_t length( size_t index ) const;
 
-    const char* GetText( uint32 index ) const { return mRow[ index ]; }
-    int32 GetInt( uint32 index ) const;
-    uint32 GetUInt( uint32 index ) const;
-    int64 GetInt64( uint32 index ) const;
-    uint64 GetUInt64( uint32 index ) const;
-    float GetFloat( uint32 index ) const;
-    double GetDouble( uint32 index ) const;
+    /// @see DbQueryResult::isColumnUnsigned( size_t ).
+    bool isUnsigned( size_t index ) const;
+    /// @see DbQueryResult::isColumnSigned( size_t ).
+    bool isBinary( size_t index ) const;
+    /**
+     * @brief Checks if a column is NULL.
+     *
+     * @param[in] index An index of the column.
+     *
+     * @return true  The column is NULL.
+     * @return false The column is not NULL.
+     */
+    bool isNull( size_t index ) const;
 
-    //proxy methods up to our query result:
-    uint32 ColumnCount() const { return mResult->ColumnCount(); }
-    const char* ColumnName( uint32 index ) const { return mResult->ColumnName( index ); }
-    DBTYPE ColumnType( uint32 index ) const { return mResult->ColumnType( index ); }
-    uint32 ColumnLength( uint32 index ) const;
-
-    bool IsUnsigned( uint32 index ) const { return mResult->IsUnsigned( index ); }
-    bool IsBinary( uint32 index ) const { return mResult->IsBinary( index ); }
+    /**
+     * @brief Obtains a value of a column.
+     *
+     * @param[in] index An index of the column.
+     *
+     * @return The value.
+     */
+    template< typename T >
+    T as( size_t index ) const
+    {
+        assert( !isNull( index ) );
+        return strTo< T >( mRow[ index ] );
+    }
 
 protected:
-    //for DbQueryResult
-    friend class DbQueryResult;
-    void SetData( DbQueryResult* res, MYSQL_ROW& row, const unsigned long* lengths );
+    /**
+     * @brief Sets the row.
+     *
+     * @param[in] res     A query result.
+     * @param[in] row     A row from the query result.
+     * @param[in] lengths An array with lengths of columns.
+     */
+    void SetRow( DbQueryResult* res, const MYSQL_ROW& row, const unsigned long* lengths );
 
+    /// The row.
     MYSQL_ROW mRow;
+    /// The lengths array.
     const unsigned long* mLengths;
 
+    /// The associated query result.
     DbQueryResult* mResult;
+};
+
+/**
+ * @brief A database query result.
+ *
+ * @author Zhur
+ */
+class DbQueryResult
+{
+    friend class DbCore;
+
+public:
+    /// A primary constructor.
+    DbQueryResult();
+    /// A destructor.
+    ~DbQueryResult();
+
+    /// A query error (if Db::Core::RunQuery returned @c false).
+    DbError error;
+
+    /// @return A number of rows.
+    size_t rowCount() const { return mResult->row_count; }
+    /// @return A number of columns.
+    size_t columnCount() const { return mColumnCount; }
+    /**
+     * @brief Obtains a name of a column.
+     *
+     * @param[in] index An index of the column.
+     *
+     * @return The name.
+     */
+    const char* columnName( size_t index ) const;
+    /**
+     * @brief Obtains a type of a column.
+     *
+     * @param[in] index An index of the column.
+     *
+     * @return The type.
+     */
+    DBTYPE columnType( size_t index ) const;
+    /**
+     * @brief Checks if the column is unsigned.
+     *
+     * @param[in] index An index of the column.
+     *
+     * @retval true  The column is unsigned.
+     * @retval false The column is not unsigned.
+     */
+    bool isColumnUnsigned( size_t index ) const;
+    /**
+     * @brief Checks if the column is binary.
+     *
+     * @param[in] index An index of the column.
+     *
+     * @retval true  The column is binary.
+     * @retval false The column is not binary.
+     */
+    bool isColumnBinary( size_t index ) const;
+
+    /**
+     * @brief Obtains a next result row.
+     *
+     * @param[in] into Where to store the result.
+     *
+     * @retval true  Operation successfull.
+     * @return false Operation failed (most likely no more rows left).
+     */
+    bool GetRow( DbResultRow& into );
+    /**
+     * @brief Resets the result.
+     */
+    void Reset();
+
+protected:
+    /**
+     * @brief Sets a new result.
+     *
+     * @param[in] res      The result.
+     * @param[in] colCount A number of columns.
+     */
+    void SetResult( MYSQL_RES** res, size_t colCount );
+
+    /// A column count.
+    size_t mColumnCount;
+    /// A result.
+    MYSQL_RES* mResult;
+    /// An array of rows.
+    MYSQL_FIELD** mFields;
+
+    /// A MYSQL -> DBTYPE signed column type map.
+    static const DBTYPE MYSQL_DBTYPE_TABLE_SIGNED[];
+    /// A MYSQL -> DBTYPE unsigned column type map.
+    static const DBTYPE MYSQL_DBTYPE_TABLE_UNSIGNED[];
 };
 
 class DbCore

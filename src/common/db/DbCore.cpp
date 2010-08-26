@@ -29,7 +29,249 @@
 #include "log/Log.h"
 #include "utils/StrConv.h"
 
-//#define COLUMN_BOUNDS_CHECKING
+/************************************************************************/
+/* DbError                                                              */
+/************************************************************************/
+DbError::DbError()
+{
+    ClearError();
+}
+
+void DbError::SetError( uint32 errNo, const char* errMsg )
+{
+    mErrNo = errNo;
+    mErrMsg = errMsg;
+}
+
+void DbError::ClearError()
+{
+    SetError( 0, "No Error" );
+}
+
+/*************************************************************************/
+/* DbResultRow                                                           */
+/*************************************************************************/
+DbResultRow::DbResultRow()
+: mRow( NULL ),
+  mLengths( NULL ),
+  mResult( NULL )
+{
+}
+
+size_t DbResultRow::count() const
+{
+    return mResult->columnCount();
+}
+
+const char* DbResultRow::name( size_t index ) const
+{
+    return mResult->columnName( index );
+}
+
+DBTYPE DbResultRow::type( size_t index ) const
+{
+    return mResult->columnType( index );
+}
+
+size_t DbResultRow::length( size_t index ) const
+{
+    assert( index < count() );
+    return mLengths[ index ];
+}
+
+bool DbResultRow::isUnsigned( size_t index ) const
+{
+    return mResult->isColumnUnsigned( index );
+}
+
+bool DbResultRow::isBinary( size_t index ) const
+{
+    return mResult->isColumnBinary( index );
+}
+
+bool DbResultRow::isNull( size_t index ) const
+{
+    assert( index < count() );
+    return NULL == mRow[ index ];
+}
+
+void DbResultRow::SetRow( DbQueryResult* res, const MYSQL_ROW& row, const unsigned long* lengths )
+{
+    mRow = row;
+    mResult = res;
+    mLengths = lengths;
+}
+
+/************************************************************************/
+/* DbQueryResult                                                        */
+/************************************************************************/
+/* treating all strings as wide isn't probably the best solution but it's
+   the easiest one which preserves wide strings. */
+const DBTYPE DbQueryResult::MYSQL_DBTYPE_TABLE_SIGNED[] =
+{
+    DBTYPE_ERROR,   //[ 0]MYSQL_TYPE_DECIMAL            /* DECIMAL or NUMERIC field */
+    DBTYPE_I1,      //[ 1]MYSQL_TYPE_TINY               /* TINYINT field */
+    DBTYPE_I2,      //[ 2]MYSQL_TYPE_SHORT              /* SMALLINT field */
+    DBTYPE_I4,      //[ 3]MYSQL_TYPE_LONG               /* INTEGER field */
+    DBTYPE_R4,      //[ 4]MYSQL_TYPE_FLOAT              /* FLOAT field */
+    DBTYPE_R8,      //[ 5]MYSQL_TYPE_DOUBLE             /* DOUBLE or REAL field */
+    DBTYPE_ERROR,   //[ 6]MYSQL_TYPE_NULL               /* NULL-type field */
+    DBTYPE_FILETIME,//[ 7]MYSQL_TYPE_TIMESTAMP          /* TIMESTAMP field */
+    DBTYPE_I8,      //[ 8]MYSQL_TYPE_LONGLONG           /* BIGINT field */
+    DBTYPE_I4,      //[ 9]MYSQL_TYPE_INT24              /* MEDIUMINT field */
+    DBTYPE_ERROR,   //[10]MYSQL_TYPE_DATE               /* DATE field */
+    DBTYPE_ERROR,   //[11]MYSQL_TYPE_TIME               /* TIME field */
+    DBTYPE_ERROR,   //[12]MYSQL_TYPE_DATETIME           /* DATETIME field */
+    DBTYPE_ERROR,   //[13]MYSQL_TYPE_YEAR               /* YEAR field */
+    DBTYPE_ERROR,   //[14]MYSQL_TYPE_NEWDATE            /* ??? */
+    DBTYPE_ERROR,   //[15]MYSQL_TYPE_VARCHAR            /* ??? */
+    DBTYPE_BOOL,    //[16]MYSQL_TYPE_BIT                /* BIT field (MySQL 5.0.3 and up) */
+    DBTYPE_ERROR,   //[17]MYSQL_TYPE_NEWDECIMAL=246     /* Precision math DECIMAL or NUMERIC field (MySQL 5.0.3 and up) */
+    DBTYPE_ERROR,   //[18]MYSQL_TYPE_ENUM=247           /* ENUM field */
+    DBTYPE_ERROR,   //[19]MYSQL_TYPE_SET=248            /* SET field */
+    DBTYPE_WSTR,    //[20]MYSQL_TYPE_TINY_BLOB=249      /* TINYBLOB or TINYTEXT field */
+    DBTYPE_WSTR,    //[21]MYSQL_TYPE_MEDIUM_BLOB=250    /* MEDIUMBLOB or MEDIUMTEXT field */
+    DBTYPE_WSTR,    //[22]MYSQL_TYPE_LONG_BLOB=251      /* LONGBLOB or LONGTEXT field */
+    DBTYPE_WSTR,    //[23]MYSQL_TYPE_BLOB=252           /* BLOB or TEXT field */
+    DBTYPE_WSTR,    //[24]MYSQL_TYPE_VAR_STRING=253     /* VARCHAR or VARBINARY field */
+    DBTYPE_WSTR,    //[25]MYSQL_TYPE_STRING=254         /* CHAR or BINARY field */
+    DBTYPE_ERROR,   //[26]MYSQL_TYPE_GEOMETRY=255       /* Spatial field */
+};
+
+const DBTYPE DbQueryResult::MYSQL_DBTYPE_TABLE_UNSIGNED[] =
+{
+    DBTYPE_ERROR,   //[ 0]MYSQL_TYPE_DECIMAL            /* DECIMAL or NUMERIC field */
+    DBTYPE_UI1,     //[ 1]MYSQL_TYPE_TINY               /* TINYINT field */
+    DBTYPE_UI2,     //[ 2]MYSQL_TYPE_SHORT              /* SMALLINT field */
+    DBTYPE_UI4,     //[ 3]MYSQL_TYPE_LONG               /* INTEGER field */
+    DBTYPE_R4,      //[ 4]MYSQL_TYPE_FLOAT              /* FLOAT field */
+    DBTYPE_R8,      //[ 5]MYSQL_TYPE_DOUBLE             /* DOUBLE or REAL field */
+    DBTYPE_ERROR,   //[ 6]MYSQL_TYPE_NULL               /* NULL-type field */
+    DBTYPE_FILETIME,//[ 7]MYSQL_TYPE_TIMESTAMP          /* TIMESTAMP field */
+    DBTYPE_UI8,     //[ 8]MYSQL_TYPE_LONGLONG           /* BIGINT field */
+    DBTYPE_UI4,     //[ 9]MYSQL_TYPE_INT24              /* MEDIUMINT field */
+    DBTYPE_ERROR,   //[10]MYSQL_TYPE_DATE               /* DATE field */
+    DBTYPE_ERROR,   //[11]MYSQL_TYPE_TIME               /* TIME field */
+    DBTYPE_ERROR,   //[12]MYSQL_TYPE_DATETIME           /* DATETIME field */
+    DBTYPE_ERROR,   //[13]MYSQL_TYPE_YEAR               /* YEAR field */
+    DBTYPE_ERROR,   //[14]MYSQL_TYPE_NEWDATE            /* ??? */
+    DBTYPE_ERROR,   //[15]MYSQL_TYPE_VARCHAR            /* ??? */
+    DBTYPE_BOOL,    //[16]MYSQL_TYPE_BIT                /* BIT field (MySQL 5.0.3 and up) */
+    DBTYPE_ERROR,   //[17]MYSQL_TYPE_NEWDECIMAL=246     /* Precision math DECIMAL or NUMERIC field (MySQL 5.0.3 and up) */
+    DBTYPE_ERROR,   //[18]MYSQL_TYPE_ENUM=247           /* ENUM field */
+    DBTYPE_ERROR,   //[19]MYSQL_TYPE_SET=248            /* SET field */
+    DBTYPE_WSTR,    //[20]MYSQL_TYPE_TINY_BLOB=249      /* TINYBLOB or TINYTEXT field */
+    DBTYPE_WSTR,    //[21]MYSQL_TYPE_MEDIUM_BLOB=250    /* MEDIUMBLOB or MEDIUMTEXT field */
+    DBTYPE_WSTR,    //[22]MYSQL_TYPE_LONG_BLOB=251      /* LONGBLOB or LONGTEXT field */
+    DBTYPE_WSTR,    //[23]MYSQL_TYPE_BLOB=252           /* BLOB or TEXT field */
+    DBTYPE_WSTR,    //[24]MYSQL_TYPE_VAR_STRING=253     /* VARCHAR or VARBINARY field */
+    DBTYPE_WSTR,    //[25]MYSQL_TYPE_STRING=254         /* CHAR or BINARY field */
+    DBTYPE_ERROR,   //[26]MYSQL_TYPE_GEOMETRY=255       /* Spatial field */
+};
+
+DbQueryResult::DbQueryResult()
+: mColumnCount( 0 ),
+  mResult( NULL ),
+  mFields( NULL )
+{
+}
+
+DbQueryResult::~DbQueryResult()
+{
+    SafeDeleteArray( mFields );
+
+    if( NULL != mResult )
+        mysql_free_result( mResult );
+}
+
+const char* DbQueryResult::columnName( size_t index ) const
+{
+    assert( index < columnCount() );
+    return mFields[ index ]->name;
+}
+
+DBTYPE DbQueryResult::columnType( size_t index ) const
+{
+    assert( index < columnCount() );
+    uint32 columnType = mFields[ index ]->type;
+
+    /* tricky needs to be checked */
+    if ( columnType > MYSQL_TYPE_BIT )
+        columnType -= ( MYSQL_TYPE_NEWDECIMAL - MYSQL_TYPE_BIT - 1 );
+
+    DBTYPE result = ( isColumnUnsigned( index ) ? MYSQL_DBTYPE_TABLE_UNSIGNED : MYSQL_DBTYPE_TABLE_SIGNED )[ columnType ];
+
+    /* if result is (wide) binary string, set result to DBTYPE_BYTES. */
+    if( ( DBTYPE_STR == result
+          || DBTYPE_WSTR == result )
+        && isColumnBinary( index ) )
+    {
+        result = DBTYPE_BYTES;
+    }
+
+    /* debug check */
+    assert( DBTYPE_ERROR != result );
+
+    return result;
+}
+
+bool DbQueryResult::isColumnUnsigned( size_t index ) const
+{
+    assert( index < columnCount() );
+    return 0 != ( mFields[index]->flags & UNSIGNED_FLAG );
+}
+
+bool DbQueryResult::isColumnBinary( size_t index ) const
+{
+    assert( index < columnCount() );
+    // According to MySQL C API Documentation, binary string
+    // fields like BLOB or VAR_BINARY have charset "63".
+    return 63 == mFields[ index ]->charsetnr;
+}
+
+bool DbQueryResult::GetRow( DbResultRow& into )
+{
+    if( NULL == mResult )
+        return false;
+
+    MYSQL_ROW row = mysql_fetch_row( mResult );
+    if( NULL == row )
+        return false;
+
+    const unsigned long* lengths = mysql_fetch_lengths( mResult );
+    if( NULL == lengths )
+        return false;
+
+    into.SetRow( this, row, lengths );
+    return true;
+}
+
+void DbQueryResult::Reset()
+{
+    if( NULL != mResult )
+        mysql_data_seek( mResult, 0);
+}
+
+void DbQueryResult::SetResult( MYSQL_RES** res, size_t colCount )
+{
+    SafeDeleteArray( mFields );
+
+    if( NULL != mResult )
+        mysql_free_result( mResult );
+
+    mResult = *res;
+    *res = NULL;
+    mColumnCount = colCount;
+
+    if( NULL != mResult )
+    {
+        mFields = new MYSQL_FIELD*[ columnCount() ];
+
+        // we are
+        for( size_t i = 0; i < columnCount(); ++i )
+            mFields[ i ] = mysql_fetch_field( mResult );
+    }
+}
 
 /*************************************************************************/
 /* DbCore                                                                */
@@ -325,314 +567,4 @@ bool DbCore::Open_locked(int32* errnum, char* errbuf) {
     }
 
     return true;
-}
-
-/************************************************************************/
-/* DbError                                                              */
-/************************************************************************/
-DbError::DbError()
-{
-    ClearError();
-}
-
-void DbError::SetError( uint32 err, const char* str )
-{
-    mErrStr = str;
-    mErrNo = err;
-}
-
-void DbError::ClearError()
-{
-    mErrStr = "No Error";
-    mErrNo = 0;
-}
-
-/************************************************************************/
-/* DbQueryResult                                                        */
-/************************************************************************/
-/* mysql to DBTYPE convention table */
-/* treating all strings as wide isn't probably the best solution but it's
-   the easiest one which preserves wide strings. */
-const DBTYPE DbQueryResult::MYSQL_DBTYPE_TABLE_SIGNED[] =
-{
-    DBTYPE_ERROR,   //[ 0]MYSQL_TYPE_DECIMAL            /* DECIMAL or NUMERIC field */
-    DBTYPE_I1,      //[ 1]MYSQL_TYPE_TINY               /* TINYINT field */
-    DBTYPE_I2,      //[ 2]MYSQL_TYPE_SHORT              /* SMALLINT field */
-    DBTYPE_I4,      //[ 3]MYSQL_TYPE_LONG               /* INTEGER field */
-    DBTYPE_R4,      //[ 4]MYSQL_TYPE_FLOAT              /* FLOAT field */
-    DBTYPE_R8,      //[ 5]MYSQL_TYPE_DOUBLE             /* DOUBLE or REAL field */
-    DBTYPE_ERROR,   //[ 6]MYSQL_TYPE_NULL               /* NULL-type field */
-    DBTYPE_FILETIME,//[ 7]MYSQL_TYPE_TIMESTAMP          /* TIMESTAMP field */
-    DBTYPE_I8,      //[ 8]MYSQL_TYPE_LONGLONG           /* BIGINT field */
-    DBTYPE_I4,      //[ 9]MYSQL_TYPE_INT24              /* MEDIUMINT field */
-    DBTYPE_ERROR,   //[10]MYSQL_TYPE_DATE               /* DATE field */
-    DBTYPE_ERROR,   //[11]MYSQL_TYPE_TIME               /* TIME field */
-    DBTYPE_ERROR,   //[12]MYSQL_TYPE_DATETIME           /* DATETIME field */
-    DBTYPE_ERROR,   //[13]MYSQL_TYPE_YEAR               /* YEAR field */
-    DBTYPE_ERROR,   //[14]MYSQL_TYPE_NEWDATE            /* ??? */
-    DBTYPE_ERROR,   //[15]MYSQL_TYPE_VARCHAR            /* ??? */
-    DBTYPE_BOOL,    //[16]MYSQL_TYPE_BIT                /* BIT field (MySQL 5.0.3 and up) */
-    DBTYPE_ERROR,   //[17]MYSQL_TYPE_NEWDECIMAL=246     /* Precision math DECIMAL or NUMERIC field (MySQL 5.0.3 and up) */
-    DBTYPE_ERROR,   //[18]MYSQL_TYPE_ENUM=247           /* ENUM field */
-    DBTYPE_ERROR,   //[19]MYSQL_TYPE_SET=248            /* SET field */
-    DBTYPE_WSTR,    //[20]MYSQL_TYPE_TINY_BLOB=249      /* TINYBLOB or TINYTEXT field */
-    DBTYPE_WSTR,    //[21]MYSQL_TYPE_MEDIUM_BLOB=250    /* MEDIUMBLOB or MEDIUMTEXT field */
-    DBTYPE_WSTR,    //[22]MYSQL_TYPE_LONG_BLOB=251      /* LONGBLOB or LONGTEXT field */
-    DBTYPE_WSTR,    //[23]MYSQL_TYPE_BLOB=252           /* BLOB or TEXT field */
-    DBTYPE_WSTR,    //[24]MYSQL_TYPE_VAR_STRING=253     /* VARCHAR or VARBINARY field */
-    DBTYPE_WSTR,    //[25]MYSQL_TYPE_STRING=254         /* CHAR or BINARY field */
-    DBTYPE_ERROR,   //[26]MYSQL_TYPE_GEOMETRY=255       /* Spatial field */
-};
-
-const DBTYPE DbQueryResult::MYSQL_DBTYPE_TABLE_UNSIGNED[] =
-{
-    DBTYPE_ERROR,   //[ 0]MYSQL_TYPE_DECIMAL            /* DECIMAL or NUMERIC field */
-    DBTYPE_UI1,     //[ 1]MYSQL_TYPE_TINY               /* TINYINT field */
-    DBTYPE_UI2,     //[ 2]MYSQL_TYPE_SHORT              /* SMALLINT field */
-    DBTYPE_UI4,     //[ 3]MYSQL_TYPE_LONG               /* INTEGER field */
-    DBTYPE_R4,      //[ 4]MYSQL_TYPE_FLOAT              /* FLOAT field */
-    DBTYPE_R8,      //[ 5]MYSQL_TYPE_DOUBLE             /* DOUBLE or REAL field */
-    DBTYPE_ERROR,   //[ 6]MYSQL_TYPE_NULL               /* NULL-type field */
-    DBTYPE_FILETIME,//[ 7]MYSQL_TYPE_TIMESTAMP          /* TIMESTAMP field */
-    DBTYPE_UI8,     //[ 8]MYSQL_TYPE_LONGLONG           /* BIGINT field */
-    DBTYPE_UI4,     //[ 9]MYSQL_TYPE_INT24              /* MEDIUMINT field */
-    DBTYPE_ERROR,   //[10]MYSQL_TYPE_DATE               /* DATE field */
-    DBTYPE_ERROR,   //[11]MYSQL_TYPE_TIME               /* TIME field */
-    DBTYPE_ERROR,   //[12]MYSQL_TYPE_DATETIME           /* DATETIME field */
-    DBTYPE_ERROR,   //[13]MYSQL_TYPE_YEAR               /* YEAR field */
-    DBTYPE_ERROR,   //[14]MYSQL_TYPE_NEWDATE            /* ??? */
-    DBTYPE_ERROR,   //[15]MYSQL_TYPE_VARCHAR            /* ??? */
-    DBTYPE_BOOL,    //[16]MYSQL_TYPE_BIT                /* BIT field (MySQL 5.0.3 and up) */
-    DBTYPE_ERROR,   //[17]MYSQL_TYPE_NEWDECIMAL=246     /* Precision math DECIMAL or NUMERIC field (MySQL 5.0.3 and up) */
-    DBTYPE_ERROR,   //[18]MYSQL_TYPE_ENUM=247           /* ENUM field */
-    DBTYPE_ERROR,   //[19]MYSQL_TYPE_SET=248            /* SET field */
-    DBTYPE_WSTR,    //[20]MYSQL_TYPE_TINY_BLOB=249      /* TINYBLOB or TINYTEXT field */
-    DBTYPE_WSTR,    //[21]MYSQL_TYPE_MEDIUM_BLOB=250    /* MEDIUMBLOB or MEDIUMTEXT field */
-    DBTYPE_WSTR,    //[22]MYSQL_TYPE_LONG_BLOB=251      /* LONGBLOB or LONGTEXT field */
-    DBTYPE_WSTR,    //[23]MYSQL_TYPE_BLOB=252           /* BLOB or TEXT field */
-    DBTYPE_WSTR,    //[24]MYSQL_TYPE_VAR_STRING=253     /* VARCHAR or VARBINARY field */
-    DBTYPE_WSTR,    //[25]MYSQL_TYPE_STRING=254         /* CHAR or BINARY field */
-    DBTYPE_ERROR,   //[26]MYSQL_TYPE_GEOMETRY=255       /* Spatial field */
-};
-
-DbQueryResult::DbQueryResult()
-: mColumnCount( 0 ),
-  mResult( NULL ),
-  mFields( NULL )
-{
-}
-
-DbQueryResult::~DbQueryResult()
-{
-    SafeDeleteArray( mFields );
-
-    if( NULL != mResult )
-        mysql_free_result( mResult );
-}
-
-bool DbQueryResult::GetRow( DbResultRow& into )
-{
-    if( NULL == mResult )
-        return false;
-
-    MYSQL_ROW row = mysql_fetch_row( mResult );
-    if( NULL == row )
-        return false;
-
-    const unsigned long* lengths = mysql_fetch_lengths( mResult );
-    if( NULL == lengths )
-        return false;
-
-    into.SetData( this, row, lengths );
-    return true;
-}
-
-void DbQueryResult::Reset()
-{
-    if( NULL != mResult )
-        mysql_data_seek( mResult, 0);
-}
-
-const char* DbQueryResult::ColumnName( uint32 index ) const
-{
-#ifdef COLUMN_BOUNDS_CHECKING
-    if( index >= ColumnCount() )
-    {
-        sLog.Error( "DbCore Query Result", "ColumnName: Column index %d exceeds number of columns (%s) in row\n", column, ColumnCount() );
-        return "(ERROR)";      //nothing better to do...
-    }
-#endif
-    return mFields[ index ]->name;
-}
-
-DBTYPE DbQueryResult::ColumnType( uint32 index ) const
-{
-#ifdef COLUMN_BOUNDS_CHECKING
-    if( index >= ColumnCount() )
-    {
-        sLog.Error( "DbCore Query Result", "ColumnType: Column index %d exceeds number of columns (%s) in row\n", column, ColumnCount() );
-        return DBTYPE_STR;     //nothing better to do...
-    }
-#endif
-
-    uint32 columnType = mFields[ index ]->type;
-
-    /* tricky needs to be checked */
-    if ( columnType > MYSQL_TYPE_BIT )
-        columnType -= ( MYSQL_TYPE_NEWDECIMAL - MYSQL_TYPE_BIT - 1 );
-
-    DBTYPE result = ( IsUnsigned( index ) ? MYSQL_DBTYPE_TABLE_UNSIGNED : MYSQL_DBTYPE_TABLE_SIGNED )[ columnType ];
-
-    /* if result is (wide) binary string, set result to DBTYPE_BYTES. */
-    if( ( DBTYPE_STR == result
-          || DBTYPE_WSTR == result )
-        && IsBinary( index ) )
-    {
-        result = DBTYPE_BYTES;
-    }
-
-    /* debug check */
-    assert( DBTYPE_ERROR != result );
-    return result;
-}
-
-bool DbQueryResult::IsUnsigned( uint32 index ) const
-{
-    return 0 != ( mFields[index]->flags & UNSIGNED_FLAG );
-}
-
-bool DbQueryResult::IsBinary( uint32 index ) const
-{
-    // According to MySQL C API Documentation, binary string
-    // fields like BLOB or VAR_BINARY have charset "63".
-    return 63 == mFields[ index ]->charsetnr;
-}
-
-void DbQueryResult::SetResult( MYSQL_RES** res, uint32 colCount )
-{
-    SafeDeleteArray( mFields );
-
-    if( NULL != mResult )
-        mysql_free_result( mResult );
-
-    mResult = *res;
-    *res = NULL;
-    mColumnCount = colCount;
-
-    if( NULL != mResult )
-	{
-		mFields = new MYSQL_FIELD*[ ColumnCount() ];
-	    
-		// we are
-		for( uint32 i = 0; i < ColumnCount(); ++i )
-			mFields[ i ] = mysql_fetch_field( mResult );
-	}
-}
-
-/*************************************************************************/
-/* DbResultRow                                                           */
-/*************************************************************************/
-DbResultRow::DbResultRow()
-: mRow( NULL ),
-  mLengths( NULL ),
-  mResult( NULL )
-{
-}
-
-uint32 DbResultRow::ColumnLength( uint32 index ) const
-{
-#ifdef COLUMN_BOUNDS_CHECKING
-    if( index >= ColumnCount() )
-    {
-        sLog.Error( "DbCore Result Row", "GetColumnLength: Column index %u exceeds number of columns (%u) in row", index, ColumnCount() );
-        return 0;       //nothing better to do...
-    }
-#endif
-
-    return mLengths[ index ];
-}
-
-int32 DbResultRow::GetInt( uint32 index ) const
-{
-#ifdef COLUMN_BOUNDS_CHECKING
-    if( index >= ColumnCount() )
-    {
-        sLog.Error( "DbCore Result Row", "GetInt: Column index %u exceeds number of columns (%u) in row", index, ColumnCount() );
-        return 0;       //nothing better to do...
-    }
-#endif
-
-    return strTo< int32 >( GetText( index ) );
-}
-
-uint32 DbResultRow::GetUInt( uint32 index ) const
-{
-#ifdef COLUMN_BOUNDS_CHECKING
-    if( index >= ColumnCount() )
-    {
-        sLog.Error( "DbCore Result Row", "GetUInt: Column index %u exceeds number of columns (%u) in row", index, ColumnCount() );
-        return 0;       //nothing better to do...
-    }
-#endif
-
-    return strTo< uint32 >( GetText( index ) );
-}
-
-int64 DbResultRow::GetInt64( uint32 index ) const
-{
-#ifdef COLUMN_BOUNDS_CHECKING
-    if( index >= ColumnCount() )
-    {
-        sLog.Error( "DbCore Result Row", "GetInt64: Column index %u exceeds number of columns (%u) in row", index, ColumnCount() );
-        return 0;       //nothing better to do...
-    }
-#endif
-
-    return strTo< int64 >( GetText( index ) );
-}
-
-uint64 DbResultRow::GetUInt64( uint32 index ) const
-{
-#ifdef COLUMN_BOUNDS_CHECKING
-    if( index >= ColumnCount() )
-    {
-        sLog.Error( "DbCore Result Row", "GetUInt64: Column index %u exceeds number of columns (%u) in row", index, ColumnCount() );
-        return 0;       //nothing better to do...
-    }
-#endif
-
-    return strTo< uint64 >( GetText( index ) );
-}
-
-float DbResultRow::GetFloat( uint32 index ) const
-{
-#ifdef COLUMN_BOUNDS_CHECKING
-    if( index >= ColumnCount() )
-    {
-        sLog.Error( "DbCore Result Row", "GetFloat: Column index %u exceeds number of columns (%u) in row", index, ColumnCount() );
-        return 0;       //nothing better to do...
-    }
-#endif
-
-    return strTo< float >( GetText( index ) );
-}
-
-double DbResultRow::GetDouble( uint32 index ) const
-{
-#ifdef COLUMN_BOUNDS_CHECKING
-    if( index >= ColumnCount() )
-    {
-        sLog.Error( "DbCore Result Row", "GetDouble: Column index %u exceeds number of columns (%u) in row", index, ColumnCount() );
-        return 0;       //nothing better to do...
-    }
-#endif
-
-    return strTo< double >( GetText( index ) );
-}
-
-void DbResultRow::SetData( DbQueryResult* res, MYSQL_ROW& row, const unsigned long* lengths )
-{
-    mRow = row;
-    mResult = res;
-    mLengths = lengths;
 }
