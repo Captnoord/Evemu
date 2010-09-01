@@ -25,10 +25,10 @@
 
 #include "CommonPCH.h"
 
-#include "log/Log.h"
 #include "net/NetUtils.h"
 #include "net/TCPConnection.h"
 #include "time/Timer.h"
+#include "utils/Log.h"
 
 const uint32 TCPCONN_RECVBUF_SIZE = 0x1000;
 const uint32 TCPCONN_LOOP_GRANULARITY = 5;
@@ -486,7 +486,7 @@ thread_return_t TCPConnection::TCPConnectionLoop()
 #endif
 
 #ifndef WIN32
-    sLog.Log( "Threading", "Starting TCPConnectionLoop with thread ID %d", pthread_self() );
+    sLog.Message( "Threading", "Starting TCPConnectionLoop with thread ID %d", pthread_self() );
 #endif
 
     mMLoopRunning.Lock();
@@ -500,7 +500,7 @@ thread_return_t TCPConnection::TCPConnectionLoop()
     mMLoopRunning.Unlock();
 
 #ifndef WIN32
-    sLog.Log( "Threading", "Ending TCPConnectionLoop with thread ID %d", pthread_self() );
+    sLog.Message( "Threading", "Ending TCPConnectionLoop with thread ID %d", pthread_self() );
 #endif
 
     THREAD_RETURN( NULL );

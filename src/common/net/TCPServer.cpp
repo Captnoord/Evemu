@@ -26,8 +26,8 @@
 #include "CommonPCH.h"
 
 #include "net/TCPServer.h"
-#include "log/Log.h"
 #include "time/Timer.h"
+#include "utils/Log.h"
 
 const uint32 TCPSRV_ERRBUF_SIZE = 1024;
 const uint32 TCPSRV_LOOP_GRANULARITY = 5;
@@ -220,7 +220,7 @@ thread_return_t BaseTCPServer::TCPServerLoop()
 #endif
 
 #ifndef WIN32
-    sLog.Log( "Threading", "Starting TCPServerLoop with thread ID %d", pthread_self() );
+    sLog.Message( "Threading", "Starting TCPServerLoop with thread ID %d", pthread_self() );
 #endif
 
     mMLoopRunning.Lock();
@@ -234,7 +234,7 @@ thread_return_t BaseTCPServer::TCPServerLoop()
     mMLoopRunning.Unlock();
 
 #ifndef WIN32
-    sLog.Log( "Threading", "Ending TCPServerLoop with thread ID %d", pthread_self() );
+    sLog.Message( "Threading", "Ending TCPServerLoop with thread ID %d", pthread_self() );
 #endif
 
     THREAD_RETURN( NULL );

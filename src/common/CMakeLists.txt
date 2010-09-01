@@ -42,11 +42,6 @@ SET( gangsta_INCLUDE
 SET( gangsta_SOURCE
      "" )
 
-SET( log_INCLUDE
-     "${TARGET_INCLUDE_DIR}/log/Log.h" )
-SET( log_SOURCE
-     "${TARGET_SOURCE_DIR}/log/Log.cpp" )
-
 SET( mt_INCLUDE
      "${TARGET_INCLUDE_DIR}/mt/Condition.h"
      "${TARGET_INCLUDE_DIR}/mt/MtCommon.h"
@@ -127,6 +122,7 @@ SET( utils_INCLUDE
      "${TARGET_INCLUDE_DIR}/utils/Buffer.h"
      "${TARGET_INCLUDE_DIR}/utils/crc32.h"
      "${TARGET_INCLUDE_DIR}/utils/Lock.h"
+     "${TARGET_INCLUDE_DIR}/utils/Log.h"
      "${TARGET_INCLUDE_DIR}/utils/misc.h"
      "${TARGET_INCLUDE_DIR}/utils/RefPtr.h"
      "${TARGET_INCLUDE_DIR}/utils/SafeDelete.h"
@@ -135,6 +131,7 @@ SET( utils_INCLUDE
      "${TARGET_INCLUDE_DIR}/utils/StrUtils.h" )
 SET( utils_SOURCE
      "${TARGET_SOURCE_DIR}/utils/crc32.cpp"
+     "${TARGET_SOURCE_DIR}/utils/Log.cpp"
      "${TARGET_SOURCE_DIR}/utils/misc.cpp"
      "${TARGET_SOURCE_DIR}/utils/StrConv.cpp"
      "${TARGET_SOURCE_DIR}/utils/StrUtils.cpp" )
@@ -182,7 +179,6 @@ SOURCE_GROUP( "include"          FILES ${INCLUDE} )
 SOURCE_GROUP( "include\\db"      FILES ${db_INCLUDE} )
 SOURCE_GROUP( "include\\fs"      FILES ${fs_INCLUDE} )
 SOURCE_GROUP( "include\\gangsta" FILES ${gangsta_INCLUDE} )
-SOURCE_GROUP( "include\\log"     FILES ${log_INCLUDE} )
 SOURCE_GROUP( "include\\mt"      FILES ${mt_INCLUDE} )
 SOURCE_GROUP( "include\\net"     FILES ${net_INCLUDE} )
 SOURCE_GROUP( "include\\posix"   FILES ${posix_INCLUDE} )
@@ -197,7 +193,6 @@ SOURCE_GROUP( "src"          FILES ${SOURCE} )
 SOURCE_GROUP( "src\\db"      FILES ${db_SOURCE} )
 SOURCE_GROUP( "src\\fs"      FILES ${fs_SOURCE} )
 SOURCE_GROUP( "src\\gangsta" FILES ${gangsta_SOURCE} )
-SOURCE_GROUP( "src\\log"     FILES ${log_SOURCE} )
 SOURCE_GROUP( "src\\mt"      FILES ${mt_SOURCE} )
 SOURCE_GROUP( "src\\net"     FILES ${net_SOURCE} )
 SOURCE_GROUP( "src\\posix"   FILES ${posix_SOURCE} )
@@ -213,7 +208,6 @@ ADD_LIBRARY( "${TARGET_NAME}"
              ${db_INCLUDE}      ${db_SOURCE}
              ${fs_INCLUDE}      ${fs_SOURCE}
              ${gangsta_INCLUDE} ${gangsta_SOURCE}
-             ${log_INCLUDE}     ${log_SOURCE}
              ${mt_INCLUDE}      ${mt_SOURCE}
              ${net_INCLUDE}     ${net_SOURCE}
              ${posix_INCLUDE}   ${posix_SOURCE}

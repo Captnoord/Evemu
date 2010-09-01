@@ -23,8 +23,8 @@
     Author:     Captnoord
 */
 
-#ifndef __LOG__LOG_H__INCL__
-#define __LOG__LOG_H__INCL__
+#ifndef __UTILS__LOG_H__INCL__
+#define __UTILS__LOG_H__INCL__
 
 #include "mt/Mutex.h"
 #include "utils/Singleton.h"
@@ -226,4 +226,4 @@ protected:
 #define sLog \
     ( Log::get() )
 
-#endif /* !__LOG__LOG_H__INCL__ */
+#endif /* !__UTILS__LOG_H__INCL__ */

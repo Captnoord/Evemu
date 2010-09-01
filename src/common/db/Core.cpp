@@ -26,7 +26,7 @@
 #include "CommonPCH.h"
 
 #include "db/Core.h"
-#include "log/Log.h"
+#include "utils/Log.h"
 #include "utils/StrConv.h"
 
 /************************************************************************/

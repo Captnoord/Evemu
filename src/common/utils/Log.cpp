@@ -25,7 +25,7 @@
 
 #include "CommonPCH.h"
 
-#include "log/Log.h"
+#include "utils/Log.h"
 #include "utils/StrUtils.h"
 
 /*************************************************************************/

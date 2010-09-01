@@ -25,8 +25,8 @@
 
 #include "CommonPCH.h"
 
-#include "log/Log.h"
 #include "mt/ThreadMgr.h"
+#include "utils/Log.h"
 
 /*************************************************************************/
 /* ThreadMgr                                                             */
