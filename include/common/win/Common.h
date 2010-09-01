@@ -23,8 +23,13 @@
     Author:     Aim, Captnoord, Zhur, Bloody.Rabbit
 */
 
-#ifndef __WIN__WIN_COMMON_H__INCL__
-#define __WIN__WIN_COMMON_H__INCL__
+#ifndef __WIN__COMMON_H__INCL__
+#define __WIN__COMMON_H__INCL__
+
+/**
+ * @namespace Win
+ * @brief A bunch of wrappers around Windows API.
+ */
 
 // Define basic Windows configuration
 #define WIN32_LEAN_AND_MEAN
@@ -35,4 +40,4 @@
 #include <windows.h>
 #include <winsock2.h>
 
-#endif /* !__WIN__WIN_COMMON_H__INCL__ */
+#endif /* !__WIN__COMMON_H__INCL__ */

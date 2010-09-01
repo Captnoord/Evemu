@@ -25,81 +25,72 @@
 
 #include "CommonPCH.h"
 
-#include "win/WinThread.h"
+#include "win/Condition.h"
 
 /*************************************************************************/
-/* WinThread                                                       */
+/* Win::Condition                                                        */
 /*************************************************************************/
-WinThread WinThread::self()
+Win::Condition::Condition()
+: mCurrentCount( 0 ),
+  mToFreeCount( 0 )
 {
-    return WinThread( ::GetCurrentThread(), ::GetCurrentThreadId() );
 }
 
-VOID WinThread::Sleep( DWORD milliseconds )
+BOOL Win::Condition::Signal()
 {
-    if( 0 < milliseconds )
-        ::Sleep( milliseconds );
+    MutexLock lock( mMutex );
+
+    mToFreeCount = std::min( mToFreeCount + 1, mCurrentCount );
+    return ( 0 < mToFreeCount ? mWaitEvent.Set() : TRUE );
 }
 
-WinThread::WinThread( PTHREAD_START_ROUTINE startAddress, PVOID param, SIZE_T stackSize )
+BOOL Win::Condition::Broadcast()
 {
-    BOOL success;
+    MutexLock lock( mMutex );
 
-    success = Create( startAddress, param, stackSize );
-    assert( TRUE == success );
+    mToFreeCount = mCurrentCount;
+    return ( 0 < mToFreeCount ? mWaitEvent.Set() : TRUE );
 }
 
-WinThread::WinThread( const WinThread& oth )
+DWORD Win::Condition::Wait( Win::CriticalSection& criticalSection, DWORD timeout )
 {
-    // let the copy operator do the job
-    *this = oth;
-}
-
-BOOL WinThread::GetExitCode( PDWORD exitCode ) const
-{
-    return ::GetExitCodeThread( mHandle, exitCode );
-}
-
-BOOL WinThread::Create( PTHREAD_START_ROUTE startAddress, PVOID param, SIZE_T stackSize )
-{
-    BOOL success;
-
-    if( TRUE == isValid() )
     {
-        success = Close();
-        assert( TRUE == success );
+        MutexLock lock( mMutex );
+        ++mCurrentCount;
     }
 
-    mHandle = ::CreateThread( NULL, stackSize, startAddress, param, 0, &mThreadID );
-    success = isValid();
+    criticalSection.Leave();
+    DWORD code = mWaitEvent.Wait( timeout );
+    criticalSection.Enter();
 
-    return success;
-}
+    {
+        MutexLock lock( mMutex );
+        assert( mToFreeCount <= mCurrentCount );
 
-BOOL WinThread::Terminate( DWORD exitCode )
-{
-    return ::TerminateThread( mHandle, exitCode );
-}
+        /* It is important to do the stuff below ONLY IF
+           we have been woken up intentionally. */
+        if( WAIT_OBJECT_0 == code )
+        {
+            assert( 0 < mToFreeCount );
+            --mToFreeCount;
 
-DWORD WinThread::Suspend()
-{
-    return ::SuspendThread( mHandle );
-}
+            if( 0 < mToFreeCount )
+                mWaitEvent.Set();
+            else
+                mWaitEvent.Reset();
+        }
+        /* We failed to wait, so act like we've never been
+           here. However, we still need to keep integrity. */
+        else if( mToFreeCount == mCurrentCount )
+        {
+            --mToFreeCount;
 
-DWORD WinThread::Resume()
-{
-    return ::ResumeThread( mHandle );
-}
+            if( 0 == mToFreeCount )
+                mWaitEvent.Reset();
+        }
 
-BOOL WinThread::SetPriority( int priority )
-{
-    return ::SetThreadPriority( mHandle, priority );
-}
+        --mCurrentCount;
+    }
 
-WinThread& WinThread::operator=( const WinThread& oth )
-{
-    *(WinWaitableHandle*)this = oth;
-    mThreadID = oth.mThreadID;
-
-    return *this;
+    return code;
 }

@@ -139,18 +139,18 @@ SET( utils_SOURCE
 
 IF( WIN32 )
     SET( win_INCLUDE
-         "${TARGET_INCLUDE_DIR}/win/WinCommon.h"
-         "${TARGET_INCLUDE_DIR}/win/WinCondition.h"
-         "${TARGET_INCLUDE_DIR}/win/WinCriticalSection.h"
-         "${TARGET_INCLUDE_DIR}/win/WinEvent.h"
-         "${TARGET_INCLUDE_DIR}/win/WinHandle.h"
-         "${TARGET_INCLUDE_DIR}/win/WinThread.h" )
+         "${TARGET_INCLUDE_DIR}/win/Common.h"
+         "${TARGET_INCLUDE_DIR}/win/Condition.h"
+         "${TARGET_INCLUDE_DIR}/win/CriticalSection.h"
+         "${TARGET_INCLUDE_DIR}/win/Event.h"
+         "${TARGET_INCLUDE_DIR}/win/Handle.h"
+         "${TARGET_INCLUDE_DIR}/win/Thread.h" )
     SET( win_SOURCE
-         "${TARGET_SOURCE_DIR}/win/WinCondition.cpp"
-         "${TARGET_SOURCE_DIR}/win/WinCriticalSection.cpp"
-         "${TARGET_SOURCE_DIR}/win/WinEvent.cpp"
-         "${TARGET_SOURCE_DIR}/win/WinHandle.cpp"
-         "${TARGET_SOURCE_DIR}/win/WinThread.cpp" )
+         "${TARGET_SOURCE_DIR}/win/Condition.cpp"
+         "${TARGET_SOURCE_DIR}/win/CriticalSection.cpp"
+         "${TARGET_SOURCE_DIR}/win/Event.cpp"
+         "${TARGET_SOURCE_DIR}/win/Handle.cpp"
+         "${TARGET_SOURCE_DIR}/win/Thread.cpp" )
 ENDIF( WIN32 )
 
 SET( xml_INCLUDE

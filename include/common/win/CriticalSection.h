@@ -23,43 +23,46 @@
     Author:     Bloody.Rabbit
 */
 
-#include "CommonPCH.h"
+#ifndef __WIN__CRITICAL_SECTION_H__INCL__
+#define __WIN__CRITICAL_SECTION_H__INCL__
 
-#include "win/WinEvent.h"
-
-/*************************************************************************/
-/* WinEvent                                                              */
-/*************************************************************************/
-WinEvent::WinEvent( BOOL manualReset, BOOL initialState )
+namespace Win
 {
-    BOOL success;
-
-    success = Create( manualReset, initialState );
-    assert( TRUE == success );
-}
-
-BOOL WinEvent::Create( BOOL manualReset, BOOL initialState )
-{
-    BOOL success;
-
-    if( TRUE == isValid() )
+    /**
+     * @brief Wrapper around Windows critical section.
+     *
+     * @author Bloody.Rabbit
+     */
+    class CriticalSection
     {
-        success = Close();
-        assert( TRUE == success );
-    }
+    public:
+        /// Primary constructor.
+        CriticalSection();
+        /// A destructor.
+        ~CriticalSection();
 
-    mHandle = ::CreateEvent( NULL, manualReset, initialState, NULL );
-    success = isValid();
+        /**
+         * @brief Enters the critical section.
+         *
+         * This method blocks until the section
+         * has been entered.
+         */
+        VOID Enter();
+        /**
+         * @brief Attempts to enter the critical section.
+         *
+         * This method returns immediately; the returned value
+         * indicates whether the critical section has been entered.
+         */
+        BOOL TryEnter();
 
-    return success;
+        /// Leaves the critical section.
+        VOID Leave();
+
+    protected:
+        /// The critical section itself.
+        CRITICAL_SECTION mCriticalSection;
+    };
 }
 
-BOOL WinEvent::Set()
-{
-    return ::SetEvent( mHandle );
-}
-
-BOOL WinEvent::Reset()
-{
-    return ::ResetEvent( mHandle );
-}
+#endif /* !__WIN__CRITICAL_SECTION_H__INCL__ */

@@ -25,72 +25,72 @@
 
 #include "CommonPCH.h"
 
-#include "win/WinCondition.h"
+#include "win/Handle.h"
 
 /*************************************************************************/
-/* WinCondition                                                          */
+/* Win::Handle                                                           */
 /*************************************************************************/
-WinCondition::WinCondition()
-: mCurrentCount( 0 ),
-  mToFreeCount( 0 )
+Win::Handle::Handle( HANDLE handle )
+: mHandle( handle )
 {
 }
 
-BOOL WinCondition::Signal()
+Win::Handle::Handle( const Win::Handle& oth )
+: mHandle( INVALID_HANDLE )
 {
-    MutexLock lock( mMutex );
-
-    mToFreeCount = std::min( mToFreeCount + 1, mCurrentCount );
-    return ( 0 < mToFreeCount ? mWaitEvent.Set() : TRUE );
+    // pass to copy operator
+    *this = oth;
 }
 
-BOOL WinCondition::Broadcast()
+Win::Handle::~Handle()
 {
-    MutexLock lock( mMutex );
+    BOOL success;
 
-    mToFreeCount = mCurrentCount;
-    return ( 0 < mToFreeCount ? mWaitEvent.Set() : TRUE );
-}
-
-DWORD WinCondition::Wait( WinCriticalSection& criticalSection, DWORD timeout )
-{
+    if( TRUE == isValid() )
     {
-        MutexLock lock( mMutex );
-        ++mCurrentCount;
+        success = Close();
+        assert( TRUE == success );
+    }
+}
+
+Win::Handle& Win::Handle::operator=( const Win::Handle& oth )
+{
+    BOOL success;
+
+    if( TRUE == isValid() )
+    {
+        success = Close();
+        assert( TRUE == success );
     }
 
-    criticalSection.Leave();
-    DWORD code = mWaitEvent.Wait( timeout );
-    criticalSection.Enter();
-
+    // duplicate the target handle
+    if( FALSE == oth.isValid() )
+        mHandle = INVALID_HANDLE;
+    else
     {
-        MutexLock lock( mMutex );
-        assert( mToFreeCount <= mCurrentCount );
-
-        /* It is important to do the stuff below ONLY IF
-           we have been woken up intentionally. */
-        if( WAIT_OBJECT_0 == code )
-        {
-            assert( 0 < mToFreeCount );
-            --mToFreeCount;
-
-            if( 0 < mToFreeCount )
-                mWaitEvent.Set();
-            else
-                mWaitEvent.Reset();
-        }
-        /* We failed to wait, so act like we've never been
-           here. However, we still need to keep integrity. */
-        else if( mToFreeCount == mCurrentCount )
-        {
-            --mToFreeCount;
-
-            if( 0 == mToFreeCount )
-                mWaitEvent.Reset();
-        }
-
-        --mCurrentCount;
+        success = ::DuplicateHandle( GetCurrentProcess(), oth.mHandle,
+                                     GetCurrentProcess(), &mHandle,
+                                     0, FALSE, DUPLICATE_SAME_ACCESS );
+        assert( TRUE == success );
     }
 
-    return code;
+    return *this;
+}
+
+BOOL Win::Handle::Close()
+{
+    return ::CloseHandle( mHandle );
+}
+
+/*************************************************************************/
+/* Win::WaitableHandle                                                   */
+/*************************************************************************/
+Win::WaitableHandle::WaitableHandle( HANDLE handle )
+: Win::Handle( handle )
+{
+}
+
+DWORD Win::WaitableHandle::Wait( DWORD timeout )
+{
+    return ::WaitForSingleObject( mHandle, timeout );
 }

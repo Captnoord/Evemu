@@ -25,35 +25,20 @@
 
 #include "CommonPCH.h"
 
-#include "win/WinHandle.h"
+#include "win/Event.h"
 
 /*************************************************************************/
-/* WinHandle                                                             */
+/* Win::Event                                                            */
 /*************************************************************************/
-WinHandle::WinHandle( HANDLE handle )
-: mHandle( handle )
-{
-}
-
-WinHandle::WinHandle( const WinHandle& oth )
-: mHandle( INVALID_HANDLE )
-{
-    // pass to copy operator
-    *this = oth;
-}
-
-WinHandle::~WinHandle()
+Win::Event::Event( BOOL manualReset, BOOL initialState )
 {
     BOOL success;
 
-    if( TRUE == isValid() )
-    {
-        success = Close();
-        assert( TRUE == success );
-    }
+    success = Create( manualReset, initialState );
+    assert( TRUE == success );
 }
 
-WinHandle& WinHandle::operator=( const WinHandle& oth )
+BOOL Win::Event::Create( BOOL manualReset, BOOL initialState )
 {
     BOOL success;
 
@@ -63,34 +48,18 @@ WinHandle& WinHandle::operator=( const WinHandle& oth )
         assert( TRUE == success );
     }
 
-    // duplicate the target handle
-    if( FALSE == oth.isValid() )
-        mHandle = INVALID_HANDLE;
-    else
-    {
-        success = ::DuplicateHandle( GetCurrentProcess(), oth.mHandle,
-                                     GetCurrentProcess(), &mHandle,
-                                     0, FALSE, DUPLICATE_SAME_ACCESS );
-        assert( TRUE == success );
-    }
+    mHandle = ::CreateEvent( NULL, manualReset, initialState, NULL );
+    success = isValid();
 
-    return *this;
+    return success;
 }
 
-BOOL WinHandle::Close()
+BOOL Win::Event::Set()
 {
-    return ::CloseHandle( mHandle );
+    return ::SetEvent( mHandle );
 }
 
-/*************************************************************************/
-/* WinWaitableHandle                                                     */
-/*************************************************************************/
-WinWaitableHandle::WinWaitableHandle( HANDLE handle )
-: WinHandle( handle )
+BOOL Win::Event::Reset()
 {
-}
-
-DWORD WinWaitableHandle::Wait( DWORD timeout )
-{
-    return ::WaitForSingleObject( mHandle, timeout );
+    return ::ResetEvent( mHandle );
 }

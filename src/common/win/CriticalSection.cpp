@@ -23,45 +23,34 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __WIN__WIN_CRITICAL_SECTION_H__INCL__
-#define __WIN__WIN_CRITICAL_SECTION_H__INCL__
+#include "CommonPCH.h"
 
-/**
- * @brief Wrapper around Windows' critical section.
- *
- * @author Bloody.Rabbit
- */
-class WinCriticalSection
+#include "win/CriticalSection.h"
+
+/*************************************************************************/
+/* Win::CriticalSection                                                  */
+/*************************************************************************/
+Win::CriticalSection::CriticalSection()
 {
-public:
-    /// Primary constructor.
-    WinCriticalSection();
-    /// A destructor.
-    ~WinCriticalSection();
+    ::InitializeCriticalSection( &mCriticalSection );
+}
 
-    /**
-     * @brief Enters the critical section.
-     *
-     * This method blocks until the section
-     * has been entered.
-     */
-    VOID Enter();
-    /**
-     * @brief Attempts to enter the critical section.
-     *
-     * This method returns immediately; the returned value
-     * indicates whether the critical section has been entered.
-     */
-    BOOL TryEnter();
+Win::CriticalSection::~CriticalSection()
+{
+    ::DeleteCriticalSection( &mCriticalSection );
+}
 
-    /**
-     * @brief Leaves the critical section.
-     */
-    VOID Leave();
+VOID Win::CriticalSection::Enter()
+{
+    ::EnterCriticalSection( &mCriticalSection );
+}
 
-protected:
-    /// The critical section itself.
-    CRITICAL_SECTION mCriticalSection;
-};
+BOOL Win::CriticalSection::TryEnter()
+{
+    return ::TryEnterCriticalSection( &mCriticalSection );
+}
 
-#endif /* !__WIN__WIN_CRITICAL_SECTION_H__INCL__ */
+VOID Win::CriticalSection::Leave()
+{
+    ::LeaveCriticalSection( &mCriticalSection );
+}
