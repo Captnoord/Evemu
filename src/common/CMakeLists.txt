@@ -156,11 +156,11 @@ IF( WIN32 )
 ENDIF( WIN32 )
 
 SET( xml_INCLUDE
-     "${TARGET_INCLUDE_DIR}/xml/XmlCommon.h"
-     "${TARGET_INCLUDE_DIR}/xml/XmlParser.h"
-     "${TARGET_INCLUDE_DIR}/xml/XmlParserEx.h" )
+     "${TARGET_INCLUDE_DIR}/xml/Common.h"
+     "${TARGET_INCLUDE_DIR}/xml/Parser.h"
+     "${TARGET_INCLUDE_DIR}/xml/ParserEx.h" )
 SET( xml_SOURCE
-     "${TARGET_SOURCE_DIR}/xml/XmlParser.cpp" )
+     "${TARGET_SOURCE_DIR}/xml/Parser.cpp" )
 
 SET( zlib_INCLUDE
      "${TARGET_INCLUDE_DIR}/zlib/Common.h"

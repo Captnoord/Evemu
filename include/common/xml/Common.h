@@ -23,9 +23,14 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __XML__XML_COMMON_H__INCL__
-#define __XML__XML_COMMON_H__INCL__
+#ifndef __XML__COMMON_H__INCL__
+#define __XML__COMMON_H__INCL__
+
+/**
+ * @namespace Xml
+ * @brief Keeps classes for XML parsing (mostly TinyXML wrappers).
+ */
 
 #include <tinyxml.h>
 
-#endif /* !__XML__XML_COMMON_H__INCL__ */
+#endif /* !__XML__COMMON_H__INCL__ */

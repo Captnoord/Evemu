@@ -32,7 +32,7 @@
 #include "Common.h"
 
 #include "gangsta/GaCommon.h"
-#include "xml/XmlCommon.h"
+#include "xml/Common.h"
 #include "zlib/Common.h"
 
 #include "db/DbCommon.h"

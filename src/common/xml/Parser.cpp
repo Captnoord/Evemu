@@ -26,52 +26,52 @@
 #include "CommonPCH.h"
 
 #include "log/Log.h"
-#include "xml/XmlParser.h"
+#include "xml/Parser.h"
 
 /************************************************************************/
-/* XmlParser                                                            */
+/* Xml::Parser                                                          */
 /************************************************************************/
-XmlParser::XmlParser()
+Xml::Parser::Parser()
 {
 }
 
-XmlParser::~XmlParser()
+Xml::Parser::~Parser()
 {
     ClearParsers();
 }
 
-bool XmlParser::ParseFile( const char* file ) const
+bool Xml::Parser::ParseFile( const char* file ) const
 {
     TiXmlDocument doc( file );
     if( !doc.LoadFile() )
     {
-        sLog.Error( "XmlParser", "Unable to load '%s': %s.", file, doc.ErrorDesc() );
+        sLog.Error( "Xml::Parser", "Unable to load '%s': %s.", file, doc.ErrorDesc() );
         return false;
     }
 
     TiXmlElement* root = doc.RootElement();
     if( NULL == root )
     {
-        sLog.Error( "XmlParser", "Unable to find root in '%s'.", file );
+        sLog.Error( "Xml::Parser", "Unable to find root in '%s'.", file );
         return false;
     }
 
     return ParseElement( root );
 }
 
-bool XmlParser::ParseElement( const TiXmlElement* element ) const
+bool Xml::Parser::ParseElement( const TiXmlElement* element ) const
 {
-    std::map<std::string, ElementParser*>::const_iterator res = mParsers.find( element->Value() );
+    std::map< std::string, ElementParser* >::const_iterator res = mParsers.find( element->Value() );
     if( mParsers.end() == res )
     {
-        sLog.Error( "XmlParser", "Unknown element '%s' at line %d.", element->Value(), element->Row() );
+        sLog.Error( "Xml::Parser", "Unknown element '%s' at line %d.", element->Value(), element->Row() );
         return false;
     }
 
     return res->second->Parse( element );
 }
 
-bool XmlParser::ParseElementChildren( const TiXmlElement* element, size_t max ) const
+bool Xml::Parser::ParseElementChildren( const TiXmlElement* element, size_t max ) const
 {
     const TiXmlNode* child = NULL;
 
@@ -84,12 +84,12 @@ bool XmlParser::ParseElementChildren( const TiXmlElement* element, size_t max ) 
 
             if( 0 < max && max <= count )
             {
-                sLog.Error( "XmlParser", "Maximal children count %lu exceeded"
-                                         " in element '%s' at line %d"
-                                         " by element '%s' at line %d.",
-                                         max,
-                                         element->Value(), element->Row(),
-                                         childElement->Value(), childElement->Row() );
+                sLog.Error( "Xml::Parser", "Maximal children count %lu exceeded"
+                                           " in element '%s' at line %d"
+                                           " by element '%s' at line %d.",
+                                           max,
+                                           element->Value(), element->Row(),
+                                           childElement->Value(), childElement->Row() );
 
                 return false;
             }
@@ -104,14 +104,14 @@ bool XmlParser::ParseElementChildren( const TiXmlElement* element, size_t max ) 
     return true;
 }
 
-void XmlParser::AddParser( const char* name, ElementParser* parser )
+void Xml::Parser::AddParser( const char* name, ElementParser* parser )
 {
     mParsers[ name ] = parser;
 }
 
-void XmlParser::RemoveParser( const char* name )
+void Xml::Parser::RemoveParser( const char* name )
 {
-    std::map<std::string, ElementParser*>::iterator res = mParsers.find( name );
+    std::map< std::string, ElementParser* >::iterator res = mParsers.find( name );
     if( mParsers.end() != res )
     {
         SafeDelete( res->second );
@@ -119,9 +119,9 @@ void XmlParser::RemoveParser( const char* name )
     }
 }
 
-void XmlParser::ClearParsers()
+void Xml::Parser::ClearParsers()
 {
-    std::map<std::string, ElementParser*>::iterator cur, end;
+    std::map< std::string, ElementParser* >::iterator cur, end;
     cur = mParsers.begin();
     end = mParsers.end();
     for(; cur != end; ++cur )
@@ -129,4 +129,3 @@ void XmlParser::ClearParsers()
 
     mParsers.clear();
 }
-
