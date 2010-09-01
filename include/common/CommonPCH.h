@@ -33,7 +33,7 @@
 
 #include "gangsta/GaCommon.h"
 #include "xml/XmlCommon.h"
-#include "zlib/ZlibCommon.h"
+#include "zlib/Common.h"
 
 #include "db/DbCommon.h"
 #include "fs/FsCommon.h"

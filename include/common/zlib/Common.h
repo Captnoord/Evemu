@@ -23,9 +23,14 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __ZLIB__ZLIB_COMMON_H__INCL__
-#define __ZLIB__ZLIB_COMMON_H__INCL__
+#ifndef __ZLIB__COMMON_H__INCL__
+#define __ZLIB__COMMON_H__INCL__
+
+/**
+ * @namespace Zlib
+ * @brief Contains utilities to access zlib functionality.
+ */
 
 #include <zlib.h>
 
-#endif /* !__ZLIB__ZLIB_COMMON_H__INCL__ */
+#endif /* !__ZLIB__COMMON_H__INCL__ */

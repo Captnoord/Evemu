@@ -163,10 +163,10 @@ SET( xml_SOURCE
      "${TARGET_SOURCE_DIR}/xml/XmlParser.cpp" )
 
 SET( zlib_INCLUDE
-     "${TARGET_INCLUDE_DIR}/zlib/ZlibCommon.h"
-     "${TARGET_INCLUDE_DIR}/zlib/ZlibUtils.h" )
+     "${TARGET_INCLUDE_DIR}/zlib/Common.h"
+     "${TARGET_INCLUDE_DIR}/zlib/Utils.h" )
 SET( zlib_SOURCE
-     "${TARGET_SOURCE_DIR}/zlib/ZlibUtils.cpp" )
+     "${TARGET_SOURCE_DIR}/zlib/Utils.cpp" )
 
 #####################
 # Setup the library #

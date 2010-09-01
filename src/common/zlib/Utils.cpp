@@ -25,16 +25,16 @@
 
 #include "CommonPCH.h"
 
-#include "zlib/ZlibUtils.h"
+#include "zlib/Utils.h"
 
-const uint8 ZLibHeaderByte = 0x78; //'x'
+const uint8 Zlib::HEADER_BYTE = 0x78; //'x'
 
-bool IsDeflated( const Buffer& data )
+bool Zlib::IsDeflated( const Buffer& data )
 {
-    return ( ZLibHeaderByte == data[0] );
+    return Zlib::HEADER_BYTE == data[0];
 }
 
-bool DeflateData( Buffer& data )
+bool Zlib::DeflateData( Buffer& data )
 {
     Buffer dataDeflated;
     if( !DeflateData( data, dataDeflated ) )
@@ -44,9 +44,9 @@ bool DeflateData( Buffer& data )
     return true;
 }
 
-bool DeflateData( const Buffer& input, Buffer& output )
+bool Zlib::DeflateData( const Buffer& input, Buffer& output )
 {
-    const Buffer::iterator<uint8> out = output.end<uint8>();
+    const Buffer::iterator< uint8 > out = output.end< uint8 >();
 
     size_t outputSize = compressBound( input.size() );
     output.ResizeAt( out, outputSize );
@@ -65,7 +65,7 @@ bool DeflateData( const Buffer& input, Buffer& output )
     }
 }
 
-bool InflateData( Buffer& data )
+bool Zlib::InflateData( Buffer& data )
 {
     Buffer dataInflated;
     if( !InflateData( data, dataInflated ) )
@@ -75,9 +75,9 @@ bool InflateData( Buffer& data )
     return true;
 }
 
-bool InflateData( const Buffer& input, Buffer& output )
+bool Zlib::InflateData( const Buffer& input, Buffer& output )
 {
-    const Buffer::iterator<uint8> out = output.end<uint8>();
+    const Buffer::iterator< uint8 > out = output.end< uint8 >();
 
     size_t outputSize = 0;
     size_t sizeMultiplier = 0;
