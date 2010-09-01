@@ -23,13 +23,45 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __MT__MT_COMMON_H__INCL__
-#define __MT__MT_COMMON_H__INCL__
+#ifndef __MT__TARGET_H__INCL__
+#define __MT__TARGET_H__INCL__
 
-#ifdef WIN32
-#   include "win/WinCommon.h"
-#else /* !WIN32 */
-#   include "posix/PosixCommon.h"
-#endif /* !WIN32 */
+namespace Mt
+{
+    /**
+     * @brief An execution target.
+     *
+     * @author Bloody.Rabbit
+     */
+    class Target
+    {
+    public:
+        /**
+         * @brief Processes the given Target.
+         *
+         * Static to avoid "delete this" in the code.
+         *
+         * @param[in] target The Target to process.
+         */
+        static void Process( Target* target );
 
-#endif /* !__MT__MT_COMMON_H__INCL__ */
+        /// Must be virtual if proper destructor shall be invoked.
+        virtual ~Target() {}
+
+    protected:
+        /**
+         * @brief Determines whether the Target should be deleted when Run() returns.
+         *
+         * @retval true  Target should be deleted.
+         * @retval false Target should not be deleted.
+         */
+        virtual bool deleteOnExit() = 0;
+
+        /**
+         * @brief Runs the target.
+         */
+        virtual void Run() = 0;
+    };
+}
+
+#endif /* !__MT__TARGET_H__INCL__ */

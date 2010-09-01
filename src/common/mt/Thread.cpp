@@ -29,18 +29,18 @@
 #include "time/TimeConst.h"
 
 /*************************************************************************/
-/* Thread                                                                */
+/* Mt::Thread                                                            */
 /*************************************************************************/
-Thread Thread::self()
+Mt::Thread Mt::Thread::self()
 {
 #ifdef WIN32
-    return Thread( WinThread::self() );
+    return Mt::Thread( WinThread::self() );
 #else /* !WIN32 */
-    return Thread( PosixThread::self() );
+    return Mt::Thread( PosixThread::self() );
 #endif /* !WIN32 */
 }
 
-void Thread::Sleep( size_t milliseconds )
+void Mt::Thread::Sleep( size_t milliseconds )
 {
     if( 0 < milliseconds )
     {
@@ -53,31 +53,31 @@ void Thread::Sleep( size_t milliseconds )
     }
 }
 
-Thread::Thread()
+Mt::Thread::Thread()
 {
 }
 
-Thread::Thread( Target* target )
+Mt::Thread::Thread( Mt::Target* target )
 {
     Create( target );
 }
 
-Thread::Thread( const Thread& oth )
+Mt::Thread::Thread( const Mt::Thread& oth )
 {
     // let the copy operator do the job
     *this = oth;
 }
 
 #ifdef WIN32
-Thread::Thread( const WinThread& thread )
+Mt::Thread::Thread( const WinThread& thread )
 #else /* !WIN32 */
-Thread::Thread( const PosixThread& thread )
+Mt::Thread::Thread( const PosixThread& thread )
 #endif /* !WIN32 */
 : mThread( thread )
 {
 }
 
-void Thread::Wait() const
+void Mt::Thread::Wait() const
 {
 #ifdef WIN32
     DWORD code = mThread.Wait();
@@ -88,7 +88,7 @@ void Thread::Wait() const
 #endif /* !WIN32 */
 }
 
-void Thread::Create( Target* target )
+void Mt::Thread::Create( Mt::Target* target )
 {
 #ifdef WIN32
     BOOL success = mThread.Create( ThreadMain, target );
@@ -99,7 +99,7 @@ void Thread::Create( Target* target )
 #endif /* !WIN32 */
 }
 
-void Thread::Terminate()
+void Mt::Thread::Terminate()
 {
 #ifdef WIN32
     BOOL success = mThread.Terminate( -1 );
@@ -111,9 +111,9 @@ void Thread::Terminate()
 }
 
 #ifdef WIN32
-DWORD WINAPI Thread::ThreadMain( PVOID arg )
+DWORD WINAPI Mt::Thread::ThreadMain( PVOID arg )
 #else /* !WIN32 */
-void* Thread::ThreadMain( void* arg )
+void* Mt::Thread::ThreadMain( void* arg )
 #endif /* !WIN32 */
 {
 #ifndef WIN32
@@ -128,11 +128,7 @@ void* Thread::ThreadMain( void* arg )
     assert( 0 == code );
 #endif /* !WIN32 */
 
-    Target* target = reinterpret_cast< Target* >( arg );
-    target->Run();
-
-    if( target->deleteOnExit() )
-        SafeDelete( target );
+    Mt::Target::Process( reinterpret_cast< Mt::Target* >( arg ) );
 
 #ifdef WIN32
     return 0;

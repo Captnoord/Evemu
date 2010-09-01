@@ -26,7 +26,6 @@
 #ifndef __NET__TCP_SERVER_H__INCL__
 #define __NET__TCP_SERVER_H__INCL__
 
-#include "mt/MtUtils.h"
 #include "mt/Mutex.h"
 #include "net/Socket.h"
 
@@ -110,14 +109,14 @@ namespace Net
         thread_return_t TcpServerLoop();
 
         /// Mutex to protect socket and associated variables.
-        mutable Mutex mMSock;
+        mutable Mt::Mutex mMSock;
         /// Socket used for listening.
         Socket* mSock;
         /// Port the socket is listening on.
         uint16 mPort;
 
         /// Worker thread acquires this mutex before it starts processing; used for thread synchronization.
-        mutable Mutex mMLoopRunning;
+        mutable Mt::Mutex mMLoopRunning;
     };
 
     /**
@@ -133,7 +132,7 @@ namespace Net
         /// Deletes all stored connections.
         ~TcpServer()
         {
-            MutexLock lock( mMQueue );
+            Mt::MutexLock lock( mMQueue );
 
             X* conn;
             while( ( conn = PopConnection() ) )
@@ -147,7 +146,7 @@ namespace Net
          */
         X* PopConnection()
         {
-            MutexLock lock( mMQueue );
+            Mt::MutexLock lock( mMQueue );
 
             X* ret = NULL;
             if( !mQueue.empty() )
@@ -167,13 +166,13 @@ namespace Net
          */
         void AddConnection( X* con )
         {
-            MutexLock lock( mMQueue );
+            Mt::MutexLock lock( mMQueue );
 
             mQueue.push( con );
         }
 
         /// Mutex to protect connection queue.
-        Mutex mMQueue;
+        Mt::Mutex mMQueue;
         /// Connection queue.
         std::queue< X* > mQueue;
     };

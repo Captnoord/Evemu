@@ -23,55 +23,17 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __MT__CONDITION_H__INCL__
-#define __MT__CONDITION_H__INCL__
+#include "CommonPCH.h"
 
-#include "mt/Mutex.h"
+#include "mt/Target.h"
 
-#ifdef WIN32
-#   include "win/WinCondition.h"
-#else /* !WIN32 */
-#   include "posix/PosixCondition.h"
-#endif /* !WIN32 */
-
-namespace Mt
+/*************************************************************************/
+/* Mt::Target                                                            */
+/*************************************************************************/
+void Mt::Target::Process( Mt::Target* target )
 {
-    /**
-     * @brief A wrapper around platform-specific conditions.
-     *
-     * @author Bloody.Rabbit
-     */
-    class Condition
-    {
-    public:
-        /// Signals the condition.
-        void Signal();
-        /// Broadcasts the condition.
-        void Broadcast();
+    target->Run();
 
-        /**
-         * @brief Waits on the condition variable.
-         *
-         * @param[in] mutex The mutex this condition is bound to.
-         */
-        void Wait( Mutex& mutex );
-        /**
-         * @brief Waits on the condition variable with a timeout.
-         *
-         * @param[in] mutex   The mutex this condition is bound to.
-         * @param[in] timeout The timeout (in milliseconds).
-         */
-        void TimedWait( Mutex& mutex, size_t timeout );
-
-    protected:
-#   ifdef WIN32
-        /// Windows condition variable.
-        WinCondition mCondition;
-#   else /* !WIN32 */
-        /// pthread condition variable.
-        PosixCondition mCondition;
-#   endif /* !WIN32 */
-    };
+    if( target->deleteOnExit() )
+        SafeDelete( target );
 }
-
-#endif /* !__MT__CONDITION_H__INCL__ */

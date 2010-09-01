@@ -73,7 +73,7 @@ void Timer::Sleep( bool restart )
     SetMsecByNow( msec );
 
     if( msec < mEnd )
-        Thread::Sleep( mEnd - msec );
+        Mt::Thread::Sleep( mEnd - msec );
 
     if( restart )
         Start();

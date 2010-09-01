@@ -442,7 +442,7 @@ namespace Db
         /// The MYSQL object we're using.
         MYSQL mMysql;
         /// A mutex to protect mMysql.
-        Mutex mMysqlMutex;
+        Mt::Mutex mMysqlMutex;
         /// A status of mMysql.
         Status mMysqlStatus;
 

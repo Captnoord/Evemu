@@ -20,22 +20,21 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:     Aim, Captnoord, Zhur, Bloody.Rabbit
+    Author:     Bloody.Rabbit
 */
 
-#ifndef __MT__MT_UTILS_H__INCL__
-#define __MT__MT_UTILS_H__INCL__
+#ifndef __MT__COMMON_H__INCL__
+#define __MT__COMMON_H__INCL__
 
-// Return thread macro's
-// URL: http://msdn.microsoft.com/en-us/library/hw264s73(VS.80).aspx
-// Important Quote: "_endthread and _endthreadex cause C++ destructors pending in the thread not to be called."
-// Result: mem leaks under windows
+/**
+ * @namespace Mt
+ * @brief Classes and utilities to manage multithreading.
+ */
+
 #ifdef WIN32
-#   define THREAD_RETURN( x ) ( x )
-typedef void thread_return_t;
+#   include "win/WinCommon.h"
 #else /* !WIN32 */
-#   define THREAD_RETURN( x ) return ( x )
-typedef void* thread_return_t;
+#   include "posix/PosixCommon.h"
 #endif /* !WIN32 */
 
-#endif /* !__MT__MT_UTILS_H__INCL__ */
+#endif /* !__MT__COMMON_H__INCL__ */

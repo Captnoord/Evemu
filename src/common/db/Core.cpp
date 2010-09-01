@@ -318,7 +318,7 @@ bool Db::Core::RunQuery( Db::QueryResult& into, const char* queryFmt, ... )
 
     bool result = false;
     {
-        MutexLock lock( mMysqlMutex );
+        Mt::MutexLock lock( mMysqlMutex );
 
         if( RunQueryLocked( into.error, query, queryLen ) )
         {
@@ -354,7 +354,7 @@ bool Db::Core::RunQuery( Db::Error& err, const char* queryFmt, ... )
 
     bool result = false;
     {
-        MutexLock lock( mMysqlMutex );
+        Mt::MutexLock lock( mMysqlMutex );
         result = RunQueryLocked( err, query, queryLen );
     }
 
@@ -374,7 +374,7 @@ bool Db::Core::RunQuery( Db::Error& err, size_t& affectedRows, const char* query
 
     bool result = false;
     {
-        MutexLock lock( mMysqlMutex );
+        Mt::MutexLock lock( mMysqlMutex );
 
         if( RunQueryLocked( err, query, queryLen ) )
         {
@@ -399,7 +399,7 @@ bool Db::Core::RunQueryLID( Db::Error& err, uint64& lastInsertId, const char* qu
 
     bool result = false;
     {
-        MutexLock lock( mMysqlMutex );
+        Mt::MutexLock lock( mMysqlMutex );
 
         if( RunQueryLocked( err, query, queryLen ) )
         {
@@ -423,7 +423,7 @@ bool Db::Core::RunQuery( const char* query, size_t queryLen, MYSQL_RES** result,
         errMsg[0] = 0;
 
     {
-        MutexLock lock( mMysqlMutex );
+        Mt::MutexLock lock( mMysqlMutex );
 
         Db::Error err;
         if( !RunQueryLocked( err, query, queryLen, retry ) )
@@ -470,7 +470,7 @@ bool Db::Core::RunQuery( const char* query, size_t queryLen, MYSQL_RES** result,
 
 size_t Db::Core::DoEscapeString( char* to, const char* from, size_t len )
 {
-    MutexLock lock( mMysqlMutex );
+    Mt::MutexLock lock( mMysqlMutex );
 
     return mysql_real_escape_string( &mMysql, to, from, len );
 }
@@ -482,7 +482,7 @@ void Db::Core::DoEscapeString( std::string& to, const std::string& from )
     to.resize( 2 * len + 1 );
 
     {
-        MutexLock lock( mMysqlMutex );
+        Mt::MutexLock lock( mMysqlMutex );
 
         len = mysql_real_escape_string( &mMysql, &to[0], &from[0], len );
     }
@@ -504,7 +504,7 @@ bool Db::Core::Open( const char* host, const char* user, const char* password,
                    const char* database, int16 port, unsigned int* errNo, char* errMsg,
                    bool compress, bool ssl )
 {
-    MutexLock lock( mMysqlMutex );
+    Mt::MutexLock lock( mMysqlMutex );
 
     mHost = host;
     mUser = user;
@@ -521,7 +521,7 @@ bool Db::Core::Open( const char* host, const char* user, const char* password,
 bool Db::Core::Open( Db::Error& err, const char* host, const char* user, const char* password,
                    const char* database, int16 port, bool compress, bool ssl )
 {
-    MutexLock lock( mMysqlMutex );
+    Mt::MutexLock lock( mMysqlMutex );
 
     mHost = host;
     mUser = user;

@@ -206,7 +206,7 @@ protected:
     /// Current timestamp.
     time_t mTime; // crap there should be 1 generic easy to understand time manager.
     /// Protection against concurrent log messages
-    Mutex mMutex;
+    Mt::Mutex mMutex;
 
 #ifdef WIN32
     /// Handle to standard output stream.

@@ -28,9 +28,9 @@
 #include "mt/Mutex.h"
 
 /*************************************************************************/
-/* Mutex                                                                 */
+/* Mt::Mutex                                                             */
 /*************************************************************************/
-void Mutex::Lock()
+void Mt::Mutex::Lock()
 {
 #ifdef WIN32
     mCriticalSection.Enter();
@@ -40,7 +40,7 @@ void Mutex::Lock()
 #endif
 }
 
-bool Mutex::TryLock()
+bool Mt::Mutex::TryLock()
 {
 #ifdef WIN32
     return TRUE == mCriticalSection.TryEnter();
@@ -52,7 +52,7 @@ bool Mutex::TryLock()
 #endif
 }
 
-void Mutex::Unlock()
+void Mt::Mutex::Unlock()
 {
 #ifdef WIN32
     mCriticalSection.Leave();

@@ -26,7 +26,6 @@
 #ifndef __NET__TCP_CONNECTION_H__INCL__
 #define __NET__TCP_CONNECTION_H__INCL__
 
-#include "mt/MtUtils.h"
 #include "mt/Mutex.h"
 #include "net/Socket.h"
 #include "utils/Buffer.h"
@@ -194,7 +193,7 @@ namespace Net
         thread_return_t TcpConnectionLoop();
 
         /// Protection of socket and associated variables.
-        mutable Mutex mMSock;
+        mutable Mt::Mutex mMSock;
         /// Socket for connection.
         Socket* mSock;
         /// State the socket is in.
@@ -205,10 +204,10 @@ namespace Net
         uint16 mrPort;
 
         /// When a thread is running TcpConnectionLoop, it acquires this mutex first; used for synchronization.
-        mutable Mutex mMLoopRunning;
+        mutable Mt::Mutex mMLoopRunning;
 
         /// Mutex protecting send queue.
-        mutable Mutex mMSendQueue;
+        mutable Mt::Mutex mMSendQueue;
         /// Send queue.
         std::deque< Buffer* > mSendQueue;
 

@@ -28,31 +28,28 @@
 
 #include "mt/Thread.h"
 
-/**
- * @brief A simple thread worker.
- *
- * @author Bloody.Rabbit
- */
-class Worker
-: protected Thread::Target
+namespace Mt
 {
-public:
-    /// A primary constructor.
-    Worker();
-    /// A destructor.
-    ~Worker();
-
-protected:
-    /// Primary processing loop.
-    void Run();
-
     /**
-     * @brief Obtains a target to process.
+     * @brief A simple thread worker.
      *
-     * @retval The target.
-     * @retval NULL Exit signal.
+     * @author Bloody.Rabbit
      */
-    virtual Thread::Target* GetTarget() = 0;
-};
+    class Worker
+    : public Target
+    {
+    protected:
+        /**
+         * @brief Obtains a target to process.
+         *
+         * @retval The target.
+         * @retval NULL Exit signal.
+         */
+        virtual Target* GetTarget() = 0;
+
+        /// Primary processing loop.
+        void Run();
+    };
+}
 
 #endif /* !__MT__WORKER_H__INCL__ */

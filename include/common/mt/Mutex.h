@@ -34,45 +34,44 @@
 #   include "posix/PosixMutex.h"
 #endif /* !WIN32 */
 
-/**
- * @brief Common wrapper for platform-specific mutexes.
- *
- * @author Zhur, Bloody.Rabbit
- */
-class Mutex
-: public Lockable
+namespace Mt
 {
-    friend class Condition;
-
-public:
     /**
-     * @brief Locks the mutex.
-     */
-    void Lock();
-    /**
-     * @brief Attempts to lock the mutex.
+     * @brief Common wrapper for platform-specific mutexes.
      *
-     * @retval true  Mutex successfully locked.
-     * @retval false Mutex locked by another thread.
+     * @author Zhur, Bloody.Rabbit
      */
-    bool TryLock();
+    class Mutex
+    : public Lockable
+    {
+        friend class Condition;
 
-    /**
-     * @brief Unlocks the mutex.
-     */
-    void Unlock();
+    public:
+        /// Locks the mutex.
+        void Lock();
+        /**
+         * @brief Attempts to lock the mutex.
+         *
+         * @retval true  Mutex successfully locked.
+         * @retval false Mutex locked by another thread.
+         */
+        bool TryLock();
 
-protected:
-#ifdef WIN32
-    /// A critical section used for mutex implementation on Windows.
-    WinCriticalSection mCriticalSection;
-#else
-    /// A pthread mutex used for mutex implementation using pthread library.
-    PosixMutex mMutex;
-#endif
-};
+        /// Unlocks the mutex.
+        void Unlock();
 
-/// Convenience typedef for Mutex's lock.
-typedef Lock< Mutex > MutexLock;
+    protected:
+#   ifdef WIN32
+        /// A critical section used for mutex implementation on Windows.
+        WinCriticalSection mCriticalSection;
+#   else
+        /// A pthread mutex used for mutex implementation using pthread library.
+        PosixMutex mMutex;
+#   endif
+    };
+
+    /// Convenience typedef for Mutex's lock.
+    typedef Lock< Mutex > MutexLock;
+}
 
 #endif /* !__MT__MUTEX_H__INCL__ */

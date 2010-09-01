@@ -67,7 +67,7 @@ bool Net::TcpServerBase::Open( uint16 port, char* errbuf )
         errbuf[0] = 0;
 
     // mutex lock
-    MutexLock lock( mMSock );
+    Mt::MutexLock lock( mMSock );
 
     if( IsOpen() )
     {
@@ -145,7 +145,7 @@ bool Net::TcpServerBase::Open( uint16 port, char* errbuf )
 
 void Net::TcpServerBase::Close()
 {
-    MutexLock lock( mMSock );
+    Mt::MutexLock lock( mMSock );
 
     SafeDelete( mSock );
     mPort = 0;
@@ -170,7 +170,7 @@ void Net::TcpServerBase::WaitLoop()
 
 bool Net::TcpServerBase::Process()
 {
-    MutexLock lock( mMSock );
+    Mt::MutexLock lock( mMSock );
 
     if( !IsOpen() )
         return false;
@@ -188,7 +188,7 @@ void Net::TcpServerBase::ListenNewConnections()
     from.sin_family = AF_INET;
     fromlen = sizeof( from );
 
-    MutexLock lock( mMSock );
+    Mt::MutexLock lock( mMSock );
 
     // Check for pending connects
     while( ( sock = mSock->accept( (sockaddr*)&from, &fromlen ) ) != NULL )

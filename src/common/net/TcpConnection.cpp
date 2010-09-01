@@ -93,7 +93,7 @@ bool Net::TcpConnection::Connect( uint32 rIP, uint16 rPort, char* errbuf )
     if( errbuf )
         errbuf[0] = 0;
 
-    MutexLock lock( mMSock );
+    Mt::MutexLock lock( mMSock );
 
     State oldState = GetState();
     if( oldState == STATE_DISCONNECTED )
@@ -156,7 +156,7 @@ bool Net::TcpConnection::Connect( uint32 rIP, uint16 rPort, char* errbuf )
 void Net::TcpConnection::AsyncConnect( uint32 rIP, uint16 rPort )
 {
     // Changing state; acquire mutex
-    MutexLock lock( mMSock );
+    Mt::MutexLock lock( mMSock );
 
     State state = GetState();
     if( state == STATE_DISCONNECTED )
@@ -184,7 +184,7 @@ void Net::TcpConnection::AsyncConnect( uint32 rIP, uint16 rPort )
 
 void Net::TcpConnection::Disconnect()
 {
-    MutexLock lock( mMSock );
+    Mt::MutexLock lock( mMSock );
 
     State state = GetState();
     if( state != STATE_CONNECTING && state != STATE_CONNECTED )
@@ -201,7 +201,7 @@ bool Net::TcpConnection::Send( Buffer** data )
     *data = NULL;
 
     // Check we are in STATE_CONNECTED
-    MutexLock sockLock( mMSock );
+    Mt::MutexLock sockLock( mMSock );
 
     State state = GetState();
     if( state != STATE_CONNECTED )
@@ -212,7 +212,7 @@ bool Net::TcpConnection::Send( Buffer** data )
     }
 
     // Push buffer to the send queue
-    MutexLock queueLock( mMSendQueue );
+    Mt::MutexLock queueLock( mMSendQueue );
 
     mSendQueue.push_back( buf );
     buf = NULL;
@@ -244,7 +244,7 @@ bool Net::TcpConnection::Process()
 {
     char errbuf[ ERRBUF_SIZE ];
 
-    MutexLock lock( mMSock );
+    Mt::MutexLock lock( mMSock );
     switch( GetState() )
     {
         case STATE_DISCONNECTED:
@@ -316,7 +316,7 @@ bool Net::TcpConnection::SendData( char* errbuf )
     if( errbuf )
     errbuf[0] = 0;
 
-    MutexLock lock( mMSock );
+    Mt::MutexLock lock( mMSock );
 
     State state = GetState();
     if( state != STATE_CONNECTED && state != STATE_DISCONNECTING )
@@ -369,7 +369,7 @@ bool Net::TcpConnection::SendData( char* errbuf )
             if( status > 0 )
                 buf->AssignSeq( buf->begin< uint8 >() + status, buf->end< uint8 >() );
 
-            MutexLock queueLock( mMSendQueue );
+            Mt::MutexLock queueLock( mMSendQueue );
 
             mSendQueue.push_front( buf );
             buf = NULL;
@@ -391,7 +391,7 @@ bool Net::TcpConnection::RecvData( char* errbuf )
     if( errbuf != NULL )
         errbuf[0] = 0;
 
-    MutexLock lock( mMSock );
+    Mt::MutexLock lock( mMSock );
 
     State state = GetState();
     if( state != STATE_CONNECTED && state != STATE_DISCONNECTING )
@@ -446,7 +446,7 @@ bool Net::TcpConnection::RecvData( char* errbuf )
 
 void Net::TcpConnection::DoDisconnect()
 {
-    MutexLock lock( mMSock );
+    Mt::MutexLock lock( mMSock );
 
     State state = GetState();
     if( state != STATE_CONNECTED && state != STATE_DISCONNECTING )
@@ -461,7 +461,7 @@ void Net::TcpConnection::DoDisconnect()
 
 void Net::TcpConnection::ClearBuffers()
 {
-    MutexLock lock( mMSendQueue );
+    Mt::MutexLock lock( mMSendQueue );
 
     while( !mSendQueue.empty() )
     {

@@ -29,50 +29,50 @@
 #include "utils/Log.h"
 
 /*************************************************************************/
-/* ThreadMgr                                                             */
+/* Mt::ThreadMgr                                                         */
 /*************************************************************************/
-ThreadMgr::ThreadMgr( size_t limit )
+Mt::ThreadMgr::ThreadMgr( size_t limit )
 : mLimit( limit )
 {
-    sLog.Debug( "ThreadMgr", "Thread manager started" );
+    sLog.Debug( "Mt::ThreadMgr", "Thread manager started" );
 }
 
-ThreadMgr::~ThreadMgr()
+Mt::ThreadMgr::~ThreadMgr()
 {
-    sLog.Debug( "ThreadMgr", "Thread manager shutting down" );
+    sLog.Debug( "Mt::ThreadMgr", "Thread manager shutting down" );
 
     SetThreadLimit( 0 );
 }
 
-size_t ThreadMgr::threadCount() const
+size_t Mt::ThreadMgr::threadCount() const
 {
     MutexLock lock( mMutex );
 
     return activeThreadCount() + inactiveThreadCount();
 }
 
-size_t ThreadMgr::activeThreadCount() const
+size_t Mt::ThreadMgr::activeThreadCount() const
 {
     MutexLock lock( mMutex );
 
     return mActiveWorkers.size();
 }
 
-size_t ThreadMgr::inactiveThreadCount() const
+size_t Mt::ThreadMgr::inactiveThreadCount() const
 {
     MutexLock lock( mMutex );
 
     return mInactiveWorkers.size();
 }
 
-size_t ThreadMgr::threadLimit() const
+size_t Mt::ThreadMgr::threadLimit() const
 {
     MutexLock lock( mMutex );
 
     return mLimit;
 }
 
-void ThreadMgr::Run( Thread::Target* target )
+void Mt::ThreadMgr::Run( Mt::Target* target )
 {
     MutexLock lock( mMutex );
 
@@ -83,10 +83,10 @@ void ThreadMgr::Run( Thread::Target* target )
         mWorkerEvent.Signal();
     else if( threadCount() < threadLimit() )
         // Haven't reached the limit yet, spawn a worker.
-        new Worker( this );
+        Thread t( new Worker( this ) );
 }
 
-void ThreadMgr::SetThreadLimit( size_t limit )
+void Mt::ThreadMgr::SetThreadLimit( size_t limit )
 {
     MutexLock lock( mMutex );
 
@@ -112,7 +112,7 @@ void ThreadMgr::SetThreadLimit( size_t limit )
     }
 }
 
-ThreadMgr::WorkerList::iterator ThreadMgr::AddWorker( Worker* worker )
+Mt::ThreadMgr::WorkerList::iterator Mt::ThreadMgr::AddWorker( Worker* worker )
 {
     MutexLock lock( mMutex );
 
@@ -120,14 +120,14 @@ ThreadMgr::WorkerList::iterator ThreadMgr::AddWorker( Worker* worker )
     return --mActiveWorkers.end();
 }
 
-void ThreadMgr::RemoveWorker( WorkerList::iterator& itr )
+void Mt::ThreadMgr::RemoveWorker( WorkerList::iterator& itr )
 {
     MutexLock lock( mMutex );
 
     mActiveWorkers.erase( itr );
 }
 
-Thread::Target* ThreadMgr::GetTarget( WorkerList::iterator& itr )
+Mt::Target* Mt::ThreadMgr::GetTarget( WorkerList::iterator& itr )
 {
     MutexLock lock( mMutex );
 
@@ -136,7 +136,7 @@ Thread::Target* ThreadMgr::GetTarget( WorkerList::iterator& itr )
                              mActiveWorkers, itr );
     itr = --mInactiveWorkers.end();
 
-    Thread::Target* target = NULL;
+    Mt::Target* target = NULL;
     while( threadCount() <= threadLimit() )
     {
         if( !mTargets.empty() )
@@ -158,22 +158,20 @@ Thread::Target* ThreadMgr::GetTarget( WorkerList::iterator& itr )
 }
 
 /*************************************************************************/
-/* ThreadMgr::Worker                                                     */
+/* Mt::ThreadMgr::Worker                                                 */
 /*************************************************************************/
-ThreadMgr::Worker::Worker( ThreadMgr* mgr )
+Mt::ThreadMgr::Worker::Worker( Mt::ThreadMgr* mgr )
 : mMgr( NULL )
 {
     AssignMgr( mgr );
-
-    Thread thread( this );
 }
 
-ThreadMgr::Worker::~Worker()
+Mt::ThreadMgr::Worker::~Worker()
 {
     AssignMgr( NULL );
 }
 
-void ThreadMgr::Worker::AssignMgr( ThreadMgr* mgr )
+void Mt::ThreadMgr::Worker::AssignMgr( Mt::ThreadMgr* mgr )
 {
     MutexLock lock( mMutex );
 
@@ -186,7 +184,7 @@ void ThreadMgr::Worker::AssignMgr( ThreadMgr* mgr )
         mItr = mMgr->AddWorker( this );
 }
 
-Thread::Target* ThreadMgr::Worker::GetTarget()
+Mt::Target* Mt::ThreadMgr::Worker::GetTarget()
 {
     if( NULL == mMgr )
         return NULL;

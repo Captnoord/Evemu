@@ -30,9 +30,9 @@
 #include "time/TimeTimespec.h"
 
 /*************************************************************************/
-/* Condition                                                             */
+/* Mt::Condition                                                         */
 /*************************************************************************/
-void Condition::Signal()
+void Mt::Condition::Signal()
 {
 #ifdef WIN32
     BOOL success = mCondition.Signal();
@@ -43,7 +43,7 @@ void Condition::Signal()
 #endif /* !WIN32 */
 }
 
-void Condition::Broadcast()
+void Mt::Condition::Broadcast()
 {
 #ifdef WIN32
     BOOL success = mCondition.Broadcast();
@@ -54,7 +54,7 @@ void Condition::Broadcast()
 #endif /* !WIN32 */
 }
 
-void Condition::Wait( Mutex& mutex )
+void Mt::Condition::Wait( Mutex& mutex )
 {
 #ifdef WIN32
     BOOL success = mCondition.Wait( mutex.mCriticalSection );
@@ -65,7 +65,7 @@ void Condition::Wait( Mutex& mutex )
 #endif /* !WIN32 */
 }
 
-void Condition::TimedWait( Mutex& mutex, size_t timeout )
+void Mt::Condition::TimedWait( Mutex& mutex, size_t timeout )
 {
 #ifdef WIN32
     BOOL success = mCondition.Wait( mutex.mCriticalSection,

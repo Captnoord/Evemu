@@ -28,25 +28,11 @@
 #include "mt/Worker.h"
 
 /*************************************************************************/
-/* Worker                                                                */
+/* Mt::Worker                                                            */
 /*************************************************************************/
-Worker::Worker()
+void Mt::Worker::Run()
 {
-}
-
-Worker::~Worker()
-{
-}
-
-void Worker::Run()
-{
-    Thread::Target* target = NULL;
-
+    Mt::Target* target = NULL;
     while( NULL != ( target = GetTarget() ) )
-    {
-        target->Run();
-
-        if( target->deleteOnExit() )
-            SafeDelete( target );
-    }
+        Mt::Target::Process( target );
 }
