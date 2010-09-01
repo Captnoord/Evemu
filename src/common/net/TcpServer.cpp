@@ -25,20 +25,23 @@
 
 #include "CommonPCH.h"
 
-#include "net/TCPServer.h"
+#include "net/TcpServer.h"
 #include "time/Timer.h"
 #include "utils/Log.h"
 
-const uint32 TCPSRV_ERRBUF_SIZE = 1024;
-const uint32 TCPSRV_LOOP_GRANULARITY = 5;
+/*************************************************************************/
+/* Net::TcpServerBase                                                    */
+/*************************************************************************/
+const size_t Net::TcpServerBase::ERRBUF_SIZE = 1024;
+const size_t Net::TcpServerBase::LOOP_GRANULARITY = 5;
 
-BaseTCPServer::BaseTCPServer()
+Net::TcpServerBase::TcpServerBase()
 : mSock( NULL ),
   mPort( 0 )
 {
 }
 
-BaseTCPServer::~BaseTCPServer()
+Net::TcpServerBase::~TcpServerBase()
 {
     // Close socket
     Close();
@@ -47,7 +50,7 @@ BaseTCPServer::~BaseTCPServer()
     WaitLoop();
 }
 
-bool BaseTCPServer::IsOpen() const
+bool Net::TcpServerBase::IsOpen() const
 {
     bool ret;
 
@@ -58,7 +61,7 @@ bool BaseTCPServer::IsOpen() const
     return ret;
 }
 
-bool BaseTCPServer::Open( uint16 port, char* errbuf )
+bool Net::TcpServerBase::Open( uint16 port, char* errbuf )
 {
     if( errbuf != NULL )
         errbuf[0] = 0;
@@ -69,7 +72,7 @@ bool BaseTCPServer::Open( uint16 port, char* errbuf )
     if( IsOpen() )
     {
         if( errbuf != NULL )
-            snprintf( errbuf, TCPSRV_ERRBUF_SIZE, "Listening socket already open" );
+            snprintf( errbuf, ERRBUF_SIZE, "Listening socket already open" );
         return false;
     }
     else
@@ -83,7 +86,7 @@ bool BaseTCPServer::Open( uint16 port, char* errbuf )
     }
 
     // Setting up TCP port for new TCP connections
-    mSock = new Socket( AF_INET, SOCK_STREAM, 0 );
+    mSock = new Net::Socket( AF_INET, SOCK_STREAM, 0 );
 
     // Quag: don't think following is good stuff for TCP, good for UDP
     // Mis: SO_REUSEADDR shouldn't be a problem for tcp - allows you to restart
@@ -123,9 +126,9 @@ bool BaseTCPServer::Open( uint16 port, char* errbuf )
     {
         if( errbuf != NULL )
 #ifdef WIN32
-            snprintf( errbuf, TCPSRV_ERRBUF_SIZE, "listen() failed, Error: %u", WSAGetLastError() );
+            snprintf( errbuf, ERRBUF_SIZE, "listen() failed, Error: %u", WSAGetLastError() );
 #else
-            snprintf( errbuf, TCPSRV_ERRBUF_SIZE, "listen() failed, Error: %s", strerror( errno ) );
+            snprintf( errbuf, ERRBUF_SIZE, "listen() failed, Error: %s", strerror( errno ) );
 #endif
 
         SafeDelete( mSock );
@@ -140,7 +143,7 @@ bool BaseTCPServer::Open( uint16 port, char* errbuf )
     return true;
 }
 
-void BaseTCPServer::Close()
+void Net::TcpServerBase::Close()
 {
     MutexLock lock( mMSock );
 
@@ -148,24 +151,24 @@ void BaseTCPServer::Close()
     mPort = 0;
 }
 
-void BaseTCPServer::StartLoop()
+void Net::TcpServerBase::StartLoop()
 {
 #ifdef WIN32
-    _beginthread( BaseTCPServer::TCPServerLoop, 0, this );
+    _beginthread( TcpServerLoop, 0, this );
 #else
     pthread_t thread;
-    pthread_create( &thread, NULL, &BaseTCPServer::TCPServerLoop, this );
+    pthread_create( &thread, NULL, TcpServerLoop, this );
 #endif
 }
 
-void BaseTCPServer::WaitLoop()
+void Net::TcpServerBase::WaitLoop()
 {
     //wait for loop to stop.
     mMLoopRunning.Lock();
     mMLoopRunning.Unlock();
 }
 
-bool BaseTCPServer::Process()
+bool Net::TcpServerBase::Process()
 {
     MutexLock lock( mMSock );
 
@@ -176,11 +179,11 @@ bool BaseTCPServer::Process()
     return true;
 }
 
-void BaseTCPServer::ListenNewConnections()
+void Net::TcpServerBase::ListenNewConnections()
 {
-    Socket*         sock;
-    sockaddr_in     from;
-    unsigned int    fromlen;
+    Net::Socket* sock;
+    sockaddr_in  from;
+    unsigned int fromlen;
 
     from.sin_family = AF_INET;
     fromlen = sizeof( from );
@@ -205,27 +208,27 @@ void BaseTCPServer::ListenNewConnections()
     }
 }
 
-thread_return_t BaseTCPServer::TCPServerLoop( void* arg )
+thread_return_t Net::TcpServerBase::TcpServerLoop( void* arg )
 {
-    BaseTCPServer* tcps = reinterpret_cast<BaseTCPServer*>( arg );
+    Net::TcpServerBase* tcps = reinterpret_cast< Net::TcpServerBase* >( arg );
     assert( tcps != NULL );
 
-    THREAD_RETURN( tcps->TCPServerLoop() );
+    THREAD_RETURN( tcps->TcpServerLoop() );
 }
 
-thread_return_t BaseTCPServer::TCPServerLoop()
+thread_return_t Net::TcpServerBase::TcpServerLoop()
 {
 #ifdef WIN32
     SetThreadPriority( GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL );
 #endif
 
 #ifndef WIN32
-    sLog.Message( "Threading", "Starting TCPServerLoop with thread ID %d", pthread_self() );
+    sLog.Message( "Threading", "Starting TcpServerLoop with thread ID %d", pthread_self() );
 #endif
 
     mMLoopRunning.Lock();
 
-    Timer timer( TCPSRV_LOOP_GRANULARITY );
+    Timer timer( LOOP_GRANULARITY );
 
     timer.Start();
     while( Process() )
@@ -234,9 +237,8 @@ thread_return_t BaseTCPServer::TCPServerLoop()
     mMLoopRunning.Unlock();
 
 #ifndef WIN32
-    sLog.Message( "Threading", "Ending TCPServerLoop with thread ID %d", pthread_self() );
+    sLog.Message( "Threading", "Ending TcpServerLoop with thread ID %d", pthread_self() );
 #endif
 
     THREAD_RETURN( NULL );
 }
-

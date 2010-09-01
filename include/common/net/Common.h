@@ -23,8 +23,13 @@
     Author:        Zhur
 */
 
-#ifndef __NET__NET_COMMON_H__INCL__
-#define __NET__NET_COMMON_H__INCL__
+#ifndef __NET__COMMON_H__INCL__
+#define __NET__COMMON_H__INCL__
+
+/**
+ * @namespace Net
+ * @brief Collection of utilities to access the network.
+ */
 
 #ifdef WIN32
 #   include "win/WinCommon.h"
@@ -32,4 +37,4 @@
 #   include "posix/PosixCommon.h"
 #endif /* !WIN32 */
 
-#endif /* !__NET__NET_COMMON_H__INCL__ */
+#endif /* !__NET__COMMON_H__INCL__ */

@@ -25,19 +25,19 @@
 
 #include "CommonPCH.h"
 
-#include "net/NetUtils.h"
+#include "net/Utils.h"
 
 #ifdef WIN32
 /*************************************************************************/
-/* InitWinsock                                                           */
+/* Net::InitWinsock                                                      */
 /*************************************************************************/
-InitWinsock::InitWinsock()
+Net::InitWinsock::InitWinsock()
 {
     WSADATA wsadata;
     WSAStartup( MAKEWORD( 1, 1 ), &wsadata );
 }
 
-InitWinsock::~InitWinsock()
+Net::InitWinsock::~InitWinsock()
 {
     WSACleanup();
 }

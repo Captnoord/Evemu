@@ -23,8 +23,8 @@
     Author:     Aim, Captnoord, Zhur, Bloody.Rabbit
 */
 
-#ifndef __NET__NET_UTILS_H__INCL__
-#define __NET__NET_UTILS_H__INCL__
+#ifndef __NET__UTILS_H__INCL__
+#define __NET__UTILS_H__INCL__
 
 /*
  * Define some common interface.
@@ -50,35 +50,38 @@ typedef int SOCKET;
 #   endif
 #endif /* !WIN32 */
 
-/*
- * Define NET_ERRNO and H_NET_ERRNO.
- */
-#ifdef WIN32
-#   define   NET_ERRNO ( (int)WSAGetLastError() )
-#   define H_NET_ERRNO NET_ERRNO
-#else /* !WIN32 */
-#   define   NET_ERRNO ( (int)errno )
-#   define H_NET_ERRNO ( (int)h_errno )
-#endif /* !WIN32 */
-
-#ifdef WIN32
-/**
- * @brief Winsock initialization class.
- *
- * Utility class to initialize Winsock. Winsock is
- * initialized as long as there is at least one
- * instance of this class.
- *
- * @author Zhur
- */
-class InitWinsock
+namespace Net
 {
-public:
-    /// A primary constructor.
-    InitWinsock();
-    /// A destructor.
-    ~InitWinsock();
-};
-#endif
+    /*
+     * Define NET_ERRNO and H_NET_ERRNO.
+     */
+#   ifdef WIN32
+#       define   NET_ERRNO ( (int)WSAGetLastError() )
+#       define H_NET_ERRNO NET_ERRNO
+#   else /* !WIN32 */
+#       define   NET_ERRNO ( (int)errno )
+#       define H_NET_ERRNO ( (int)h_errno )
+#   endif /* !WIN32 */
 
-#endif /* !__NET__NET_UTILS_H__INCL__ */
+#   ifdef WIN32
+    /**
+     * @brief Winsock initialization class.
+     *
+     * Utility class to initialize Winsock. Winsock is
+     * initialized as long as there is at least one
+     * instance of this class.
+     *
+     * @author Zhur
+     */
+    class InitWinsock
+    {
+    public:
+        /// A primary constructor.
+        InitWinsock();
+        /// A destructor.
+        ~InitWinsock();
+    };
+#   endif
+}
+
+#endif /* !__NET__UTILS_H__INCL__ */

@@ -27,28 +27,31 @@
 
 #include "net/StreamPacketizer.h"
 
-StreamPacketizer::~StreamPacketizer()
+/*************************************************************************/
+/* Net::StreamPacketizer                                                 */
+/*************************************************************************/
+Net::StreamPacketizer::~StreamPacketizer()
 {
     ClearBuffers();
 }
 
-void StreamPacketizer::InputData( const Buffer& data )
+void Net::StreamPacketizer::InputData( const Buffer& data )
 {
-    mBuffer.AppendSeq( data.begin<uint8>(), data.end<uint8>() );
+    mBuffer.AppendSeq( data.begin< uint8 >(), data.end< uint8 >() );
 }
 
-void StreamPacketizer::Process()
+void Net::StreamPacketizer::Process()
 {
-    Buffer::const_iterator<uint8> cur, end;
-    cur = mBuffer.begin<uint8>();
-    end = mBuffer.end<uint8>();
+    Buffer::const_iterator< uint8 > cur, end;
+    cur = mBuffer.begin< uint8 >();
+    end = mBuffer.end< uint8 >();
     while( true )
     {
         if( sizeof( uint32 ) > ( end - cur ) )
             break;
 
-        const Buffer::const_iterator<uint32> len = cur.As<uint32>();
-        const Buffer::const_iterator<uint8> start = ( len + 1 ).As<uint8>();
+        const Buffer::const_iterator< uint32 > len = cur.As< uint32 >();
+        const Buffer::const_iterator< uint8 > start = ( len + 1 ).As< uint8 >();
 
         if( *len > (uint32)( end - start ) )
             break;
@@ -57,11 +60,11 @@ void StreamPacketizer::Process()
         cur = ( start + *len );
     }
 
-    if( cur != mBuffer.begin<uint8>() )
+    if( cur != mBuffer.begin< uint8 >() )
         mBuffer.AssignSeq( cur, end );
 }
 
-Buffer* StreamPacketizer::PopPacket()
+Buffer* Net::StreamPacketizer::PopPacket()
 {
     Buffer* ret = NULL;
     if( !mPackets.empty() )
@@ -73,15 +76,9 @@ Buffer* StreamPacketizer::PopPacket()
     return ret;
 }
 
-void StreamPacketizer::ClearBuffers()
+void Net::StreamPacketizer::ClearBuffers()
 {
     Buffer* buf;
     while( ( buf = PopPacket() ) )
         SafeDelete( buf );
 }
-
-
-
-
-
-

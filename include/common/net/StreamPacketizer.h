@@ -28,22 +28,45 @@
 
 #include "utils/Buffer.h"
 
-class StreamPacketizer
+namespace Net
 {
-public:
-    ~StreamPacketizer();
+    /**
+     * @brief Turns a stream into packets.
+     *
+     * @author Bloody.Rabbit
+     */
+    class StreamPacketizer
+    {
+    public:
+        /// A destructor.
+        ~StreamPacketizer();
 
-    void InputData( const Buffer& data );
-    void Process();
+        /**
+         * @brief Inputs new data.
+         *
+         * @param[in] data A buffer with new data.
+         */
+        void InputData( const Buffer& data );
+        /// Processes data into packets.
+        void Process();
 
-    Buffer* PopPacket();
+        /**
+         * @brief Obtains a next packet in the queue.
+         *
+         * @return The packet.
+         */
+        Buffer* PopPacket();
 
-    void ClearBuffers();
+        /// Clears all buffers.
+        void ClearBuffers();
 
-protected:
-    Buffer mBuffer;
+    protected:
+        /// Unprocessed or uncomplete packet data.
+        Buffer mBuffer;
 
-    std::queue<Buffer*> mPackets;
-};
+        /// A queue of processed packets.
+        std::queue< Buffer* > mPackets;
+    };
+}
 
 #endif /* !__NET__STREAM_PACKETIZER_H__INCL__ */

@@ -26,22 +26,26 @@
 #include "CommonPCH.h"
 
 #include "net/Ip4.h"
-#include "net/NetUtils.h"
+#include "net/Utils.h"
 #include "utils/Log.h"
 #include "utils/StrConv.h"
 #include "utils/StrUtils.h"
 
 /*************************************************************************/
-/* Ip4                                                                   */
+/* Net::Ip4                                                              */
 /*************************************************************************/
-const int Ip4::ADDRESS_FAMILY = AF_INET;
+const int Net::Ip4::ADDRESS_FAMILY = AF_INET;
 
-const Ip4::SocketAddress Ip4::SOCKET_ADDRESS_ANY = Ip4::GetSocketAddress( Ip4::ADDRESS_ANY, Ip4::GetPort( 0 ) );
+const Net::Ip4::SocketAddress Net::Ip4::SOCKET_ADDRESS_ANY =
+    Net::Ip4::GetSocketAddress( Net::Ip4::ADDRESS_ANY,
+                                Net::Ip4::GetPort( 0 ) )
+;
 
-const Ip4::Address Ip4::ADDRESS_ANY = Ip4::GetAddress( INADDR_ANY );
-const Ip4::Address Ip4::ADDRESS_BROADCAST = Ip4::GetAddress( INADDR_BROADCAST );
+const Net::Ip4::Address Net::Ip4::ADDRESS_ANY = Net::Ip4::GetAddress( INADDR_ANY );
+const Net::Ip4::Address Net::Ip4::ADDRESS_BROADCAST = Net::Ip4::GetAddress( INADDR_BROADCAST );
 
-Ip4::SocketAddress Ip4::GetSocketAddress( const Ip4::Address& address, const Ip4::Port& port )
+Net::Ip4::SocketAddress Net::Ip4::GetSocketAddress( const Net::Ip4::Address& address,
+                                                    const Net::Ip4::Port& port )
 {
     SocketAddress socketAddress;
     socketAddress.sin_family = ADDRESS_FAMILY;
@@ -51,7 +55,7 @@ Ip4::SocketAddress Ip4::GetSocketAddress( const Ip4::Address& address, const Ip4
     return socketAddress;
 }
 
-Ip4::Address Ip4::GetAddress( uint32 address )
+Net::Ip4::Address Net::Ip4::GetAddress( uint32 address )
 {
     Address addr;
     addr.s_addr = address;
@@ -59,41 +63,42 @@ Ip4::Address Ip4::GetAddress( uint32 address )
     return addr;
 }
 
-Ip4::Address Ip4::GetAddressByIP( const char* ip )
+Net::Ip4::Address Net::Ip4::GetAddressByIP( const char* ip )
 {
     /* inet_addr may fail, but since the error code is
        always ambiguous, we don't care. */
     return GetAddress( inet_addr( ip ) );
 }
 
-Ip4::Address Ip4::GetAddressByHostname( const char* hostname )
+Net::Ip4::Address Net::Ip4::GetAddressByHostname( const char* hostname )
 {
     hostent* h = gethostbyname( hostname );
     if( NULL == h )
     {
-        sLog.Error( "Network", "Failed to translate '%s' into address: error %d", hostname, H_NET_ERRNO );
+        sLog.Error( "Network", "Failed to translate '%s' into address: error %d",
+                    hostname, H_NET_ERRNO );
         return ADDRESS_ANY;
     }
 
-    return *reinterpret_cast< Ip4::Address* >( h->h_addr_list[0] );
+    return *reinterpret_cast< Net::Ip4::Address* >( h->h_addr_list[0] );
 }
 
-Ip4::Address Ip4::GetAddressBySocketAddress( const Ip4::SocketAddress& socketAddress )
+Net::Ip4::Address Net::Ip4::GetAddressBySocketAddress( const Net::Ip4::SocketAddress& socketAddress )
 {
     return socketAddress.sin_addr;
 }
 
-Ip4::Port Ip4::GetPort( uint16 port )
+Net::Ip4::Port Net::Ip4::GetPort( uint16 port )
 {
     return htons( port );
 }
 
-Ip4::Port Ip4::GetPortBySocketAddress( const Ip4::SocketAddress& socketAddress )
+Net::Ip4::Port Net::Ip4::GetPortBySocketAddress( const Net::Ip4::SocketAddress& socketAddress )
 {
     return socketAddress.sin_port;
 }
 
-std::string Ip4::PrintSocketAddress( const Ip4::SocketAddress& socketAddress )
+std::string Net::Ip4::PrintSocketAddress( const Net::Ip4::SocketAddress& socketAddress )
 {
     std::string str;
     sprintf( str, "%s:%s",
@@ -103,12 +108,12 @@ std::string Ip4::PrintSocketAddress( const Ip4::SocketAddress& socketAddress )
     return str;
 }
 
-std::string Ip4::PrintAddress( const Ip4::Address& address )
+std::string Net::Ip4::PrintAddress( const Net::Ip4::Address& address )
 {
     return std::string( inet_ntoa( address ) );
 }
 
-std::string Ip4::PrintPort( const Ip4::Port& port )
+std::string Net::Ip4::PrintPort( const Net::Ip4::Port& port )
 {
     return strFrom< uint16 >( ntohs( port ) );
 }

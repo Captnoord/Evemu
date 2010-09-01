@@ -58,22 +58,22 @@ SET( mt_SOURCE
      "${TARGET_SOURCE_DIR}/mt/Worker.cpp" )
 
 SET( net_INCLUDE
+     "${TARGET_INCLUDE_DIR}/net/Common.h"
      "${TARGET_INCLUDE_DIR}/net/Ip4.h"
      "${TARGET_INCLUDE_DIR}/net/Ip6.h"
-     "${TARGET_INCLUDE_DIR}/net/NetCommon.h"
-     "${TARGET_INCLUDE_DIR}/net/NetUtils.h"
      "${TARGET_INCLUDE_DIR}/net/Socket.h"
      "${TARGET_INCLUDE_DIR}/net/StreamPacketizer.h"
      "${TARGET_INCLUDE_DIR}/net/StreamSocket.h"
-     "${TARGET_INCLUDE_DIR}/net/TCPConnection.h"
-     "${TARGET_INCLUDE_DIR}/net/TCPServer.h" )
+     "${TARGET_INCLUDE_DIR}/net/TcpConnection.h"
+     "${TARGET_INCLUDE_DIR}/net/TcpServer.h"
+     "${TARGET_INCLUDE_DIR}/net/Utils.h" )
 SET( net_SOURCE
      "${TARGET_SOURCE_DIR}/net/Ip4.cpp"
      "${TARGET_SOURCE_DIR}/net/Ip6.cpp"
-     "${TARGET_SOURCE_DIR}/net/NetUtils.cpp"
      "${TARGET_SOURCE_DIR}/net/StreamPacketizer.cpp"
-     "${TARGET_SOURCE_DIR}/net/TCPConnection.cpp"
-     "${TARGET_SOURCE_DIR}/net/TCPServer.cpp" )
+     "${TARGET_SOURCE_DIR}/net/TcpConnection.cpp"
+     "${TARGET_SOURCE_DIR}/net/TcpServer.cpp"
+     "${TARGET_SOURCE_DIR}/net/Utils.cpp" )
 
 IF( NOT WIN32 )
     SET( posix_INCLUDE

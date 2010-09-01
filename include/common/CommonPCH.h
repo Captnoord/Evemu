@@ -38,7 +38,7 @@
 #include "db/Common.h"
 #include "fs/Common.h"
 #include "mt/MtCommon.h"
-#include "net/NetCommon.h"
+#include "net/Common.h"
 #include "time/TimeCommon.h"
 
 #endif /* !__COMMON_PCH_H__INCL__ */
