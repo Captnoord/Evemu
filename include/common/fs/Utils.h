@@ -23,8 +23,8 @@
     Author:     Aim, Captnoord, Zhur, Bloody.Rabbit
 */
 
-#ifndef __FS__FS_UTILS_H__INCL__
-#define __FS__FS_UTILS_H__INCL__
+#ifndef __FS__UTILS_H__INCL__
+#define __FS__UTILS_H__INCL__
 
 #ifdef MSVC
 #   define S_IRWXU 0
@@ -32,25 +32,28 @@
 #   define S_IRWXO 0
 #endif /* MSVC */
 
-/**
- * @brief Obtains filesize.
- *
- * @param[in] filename Name of file to examine.
- *
- * @return Size of file.
- */
-uint64 filesize( const char* filename );
-/**
- * @brief Obtains filesize.
- *
- * @param[in] fd Descriptor of file to examine.
- *
- * @return Size of file.
- */
-uint64 filesize( FILE* fd );
-
 #ifdef WIN32
 int mkdir( const char* pathname, int mode );
 #endif /* !WIN32 */
 
-#endif /* !__FS__FS_UTILS_H__INCL__ */
+namespace Fs
+{
+    /**
+     * @brief Obtains filesize.
+     *
+     * @param[in] filename Name of file to examine.
+     *
+     * @return Size of file.
+     */
+    uint64 GetFilesize( const char* filename );
+    /**
+     * @brief Obtains filesize.
+     *
+     * @param[in] fd Descriptor of file to examine.
+     *
+     * @return Size of file.
+     */
+    uint64 GetFilesize( FILE* fd );
+}
+
+#endif /* !__FS__UTILS_H__INCL__ */

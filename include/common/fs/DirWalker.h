@@ -26,61 +26,71 @@
 #ifndef __FS__DIR_WALKER_H__INCL__
 #define __FS__DIR_WALKER_H__INCL__
 
-/**
- * @brief Simple class for directory listing.
- *
- * @note Capt: Even that I don't always like boost,
- *       it has a very useful class called FileSystem
- *       which does this stuff very crossplatform.
- *
- * @author Zhur, Bloody.Rabbit
- */
-class DirWalker
+namespace Fs
 {
-public:
-    DirWalker();
-    ~DirWalker();
-
-    /** @return Current file name. */
-    const char* currentFileName();
-
     /**
-     * @brief Opens directory for listing.
+     * @brief Simple class for directory listing.
      *
-     * @param[in] dir    Path to directory; must NOT end with backslash.
-     * @param[in] suffix Only files with this suffix are matched.
+     * @note Capt: Even that I don't always like boost,
+     *       it has a very useful class called FileSystem
+     *       which does this stuff very crossplatform.
      *
-     * @retval true  Directory opened successfully.
-     * @return false Failed to open directory.
+     * @author Zhur, Bloody.Rabbit
      */
-    bool OpenDir( const char* dir, const char* suffix = "" );
-    /**
-     * @brief Closes opened directory.
-     */
-    void CloseDir();
+    class DirWalker
+    {
+    public:
+        /// A primary constructor.
+        DirWalker();
+        /// A destructor.
+        ~DirWalker();
 
-    /**
-     * @brief Iterates over to next file in directory.
-     *
-     * @note This function must be called after OpenDir()
-     *       before calling currentFileName().
-     *
-     * @retval true  Iteration successfull.
-     * @retval false Iteration failed; most likely there are no more files.
-     */
-    bool NextFile();
+        /// @return Current file name.
+        const char* currentFileName();
 
-protected:
-#ifdef WIN32
-    HANDLE mFind;
-    WIN32_FIND_DATA mFindData;
-    bool mValid;
-    bool mFirst;
-#else
-    DIR* mDir;
-    struct dirent* mFile;
-    std::string mSuffix;
-#endif
-};
+        /**
+         * @brief Opens directory for listing.
+         *
+         * @param[in] dir    Path to directory; must NOT end with a backslash.
+         * @param[in] suffix Only files with this suffix are matched.
+         *
+         * @retval true  Directory opened successfully.
+         * @retval false Failed to open directory.
+         */
+        bool OpenDir( const char* dir, const char* suffix = "" );
+        /// Closes opened directory.
+        void CloseDir();
+
+        /**
+         * @brief Iterates over to next file in directory.
+         *
+         * This function must be called after OpenDir()
+         * before calling currentFileName().
+         *
+         * @retval true  Iteration successfull.
+         * @retval false Iteration failed; most likely there are no more files.
+         */
+        bool NextFile();
+
+    protected:
+#   ifdef WIN32
+        /// A search handle.
+        HANDLE mFind;
+        /// A struct which holds data about the current file.
+        WIN32_FIND_DATA mFindData;
+        /// True if mFind is valid.
+        bool mValid;
+        /// True if this is the first file in the directory.
+        bool mFirst;
+#   else
+        /// A handle to the directory.
+        DIR* mDir;
+        /// A current directory entry.
+        struct dirent* mFile;
+        /// A match suffix.
+        std::string mSuffix;
+#   endif
+    };
+}
 
 #endif /* !__FS__DIR_WALKER_H__INCL__ */

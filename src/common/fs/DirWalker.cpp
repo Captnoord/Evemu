@@ -27,7 +27,10 @@
 
 #include "fs/DirWalker.h"
 
-DirWalker::DirWalker()
+/*************************************************************************/
+/* Fs::DirWalker                                                         */
+/*************************************************************************/
+Fs::DirWalker::DirWalker()
 #ifdef WIN32
 : mFind( INVALID_HANDLE_VALUE ),
   mFindData(),
@@ -41,12 +44,12 @@ DirWalker::DirWalker()
 {
 }
 
-DirWalker::~DirWalker()
+Fs::DirWalker::~DirWalker()
 {
     CloseDir();
 }
 
-const char* DirWalker::currentFileName()
+const char* Fs::DirWalker::currentFileName()
 {
 #ifdef WIN32
     if( !mValid )
@@ -61,7 +64,7 @@ const char* DirWalker::currentFileName()
 #endif
 }
 
-bool DirWalker::OpenDir( const char* dir, const char* suffix )
+bool Fs::DirWalker::OpenDir( const char* dir, const char* suffix )
 {
     CloseDir();
 
@@ -87,7 +90,7 @@ bool DirWalker::OpenDir( const char* dir, const char* suffix )
 #endif
 }
 
-void DirWalker::CloseDir()
+void Fs::DirWalker::CloseDir()
 {
 #ifdef WIN32
     if( INVALID_HANDLE_VALUE != mFind )
@@ -104,7 +107,7 @@ void DirWalker::CloseDir()
 #endif
 }
 
-bool DirWalker::NextFile()
+bool Fs::DirWalker::NextFile()
 {
 #ifdef WIN32
     if( INVALID_HANDLE_VALUE == mFind )
@@ -137,21 +140,3 @@ bool DirWalker::NextFile()
     return false;
 #endif
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

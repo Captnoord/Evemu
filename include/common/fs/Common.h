@@ -23,36 +23,19 @@
     Author:     Aim, Captnoord, Zhur, Bloody.Rabbit
 */
 
-#include "CommonPCH.h"
+#ifndef __FS__COMMON_H__INCL__
+#define __FS__COMMON_H__INCL__
 
-#include "fs/FsUtils.h"
-
-uint64 filesize( const char* filename )
-{
-    FILE* fd = fopen( filename, "r" );
-    if( fd == NULL )
-        return 0;
-
-    return filesize( fd );
-}
-
-uint64 filesize( FILE* fd )
-{
-#ifdef WIN32
-	return _filelength( _fileno( fd ) );
-#else
-	struct stat file_stat;
-	fstat( fileno( fd ), &file_stat );
-	return file_stat.st_size;
-#endif
-}
+/**
+ * @namespace Fs
+ * @brief Contains all utilities needed to access the filesystem.
+ */
 
 #ifdef WIN32
-int mkdir( const char* pathname, int mode ) 
-{ 
-    int result = CreateDirectory( pathname, NULL ); 
+#   include <io.h>
+#   include "win/WinCommon.h"
+#else /* !WIN32 */
+#   include "posix/PosixCommon.h"
+#endif /* !WIN32 */
 
-    // mkdir returns 0 for success, opposite of CreateDirectory().
-    return ( result ? 0 : -1 ); 
-} 
-#endif /* WIN32 */
+#endif /* !__FS__COMMON_H__INCL__ */

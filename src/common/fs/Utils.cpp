@@ -23,14 +23,34 @@
     Author:     Aim, Captnoord, Zhur, Bloody.Rabbit
 */
 
-#ifndef __FS__FS_COMMON_H__INCL__
-#define __FS__FS_COMMON_H__INCL__
+#include "CommonPCH.h"
+
+#include "fs/Utils.h"
 
 #ifdef WIN32
-#   include <io.h>
-#   include "win/WinCommon.h"
-#else /* !WIN32 */
-#   include "posix/PosixCommon.h"
-#endif /* !WIN32 */
+int mkdir( const char* pathname, int mode ) 
+{ 
+    // mkdir returns 0 for success, opposite of CreateDirectory().
+    return ( CreateDirectory( pathname, NULL ) ? 0 : -1 ); 
+} 
+#endif /* WIN32 */
 
-#endif /* !__FS__FS_COMMON_H__INCL__ */
+uint64 Fs::GetFilesize( const char* filename )
+{
+    FILE* fd = fopen( filename, "r" );
+    if( fd == NULL )
+        return 0;
+
+    return Fs::GetFilesize( fd );
+}
+
+uint64 Fs::GetFilesize( FILE* fd )
+{
+#ifdef WIN32
+	return _filelength( _fileno( fd ) );
+#else
+	struct stat file_stat;
+	fstat( fileno( fd ), &file_stat );
+	return file_stat.st_size;
+#endif
+}

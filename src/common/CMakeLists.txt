@@ -29,12 +29,12 @@ SET( db_SOURCE
      "${TARGET_SOURCE_DIR}/db/DbType.cpp" )
 
 SET( fs_INCLUDE
+     "${TARGET_INCLUDE_DIR}/fs/Common.h"
      "${TARGET_INCLUDE_DIR}/fs/DirWalker.h"
-     "${TARGET_INCLUDE_DIR}/fs/FsCommon.h"
-     "${TARGET_INCLUDE_DIR}/fs/FsUtils.h" )
+     "${TARGET_INCLUDE_DIR}/fs/Utils.h" )
 SET( fs_SOURCE
      "${TARGET_SOURCE_DIR}/fs/DirWalker.cpp"
-     "${TARGET_SOURCE_DIR}/fs/FsUtils.cpp" )
+     "${TARGET_SOURCE_DIR}/fs/Utils.cpp" )
 
 SET( gangsta_INCLUDE
      "${TARGET_INCLUDE_DIR}/gangsta/GaCommon.h"
