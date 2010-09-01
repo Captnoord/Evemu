@@ -25,40 +25,40 @@
 
 #include "CommonPCH.h"
 
-#include "db/DbType.h"
+#include "db/Type.h"
 
-uint8 DBTYPE_GetSizeBits( DBTYPE type )
+uint8 Db::TYPE_GetSizeBits( Db::TYPE type )
 {
     switch( type )
     {
-        case DBTYPE_I8:
-        case DBTYPE_UI8:
-        case DBTYPE_R8:
-        case DBTYPE_CY:
-        case DBTYPE_FILETIME:
+        case Db::TYPE_I8:
+        case Db::TYPE_UI8:
+        case Db::TYPE_R8:
+        case Db::TYPE_CY:
+        case Db::TYPE_FILETIME:
             return 64;
-        case DBTYPE_I4:
-        case DBTYPE_UI4:
-        case DBTYPE_R4:
+        case Db::TYPE_I4:
+        case Db::TYPE_UI4:
+        case Db::TYPE_R4:
             return 32;
-        case DBTYPE_I2:
-        case DBTYPE_UI2:
+        case Db::TYPE_I2:
+        case Db::TYPE_UI2:
             return 16;
-        case DBTYPE_I1:
-        case DBTYPE_UI1:
+        case Db::TYPE_I1:
+        case Db::TYPE_UI1:
             return 8;
-        case DBTYPE_BOOL:
+        case Db::TYPE_BOOL:
             return 1;
-        case DBTYPE_BYTES:
-        case DBTYPE_STR:
-        case DBTYPE_WSTR:
+        case Db::TYPE_BYTES:
+        case Db::TYPE_STR:
+        case Db::TYPE_WSTR:
             return 0;
     }
 
     return 0;
 }
 
-uint8 DBTYPE_GetSizeBytes( DBTYPE type )
+uint8 Db::TYPE_GetSizeBytes( Db::TYPE type )
 {
-    return ( ( DBTYPE_GetSizeBits( type ) + 7 ) >> 3 );
+    return ( ( Db::TYPE_GetSizeBits( type ) + 7 ) >> 3 );
 }

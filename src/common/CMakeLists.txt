@@ -21,12 +21,12 @@ SET( SOURCE
      "" )
 
 SET( db_INCLUDE
-     "${TARGET_INCLUDE_DIR}/db/DbCommon.h"
-     "${TARGET_INCLUDE_DIR}/db/DbCore.h"
-     "${TARGET_INCLUDE_DIR}/db/DbType.h" )
+     "${TARGET_INCLUDE_DIR}/db/Common.h"
+     "${TARGET_INCLUDE_DIR}/db/Core.h"
+     "${TARGET_INCLUDE_DIR}/db/Type.h" )
 SET( db_SOURCE
-     "${TARGET_SOURCE_DIR}/db/DbCore.cpp"
-     "${TARGET_SOURCE_DIR}/db/DbType.cpp" )
+     "${TARGET_SOURCE_DIR}/db/Core.cpp"
+     "${TARGET_SOURCE_DIR}/db/Type.cpp" )
 
 SET( fs_INCLUDE
      "${TARGET_INCLUDE_DIR}/fs/Common.h"

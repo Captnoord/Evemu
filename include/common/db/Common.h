@@ -23,10 +23,15 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __DB__DB_COMMON_H__INCL__
-#define __DB__DB_COMMON_H__INCL__
+#ifndef __DB__COMMON_H__INCL__
+#define __DB__COMMON_H__INCL__
+
+/**
+ * @namespace Db
+ * @brief Houses all database-related stuff.
+ */
 
 #include <mysql.h>
 #include <errmsg.h>
 
-#endif /* !__DB__DB_COMMON_H__INCL__ */
+#endif /* !__DB__COMMON_H__INCL__ */

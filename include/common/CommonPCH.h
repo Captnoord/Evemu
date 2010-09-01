@@ -35,7 +35,7 @@
 #include "xml/Common.h"
 #include "zlib/Common.h"
 
-#include "db/DbCommon.h"
+#include "db/Common.h"
 #include "fs/Common.h"
 #include "mt/MtCommon.h"
 #include "net/NetCommon.h"
