@@ -36,10 +36,10 @@ SET( fs_SOURCE
      "${TARGET_SOURCE_DIR}/fs/DirWalker.cpp"
      "${TARGET_SOURCE_DIR}/fs/Utils.cpp" )
 
-SET( gangsta_INCLUDE
-     "${TARGET_INCLUDE_DIR}/gangsta/GaCommon.h"
-     "${TARGET_INCLUDE_DIR}/gangsta/GaUtils.h" )
-SET( gangsta_SOURCE
+SET( ga_INCLUDE
+     "${TARGET_INCLUDE_DIR}/ga/Common.h"
+     "${TARGET_INCLUDE_DIR}/ga/Utils.h" )
+SET( ga_SOURCE
      "" )
 
 SET( mt_INCLUDE
@@ -176,48 +176,48 @@ INCLUDE_DIRECTORIES( "${ZLIB_INCLUDE_DIR}" )
 
 INCLUDE_DIRECTORIES( "${TARGET_INCLUDE_DIR}" )
 
-SOURCE_GROUP( "include"          FILES ${INCLUDE} )
-SOURCE_GROUP( "include\\db"      FILES ${db_INCLUDE} )
-SOURCE_GROUP( "include\\fs"      FILES ${fs_INCLUDE} )
-SOURCE_GROUP( "include\\gangsta" FILES ${gangsta_INCLUDE} )
-SOURCE_GROUP( "include\\mt"      FILES ${mt_INCLUDE} )
-SOURCE_GROUP( "include\\net"     FILES ${net_INCLUDE} )
-SOURCE_GROUP( "include\\posix"   FILES ${posix_INCLUDE} )
-SOURCE_GROUP( "include\\std"     FILES ${std_INCLUDE} )
-SOURCE_GROUP( "include\\time"    FILES ${time_INCLUDE} )
-SOURCE_GROUP( "include\\utils"   FILES ${utils_INCLUDE} )
-SOURCE_GROUP( "include\\win"     FILES ${win_INCLUDE} )
-SOURCE_GROUP( "include\\xml"     FILES ${xml_INCLUDE} )
-SOURCE_GROUP( "include\\zlib"    FILES ${zlib_INCLUDE} )
+SOURCE_GROUP( "include"        FILES ${INCLUDE} )
+SOURCE_GROUP( "include\\db"    FILES ${db_INCLUDE} )
+SOURCE_GROUP( "include\\fs"    FILES ${fs_INCLUDE} )
+SOURCE_GROUP( "include\\ga"    FILES ${ga_INCLUDE} )
+SOURCE_GROUP( "include\\mt"    FILES ${mt_INCLUDE} )
+SOURCE_GROUP( "include\\net"   FILES ${net_INCLUDE} )
+SOURCE_GROUP( "include\\posix" FILES ${posix_INCLUDE} )
+SOURCE_GROUP( "include\\std"   FILES ${std_INCLUDE} )
+SOURCE_GROUP( "include\\time"  FILES ${time_INCLUDE} )
+SOURCE_GROUP( "include\\utils" FILES ${utils_INCLUDE} )
+SOURCE_GROUP( "include\\win"   FILES ${win_INCLUDE} )
+SOURCE_GROUP( "include\\xml"   FILES ${xml_INCLUDE} )
+SOURCE_GROUP( "include\\zlib"  FILES ${zlib_INCLUDE} )
 
-SOURCE_GROUP( "src"          FILES ${SOURCE} )
-SOURCE_GROUP( "src\\db"      FILES ${db_SOURCE} )
-SOURCE_GROUP( "src\\fs"      FILES ${fs_SOURCE} )
-SOURCE_GROUP( "src\\gangsta" FILES ${gangsta_SOURCE} )
-SOURCE_GROUP( "src\\mt"      FILES ${mt_SOURCE} )
-SOURCE_GROUP( "src\\net"     FILES ${net_SOURCE} )
-SOURCE_GROUP( "src\\posix"   FILES ${posix_SOURCE} )
-SOURCE_GROUP( "src\\std"     FILES ${std_SOURCE} )
-SOURCE_GROUP( "src\\time"    FILES ${time_SOURCE} )
-SOURCE_GROUP( "src\\utils"   FILES ${utils_SOURCE} )
-SOURCE_GROUP( "src\\win"     FILES ${win_SOURCE} )
-SOURCE_GROUP( "src\\xml"     FILES ${xml_SOURCE} )
-SOURCE_GROUP( "src\\zlib"    FILES ${zlib_SOURCE} )
+SOURCE_GROUP( "src"        FILES ${SOURCE} )
+SOURCE_GROUP( "src\\db"    FILES ${db_SOURCE} )
+SOURCE_GROUP( "src\\fs"    FILES ${fs_SOURCE} )
+SOURCE_GROUP( "src\\ga"    FILES ${ga_SOURCE} )
+SOURCE_GROUP( "src\\mt"    FILES ${mt_SOURCE} )
+SOURCE_GROUP( "src\\net"   FILES ${net_SOURCE} )
+SOURCE_GROUP( "src\\posix" FILES ${posix_SOURCE} )
+SOURCE_GROUP( "src\\std"   FILES ${std_SOURCE} )
+SOURCE_GROUP( "src\\time"  FILES ${time_SOURCE} )
+SOURCE_GROUP( "src\\utils" FILES ${utils_SOURCE} )
+SOURCE_GROUP( "src\\win"   FILES ${win_SOURCE} )
+SOURCE_GROUP( "src\\xml"   FILES ${xml_SOURCE} )
+SOURCE_GROUP( "src\\zlib"  FILES ${zlib_SOURCE} )
 
 ADD_LIBRARY( "${TARGET_NAME}"
-             ${INCLUDE}         ${SOURCE}
-             ${db_INCLUDE}      ${db_SOURCE}
-             ${fs_INCLUDE}      ${fs_SOURCE}
-             ${gangsta_INCLUDE} ${gangsta_SOURCE}
-             ${mt_INCLUDE}      ${mt_SOURCE}
-             ${net_INCLUDE}     ${net_SOURCE}
-             ${posix_INCLUDE}   ${posix_SOURCE}
-             ${std_INCLUDE}     ${std_SOURCE}
-             ${time_INCLUDE}    ${time_SOURCE}
-             ${utils_INCLUDE}   ${utils_SOURCE}
-             ${win_INCLUDE}     ${win_SOURCE}
-             ${xml_INCLUDE}     ${xml_SOURCE}
-             ${zlib_INCLUDE}    ${zlib_SOURCE} )
+             ${INCLUDE}       ${SOURCE}
+             ${db_INCLUDE}    ${db_SOURCE}
+             ${fs_INCLUDE}    ${fs_SOURCE}
+             ${ga_INCLUDE}    ${ga_SOURCE}
+             ${mt_INCLUDE}    ${mt_SOURCE}
+             ${net_INCLUDE}   ${net_SOURCE}
+             ${posix_INCLUDE} ${posix_SOURCE}
+             ${std_INCLUDE}   ${std_SOURCE}
+             ${time_INCLUDE}  ${time_SOURCE}
+             ${utils_INCLUDE} ${utils_SOURCE}
+             ${win_INCLUDE}   ${win_SOURCE}
+             ${xml_INCLUDE}   ${xml_SOURCE}
+             ${zlib_INCLUDE}  ${zlib_SOURCE} )
 
 TARGET_BUILD_PCH( "${TARGET_NAME}"
                   "CommonPCH.h"

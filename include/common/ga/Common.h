@@ -23,11 +23,16 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __GANGSTA__GA_COMMON_H__INCL__
-#define __GANGSTA__GA_COMMON_H__INCL__
+#ifndef __GA__COMMON_H__INCL__
+#define __GA__COMMON_H__INCL__
+
+/**
+ * @namespace Ga
+ * @brief Various utilities related to the Gangsta wrapper library.
+ */
 
 #include <GaPreReqs.h>
 #include <GaMath.h>
 #include <GaTypes.h>
 
-#endif /* !__GANGSTA__GA_COMMON_H__INCL__ */
+#endif /* !__GA__COMMON_H__INCL__ */

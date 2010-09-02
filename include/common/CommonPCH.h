@@ -31,7 +31,7 @@
 /*************************************************************************/
 #include "Common.h"
 
-#include "gangsta/GaCommon.h"
+#include "ga/Common.h"
 #include "xml/Common.h"
 #include "zlib/Common.h"
 
