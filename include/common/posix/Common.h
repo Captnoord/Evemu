@@ -20,49 +20,35 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:     Bloody.Rabbit
+    Author:     Aim, Captnoord, Zhur, Bloody.Rabbit
 */
 
-#include "CommonPCH.h"
+#ifndef __POSIX__POSIX_COMMON_H__INCL__
+#define __POSIX__POSIX_COMMON_H__INCL__
 
-#include "posix/PosixConditionAttribute.h"
+/**
+ * @namespace Posix
+ * @brief Wrappers around POSIX API.
+ */
 
-/*************************************************************************/
-/* PosixCondition::Attribute                                             */
-/*************************************************************************/
-PosixCondition::Attribute::Attribute()
-{
-    int code;
+// Network
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
 
-    code = ::pthread_condattr_init( &mAttribute );
-    assert( 0 == code );
-}
+// Files
+#include <dirent.h>
+#include <fcntl.h>
+#include <sys/stat.h>
 
-PosixCondition::Attribute::Attribute( int processShared )
-{
-    int code;
+// Threads
+#include <pthread.h>
 
-    code = ::pthread_condattr_init( &mAttribute );
-    assert( 0 == code );
+// Time
+#include <sys/time.h>
 
-    code = SetProcessShared( processShared );
-    assert( 0 == code );
-}
+// Miscellaneous
+#include <unistd.h>
 
-PosixCondition::Attribute::~Attribute()
-{
-    int code;
-
-    code = ::pthread_condattr_destroy( &mAttribute );
-    assert( 0 == code );
-}
-
-int PosixCondition::Attribute::GetProcessShared( int* processShared ) const
-{
-    return ::pthread_condattr_getpshared( &mAttribute, processShared );
-}
-
-int PosixCondition::Attribute::SetProcessShared( int processShared )
-{
-    return ::pthread_condattr_setpshared( &mAttribute, processShared );
-}
+#endif /* !__POSIX__POSIX_COMMON_H__INCL__ */

@@ -34,9 +34,9 @@
 Mt::Thread Mt::Thread::self()
 {
 #ifdef WIN32
-    return Mt::Thread( WinThread::self() );
+    return Mt::Thread( Win::Thread::self() );
 #else /* !WIN32 */
-    return Mt::Thread( PosixThread::self() );
+    return Mt::Thread( Posix::Thread::self() );
 #endif /* !WIN32 */
 }
 
@@ -45,9 +45,9 @@ void Mt::Thread::Sleep( size_t milliseconds )
     if( 0 < milliseconds )
     {
 #ifdef WIN32
-        WinThread::Sleep( static_cast< DWORD >( milliseconds ) );
+        Win::Thread::Sleep( static_cast< DWORD >( milliseconds ) );
 #else /* !WIN32 */
-        int code = PosixThread::Sleep( static_cast< useconds_t >( milliseconds * USEC_PER_MSEC ) );
+        int code = Posix::Thread::Sleep( static_cast< useconds_t >( milliseconds * USEC_PER_MSEC ) );
         assert( 0 == code );
 #endif /* !WIN32 */
     }
@@ -69,9 +69,9 @@ Mt::Thread::Thread( const Mt::Thread& oth )
 }
 
 #ifdef WIN32
-Mt::Thread::Thread( const WinThread& thread )
+Mt::Thread::Thread( const Win::Thread& thread )
 #else /* !WIN32 */
-Mt::Thread::Thread( const PosixThread& thread )
+Mt::Thread::Thread( const Posix::Thread& thread )
 #endif /* !WIN32 */
 : mThread( thread )
 {
@@ -121,10 +121,10 @@ void* Mt::Thread::ThreadMain( void* arg )
        cancel works as desired. */
     int code;
 
-    code = PosixThread::SetCancelState( PTHREAD_CANCEL_ENABLE, NULL );
+    code = Posix::Thread::SetCancelState( PTHREAD_CANCEL_ENABLE, NULL );
     assert( 0 == code );
 
-    code = PosixThread::SetCancelType( PTHREAD_CANCEL_ASYNCHRONOUS, NULL );
+    code = Posix::Thread::SetCancelType( PTHREAD_CANCEL_ASYNCHRONOUS, NULL );
     assert( 0 == code );
 #endif /* !WIN32 */
 

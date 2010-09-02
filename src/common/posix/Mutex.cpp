@@ -23,64 +23,49 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __POSIX__POSIX_MUTEX_H__INCL__
-#define __POSIX__POSIX_MUTEX_H__INCL__
+#include "CommonPCH.h"
 
-/**
- * @brief Wrapper around @c pthread_mutex_t.
- *
- * @author Bloody.Rabbit
- */
-class PosixMutex
+#include "posix/Mutex.h"
+#include "posix/MutexAttribute.h"
+
+/*************************************************************************/
+/* Posix::Mutex                                                          */
+/*************************************************************************/
+const Posix::Mutex::Attribute Posix::Mutex::DEFAULT_ATTRIBUTE(
+#if defined( CYGWIN ) || defined( APPLE )
+    PTHREAD_MUTEX_RECURSIVE
+#else
+    PTHREAD_MUTEX_RECURSIVE_NP
+#endif
+ );
+
+Posix::Mutex::Mutex( const Attribute& attr )
 {
-    friend class PosixCondition;
+    int code;
 
-public:
-    class Attribute;
+    code = ::pthread_mutex_init( &mMutex, &attr.mAttribute );
+    assert( 0 == code );
+}
 
-    /// The default attribute of new mutexes.
-    static const Attribute DEFAULT_ATTRIBUTE;
+Posix::Mutex::~Mutex()
+{
+    int code;
 
-    /**
-     * @brief The primary constructor.
-     *
-     * @param[in] attr The mutex attribute to use.
-     */
-    PosixMutex( const Attribute& attr = DEFAULT_ATTRIBUTE );
-    /**
-     * @brief A destructor.
-     */
-    ~PosixMutex();
+    code = ::pthread_mutex_destroy( &mMutex );
+    assert( 0 == code );
+}
 
-    /**
-     * @brief Locks the mutex.
-     *
-     * Blocks until the mutex is successfully locked or
-     * an error is encountered.
-     *
-     * @return A value returned by @c pthread_mutex_lock.
-     */
-    int Lock();
-    /**
-     * @brief Tries to lock the mutex.
-     *
-     * Returns immediately; the return value indicates
-     * whether the mutex has been locked or not.
-     *
-     * @return A value returned by @c pthread_mutex_trylock.
-     */
-    int TryLock();
+int Posix::Mutex::Lock()
+{
+    return ::pthread_mutex_lock( &mMutex );
+}
 
-    /**
-     * @brief Unlocks the mutex.
-     *
-     * @return A value returned by @c pthread_mutex_unlock.
-     */
-    int Unlock();
+int Posix::Mutex::TryLock()
+{
+    return ::pthread_mutex_trylock( &mMutex );
+}
 
-protected:
-    /// The mutex itself.
-    pthread_mutex_t mMutex;
-};
-
-#endif /* !__POSIX__POSIX_MUTEX_H__INCL__ */
+int Posix::Mutex::Unlock()
+{
+    return ::pthread_mutex_unlock( &mMutex );
+}

@@ -78,20 +78,20 @@ SET( net_SOURCE
 
 IF( NOT WIN32 )
     SET( posix_INCLUDE
-         "${TARGET_INCLUDE_DIR}/posix/PosixCommon.h"
-         "${TARGET_INCLUDE_DIR}/posix/PosixCondition.h"
-         "${TARGET_INCLUDE_DIR}/posix/PosixConditionAttribute.h"
-         "${TARGET_INCLUDE_DIR}/posix/PosixMutex.h"
-         "${TARGET_INCLUDE_DIR}/posix/PosixMutexAttribute.h"
-         "${TARGET_INCLUDE_DIR}/posix/PosixThread.h"
-         "${TARGET_INCLUDE_DIR}/posix/PosixThreadAttribute.h" )
+         "${TARGET_INCLUDE_DIR}/posix/Common.h"
+         "${TARGET_INCLUDE_DIR}/posix/Condition.h"
+         "${TARGET_INCLUDE_DIR}/posix/ConditionAttribute.h"
+         "${TARGET_INCLUDE_DIR}/posix/Mutex.h"
+         "${TARGET_INCLUDE_DIR}/posix/MutexAttribute.h"
+         "${TARGET_INCLUDE_DIR}/posix/Thread.h"
+         "${TARGET_INCLUDE_DIR}/posix/ThreadAttribute.h" )
     SET( posix_SOURCE
-         "${TARGET_SOURCE_DIR}/posix/PosixCondition.cpp"
-         "${TARGET_SOURCE_DIR}/posix/PosixConditionAttribute.cpp"
-         "${TARGET_SOURCE_DIR}/posix/PosixMutex.cpp"
-         "${TARGET_SOURCE_DIR}/posix/PosixMutexAttribute.cpp"
-         "${TARGET_SOURCE_DIR}/posix/PosixThread.cpp"
-         "${TARGET_SOURCE_DIR}/posix/PosixThreadAttribute.cpp" )
+         "${TARGET_SOURCE_DIR}/posix/Condition.cpp"
+         "${TARGET_SOURCE_DIR}/posix/ConditionAttribute.cpp"
+         "${TARGET_SOURCE_DIR}/posix/Mutex.cpp"
+         "${TARGET_SOURCE_DIR}/posix/MutexAttribute.cpp"
+         "${TARGET_SOURCE_DIR}/posix/Thread.cpp"
+         "${TARGET_SOURCE_DIR}/posix/ThreadAttribute.cpp" )
 ENDIF( NOT WIN32 )
 
 SET( std_INCLUDE

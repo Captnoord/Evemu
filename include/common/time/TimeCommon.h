@@ -27,9 +27,9 @@
 #define __TIME__TIME_COMMON_H__INCL__
 
 #ifdef WIN32
-#   include "win/WinCommon.h"
+#   include "win/Common.h"
 #else /* !WIN32 */
-#   include "posix/PosixCommon.h"
+#   include "posix/Common.h"
 #endif /* !WIN32 */
 
 #endif /* !__TIME__TIME_COMMON_H__INCL__ */

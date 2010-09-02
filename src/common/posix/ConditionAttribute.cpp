@@ -25,47 +25,44 @@
 
 #include "CommonPCH.h"
 
-#include "posix/PosixMutex.h"
-#include "posix/PosixMutexAttribute.h"
+#include "posix/ConditionAttribute.h"
 
 /*************************************************************************/
-/* PosixMutex                                                            */
+/* Posix::Condition::Attribute                                           */
 /*************************************************************************/
-const PosixMutex::Attribute PosixMutex::DEFAULT_ATTRIBUTE(
-#if defined( CYGWIN ) || defined( APPLE )
-    PTHREAD_MUTEX_RECURSIVE
-#else
-    PTHREAD_MUTEX_RECURSIVE_NP
-#endif
- );
-
-PosixMutex::PosixMutex( const Attribute& attr )
+Posix::Condition::Attribute::Attribute()
 {
     int code;
 
-    code = ::pthread_mutex_init( &mMutex, &attr.mAttribute );
+    code = ::pthread_condattr_init( &mAttribute );
     assert( 0 == code );
 }
 
-PosixMutex::~PosixMutex()
+Posix::Condition::Attribute::Attribute( int processShared )
 {
     int code;
 
-    code = ::pthread_mutex_destroy( &mMutex );
+    code = ::pthread_condattr_init( &mAttribute );
+    assert( 0 == code );
+
+    code = SetProcessShared( processShared );
     assert( 0 == code );
 }
 
-int PosixMutex::Lock()
+Posix::Condition::Attribute::~Attribute()
 {
-    return ::pthread_mutex_lock( &mMutex );
+    int code;
+
+    code = ::pthread_condattr_destroy( &mAttribute );
+    assert( 0 == code );
 }
 
-int PosixMutex::TryLock()
+int Posix::Condition::Attribute::GetProcessShared( int* processShared ) const
 {
-    return ::pthread_mutex_trylock( &mMutex );
+    return ::pthread_condattr_getpshared( &mAttribute, processShared );
 }
 
-int PosixMutex::Unlock()
+int Posix::Condition::Attribute::SetProcessShared( int processShared )
 {
-    return ::pthread_mutex_unlock( &mMutex );
+    return ::pthread_condattr_setpshared( &mAttribute, processShared );
 }

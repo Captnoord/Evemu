@@ -23,55 +23,55 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __MT__CONDITION_H__INCL__
-#define __MT__CONDITION_H__INCL__
+#ifndef __POSIX__CONDITION_ATTRIBUTE_H__INCL__
+#define __POSIX__CONDITION_ATTRIBUTE_H__INCL__
 
-#include "mt/Mutex.h"
+#include "posix/Condition.h"
 
-#ifdef WIN32
-#   include "win/Condition.h"
-#else /* !WIN32 */
-#   include "posix/Condition.h"
-#endif /* !WIN32 */
-
-namespace Mt
+namespace Posix
 {
     /**
-     * @brief A wrapper around platform-specific conditions.
+     * @brief A wrapper around <code>pthread_condattr_t</code>.
      *
      * @author Bloody.Rabbit
      */
-    class Condition
+    class Condition::Attribute
     {
+        friend class Condition;
+
     public:
-        /// Signals the condition.
-        void Signal();
-        /// Broadcasts the condition.
-        void Broadcast();
+        /// A default constructor.
+        Attribute();
+        /**
+         * @brief A primary constructor.
+         *
+         * @param[in] processShared The value for process-shared attribute.
+         */
+        Attribute( int processShared );
+        /// A destructor.
+        ~Attribute();
 
         /**
-         * @brief Waits on the condition variable.
+         * @brief Obtains a value of process-shared attribute.
          *
-         * @param[in] mutex The mutex this condition is bound to.
+         * @param[out] processShared A variable which receives the value.
+         *
+         * @return A value returned by <code>pthread_condattr_getpshared</code>.
          */
-        void Wait( Mutex& mutex );
+        int GetProcessShared( int* processShared ) const;
         /**
-         * @brief Waits on the condition variable with a timeout.
+         * @brief Sets the value of process-shared attribute.
          *
-         * @param[in] mutex   The mutex this condition is bound to.
-         * @param[in] timeout The timeout (in milliseconds).
+         * @param[in] processShared A value of process-shared attribute to set.
+         *
+         * @return A value returned by <code>pthread_condattr_setpshared</code>.
          */
-        void TimedWait( Mutex& mutex, size_t timeout );
+        int SetProcessShared( int processShared );
 
     protected:
-#   ifdef WIN32
-        /// Windows condition variable.
-        Win::Condition mCondition;
-#   else /* !WIN32 */
-        /// pthread condition variable.
-        Posix::Condition mCondition;
-#   endif /* !WIN32 */
+        /// The condition attribute itself.
+        pthread_condattr_t mAttribute;
     };
 }
 
-#endif /* !__MT__CONDITION_H__INCL__ */
+#endif /* !__POSIX__CONDITION_ATTRIBUTE_H__INCL__ */

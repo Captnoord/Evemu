@@ -25,12 +25,12 @@
 
 #include "CommonPCH.h"
 
-#include "posix/PosixThreadAttribute.h"
+#include "posix/ThreadAttribute.h"
 
 /*************************************************************************/
-/* PosixThread::Attribute                                                    */
+/* Posix::Thread::Attribute                                              */
 /*************************************************************************/
-PosixThread::Attribute::Attribute()
+Posix::Thread::Attribute::Attribute()
 {
     int code;
 
@@ -38,7 +38,7 @@ PosixThread::Attribute::Attribute()
     assert( 0 == code );
 }
 
-PosixThread::Attribute::~Attribute()
+Posix::Thread::Attribute::~Attribute()
 {
     int code;
 
@@ -46,82 +46,82 @@ PosixThread::Attribute::~Attribute()
     assert( 0 == code );
 }
 
-int PosixThread::Attribute::GetDetachState( int* detachState ) const
+int Posix::Thread::Attribute::GetDetachState( int* detachState ) const
 {
     return ::pthread_attr_getdetachstate( &mAttribute, detachState );
 }
 
-int PosixThread::Attribute::SetDetachState( int detachState )
+int Posix::Thread::Attribute::SetDetachState( int detachState )
 {
     return ::pthread_attr_setdetachstate( &mAttribute, detachState );
 }
 
-int PosixThread::Attribute::GetGuardSize( size_t* guardSize ) const
+int Posix::Thread::Attribute::GetGuardSize( size_t* guardSize ) const
 {
     return ::pthread_attr_getguardsize( &mAttribute, guardSize );
 }
 
-int PosixThread::Attribute::SetGuardSize( size_t guardSize )
+int Posix::Thread::Attribute::SetGuardSize( size_t guardSize )
 {
     return ::pthread_attr_setguardsize( &mAttribute, guardSize );
 }
 
-int PosixThread::Attribute::GetInheritSched( int* inheritSched ) const
+int Posix::Thread::Attribute::GetInheritSched( int* inheritSched ) const
 {
     return ::pthread_attr_getinheritsched( &mAttribute, inheritSched );
 }
 
-int PosixThread::Attribute::SetInheritSched( int inheritSched )
+int Posix::Thread::Attribute::SetInheritSched( int inheritSched )
 {
     return ::pthread_attr_setinheritsched( &mAttribute, inheritSched );
 }
 
-int PosixThread::Attribute::GetSchedParam( sched_param* schedParam ) const
+int Posix::Thread::Attribute::GetSchedParam( sched_param* schedParam ) const
 {
     return ::pthread_attr_getschedparam( &mAttribute, schedParam );
 }
 
-int PosixThread::Attribute::SetSchedParam( const sched_param* schedParam )
+int Posix::Thread::Attribute::SetSchedParam( const sched_param* schedParam )
 {
     return ::pthread_attr_setschedparam( &mAttribute, schedParam );
 }
 
-int PosixThread::Attribute::GetSchedPolicy( int* schedPolicy ) const
+int Posix::Thread::Attribute::GetSchedPolicy( int* schedPolicy ) const
 {
     return ::pthread_attr_getschedpolicy( &mAttribute, schedPolicy );
 }
 
-int PosixThread::Attribute::SetSchedPolicy( int schedPolicy )
+int Posix::Thread::Attribute::SetSchedPolicy( int schedPolicy )
 {
     return ::pthread_attr_setschedpolicy( &mAttribute, schedPolicy );
 }
 
-int PosixThread::Attribute::GetScope( int* scope ) const
+int Posix::Thread::Attribute::GetScope( int* scope ) const
 {
     return ::pthread_attr_getscope( &mAttribute, scope );
 }
 
-int PosixThread::Attribute::SetScope( int scope )
+int Posix::Thread::Attribute::SetScope( int scope )
 {
     return ::pthread_attr_setscope( &mAttribute, scope );
 }
 
-int PosixThread::Attribute::GetStack( void** stackAddr, size_t* stackSize ) const
+int Posix::Thread::Attribute::GetStack( void** stackAddr, size_t* stackSize ) const
 {
     return ::pthread_attr_getstack( &mAttribute, stackAddr, stackSize );
 }
 
-int PosixThread::Attribute::SetStack( void* stackAddr, size_t stackSize )
+int Posix::Thread::Attribute::SetStack( void* stackAddr, size_t stackSize )
 {
     return ::pthread_attr_setstack( &mAttribute, stackAddr, stackSize );
 }
 
-int PosixThread::Attribute::GetStackSize( size_t* stackSize ) const
+int Posix::Thread::Attribute::GetStackSize( size_t* stackSize ) const
 {
     return ::pthread_attr_getstacksize( &mAttribute, stackSize );
 }
 
-int PosixThread::Attribute::SetStackSize( size_t stackSize )
+int Posix::Thread::Attribute::SetStackSize( size_t stackSize )
 {
     return ::pthread_attr_setstacksize( &mAttribute, stackSize );
 }

@@ -76,7 +76,7 @@ namespace Win
          * @retval TRUE  The handles are equal.
          * @retval FALSE The handles are not equal.
          */
-        BOOL operator==( const WinHandle& oth ) const { return ( oth.mHandle == mHandle ? TRUE : FALSE ); }
+        BOOL operator==( const Handle& oth ) const { return ( oth.mHandle == mHandle ? TRUE : FALSE ); }
 
         /**
          * @brief Closes the handle.

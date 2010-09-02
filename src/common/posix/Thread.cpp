@@ -25,45 +25,45 @@
 
 #include "CommonPCH.h"
 
-#include "posix/PosixThread.h"
-#include "posix/PosixThreadAttribute.h"
+#include "posix/Thread.h"
+#include "posix/ThreadAttribute.h"
 
 /*************************************************************************/
-/* PosixThread                                                           */
+/* Posix::Thread                                                         */
 /*************************************************************************/
-const PosixThread::Attribute PosixThread::DEFAULT_ATTRIBUTE;
+const Posix::Thread::Attribute Posix::Thread::DEFAULT_ATTRIBUTE;
 
-PosixThread PosixThread::self()
+Posix::Thread Posix::Thread::self()
 {
-    return PosixThread( ::pthread_self() );
+    return Posix::Thread( ::pthread_self() );
 }
 
-int PosixThread::GetConcurrency()
+int Posix::Thread::GetConcurrency()
 {
     return ::pthread_getconcurrency();
 }
 
-int PosixThread::SetConcurrency( int level )
+int Posix::Thread::SetConcurrency( int level )
 {
     return ::pthread_setconcurrency( level );
 }
 
-int PosixThread::SetCancelState( int state, int* oldState )
+int Posix::Thread::SetCancelState( int state, int* oldState )
 {
     return ::pthread_setcancelstate( state, oldState );
 }
 
-int PosixThread::SetCancelType( int type, int* oldType )
+int Posix::Thread::SetCancelType( int type, int* oldType )
 {
     return ::pthread_setcanceltype( type, oldType );
 }
 
-void PosixThread::TestCancel()
+void Posix::Thread::TestCancel()
 {
     ::pthread_testcancel();
 }
 
-int PosixThread::Sleep( useconds_t microseconds )
+int Posix::Thread::Sleep( useconds_t microseconds )
 {
     if( 0 < microseconds )
         return ::usleep( microseconds );
@@ -71,16 +71,16 @@ int PosixThread::Sleep( useconds_t microseconds )
         return 0;
 }
 
-PosixThread::PosixThread()
+Posix::Thread::Thread()
 {
 }
 
-PosixThread::PosixThread( pthread_t thread )
+Posix::Thread::Thread( pthread_t thread )
 : mThread( thread )
 {
 }
 
-PosixThread::PosixThread( void* ( *startRoutine )( void* ), void* arg, const Attribute& attr )
+Posix::Thread::Thread( void* ( *startRoutine )( void* ), void* arg, const Attribute& attr )
 {
     int code;
 
@@ -88,48 +88,48 @@ PosixThread::PosixThread( void* ( *startRoutine )( void* ), void* arg, const Att
     assert( 0 == code );
 }
 
-PosixThread::PosixThread( const PosixThread& oth )
+Posix::Thread::Thread( const Posix::Thread& oth )
 {
     // let the copy constructor do the job
     *this = oth;
 }
 
-int PosixThread::Join( void** retVal ) const
+int Posix::Thread::Join( void** retVal ) const
 {
     return ::pthread_join( mThread, retVal );
 }
 
-bool PosixThread::operator==( const PosixThread& oth ) const
+bool Posix::Thread::operator==( const Posix::Thread& oth ) const
 {
     return 0 != ::pthread_equal( mThread, oth.mThread );
 }
 
-int PosixThread::Create( void* ( *startRoutine )( void* ), void* arg, const Attribute& attr )
+int Posix::Thread::Create( void* ( *startRoutine )( void* ), void* arg, const Attribute& attr )
 {
     return ::pthread_create( &mThread, &attr.mAttribute, startRoutine, arg );
 }
 
-int PosixThread::Cancel()
+int Posix::Thread::Cancel()
 {
     return ::pthread_cancel( mThread );
 }
 
-int PosixThread::Detach()
+int Posix::Thread::Detach()
 {
     return ::pthread_detach( mThread );
 }
 
-int PosixThread::GetSchedPolicyParam( int* policy, sched_param* schedParam ) const
+int Posix::Thread::GetSchedPolicyParam( int* policy, sched_param* schedParam ) const
 {
     return ::pthread_getschedparam( mThread, policy, schedParam );
 }
 
-int PosixThread::SetSchedPolicyParam( int policy, const sched_param* schedParam )
+int Posix::Thread::SetSchedPolicyParam( int policy, const sched_param* schedParam )
 {
     return ::pthread_setschedparam( mThread, policy, schedParam );
 }
 
-PosixThread& PosixThread::operator=( const PosixThread& oth )
+Posix::Thread& Posix::Thread::operator=( const Posix::Thread& oth )
 {
     mThread = oth.mThread;
 }

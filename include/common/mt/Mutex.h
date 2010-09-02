@@ -29,9 +29,9 @@
 #include "utils/Lock.h"
 
 #ifdef WIN32
-#   include "win/WinCriticalSection.h"
+#   include "win/CriticalSection.h"
 #else /* !WIN32 */
-#   include "posix/PosixMutex.h"
+#   include "posix/Mutex.h"
 #endif /* !WIN32 */
 
 namespace Mt
@@ -63,10 +63,10 @@ namespace Mt
     protected:
 #   ifdef WIN32
         /// A critical section used for mutex implementation on Windows.
-        WinCriticalSection mCriticalSection;
+        Win::CriticalSection mCriticalSection;
 #   else
         /// A pthread mutex used for mutex implementation using pthread library.
-        PosixMutex mMutex;
+        Posix::Mutex mMutex;
 #   endif
     };
 

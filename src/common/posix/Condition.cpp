@@ -23,56 +23,48 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __POSIX__POSIX_CONDITION_ATTRIBUTE_H__INCL__
-#define __POSIX__POSIX_CONDITION_ATTRIBUTE_H__INCL__
+#include "CommonPCH.h"
 
-#include "posix/PosixCondition.h"
+#include "posix/Condition.h"
+#include "posix/ConditionAttribute.h"
 
-/**
- * @brief A wrapper around @c pthread_condattr_t.
- *
- * @author Bloody.Rabbit
- */
-class PosixCondition::Attribute
+/*************************************************************************/
+/* Posix::Condition                                                      */
+/*************************************************************************/
+const Posix::Condition::Attribute Posix::Condition::DEFAULT_ATTRIBUTE;
+
+Posix::Condition::Condition( const Attribute& attr )
 {
-    friend class PosixCondition;
+    int code;
 
-public:
-    /**
-     * @brief A default constructor.
-     */
-    Attribute();
-    /**
-     * @brief A primary constructor.
-     *
-     * @param[in] processShared The value for process-shared attribute.
-     */
-    Attribute( int processShared );
-    /**
-     * @brief A destructor.
-     */
-    ~Attribute();
+    code = ::pthread_cond_init( &mCondition, &attr.mAttribute );
+    assert( 0 == code );
+}
 
-    /**
-     * @brief Obtains a value of process-shared attribute.
-     *
-     * @param[out] processShared A variable which receives the value.
-     *
-     * @return A value returned by @c pthread_condattr_getpshared.
-     */
-    int GetProcessShared( int* processShared ) const;
-    /**
-     * @brief Sets the value of process-shared attribute.
-     *
-     * @param[in] processShared A value of process-shared attribute to set.
-     *
-     * @return A value returned by @c pthread_condattr_setpshared.
-     */
-    int SetProcessShared( int processShared );
+Posix::Condition::~Condition()
+{
+    int code;
 
-protected:
-    /// The condition attribute itself.
-    pthread_condattr_t mAttribute;
-};
+    code = ::pthread_cond_destroy( &mCondition );
+    assert( 0 == code );
+}
 
-#endif /* !__POSIX__POSIX_CONDITION_ATTRIBUTE_H__INCL__ */
+int Posix::Condition::Signal()
+{
+    return ::pthread_cond_signal( &mCondition );
+}
+
+int Posix::Condition::Broadcast()
+{
+    return ::pthread_cond_broadcast( &mCondition );
+}
+
+int Posix::Condition::Wait( Posix::Mutex& mutex )
+{
+    return ::pthread_cond_wait( &mCondition, &mutex.mMutex );
+}
+
+int Posix::Condition::TimedWait( Posix::Mutex& mutex, const timespec* time )
+{
+    return ::pthread_cond_timedwait( &mCondition, &mutex.mMutex, time );
+}

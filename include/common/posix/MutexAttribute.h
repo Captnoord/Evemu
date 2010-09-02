@@ -23,48 +23,55 @@
     Author:     Bloody.Rabbit
 */
 
-#include "CommonPCH.h"
+#ifndef __POSIX__MUTEX_ATTRIBUTE_H__INCL__
+#define __POSIX__MUTEX_ATTRIBUTE_H__INCL__
 
-#include "posix/PosixCondition.h"
-#include "posix/PosixConditionAttribute.h"
+#include "posix/Mutex.h"
 
-/*************************************************************************/
-/* PosixCondition                                                        */
-/*************************************************************************/
-const PosixCondition::Attribute PosixCondition::DEFAULT_ATTRIBUTE;
-
-PosixCondition::PosixCondition( const Attribute& attr )
+namespace Posix
 {
-    int code;
+    /**
+     * @brief Wrapper around <code>pthread_mutexattr_t</code>.
+     *
+     * @author Bloody.Rabbit
+     */
+    class Mutex::Attribute
+    {
+        friend class Mutex;
 
-    code = ::pthread_cond_init( &mCondition, &attr.mAttribute );
-    assert( 0 == code );
+    public:
+        /// The default constructor.
+        Attribute();
+        /**
+         * @brief The primary constructor.
+         *
+         * @param[in] type Type to be set.
+         */
+        Attribute( int type );
+        /// A destructor.
+        ~Attribute();
+
+        /**
+         * @brief Obtains the type.
+         *
+         * @param[out] type A variable which receives the type.
+         *
+         * @return A value returned by <code>pthread_mutexattr_gettype</code>.
+         */
+        int GetType( int* type ) const;
+        /**
+         * @brief Sets the type.
+         *
+         * @param[in] type Type to be set.
+         *
+         * @return A value returned by <code>pthread_mutexattr_settype</code>.
+         */
+        int SetType( int type );
+
+    protected:
+        /// The attribute itself.
+        pthread_mutexattr_t mAttribute;
+    };
 }
 
-PosixCondition::~PosixCondition()
-{
-    int code;
-
-    code = ::pthread_cond_destroy( &mCondition );
-    assert( 0 == code );
-}
-
-int PosixCondition::Signal()
-{
-    return ::pthread_cond_signal( &mCondition );
-}
-
-int PosixCondition::Broadcast()
-{
-    return ::pthread_cond_broadcast( &mCondition );
-}
-
-int PosixCondition::Wait( PosixMutex& mutex )
-{
-    return ::pthread_cond_wait( &mCondition, &mutex.mMutex );
-}
-
-int PosixCondition::TimedWait( PosixMutex& mutex, const timespec* time )
-{
-    return ::pthread_cond_timedwait( &mCondition, &mutex.mMutex, time );
-}
+#endif /* !__POSIX__MUTEX_ATTRIBUTE_H__INCL__ */

@@ -33,9 +33,9 @@
 
 #ifdef WIN32
 #   include <io.h>
-#   include "win/WinCommon.h"
+#   include "win/Common.h"
 #else /* !WIN32 */
-#   include "posix/PosixCommon.h"
+#   include "posix/Common.h"
 #endif /* !WIN32 */
 
 #endif /* !__FS__COMMON_H__INCL__ */

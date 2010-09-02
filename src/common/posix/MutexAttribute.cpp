@@ -20,30 +20,49 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:     Aim, Captnoord, Zhur, Bloody.Rabbit
+    Author:     Bloody.Rabbit
 */
 
-#ifndef __POSIX__POSIX_COMMON_H__INCL__
-#define __POSIX__POSIX_COMMON_H__INCL__
+#include "CommonPCH.h"
 
-// Network
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
+#include "posix/MutexAttribute.h"
 
-// Files
-#include <dirent.h>
-#include <fcntl.h>
-#include <sys/stat.h>
+/*************************************************************************/
+/* Posix::Mutex::Attribute                                               */
+/*************************************************************************/
+Posix::Mutex::Attribute::Attribute()
+{
+    int code;
 
-// Threads
-#include <pthread.h>
+    code = ::pthread_mutexattr_init( &mAttribute );
+    assert( 0 == code );
+}
 
-// Time
-#include <sys/time.h>
+Posix::Mutex::Attribute::Attribute( int type )
+{
+    int code;
 
-// Miscellaneous
-#include <unistd.h>
+    code = ::pthread_mutexattr_init( &mAttribute );
+    assert( 0 == code );
 
-#endif /* !__POSIX__POSIX_COMMON_H__INCL__ */
+    code = SetType( type );
+    assert( 0 == code );
+}
+
+Posix::Mutex::Attribute::~Attribute()
+{
+    int code;
+
+    code = ::pthread_mutexattr_destroy( &mAttribute );
+    assert( 0 == code );
+}
+
+int Posix::Mutex::Attribute::GetType( int* type ) const
+{
+    return ::pthread_mutexattr_gettype( &mAttribute, type );
+}
+
+int Posix::Mutex::Attribute::SetType( int type )
+{
+    return ::pthread_mutexattr_settype( &mAttribute, type );
+}

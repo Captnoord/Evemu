@@ -29,9 +29,9 @@
 #include "mt/Target.h"
 
 #ifdef WIN32
-#   include "win/WinThread.h"
+#   include "win/Thread.h"
 #else /* !WIN32 */
-#   include "posix/PosixThread.h"
+#   include "posix/Thread.h"
 #endif /* !WIN32 */
 
 namespace Mt
@@ -125,28 +125,28 @@ namespace Mt
         /**
          * @brief A protected constructor.
          *
-         * @param[in] thread A WinThread to use.
+         * @param[in] thread A Win::Thread to use.
          */
-        Thread( const WinThread& thread );
+        Thread( const Win::Thread& thread );
 
         /// Startup routine for Windows threads.
         static DWORD WINAPI ThreadMain( PVOID arg );
 
         /// A thread handle used on Windows.
-        WinThread mThread;
+        Win::Thread mThread;
 #   else /* !WIN32 */
         /**
          * @brief A protected constructor.
          *
-         * @param[in] thread A PosixThread to use.
+         * @param[in] thread A Posix::Thread to use.
          */
-        Thread( const PosixThread& thread );
+        Thread( const Posix::Thread& thread );
 
         /// Startup routine for POSIX threads.
         static void* ThreadMain( void* arg );
 
         /// A thread handle used with POSIX threads.
-        PosixThread mThread;
+        Posix::Thread mThread;
 #   endif /* !WIN32 */
     };
 }

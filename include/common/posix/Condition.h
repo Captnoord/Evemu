@@ -23,55 +23,70 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __MT__CONDITION_H__INCL__
-#define __MT__CONDITION_H__INCL__
+#ifndef __POSIX__CONDITION_H__INCL__
+#define __POSIX__CONDITION_H__INCL__
 
-#include "mt/Mutex.h"
+#include "posix/Mutex.h"
 
-#ifdef WIN32
-#   include "win/Condition.h"
-#else /* !WIN32 */
-#   include "posix/Condition.h"
-#endif /* !WIN32 */
-
-namespace Mt
+namespace Posix
 {
     /**
-     * @brief A wrapper around platform-specific conditions.
+     * @brief A wrapper around <code>pthread_cond_t</code>.
      *
      * @author Bloody.Rabbit
      */
     class Condition
     {
     public:
-        /// Signals the condition.
-        void Signal();
-        /// Broadcasts the condition.
-        void Broadcast();
+        class Attribute;
+
+        /// A default attribute used for new conditions.
+        static const Attribute DEFAULT_ATTRIBUTE;
 
         /**
-         * @brief Waits on the condition variable.
+         * @brief A primary constructor.
+         *
+         * @param[in] attr An attribute for the condition.
+         */
+        Condition( const Attribute& attr = DEFAULT_ATTRIBUTE );
+        /// A destructor.
+        ~Condition();
+
+        /**
+         * @brief Signals the condition.
+         *
+         * @return A value returned by <code>pthread_cond_signal</code>.
+         */
+        int Signal();
+        /**
+         * @brief Broadcasts the condition.
+         *
+         * @return A value returned by <code>pthread_cond_broadcast</code>.
+         */
+        int Broadcast();
+
+        /**
+         * @brief Waits for the condition.
          *
          * @param[in] mutex The mutex this condition is bound to.
-         */
-        void Wait( Mutex& mutex );
-        /**
-         * @brief Waits on the condition variable with a timeout.
          *
-         * @param[in] mutex   The mutex this condition is bound to.
-         * @param[in] timeout The timeout (in milliseconds).
+         * @return A value returned by <code>pthread_cond_wait</code>.
          */
-        void TimedWait( Mutex& mutex, size_t timeout );
+        int Wait( Mutex& mutex );
+        /**
+         * @brief Waits for the condition with timeout.
+         *
+         * @param[in] mutex The mutex this condition is bound to.
+         * @param[in] time  Time until which to wait.
+         *
+         * @return A value returned by <code>pthread_cond_timedwait</code>.
+         */
+        int TimedWait( Mutex& mutex, const timespec* time );
 
     protected:
-#   ifdef WIN32
-        /// Windows condition variable.
-        Win::Condition mCondition;
-#   else /* !WIN32 */
-        /// pthread condition variable.
-        Posix::Condition mCondition;
-#   endif /* !WIN32 */
+        /// The condition variable itself.
+        pthread_cond_t mCondition;
     };
 }
 
-#endif /* !__MT__CONDITION_H__INCL__ */
+#endif /* !__POSIX__CONDITION_H__INCL__ */

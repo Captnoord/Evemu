@@ -23,55 +23,65 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __MT__CONDITION_H__INCL__
-#define __MT__CONDITION_H__INCL__
+#ifndef __POSIX__MUTEX_H__INCL__
+#define __POSIX__MUTEX_H__INCL__
 
-#include "mt/Mutex.h"
-
-#ifdef WIN32
-#   include "win/Condition.h"
-#else /* !WIN32 */
-#   include "posix/Condition.h"
-#endif /* !WIN32 */
-
-namespace Mt
+namespace Posix
 {
     /**
-     * @brief A wrapper around platform-specific conditions.
+     * @brief Wrapper around <code>pthread_mutex_t</code>.
      *
      * @author Bloody.Rabbit
      */
-    class Condition
+    class Mutex
     {
+        friend class Condition;
+
     public:
-        /// Signals the condition.
-        void Signal();
-        /// Broadcasts the condition.
-        void Broadcast();
+        class Attribute;
+
+        /// The default attribute of new mutexes.
+        static const Attribute DEFAULT_ATTRIBUTE;
 
         /**
-         * @brief Waits on the condition variable.
+         * @brief The primary constructor.
          *
-         * @param[in] mutex The mutex this condition is bound to.
+         * @param[in] attr The mutex attribute to use.
          */
-        void Wait( Mutex& mutex );
+        Mutex( const Attribute& attr = DEFAULT_ATTRIBUTE );
+        /// A destructor.
+        ~Mutex();
+
         /**
-         * @brief Waits on the condition variable with a timeout.
+         * @brief Locks the mutex.
          *
-         * @param[in] mutex   The mutex this condition is bound to.
-         * @param[in] timeout The timeout (in milliseconds).
+         * Blocks until the mutex is successfully locked or
+         * an error is encountered.
+         *
+         * @return A value returned by <code>pthread_mutex_lock</code>.
          */
-        void TimedWait( Mutex& mutex, size_t timeout );
+        int Lock();
+        /**
+         * @brief Tries to lock the mutex.
+         *
+         * Returns immediately; the return value indicates
+         * whether the mutex has been locked or not.
+         *
+         * @return A value returned by <code>pthread_mutex_trylock</code>.
+         */
+        int TryLock();
+
+        /**
+         * @brief Unlocks the mutex.
+         *
+         * @return A value returned by <code>pthread_mutex_unlock</code>.
+         */
+        int Unlock();
 
     protected:
-#   ifdef WIN32
-        /// Windows condition variable.
-        Win::Condition mCondition;
-#   else /* !WIN32 */
-        /// pthread condition variable.
-        Posix::Condition mCondition;
-#   endif /* !WIN32 */
+        /// The mutex itself.
+        pthread_mutex_t mMutex;
     };
 }
 
-#endif /* !__MT__CONDITION_H__INCL__ */
+#endif /* !__POSIX__MUTEX_H__INCL__ */
