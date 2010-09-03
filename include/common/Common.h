@@ -36,9 +36,9 @@
 /*
  * Include common headers.
  */
-#include "std/StdCommon.h"
-#include "std/StdTypes.h"
-#include "std/StdUtils.h"
+#include "std/Common.h"
+#include "std/Types.h"
+#include "std/Utils.h"
 
 #include "utils/SafeDelete.h"
 

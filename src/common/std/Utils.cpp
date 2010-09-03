@@ -25,7 +25,7 @@
 
 #include "CommonPCH.h"
 
-#include "std/StdUtils.h"
+#include "std/Utils.h"
 
 #ifdef WIN32
 int asprintf( char** strp, const char* fmt, ... )
@@ -69,19 +69,19 @@ int vasprintf( char** strp, const char* fmt, va_list ap )
 #endif /* WIN32 */
 
 #ifdef CYGWIN
-char* strupr( char* tmp )
+char* strupr( char* str )
 {
-    for( size_t i = 0; 0 != tmp[i]; ++i )
-        tmp[i] = toupper( tmp[i] );
+    for( size_t i = 0; 0 != str[i]; ++i )
+        str[i] = toupper( str[i] );
 
-    return tmp;
+    return str;
 }
 
-char* strlwr( char* tmp )
+char* strlwr( char* str )
 {
-    for( size_t i = 0; 0 != tmp[i]; ++i )
-        tmp[i] = tolower( tmp[i] );
+    for( size_t i = 0; 0 != str[i]; ++i )
+        str[i] = tolower( str[i] );
 
-    return tmp;
+    return str;
 }
 #endif /* CYGWIN */

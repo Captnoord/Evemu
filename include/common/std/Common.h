@@ -23,8 +23,13 @@
     Author:     Aim, Captnoord, Zhur, Bloody.Rabbit
 */
 
-#ifndef __STD__STD_COMMON_H__INCL__
-#define __STD__STD_COMMON_H__INCL__
+#ifndef __STD__COMMON_H__INCL__
+#define __STD__COMMON_H__INCL__
+
+/**
+ * @namespace Std
+ * @brief Our extensions of standard library.
+ */
 
 /*
  * Non-MSVC configuration.
@@ -112,4 +117,4 @@
 #   endif /* !NDEBUG */
 #endif /* MSVC */
 
-#endif /* !__STD__STD_COMMON_H__INCL__ */
+#endif /* !__STD__COMMON_H__INCL__ */

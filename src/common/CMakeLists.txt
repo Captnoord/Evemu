@@ -95,11 +95,11 @@ IF( NOT WIN32 )
 ENDIF( NOT WIN32 )
 
 SET( std_INCLUDE
-     "${TARGET_INCLUDE_DIR}/std/StdCommon.h"
-     "${TARGET_INCLUDE_DIR}/std/StdTypes.h"
-     "${TARGET_INCLUDE_DIR}/std/StdUtils.h" )
+     "${TARGET_INCLUDE_DIR}/std/Common.h"
+     "${TARGET_INCLUDE_DIR}/std/Types.h"
+     "${TARGET_INCLUDE_DIR}/std/Utils.h" )
 SET( std_SOURCE
-     "${TARGET_SOURCE_DIR}/std/StdUtils.cpp" )
+     "${TARGET_SOURCE_DIR}/std/Utils.cpp" )
 
 SET( time_INCLUDE
      "${TARGET_INCLUDE_DIR}/time/TimeCommon.h"

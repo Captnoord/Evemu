@@ -23,8 +23,8 @@
     Author:     Aim, Captnoord, Zhur, Bloody.Rabbit
 */
 
-#ifndef __STD__STD_UTILS_H__INCL__
-#define __STD__STD_UTILS_H__INCL__
+#ifndef __STD__UTILS_H__INCL__
+#define __STD__UTILS_H__INCL__
 
 /*
  * WIN32:
@@ -42,8 +42,8 @@ int vasprintf( char** strp, const char* fmt, va_list ap );
  *   strlwr
  */
 #ifdef CYGWIN
-char* strupr( char* tmp );
-char* strlwr( char* tmp );
+char* strupr( char* str );
+char* strlwr( char* str );
 #endif /* CYGWIN */
 
 /*
@@ -103,4 +103,4 @@ using std::isnan;
 #   define isnan  __isnan
 #endif /* !MSVC && !MINGW && !APPLE && !FREE_BSD */
 
-#endif /* !__STD__STD_UTILS_H__INCL__ */
+#endif /* !__STD__UTILS_H__INCL__ */
