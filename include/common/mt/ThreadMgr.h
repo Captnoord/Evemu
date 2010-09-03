@@ -29,7 +29,7 @@
 #include "mt/Condition.h"
 #include "mt/Mutex.h"
 #include "mt/Worker.h"
-#include "utils/Singleton.h"
+#include "util/Singleton.h"
 
 namespace Mt
 {
@@ -39,7 +39,7 @@ namespace Mt
      * @author Bloody.Rabbit
      */
     class ThreadMgr
-    : public Singleton< ThreadMgr >
+    : public Util::Singleton< ThreadMgr >
     {
     public:
         /**

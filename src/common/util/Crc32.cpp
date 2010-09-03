@@ -1,33 +1,36 @@
 /*
-	------------------------------------------------------------------------------------
-	LICENSE:
-	------------------------------------------------------------------------------------
-	This file is part of EVEmu: EVE Online Server Emulator
-	Copyright 2006 - 2008 The EVEmu Team
-	For the latest information visit http://evemu.mmoforge.org
-	------------------------------------------------------------------------------------
-	This program is free software; you can redistribute it and/or modify it under
-	the terms of the GNU Lesser General Public License as published by the Free Software
-	Foundation; either version 2 of the License, or (at your option) any later
-	version.
+    ------------------------------------------------------------------------------------
+    LICENSE:
+    ------------------------------------------------------------------------------------
+    This file is part of EVEmu: EVE Online Server Emulator
+    Copyright 2006 - 2008 The EVEmu Team
+    For the latest information visit http://evemu.mmoforge.org
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+    Foundation; either version 2 of the License, or (at your option) any later
+    version.
 
-	This program is distributed in the hope that it will be useful, but WITHOUT
-	ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-	FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+    This program is distributed in the hope that it will be useful, but WITHOUT
+    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+    FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
 
-	You should have received a copy of the GNU Lesser General Public License along with
-	this program; if not, write to the Free Software Foundation, Inc., 59 Temple
-	Place - Suite 330, Boston, MA 02111-1307, USA, or go to
-	http://www.gnu.org/copyleft/lesser.txt.
-	------------------------------------------------------------------------------------
-	Author:		Zhur
+    You should have received a copy of the GNU Lesser General Public License along with
+    this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+    Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+    http://www.gnu.org/copyleft/lesser.txt.
+    ------------------------------------------------------------------------------------
+    Author:     Zhur
 */
 
 #include "CommonPCH.h"
 
-#include "utils/crc32.h"
+#include "util/Crc32.h"
 
-const uint32 CRC32_LOOKUP_TABLE[ 0x100 ] =
+/*************************************************************************/
+/* Util::Crc32                                                           */
+/*************************************************************************/
+const uint32 Util::Crc32::LOOKUP_TABLE[ 0x100 ] =
 {
     0x00000000, 0x77073096, 0xEE0E612C, 0x990951BA,
     0x076DC419, 0x706AF48F, 0xE963A535, 0x9E6495A3,
@@ -98,10 +101,10 @@ const uint32 CRC32_LOOKUP_TABLE[ 0x100 ] =
     0xB40BBE37, 0xC30C8EA1, 0x5A05DF1B, 0x2D02EF8D
 };
 
-uint32 CRC32::Update( const uint8* buf, size_t bufsize, uint32 crc32 )
+uint32 Util::Crc32::Update( const uint8* buf, size_t bufsize, uint32 crc32 )
 {
     for( size_t i = 0; i < bufsize; ++i )
-        crc32 = ( crc32 >> 8 ) ^ CRC32_LOOKUP_TABLE[ buf[ i ] ^ ( crc32 & 0x000000FF ) ];
+        crc32 = ( crc32 >> 8 ) ^ LOOKUP_TABLE[ buf[ i ] ^ ( crc32 & 0x000000FF ) ];
 
     return crc32;
 }

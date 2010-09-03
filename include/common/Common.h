@@ -40,6 +40,6 @@
 #include "std/Types.h"
 #include "std/Utils.h"
 
-#include "utils/SafeDelete.h"
+#include "util/SafeDelete.h"
 
 #endif /* !__COMMON_H__INCL__ */

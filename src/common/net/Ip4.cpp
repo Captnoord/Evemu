@@ -27,8 +27,8 @@
 
 #include "net/Ip4.h"
 #include "net/Utils.h"
-#include "utils/Log.h"
-#include "utils/StrConv.h"
+#include "util/Log.h"
+#include "util/StrConv.h"
 
 /*************************************************************************/
 /* Net::Ip4                                                              */
@@ -114,5 +114,5 @@ std::string Net::Ip4::PrintAddress( const Net::Ip4::Address& address )
 
 std::string Net::Ip4::PrintPort( const Net::Ip4::Port& port )
 {
-    return strFrom< uint16 >( ntohs( port ) );
+    return Util::strFrom< uint16 >( ntohs( port ) );
 }

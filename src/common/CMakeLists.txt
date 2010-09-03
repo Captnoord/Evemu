@@ -121,23 +121,23 @@ SET( time_SOURCE
      "${TARGET_SOURCE_DIR}/time/TimeTm.cpp"
      "${TARGET_SOURCE_DIR}/time/TimeWin.cpp" )
 
-SET( utils_INCLUDE
-     "${TARGET_INCLUDE_DIR}/utils/Buffer.h"
-     "${TARGET_INCLUDE_DIR}/utils/crc32.h"
-     "${TARGET_INCLUDE_DIR}/utils/Lock.h"
-     "${TARGET_INCLUDE_DIR}/utils/Log.h"
-     "${TARGET_INCLUDE_DIR}/utils/misc.h"
-     "${TARGET_INCLUDE_DIR}/utils/RefPtr.h"
-     "${TARGET_INCLUDE_DIR}/utils/SafeDelete.h"
-     "${TARGET_INCLUDE_DIR}/utils/Singleton.h"
-     "${TARGET_INCLUDE_DIR}/utils/StrConv.h"
-     "${TARGET_INCLUDE_DIR}/utils/StrUtils.h" )
-SET( utils_SOURCE
-     "${TARGET_SOURCE_DIR}/utils/crc32.cpp"
-     "${TARGET_SOURCE_DIR}/utils/Log.cpp"
-     "${TARGET_SOURCE_DIR}/utils/misc.cpp"
-     "${TARGET_SOURCE_DIR}/utils/StrConv.cpp"
-     "${TARGET_SOURCE_DIR}/utils/StrUtils.cpp" )
+SET( util_INCLUDE
+     "${TARGET_INCLUDE_DIR}/util/Buffer.h"
+     "${TARGET_INCLUDE_DIR}/util/Crc32.h"
+     "${TARGET_INCLUDE_DIR}/util/Lock.h"
+     "${TARGET_INCLUDE_DIR}/util/Log.h"
+     "${TARGET_INCLUDE_DIR}/util/Misc.h"
+     "${TARGET_INCLUDE_DIR}/util/RefPtr.h"
+     "${TARGET_INCLUDE_DIR}/util/SafeDelete.h"
+     "${TARGET_INCLUDE_DIR}/util/Singleton.h"
+     "${TARGET_INCLUDE_DIR}/util/StrConv.h"
+     "${TARGET_INCLUDE_DIR}/util/StrUtils.h" )
+SET( util_SOURCE
+     "${TARGET_SOURCE_DIR}/util/Crc32.cpp"
+     "${TARGET_SOURCE_DIR}/util/Log.cpp"
+     "${TARGET_SOURCE_DIR}/util/Misc.cpp"
+     "${TARGET_SOURCE_DIR}/util/StrConv.cpp"
+     "${TARGET_SOURCE_DIR}/util/StrUtils.cpp" )
 
 IF( WIN32 )
     SET( win_INCLUDE
@@ -187,7 +187,7 @@ SOURCE_GROUP( "include\\net"   FILES ${net_INCLUDE} )
 SOURCE_GROUP( "include\\posix" FILES ${posix_INCLUDE} )
 SOURCE_GROUP( "include\\std"   FILES ${std_INCLUDE} )
 SOURCE_GROUP( "include\\time"  FILES ${time_INCLUDE} )
-SOURCE_GROUP( "include\\utils" FILES ${utils_INCLUDE} )
+SOURCE_GROUP( "include\\util"  FILES ${util_INCLUDE} )
 SOURCE_GROUP( "include\\win"   FILES ${win_INCLUDE} )
 SOURCE_GROUP( "include\\xml"   FILES ${xml_INCLUDE} )
 SOURCE_GROUP( "include\\zlib"  FILES ${zlib_INCLUDE} )
@@ -201,7 +201,7 @@ SOURCE_GROUP( "src\\net"   FILES ${net_SOURCE} )
 SOURCE_GROUP( "src\\posix" FILES ${posix_SOURCE} )
 SOURCE_GROUP( "src\\std"   FILES ${std_SOURCE} )
 SOURCE_GROUP( "src\\time"  FILES ${time_SOURCE} )
-SOURCE_GROUP( "src\\utils" FILES ${utils_SOURCE} )
+SOURCE_GROUP( "src\\util"  FILES ${util_SOURCE} )
 SOURCE_GROUP( "src\\win"   FILES ${win_SOURCE} )
 SOURCE_GROUP( "src\\xml"   FILES ${xml_SOURCE} )
 SOURCE_GROUP( "src\\zlib"  FILES ${zlib_SOURCE} )
@@ -216,7 +216,7 @@ ADD_LIBRARY( "${TARGET_NAME}"
              ${posix_INCLUDE} ${posix_SOURCE}
              ${std_INCLUDE}   ${std_SOURCE}
              ${time_INCLUDE}  ${time_SOURCE}
-             ${utils_INCLUDE} ${utils_SOURCE}
+             ${util_INCLUDE}  ${util_SOURCE}
              ${win_INCLUDE}   ${win_SOURCE}
              ${xml_INCLUDE}   ${xml_SOURCE}
              ${zlib_INCLUDE}  ${zlib_SOURCE} )

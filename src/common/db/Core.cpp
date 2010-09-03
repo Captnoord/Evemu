@@ -26,8 +26,8 @@
 #include "CommonPCH.h"
 
 #include "db/Core.h"
-#include "utils/Log.h"
-#include "utils/StrConv.h"
+#include "util/Log.h"
+#include "util/StrConv.h"
 
 /************************************************************************/
 /* Db::Error                                                            */

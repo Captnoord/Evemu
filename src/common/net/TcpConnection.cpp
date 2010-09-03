@@ -28,7 +28,7 @@
 #include "net/TcpConnection.h"
 #include "net/Utils.h"
 #include "time/Timer.h"
-#include "utils/Log.h"
+#include "util/Log.h"
 
 #ifdef WIN32
 static Net::InitWinsock winsock;
@@ -194,10 +194,10 @@ void Net::TcpConnection::Disconnect()
     mSockState = STATE_DISCONNECTING;
 }
 
-bool Net::TcpConnection::Send( Buffer** data )
+bool Net::TcpConnection::Send( Util::Buffer** data )
 {
     // Invalidate pointer
-    Buffer* buf = *data;
+    Util::Buffer* buf = *data;
     *data = NULL;
 
     // Check we are in STATE_CONNECTED
@@ -325,7 +325,7 @@ bool Net::TcpConnection::SendData( char* errbuf )
     mMSendQueue.Lock();
     while( !mSendQueue.empty() )
     {
-        Buffer* buf = mSendQueue.front();
+        Util::Buffer* buf = mSendQueue.front();
         mSendQueue.pop_front();
         mMSendQueue.Unlock();
 
@@ -400,7 +400,7 @@ bool Net::TcpConnection::RecvData( char* errbuf )
     while( true )
     {
         if( mRecvBuf == NULL )
-            mRecvBuf = new Buffer( RECVBUF_SIZE );
+            mRecvBuf = new Util::Buffer( RECVBUF_SIZE );
         else if( mRecvBuf->size() < RECVBUF_SIZE )
             mRecvBuf->Resize< uint8 >( RECVBUF_SIZE );
 
@@ -465,7 +465,7 @@ void Net::TcpConnection::ClearBuffers()
 
     while( !mSendQueue.empty() )
     {
-        Buffer* buf = mSendQueue.front();
+        Util::Buffer* buf = mSendQueue.front();
         mSendQueue.pop_front();
 
         SafeDelete( buf );

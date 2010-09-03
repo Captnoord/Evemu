@@ -23,50 +23,52 @@
     Author:     Zhur
 */
 
-#ifndef __NET__STREAM_PACKETIZER_H__INCL__
-#define __NET__STREAM_PACKETIZER_H__INCL__
+#ifndef __UTIL__MISC_H__INCL__
+#define __UTIL__MISC_H__INCL__
 
-#include "util/Buffer.h"
-
-namespace Net
+/// A collection of various utilities.
+namespace Util
 {
     /**
-     * @brief Turns a stream into packets.
+     * @brief This is functionally equivalent to python's binascii.crc_hqx.
      *
-     * @author Bloody.Rabbit
+     * @param[in] data Binary data to be checksumed.
+     * @param[in] len  Length of binary data.
+     * @param[in] crc  CRC value to start with.
+     *
+     * @return CRC-16 checksum.
      */
-    class StreamPacketizer
-    {
-    public:
-        /// A destructor.
-        ~StreamPacketizer();
+    uint16 crc_hqx( const uint8* data, size_t len, uint16 crc = 0 );
 
-        /**
-         * @brief Inputs new data.
-         *
-         * @param[in] data A buffer with new data.
-         */
-        void InputData( const Util::Buffer& data );
-        /// Processes data into packets.
-        void Process();
+    /**
+     * @brief Calculates next (greater or equal)
+     *        power-of-two number.
+     *
+     * @param[in] num Base number.
+     *
+     * @return Power-of-two number which is greater than or
+     *         equal to the base number.
+     */
+    uint64 npowof2( uint64 num );
 
-        /**
-         * @brief Obtains a next packet in the queue.
-         *
-         * @return The packet.
-         */
-        Util::Buffer* PopPacket();
-
-        /// Clears all buffers.
-        void ClearBuffers();
-
-    protected:
-        /// Unprocessed or uncomplete packet data.
-        Util::Buffer mBuffer;
-
-        /// A queue of processed packets.
-        std::queue< Util::Buffer* > mPackets;
-    };
+    /**
+     * @brief Generates random integer from interval [low; high].
+     *
+     * @param[in] low  Low boundary of interval.
+     * @param[in] high High boundary of interval.
+     *
+     * @return The generated integer.
+     */
+    int64 MakeRandomInt( int64 low = 0, int64 high = RAND_MAX );
+    /**
+     * @brief Generates random real from interval [low; high].
+     *
+     * @param[in] low  Low boundary of interval.
+     * @param[in] high High boundary of interval.
+     *
+     * @return The generated real.
+     */
+    double MakeRandomFloat( double low = 0, double high = 1 );
 }
 
-#endif /* !__NET__STREAM_PACKETIZER_H__INCL__ */
+#endif /* !__UTIL__MISC_H__INCL__ */

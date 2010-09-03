@@ -25,16 +25,16 @@
 
 #include "CommonPCH.h"
 
-#include "utils/StrConv.h"
+#include "util/StrConv.h"
 
 template<>
-std::string strFrom< bool >( const bool& val )
+std::string Util::strFrom< bool >( const bool& val )
 {
     return ( val ? "true" : "false" );
 }
 
 template<>
-bool strTo< bool >( const char* str )
+bool Util::strTo< bool >( const char* str )
 {
     if( !strcasecmp( str, "true" ) )
         return true;
@@ -67,7 +67,7 @@ bool strTo< bool >( const char* str )
 }
 
 template<>
-std::string strFrom< int64 >( const int64& val )
+std::string Util::strFrom< int64 >( const int64& val )
 {
     std::string str;
     sprintf( str, "%"PRId64, val );
@@ -75,7 +75,7 @@ std::string strFrom< int64 >( const int64& val )
 }
 
 template<>
-int64 strTo< int64 >( const char* str )
+int64 Util::strTo< int64 >( const char* str )
 {
     int64 v = 0;
     sscanf( str, "%"SCNd64, &v );
@@ -83,7 +83,7 @@ int64 strTo< int64 >( const char* str )
 }
 
 template<>
-std::string strFrom< uint64 >( const uint64& val )
+std::string Util::strFrom< uint64 >( const uint64& val )
 {
     std::string str;
     sprintf( str, "%"PRIu64, val );
@@ -91,7 +91,7 @@ std::string strFrom< uint64 >( const uint64& val )
 }
 
 template<>
-uint64 strTo< uint64 >( const char* str )
+uint64 Util::strTo< uint64 >( const char* str )
 {
     uint64 v = 0;
     sscanf( str, "%"SCNu64, &v );
@@ -99,7 +99,7 @@ uint64 strTo< uint64 >( const char* str )
 }
 
 template<>
-std::string strFrom< long double >( const long double& val )
+std::string Util::strFrom< long double >( const long double& val )
 {
     std::string str;
     sprintf( str, "%Lf", val );
@@ -107,7 +107,7 @@ std::string strFrom< long double >( const long double& val )
 }
 
 template<>
-long double strTo< long double >( const char* str )
+long double Util::strTo< long double >( const char* str )
 {
     long double v = 0.0;
     sscanf( str, "%Lf", &v );

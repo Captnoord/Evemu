@@ -23,8 +23,8 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __UTILS__SAFE_DELETE_H__INCL__
-#define __UTILS__SAFE_DELETE_H__INCL__
+#ifndef __UTIL__SAFE_DELETE_H__INCL__
+#define __UTIL__SAFE_DELETE_H__INCL__
 
 // Basic programming tips
 // URL: http://nedprod.com/programs/index.html
@@ -45,10 +45,10 @@
 #   define SafeDelete( p )      { delete p; p = NULL; }
 #   define SafeDeleteArray( p ) { delete[] p; p = NULL; }
 #   define SafeFree( p )        { free( p ); p = NULL; }
-#else
+#else /* !ENABLE_ULTRA_SAFE_DELETE && !ENABLE_EXTRA_SAFE_DELETE && !ENABLE_SAFE_DELETE */
 #   define SafeDelete( p )      { delete p; }
 #   define SafeDeleteArray( p ) { delete[] p; }
 #   define SafeFree( p )        { free( p ); }
-#endif
+#endif /* !ENABLE_ULTRA_SAFE_DELETE && !ENABLE_EXTRA_SAFE_DELETE && !ENABLE_SAFE_DELETE */
 
-#endif /* !__UTILS__SAFE_DELETE_H__INCL__ */
+#endif /* !__UTIL__SAFE_DELETE_H__INCL__ */

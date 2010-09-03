@@ -25,14 +25,14 @@
 
 #include "CommonPCH.h"
 
-#include "utils/Log.h"
-#include "utils/StrUtils.h"
+#include "util/Log.h"
+#include "util/StrUtils.h"
 
 /*************************************************************************/
-/* Log                                                                   */
+/* Util::Log                                                             */
 /*************************************************************************/
 #ifdef WIN32
-const WORD Log::COLOR_TABLE[ COLOR_COUNT ] =
+const WORD Util::Log::COLOR_TABLE[ COLOR_COUNT ] =
 {
     ( FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE                        ), // COLOR_DEFAULT
     ( 0                                                                          ), // COLOR_BLACK
@@ -45,7 +45,7 @@ const WORD Log::COLOR_TABLE[ COLOR_COUNT ] =
     ( FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY )  // COLOR_WHITE
 };
 #else /* !WIN32 */
-const char* const Log::COLOR_TABLE[ COLOR_COUNT ] =
+const char* const Util::Log::COLOR_TABLE[ COLOR_COUNT ] =
 {
     "\033[" "00"    "m", // COLOR_DEFAULT
     "\033[" "30;22" "m", // COLOR_BLACK
@@ -59,7 +59,7 @@ const char* const Log::COLOR_TABLE[ COLOR_COUNT ] =
 };
 #endif /* !WIN32 */
 
-Log::Log()
+Util::Log::Log()
 : mLogfile( NULL ),
   mTime( 0 )
 #ifdef WIN32
@@ -70,18 +70,18 @@ Log::Log()
     // open default logfile
     SetLogfileDefault();
 
-    Debug( "Log", "Log system initiated" );
+    Debug( "Util::Log", "Log system initiated" );
 }
 
-Log::~Log()
+Util::Log::~Log()
 {
-    Debug( "Log", "Log system shutting down" );
+    Debug( "Util::Log", "Log system shutting down" );
 
     // close logfile
     SetLogfile( (FILE*)NULL );
 }
 
-void Log::Message( const char* source, const char* fmt, ... )
+void Util::Log::Message( const char* source, const char* fmt, ... )
 {
     va_list ap;
     va_start( ap, fmt );
@@ -91,7 +91,7 @@ void Log::Message( const char* source, const char* fmt, ... )
     va_end( ap );
 }
 
-void Log::Error( const char* source, const char* fmt, ... )
+void Util::Log::Error( const char* source, const char* fmt, ... )
 {
     va_list ap;
     va_start( ap, fmt );
@@ -101,7 +101,7 @@ void Log::Error( const char* source, const char* fmt, ... )
     va_end( ap );
 }
 
-void Log::Warning( const char* source, const char* fmt, ... )
+void Util::Log::Warning( const char* source, const char* fmt, ... )
 {
     va_list ap;
     va_start( ap, fmt );
@@ -111,7 +111,7 @@ void Log::Warning( const char* source, const char* fmt, ... )
     va_end( ap );
 }
 
-void Log::Success( const char* source, const char* fmt, ... )
+void Util::Log::Success( const char* source, const char* fmt, ... )
 {
     va_list ap;
     va_start( ap, fmt );
@@ -121,7 +121,7 @@ void Log::Success( const char* source, const char* fmt, ... )
     va_end( ap );
 }
 
-void Log::Debug( const char* source, const char* fmt, ... )
+void Util::Log::Debug( const char* source, const char* fmt, ... )
 {
 #ifndef NDEBUG
     va_list ap;
@@ -133,7 +133,7 @@ void Log::Debug( const char* source, const char* fmt, ... )
 #endif /* !NDEBUG */
 }
 
-void Log::Dump( const char* source, const void* data, size_t len, const char* fmt, ... )
+void Util::Log::Dump( const char* source, const void* data, size_t len, const char* fmt, ... )
 {
 #ifndef NDEBUG
     va_list ap;
@@ -185,7 +185,7 @@ void Log::Dump( const char* source, const void* data, size_t len, const char* fm
 #endif /* !NDEBUG */
 }
 
-bool Log::SetLogfile( const char* filename )
+bool Util::Log::SetLogfile( const char* filename )
 {
     Mt::MutexLock l( mMutex );
 
@@ -201,7 +201,7 @@ bool Log::SetLogfile( const char* filename )
     return SetLogfile( file );
 }
 
-bool Log::SetLogfile( FILE* file )
+bool Util::Log::SetLogfile( FILE* file )
 {
     Mt::MutexLock l( mMutex );
 
@@ -212,7 +212,7 @@ bool Log::SetLogfile( FILE* file )
     return true;
 }
 
-void Log::PrintMsg( Color color, char pfx, const char* source, const char* fmt, ... )
+void Util::Log::PrintMsg( Color color, char pfx, const char* source, const char* fmt, ... )
 {
     va_list ap;
     va_start( ap, fmt );
@@ -222,7 +222,7 @@ void Log::PrintMsg( Color color, char pfx, const char* source, const char* fmt, 
     va_end( ap );
 }
 
-void Log::PrintMsgVa( Color color, char pfx, const char* source, const char* fmt, va_list ap )
+void Util::Log::PrintMsgVa( Color color, char pfx, const char* source, const char* fmt, va_list ap )
 {
     Mt::MutexLock l( mMutex );
 
@@ -245,7 +245,7 @@ void Log::PrintMsgVa( Color color, char pfx, const char* source, const char* fmt
     SetColor( COLOR_DEFAULT );
 }
 
-void Log::PrintTime()
+void Util::Log::PrintTime()
 {
     Mt::MutexLock l( mMutex );
 
@@ -258,7 +258,7 @@ void Log::PrintTime()
     Print( "%02u:%02u:%02u", t.tm_hour, t.tm_min, t.tm_sec );
 }
 
-void Log::Print( const char* fmt, ... )
+void Util::Log::Print( const char* fmt, ... )
 {
     va_list ap;
     va_start( ap, fmt );
@@ -268,7 +268,7 @@ void Log::Print( const char* fmt, ... )
     va_end( ap );
 }
 
-void Log::PrintVa( const char* fmt, va_list ap )
+void Util::Log::PrintVa( const char* fmt, va_list ap )
 {
     Mt::MutexLock l( mMutex );
 
@@ -291,7 +291,7 @@ void Log::PrintVa( const char* fmt, va_list ap )
     vprintf( fmt, ap );
 }
 
-void Log::SetColor( Color color )
+void Util::Log::SetColor( Color color )
 {
     assert( 0 <= color && color < COLOR_COUNT );
 
@@ -304,7 +304,7 @@ void Log::SetColor( Color color )
 #endif /* !WIN32 */
 }
 
-void Log::SetLogfileDefault()
+void Util::Log::SetLogfileDefault()
 {
     Mt::MutexLock l( mMutex );
 
@@ -320,7 +320,7 @@ void Log::SetLogfileDefault()
               t.tm_mday, t.tm_mon + 1, t.tm_year + 1900, t.tm_hour, t.tm_min );
 
     if( SetLogfile( filename ) )
-        Success( "Log", "Opened logfile '%s'.", filename );
+        Success( "Util::Log", "Opened logfile '%s'.", filename );
     else
-        Warning( "Log", "Unable to open logfile '%s': %s", filename, strerror( errno ) );
+        Warning( "Util::Log", "Unable to open logfile '%s': %s", filename, strerror( errno ) );
 }

@@ -26,7 +26,7 @@
 #ifndef __STD__FILE_H__INCL__
 #define __STD__FILE_H__INCL__
 
-#include "utils/Buffer.h"
+#include "util/Buffer.h"
 
 namespace Std
 {
@@ -148,7 +148,7 @@ namespace Std
          *
          * @return A value returned by <code>fread</code>.
          */
-        size_t Read( Buffer& into );
+        size_t Read( Util::Buffer& into );
         /**
          * @brief Writes data to the file.
          *
@@ -156,7 +156,7 @@ namespace Std
          *
          * @return A value returned by <code>fwrite</code>.
          */
-        size_t Write( const Buffer& data );
+        size_t Write( const Util::Buffer& data );
         /**
          * @brief Flushes all buffers, writing all data to disk.
          *

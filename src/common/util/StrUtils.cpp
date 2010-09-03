@@ -25,12 +25,12 @@
 
 #include "CommonPCH.h"
 
-#include "utils/Log.h"
-#include "utils/StrUtils.h"
+#include "util/Log.h"
+#include "util/StrUtils.h"
 
-const std::string NULL_STRING = "NULL";
+const std::string Util::NULL_STRING = "NULL";
 
-std::string GenerateKey( size_t length )
+std::string Util::GenerateKey( size_t length )
 {
     static const char CHARS[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     static const size_t CHARS_COUNT = sizeof( CHARS ) / sizeof( char );
@@ -43,12 +43,12 @@ std::string GenerateKey( size_t length )
     return key;
 }
 
-bool IsNumber( char c )
+bool Util::IsNumber( char c )
 {
     return 0 != isdigit( c );
 }
 
-bool IsNumber( const char* str, size_t len )
+bool Util::IsNumber( const char* str, size_t len )
 {
     // skip sign if there is one
     if( 1 >= len )
@@ -79,17 +79,17 @@ bool IsNumber( const char* str, size_t len )
     return true;
 }
 
-bool IsNumber( const std::string& str )
+bool Util::IsNumber( const std::string& str )
 {
     return IsNumber( str.c_str(), str.length() );
 }
 
-bool IsHexNumber( char c )
+bool Util::IsHexNumber( char c )
 {
     return 0 != isxdigit( c );
 }
 
-bool IsHexNumber( const char* str, size_t len )
+bool Util::IsHexNumber( const char* str, size_t len )
 {
     // skip sign if there is one
     if( 1 >= len )
@@ -126,12 +126,12 @@ bool IsHexNumber( const char* str, size_t len )
     return true;
 }
 
-bool IsHexNumber( const std::string& str )
+bool Util::IsHexNumber( const std::string& str )
 {
     return IsHexNumber( str.c_str(), str.length() );
 }
 
-bool IsPrintable( char c )
+bool Util::IsPrintable( char c )
 {
     // They seem to expect it unsigned ...
     const unsigned char _c = c;
@@ -139,7 +139,7 @@ bool IsPrintable( char c )
     return ( isgraph( _c ) || isspace( _c ) );
 }
 
-bool IsPrintable( const char* str, size_t len )
+bool Util::IsPrintable( const char* str, size_t len )
 {
     for(; len > 0; ++str, --len)
     {
@@ -150,12 +150,12 @@ bool IsPrintable( const char* str, size_t len )
     return true;
 }
 
-bool IsPrintable( const std::string& str )
+bool Util::IsPrintable( const std::string& str )
 {
     return IsPrintable( str.c_str(), str.size() );
 }
 
-void ListToINString( const std::vector<int32>& ints, std::string& into, const char* if_empty )
+void Util::ListToINString( const std::vector<int32>& ints, std::string& into, const char* if_empty )
 {
     if( ints.empty() )
     {
@@ -187,7 +187,7 @@ void ListToINString( const std::vector<int32>& ints, std::string& into, const ch
     }
 }
 
-void MakeUpperString( const char* source, char* target )
+void Util::MakeUpperString( const char* source, char* target )
 {
     if( !target )
         return;
@@ -198,7 +198,7 @@ void MakeUpperString( const char* source, char* target )
     *target = 0;
 }
 
-void MakeLowerString( const char* source, char* target )
+void Util::MakeLowerString( const char* source, char* target )
 {
     if( !target )
         return;
@@ -209,7 +209,7 @@ void MakeLowerString( const char* source, char* target )
     *target = 0;
 }
 
-bool PyDecodeEscape( const char* str, Buffer& into )
+bool Util::PyDecodeEscape( const char* str, Buffer& into )
 {
     const size_t len = strlen( str );
     const char* const end = str + len;
@@ -297,7 +297,7 @@ bool PyDecodeEscape( const char* str, Buffer& into )
     return true;
 }
 
-void SearchReplace( std::string& subject, const std::string& search, const std::string& replace )
+void Util::SearchReplace( std::string& subject, const std::string& search, const std::string& replace )
 {
     std::string::size_type pos = 0;
     while( ( pos = subject.find( search, pos ) ) != std::string::npos )
@@ -307,7 +307,7 @@ void SearchReplace( std::string& subject, const std::string& search, const std::
     }
 }
 
-void SplitArguments( const char* str, std::vector< std::string >& into, const char* divs, const char* quotes )
+void Util::SplitArguments( const char* str, std::vector< std::string >& into, const char* divs, const char* quotes )
 {
     size_t len = strlen( str );
     bool inQuote = false;
@@ -362,7 +362,7 @@ void SplitArguments( const char* str, std::vector< std::string >& into, const ch
     }
 }
 
-void SplitPath( const std::string& path, std::vector<std::string>& into )
+void Util::SplitPath( const std::string& path, std::vector<std::string>& into )
 {
     const char* p = path.c_str();
     const char* begin = p;

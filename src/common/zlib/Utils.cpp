@@ -29,14 +29,14 @@
 
 const uint8 Zlib::HEADER_BYTE = 0x78; //'x'
 
-bool Zlib::IsDeflated( const Buffer& data )
+bool Zlib::IsDeflated( const Util::Buffer& data )
 {
     return Zlib::HEADER_BYTE == data[0];
 }
 
-bool Zlib::DeflateData( Buffer& data )
+bool Zlib::DeflateData( Util::Buffer& data )
 {
-    Buffer dataDeflated;
+    Util::Buffer dataDeflated;
     if( !DeflateData( data, dataDeflated ) )
         return false;
 
@@ -44,9 +44,9 @@ bool Zlib::DeflateData( Buffer& data )
     return true;
 }
 
-bool Zlib::DeflateData( const Buffer& input, Buffer& output )
+bool Zlib::DeflateData( const Util::Buffer& input, Util::Buffer& output )
 {
-    const Buffer::iterator< uint8 > out = output.end< uint8 >();
+    const Util::Buffer::iterator< uint8 > out = output.end< uint8 >();
 
     size_t outputSize = compressBound( input.size() );
     output.ResizeAt( out, outputSize );
@@ -65,9 +65,9 @@ bool Zlib::DeflateData( const Buffer& input, Buffer& output )
     }
 }
 
-bool Zlib::InflateData( Buffer& data )
+bool Zlib::InflateData( Util::Buffer& data )
 {
-    Buffer dataInflated;
+    Util::Buffer dataInflated;
     if( !InflateData( data, dataInflated ) )
         return false;
 
@@ -75,9 +75,9 @@ bool Zlib::InflateData( Buffer& data )
     return true;
 }
 
-bool Zlib::InflateData( const Buffer& input, Buffer& output )
+bool Zlib::InflateData( const Util::Buffer& input, Util::Buffer& output )
 {
-    const Buffer::iterator< uint8 > out = output.end< uint8 >();
+    const Util::Buffer::iterator< uint8 > out = output.end< uint8 >();
 
     size_t outputSize = 0;
     size_t sizeMultiplier = 0;

@@ -31,8 +31,8 @@
 
 #include "db/Type.h"
 #include "mt/Mutex.h"
-#include "utils/Singleton.h"
-#include "utils/StrConv.h"
+#include "util/Singleton.h"
+#include "util/StrConv.h"
 
 namespace Db
 {
@@ -128,7 +128,7 @@ namespace Db
         T as( size_t index ) const
         {
             assert( !isNull( index ) );
-            return strTo< T >( mRow[ index ] );
+            return Util::strTo< T >( mRow[ index ] );
         }
 
     protected:
@@ -249,7 +249,7 @@ namespace Db
      * @author Zhur
      */
     class Core
-    : public Singleton< Core >
+    : public Util::Singleton< Core >
     {
     public:
         /// Describes current status of MySQL connection.

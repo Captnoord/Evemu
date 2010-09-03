@@ -23,55 +23,56 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __MT__MUTEX_H__INCL__
-#define __MT__MUTEX_H__INCL__
+#ifndef __UTIL__SINGLETON_H__INCL__
+#define __UTIL__SINGLETON_H__INCL__
 
-#include "util/Lock.h"
-
-#ifdef WIN32
-#   include "win/CriticalSection.h"
-#else /* !WIN32 */
-#   include "posix/Mutex.h"
-#endif /* !WIN32 */
-
-namespace Mt
+namespace Util
 {
     /**
-     * @brief Common wrapper for platform-specific mutexes.
+     * @brief Template used for singleton classes.
      *
-     * @author Zhur, Bloody.Rabbit
+     * This template shall be used as base for classes
+     * which are intended to be singleton (i.e. there
+     * should be only 1 instance of this class at all).
+     *
+     * Uses lazy construction (i.e. object is constructed
+     * on first access request).
+     *
+     * @author Bloody.Rabbit
      */
-    class Mutex
-    : public Util::Lockable
+    template< typename X >
+    class Singleton
     {
-        friend class Condition;
-
     public:
-        /// Locks the mutex.
-        void Lock();
         /**
-         * @brief Attempts to lock the mutex.
+         * @brief Primary constructor.
          *
-         * @retval true  Mutex successfully locked.
-         * @retval false Mutex locked by another thread.
+         * Checks if the instance being constructed is first, i.e.
+         * mInstance hasn't been filled yet. This only makes sense
+         * if the actual class is derived from Singleton.
          */
-        bool TryLock();
+        Singleton()
+        {
+            assert( NULL == mInstance.get() );
+        }
 
-        /// Unlocks the mutex.
-        void Unlock();
+        /// @return Reference to the singleton instance.
+        static X& get()
+        {
+            if( NULL == mInstance.get() )
+                mInstance.reset( new X );
+
+            return *mInstance;
+        }
 
     protected:
-#   ifdef WIN32
-        /// A critical section used for mutex implementation on Windows.
-        Win::CriticalSection mCriticalSection;
-#   else
-        /// A pthread mutex used for mutex implementation using pthread library.
-        Posix::Mutex mMutex;
-#   endif
+        /// Pointer to the singleton instance.
+        static std::auto_ptr< X > mInstance;
     };
 
-    /// Convenience typedef for Mutex's lock.
-    typedef Util::Lock< Mutex > MutexLock;
+    template< typename X >
+    std::auto_ptr< X > Singleton< X >::mInstance( NULL );
 }
 
-#endif /* !__MT__MUTEX_H__INCL__ */
+#endif /* !__UTIL__SINGLETON_H__INCL__ */
+

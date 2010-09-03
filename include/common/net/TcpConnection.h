@@ -28,7 +28,7 @@
 
 #include "mt/Mutex.h"
 #include "net/Socket.h"
-#include "utils/Buffer.h"
+#include "util/Buffer.h"
 
 namespace Net
 {
@@ -113,7 +113,7 @@ namespace Net
          * @retval true  Data successfully enqueued.
          * @retval false Failed to enqueue data.
          */
-        bool Send( Buffer** data );
+        bool Send( Util::Buffer** data );
 
     protected:
         /**
@@ -209,10 +209,10 @@ namespace Net
         /// Mutex protecting send queue.
         mutable Mt::Mutex mMSendQueue;
         /// Send queue.
-        std::deque< Buffer* > mSendQueue;
+        std::deque< Util::Buffer* > mSendQueue;
 
         /// Receive buffer.
-        Buffer* mRecvBuf;
+        Util::Buffer* mRecvBuf;
     };
 }
 

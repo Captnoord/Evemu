@@ -97,12 +97,12 @@ int Std::File::Seek( long int offset, int origin )
     return ::fseek( mFile, offset, origin );
 }
 
-size_t Std::File::Read( Buffer& into )
+size_t Std::File::Read( Util::Buffer& into )
 {
     return ::fread( &into[0], 1, into.size(), mFile );
 }
 
-size_t Std::File::Write( const Buffer& data )
+size_t Std::File::Write( const Util::Buffer& data )
 {
     return ::fwrite( &data[0], 1, data.size(), mFile );
 }
