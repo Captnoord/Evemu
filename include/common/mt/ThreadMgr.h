@@ -126,10 +126,6 @@ namespace Mt
         mutable Mutex mMutex;
     };
 
-    /// A macro for easier access.
-    #define sThreadMgr \
-        ThreadMgr::get()
-
     /**
      * @brief A ThreadMgr's worker thread.
      *
@@ -169,5 +165,9 @@ namespace Mt
         Mutex mMutex;
     };
 }
+
+/// A macro for easier access.
+#define sThreadMgr \
+    ( Mt::ThreadMgr::get() )
 
 #endif /* !__MT__THREAD_MGR_H__INCL__ */

@@ -462,10 +462,10 @@ namespace Db
         /// Use encryption during transmission.
         bool mSSL;
     };
-
-    /// A macro for easing access to the Core object.
-    #define sDatabase \
-        Core::get()
 }
+
+/// A macro for easing access to the Db::Core object.
+#define sDatabase \
+    ( Db::Core::get() )
 
 #endif /* !__DB__CORE_H__INCL__ */
