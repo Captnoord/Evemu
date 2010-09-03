@@ -85,3 +85,27 @@ char* strlwr( char* str )
     return str;
 }
 #endif /* CYGWIN */
+
+int sprintf( std::string& into, const char* fmt, ... )
+{
+    va_list ap;
+    va_start( ap, fmt );
+
+    int code = vsprintf( into, fmt, ap );
+
+    va_end( ap );
+
+    return code;
+}
+
+int vsprintf( std::string& into, const char* fmt, va_list ap )
+{
+    char* buf = NULL;
+
+    int code = vasprintf( &buf, fmt, ap );
+    if( 0 <= code )
+        into = buf;
+
+    SafeDelete( buf );
+    return code;
+}

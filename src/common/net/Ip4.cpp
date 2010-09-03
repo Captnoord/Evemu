@@ -29,7 +29,6 @@
 #include "net/Utils.h"
 #include "utils/Log.h"
 #include "utils/StrConv.h"
-#include "utils/StrUtils.h"
 
 /*************************************************************************/
 /* Net::Ip4                                                              */

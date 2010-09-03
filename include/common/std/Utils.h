@@ -103,4 +103,25 @@ using std::isnan;
 #   define isnan  __isnan
 #endif /* !MSVC && !MINGW && !APPLE && !FREE_BSD */
 
+/**
+ * @brief sprintf() for <code>std::string</code>.
+ *
+ * @param[in] into Where to store the result.
+ * @param[in] fmt  The format string.
+ * @param[in] ...  Arguments.
+ *
+ * @return A value returned by vasprintf().
+ */
+int sprintf( std::string& into, const char* fmt, ... );
+/**
+ * @brief vsprintf() for <code>std::string</code>.
+ *
+ * @param[in] into Where to store the result.
+ * @param[in] fmt  The format string.
+ * @param[in] ap   Arguments.
+ *
+ * @return A value returned by vasprintf().
+ */
+int vsprintf( std::string& into, const char* fmt, va_list ap );
+
 #endif /* !__STD__UTILS_H__INCL__ */
