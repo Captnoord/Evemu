@@ -96,9 +96,11 @@ ENDIF( NOT WIN32 )
 
 SET( std_INCLUDE
      "${TARGET_INCLUDE_DIR}/std/Common.h"
+     "${TARGET_INCLUDE_DIR}/std/File.h"
      "${TARGET_INCLUDE_DIR}/std/Types.h"
      "${TARGET_INCLUDE_DIR}/std/Utils.h" )
 SET( std_SOURCE
+     "${TARGET_SOURCE_DIR}/std/File.cpp"
      "${TARGET_SOURCE_DIR}/std/Utils.cpp" )
 
 SET( time_INCLUDE
