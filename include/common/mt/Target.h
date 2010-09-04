@@ -39,7 +39,7 @@ namespace Mt
         /**
          * @brief Processes the given Target.
          *
-         * Static to avoid "delete this" in the code.
+         * Static to avoid <code>delete this</code> in the code.
          *
          * @param[in] target The Target to process.
          */
@@ -57,10 +57,21 @@ namespace Mt
          */
         virtual bool deleteOnExit() = 0;
 
-        /**
-         * @brief Runs the target.
-         */
+        /// Runs the target.
         virtual void Run() = 0;
+    };
+
+    /**
+     * @brief A Target with an ability to stop.
+     *
+     * @author Bloody.Rabbit
+     */
+    class TargetEx
+    : public Target
+    {
+    public:
+        /// Calling this should make Run() return.
+        virtual void Stop() = 0;
     };
 }
 
