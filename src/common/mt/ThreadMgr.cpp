@@ -41,49 +41,53 @@ Mt::ThreadMgr::~ThreadMgr()
 {
     sLog.Debug( "Mt::ThreadMgr", "Thread manager shutting down" );
 
-    SetThreadLimit( 0 );
+    Stop();
+
+    sLog.Debug( "Mt::ThreadMgr", "Thread manager shut down" );
 }
 
-size_t Mt::ThreadMgr::threadCount() const
+void Mt::ThreadMgr::Run( Mt::TargetEx* target )
 {
     MutexLock lock( mMutex );
 
-    return activeThreadCount() + inactiveThreadCount();
-}
+    mQueuedTargets.push( target );
 
-size_t Mt::ThreadMgr::activeThreadCount() const
-{
-    MutexLock lock( mMutex );
-
-    return mActiveWorkers.size();
-}
-
-size_t Mt::ThreadMgr::inactiveThreadCount() const
-{
-    MutexLock lock( mMutex );
-
-    return mInactiveWorkers.size();
-}
-
-size_t Mt::ThreadMgr::threadLimit() const
-{
-    MutexLock lock( mMutex );
-
-    return mLimit;
-}
-
-void Mt::ThreadMgr::Run( Mt::Target* target )
-{
-    MutexLock lock( mMutex );
-
-    mTargets.push( target );
-
-    if( 0 < inactiveThreadCount() )
-        // Someone is waiting, signal the condition.
-        mWorkerEvent.Signal();
-    else if( threadCount() < threadLimit() )
+    if( activeThreadCount() + queueLen() <= threadCount() )
+    {
+        // Just signal the condition, somebody will do it.
+        mEvent.Signal();
+    }
+    else if( activeThreadCount() + queueLen() <= threadLimit() )
+    {
         // Haven't reached the limit yet, spawn a worker.
-        Thread t( new Worker( this ) );
+        Thread t( this );
+    }
+}
+
+void Mt::ThreadMgr::Stop()
+{
+    MutexLock lock( mMutex );
+
+    // set limit, release all waiting threads
+    SetThreadLimit( 0 );
+
+    // release all working threads
+    std::list< TargetEx* >::iterator cur, end;
+    cur = mActiveTargets.begin();
+    end = mActiveTargets.end();
+    for(; cur != end; ++cur )
+        ( *cur )->Stop();
+
+    // wait until all threads quit
+    while( !mThreads.empty() )
+    {
+        // we must copy the handle
+        Thread t = mThreads.front();
+
+        lock.Unlock();
+        t.Wait();
+        lock.Relock();
+    }
 }
 
 void Mt::ThreadMgr::SetThreadLimit( size_t limit )
@@ -93,101 +97,37 @@ void Mt::ThreadMgr::SetThreadLimit( size_t limit )
     mLimit = limit;
 
     if( threadLimit() < threadCount()
-        && 0 < inactiveThreadCount() )
+        && activeThreadCount() < threadCount() )
     {
         // Broadcast thread event to make waiting threads quit
-        mWorkerEvent.Broadcast();
-    }
-
-    if( threadLimit() < activeThreadCount() )
-    {
-        // We need to stop some working threads ...
-        for( size_t i = ( activeThreadCount() - threadLimit() ); 0 < i; --i )
-        {
-            Worker* worker = mActiveWorkers.front();
-
-            // This also removes the worker from our list.
-            worker->AssignMgr( NULL );
-        }
+        mEvent.Broadcast();
     }
 }
 
-Mt::ThreadMgr::WorkerList::iterator Mt::ThreadMgr::AddWorker( Worker* worker )
+void Mt::ThreadMgr::Run()
 {
     MutexLock lock( mMutex );
 
-    mActiveWorkers.push_back( worker );
-    return --mActiveWorkers.end();
-}
+    mThreads.push_back( Thread::self() );
+    const std::list< Thread >::iterator threadItr = --mThreads.end();
 
-void Mt::ThreadMgr::RemoveWorker( WorkerList::iterator& itr )
-{
-    MutexLock lock( mMutex );
-
-    mActiveWorkers.erase( itr );
-}
-
-Mt::Target* Mt::ThreadMgr::GetTarget( WorkerList::iterator& itr )
-{
-    MutexLock lock( mMutex );
-
-    // move the Worker from mActiveWorkers to mInactiveWorkers
-    mInactiveWorkers.splice( mInactiveWorkers.end(),
-                             mActiveWorkers, itr );
-    itr = --mInactiveWorkers.end();
-
-    Mt::Target* target = NULL;
     while( threadCount() <= threadLimit() )
     {
-        if( !mTargets.empty() )
+        if( mQueuedTargets.empty() )
+            mEvent.Wait( mMutex );
+        else
         {
-            target = mTargets.front();
-            mTargets.pop();
-            break;
-        }
+            mActiveTargets.push_back( mQueuedTargets.front() );
+            mQueuedTargets.pop();
+            const std::list< TargetEx* >::iterator targetItr = --mActiveTargets.end();
 
-        mWorkerEvent.Wait( mMutex );
+            lock.Unlock();
+            Target::Process( *targetItr );
+            lock.Relock();
+
+            mActiveTargets.erase( targetItr );
+        }
     }
 
-    // move the Worker back
-    mActiveWorkers.splice( mActiveWorkers.end(),
-                           mInactiveWorkers, itr );
-    itr = --mActiveWorkers.end();
-
-    return target;
-}
-
-/*************************************************************************/
-/* Mt::ThreadMgr::Worker                                                 */
-/*************************************************************************/
-Mt::ThreadMgr::Worker::Worker( Mt::ThreadMgr* mgr )
-: mMgr( NULL )
-{
-    AssignMgr( mgr );
-}
-
-Mt::ThreadMgr::Worker::~Worker()
-{
-    AssignMgr( NULL );
-}
-
-void Mt::ThreadMgr::Worker::AssignMgr( Mt::ThreadMgr* mgr )
-{
-    MutexLock lock( mMutex );
-
-    if( NULL != mMgr )
-        mMgr->RemoveWorker( mItr );
-
-    mMgr = mgr;
-
-    if( NULL != mMgr )
-        mItr = mMgr->AddWorker( this );
-}
-
-Mt::Target* Mt::ThreadMgr::Worker::GetTarget()
-{
-    if( NULL == mMgr )
-        return NULL;
-
-    return mMgr->GetTarget( mItr );
+    mThreads.erase( threadItr );
 }
