@@ -40,8 +40,8 @@ namespace Mt
      * @author Bloody.Rabbit
      */
     class ThreadMgr
-    : public TargetEx,
-      public Util::Singleton< ThreadMgr >
+    : public Util::Singleton< ThreadMgr >,
+      protected TargetEx
     {
     public:
         /**
@@ -69,8 +69,6 @@ namespace Mt
          * @param[in] target The new target.
          */
         void Run( TargetEx* target );
-        /// Immediately stops all processing.
-        void Stop();
 
         /**
          * @brief Sets new thread count limit.
@@ -82,8 +80,11 @@ namespace Mt
     protected:
         /// Singleton cares about our destruction, always return <code>false</code>.
         bool deleteOnExit() { return false; }
+
         /// The processing loop.
         void Run();
+        /// Immediately stops all processing.
+        void Stop();
 
         /// A queue of pending targets.
         std::queue< TargetEx* > mQueuedTargets;

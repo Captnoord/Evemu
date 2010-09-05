@@ -64,32 +64,6 @@ void Mt::ThreadMgr::Run( Mt::TargetEx* target )
     }
 }
 
-void Mt::ThreadMgr::Stop()
-{
-    MutexLock lock( mMutex );
-
-    // set limit, release all waiting threads
-    SetThreadLimit( 0 );
-
-    // release all working threads
-    std::list< TargetEx* >::iterator cur, end;
-    cur = mActiveTargets.begin();
-    end = mActiveTargets.end();
-    for(; cur != end; ++cur )
-        ( *cur )->Stop();
-
-    // wait until all threads quit
-    while( !mThreads.empty() )
-    {
-        // we must copy the handle
-        Thread t = mThreads.front();
-
-        lock.Unlock();
-        t.Wait();
-        lock.Relock();
-    }
-}
-
 void Mt::ThreadMgr::SetThreadLimit( size_t limit )
 {
     MutexLock lock( mMutex );
@@ -130,4 +104,30 @@ void Mt::ThreadMgr::Run()
     }
 
     mThreads.erase( threadItr );
+}
+
+void Mt::ThreadMgr::Stop()
+{
+    MutexLock lock( mMutex );
+
+    // set limit, release all waiting threads
+    SetThreadLimit( 0 );
+
+    // release all working threads
+    std::list< TargetEx* >::iterator cur, end;
+    cur = mActiveTargets.begin();
+    end = mActiveTargets.end();
+    for(; cur != end; ++cur )
+        ( *cur )->Stop();
+
+    // wait until all threads quit
+    while( !mThreads.empty() )
+    {
+        // we must copy the handle
+        Thread t = mThreads.front();
+
+        lock.Unlock();
+        t.Wait();
+        lock.Relock();
+    }
 }
