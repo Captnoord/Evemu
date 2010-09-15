@@ -27,6 +27,7 @@
 #define __POSIX__CONDITION_H__INCL__
 
 #include "posix/Mutex.h"
+#include "time/Timespec.h"
 
 namespace Posix
 {
@@ -81,7 +82,7 @@ namespace Posix
          *
          * @return A value returned by <code>pthread_cond_timedwait</code>.
          */
-        int TimedWait( Mutex& mutex, const timespec* time );
+        int TimedWait( Mutex& mutex, const Time::Timespec& time );
 
     protected:
         /// The condition variable itself.

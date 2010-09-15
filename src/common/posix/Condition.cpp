@@ -64,7 +64,7 @@ int Posix::Condition::Wait( Posix::Mutex& mutex )
     return ::pthread_cond_wait( &mCondition, &mutex.mMutex );
 }
 
-int Posix::Condition::TimedWait( Posix::Mutex& mutex, const timespec* time )
+int Posix::Condition::TimedWait( Posix::Mutex& mutex, const Time::Timespec& time )
 {
-    return ::pthread_cond_timedwait( &mCondition, &mutex.mMutex, time );
+    return ::pthread_cond_timedwait( &mCondition, &mutex.mMutex, &time.ts() );
 }

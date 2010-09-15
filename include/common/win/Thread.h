@@ -26,6 +26,7 @@
 #ifndef __WIN__THREAD_H__INCL__
 #define __WIN__THREAD_H__INCL__
 
+#include "time/Msec.h"
 #include "win/Handle.h"
 
 namespace Win
@@ -49,9 +50,9 @@ namespace Win
         /**
          * @brief Makes caller thread sleep for specified amount of time.
          *
-         * @param[in] milliseconds Number of milliseconds to sleep.
+         * @param[in] period How much time to spend sleeping.
          */
-        static VOID Sleep( DWORD milliseconds );
+        static VOID Sleep( const Time::Msec& period );
 
         /**
          * @brief Primary constructor, creates a new thread.

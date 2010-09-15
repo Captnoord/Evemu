@@ -27,6 +27,7 @@
 #define __WIN__CONDITION_H__INCL__
 
 #include "mt/Mutex.h"
+#include "time/Msec.h"
 #include "win/CriticalSection.h"
 #incldue "win/Event.h"
 
@@ -75,7 +76,7 @@ namespace Win
          *
          * @return A value returned by <code>WaitForSingleObject</code>.
          */
-        DWORD Wait( CriticalSection& criticalSection, DWORD timeout = INFINITE );
+        DWORD Wait( CriticalSection& criticalSection, const Time::Msec& timeout = INFINITE );
 
     protected:
         /// The event for waiting threads.

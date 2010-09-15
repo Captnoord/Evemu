@@ -52,7 +52,7 @@ BOOL Win::Condition::Broadcast()
     return ( 0 < mToFreeCount ? mWaitEvent.Set() : TRUE );
 }
 
-DWORD Win::Condition::Wait( Win::CriticalSection& criticalSection, DWORD timeout )
+DWORD Win::Condition::Wait( Win::CriticalSection& criticalSection, const Time::Msec& timeout )
 {
     {
         MutexLock lock( mMutex );
@@ -60,7 +60,7 @@ DWORD Win::Condition::Wait( Win::CriticalSection& criticalSection, DWORD timeout
     }
 
     criticalSection.Leave();
-    DWORD code = mWaitEvent.Wait( timeout );
+    DWORD code = mWaitEvent.Wait( timeout.count() );
     criticalSection.Enter();
 
     {

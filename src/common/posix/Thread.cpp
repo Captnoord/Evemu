@@ -27,6 +27,7 @@
 
 #include "posix/Thread.h"
 #include "posix/ThreadAttribute.h"
+#include "time/Const.h"
 
 /*************************************************************************/
 /* Posix::Thread                                                         */
@@ -63,12 +64,10 @@ void Posix::Thread::TestCancel()
     ::pthread_testcancel();
 }
 
-int Posix::Thread::Sleep( useconds_t microseconds )
+int Posix::Thread::Sleep( const Time::Timeval& period )
 {
-    if( 0 < microseconds )
-        return ::usleep( microseconds );
-    else
-        return 0;
+    return ::usleep( static_cast< useconds_t >( Time::USEC_PER_MSEC * Time::MSEC_PER_SEC * period.sec()
+                                                + period.usec() ) );
 }
 
 Posix::Thread::Thread()

@@ -35,10 +35,9 @@ Win::Thread Win::Thread::self()
     return Win::Thread( ::GetCurrentThread(), ::GetCurrentThreadId() );
 }
 
-VOID Win::Thread::Sleep( DWORD milliseconds )
+VOID Win::Thread::Sleep( const Time::Msec& period )
 {
-    if( 0 < milliseconds )
-        ::Sleep( milliseconds );
+    ::Sleep( static_cast< DWORD >( period.count() ) );
 }
 
 Win::Thread::Thread( PTHREAD_START_ROUTINE startAddress, PVOID param, SIZE_T stackSize )

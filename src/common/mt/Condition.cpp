@@ -68,12 +68,10 @@ void Mt::Condition::Wait( Mutex& mutex )
 void Mt::Condition::TimedWait( Mutex& mutex, const Time::Msec& timeout )
 {
 #ifdef WIN32
-    BOOL success = mCondition.Wait( mutex.mCriticalSection,
-                                    static_cast< DWORD >( timeout ) );
+    BOOL success = mCondition.Wait( mutex.mCriticalSection, timeout );
     assert( TRUE == success );
 #else /* !WIN32 */
-    Time::Timespec ts = sTimeMgr.nowUnix() + timeout;
-    int code = mCondition.TimedWait( mutex.mMutex, &ts.ts() );
+    int code = mCondition.TimedWait( mutex.mMutex, sTimeMgr.nowUnix() + timeout );
     assert( 0 == code );
 #endif /* !WIN32 */
 }

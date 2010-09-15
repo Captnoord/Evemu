@@ -26,6 +26,8 @@
 #ifndef __POSIX__THREAD_H__INCL__
 #define __POSIX__THREAD_H__INCL__
 
+#include "time/Timeval.h"
+
 namespace Posix
 {
     /**
@@ -87,11 +89,11 @@ namespace Posix
         /**
          * @brief Makes the caller thread sleep for specified amount of time.
          *
-         * @param[in] microseconds Amount of microseconds to sleep.
+         * @param[in] period How much time to spend sleeping.
          *
          * @return A value returned by <code>usleep</code>.
          */
-        static int Sleep( useconds_t microseconds );
+        static int Sleep( const Time::Timeval& period );
 
         /// A default constructor.
         Thread();
