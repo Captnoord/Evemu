@@ -25,6 +25,7 @@
 
 #include "CommonPCH.h"
 
+#include "time/TimeMgr.h"
 #include "util/Log.h"
 #include "util/StrUtils.h"
 
@@ -60,143 +61,106 @@ const char* const Util::Log::COLOR_TABLE[ COLOR_COUNT ] =
 #endif /* !WIN32 */
 
 Util::Log::Log()
-: mLogfile( NULL ),
-  mTime( 0 )
 #ifdef WIN32
-  ,mStdOutHandle( GetStdHandle( STD_OUTPUT_HANDLE ) ),
+: mLogfile( NULL ),
+  mStdOutHandle( GetStdHandle( STD_OUTPUT_HANDLE ) ),
   mStdErrHandle( GetStdHandle( STD_ERROR_HANDLE ) )
-#endif /* WIN32 */
+#else /* !WIN32 */
+: mLogfile( NULL )
+#endif /* !WIN32 */
 {
-    // open default logfile
-    SetLogfileDefault();
-
-    Debug( "Util::Log", "Log system initiated" );
+    // open a default logfile
+    if( OpenLogfile( EVEMU_ROOT_DIR"/log/evemu.log" ) )
+    {
+        Success( "Util::Log", "Opened default logfile '%s'",
+                 EVEMU_ROOT_DIR"/log/evemu.log" );
+    }
+    else
+    {
+        Warning( "Util::Log", "Could not open default logfile '%s': %s",
+                 EVEMU_ROOT_DIR"/log/evemu.log", strerror( errno ) );
+    }
 }
 
 Util::Log::~Log()
 {
-    Debug( "Util::Log", "Log system shutting down" );
-
-    // close logfile
-    SetLogfile( (FILE*)NULL );
+    SetLogfile( NULL );
 }
 
-void Util::Log::Message( const char* source, const char* fmt, ... )
+void Util::Log::Message( const char* source, const char* format, ... )
 {
     va_list ap;
-    va_start( ap, fmt );
+    va_start( ap, format );
 
-    PrintMsgVa( COLOR_DEFAULT, 'L', source, fmt, ap );
+    PrintMsgVa( COLOR_DEFAULT, 'L', source, format, ap );
 
     va_end( ap );
 }
 
-void Util::Log::Error( const char* source, const char* fmt, ... )
+void Util::Log::Error( const char* source, const char* format, ... )
 {
     va_list ap;
-    va_start( ap, fmt );
+    va_start( ap, format );
 
-    PrintMsgVa( COLOR_RED, 'E', source, fmt, ap );
+    PrintMsgVa( COLOR_RED, 'E', source, format, ap );
 
     va_end( ap );
 }
 
-void Util::Log::Warning( const char* source, const char* fmt, ... )
+void Util::Log::Warning( const char* source, const char* format, ... )
 {
     va_list ap;
-    va_start( ap, fmt );
+    va_start( ap, format );
 
-    PrintMsgVa( COLOR_YELLOW, 'W', source, fmt, ap );
+    PrintMsgVa( COLOR_YELLOW, 'W', source, format, ap );
 
     va_end( ap );
 }
 
-void Util::Log::Success( const char* source, const char* fmt, ... )
+void Util::Log::Success( const char* source, const char* format, ... )
 {
     va_list ap;
-    va_start( ap, fmt );
+    va_start( ap, format );
 
-    PrintMsgVa( COLOR_GREEN, 'S', source, fmt, ap );
+    PrintMsgVa( COLOR_GREEN, 'S', source, format, ap );
 
     va_end( ap );
 }
 
-void Util::Log::Debug( const char* source, const char* fmt, ... )
+void Util::Log::Debug( const char* source, const char* format, ... )
 {
 #ifndef NDEBUG
     va_list ap;
-    va_start( ap, fmt );
+    va_start( ap, format );
 
-    PrintMsgVa( COLOR_CYAN, 'D', source, fmt, ap );
+    PrintMsgVa( COLOR_CYAN, 'D', source, format, ap );
 
     va_end( ap );
 #endif /* !NDEBUG */
 }
 
-void Util::Log::Dump( const char* source, const void* data, size_t len, const char* fmt, ... )
+void Util::Log::Dump( const char* source, const void* data, size_t length,
+                      const char* format, ... )
 {
 #ifndef NDEBUG
-    va_list ap;
-    va_start( ap, fmt );
-
-    PrintMsgVa( COLOR_MAGENTA, 'H', source, fmt, ap );
-
-    va_end( ap );
-
-    for( size_t i = 0; i < len; i += 0x10 )
-    {
-        char line[ 80 ];
-        size_t lineLen = 0;
-
-        char printable[ 0x10 ];
-
-        for( size_t j = 0; j < 0x10; ++j )
-        {
-            if( 0x08 == j )
-            {
-                lineLen += snprintf( &line[ lineLen ],
-                                     sizeof( line ) - lineLen,
-                                     " -" );
-            }
-
-            if( ( i + j ) < len )
-            {
-                const uint8 b = *( static_cast< const uint8* >( data ) + i + j );
-
-                lineLen += snprintf( &line[ lineLen ],
-                                     sizeof( line ) - lineLen,
-                                     " %02X", b );
-                printable[ j ] = ( IsPrintable( b )
-                                   ? static_cast< const char >( b )
-                                   : '.' );
-            }
-            else
-            {
-                lineLen += snprintf( &line[ lineLen ],
-                                     sizeof( line ) - lineLen,
-                                     "   " );
-                printable[ j ] = ' ';
-            }
-        }
-
-        PrintMsg( COLOR_MAGENTA, 'H', source, "%04X:%.*s | %.*s",
-                  i, lineLen, line, sizeof( printable ), printable );
-    }
-#endif /* !NDEBUG */
-}
-
-bool Util::Log::SetLogfile( const char* filename )
-{
     Mt::MutexLock l( mMutex );
 
-    FILE* file = NULL;
+    va_list ap;
+    va_start( ap, format );
 
-    if( NULL != filename )
-    {
-        file = fopen( filename, "w" );
-        if( NULL == file )
-            return false;
-    }
+    PrintMsgVa( COLOR_MAGENTA, 'H', source, format, ap );
+
+    va_end( ap );
+
+    PrintDump( COLOR_MAGENTA, 'H', source, data, length );
+#endif /* !NDEBUG */
+}
+
+bool Util::Log::OpenLogfile( const char* filename )
+{
+    FILE* file = fopen( filename, "a" );
+    if( NULL == file )
+        return false;
 
     return SetLogfile( file );
 }
@@ -205,31 +169,84 @@ bool Util::Log::SetLogfile( FILE* file )
 {
     Mt::MutexLock l( mMutex );
 
-    if( NULL != mLogfile )
-        assert( 0 == fclose( mLogfile ) );
+    if( hasLogfile() )
+    {
+        if( 0 != fclose( mLogfile ) )
+            return false;
+    }
 
     mLogfile = file;
     return true;
 }
 
-void Util::Log::PrintMsg( Color color, char pfx, const char* source, const char* fmt, ... )
+void Util::Log::PrintDump( Color color, char prefix, const char* source,
+                           const void* data, size_t length )
+{
+    for( size_t i = 0; i < length; i += 0x10 )
+        PrintDumpLine( color, prefix, source, data, length, i );
+}
+
+void Util::Log::PrintDumpLine( Color color, char prefix, const char* source,
+                               const void* data, size_t length, size_t offset )
+{
+    char line[ 80 ];
+    size_t lineLen = 0;
+
+    char printable[ 0x10 ];
+
+    for( size_t i = 0; i < 0x10; ++i )
+    {
+        if( 0x08 == i )
+        {
+            lineLen += snprintf( &line[ lineLen ],
+                                 sizeof( line ) - lineLen,
+                                 " -" );
+        }
+
+        if( ( offset + i ) < length )
+        {
+            const uint8 b = *( static_cast< const uint8* >( data ) + offset + i );
+
+            lineLen += snprintf( &line[ lineLen ],
+                                 sizeof( line ) - lineLen,
+                                 " %02X", b );
+            printable[ i ] = ( IsPrintable( b )
+                               ? static_cast< const char >( b )
+                               : '.' );
+        }
+        else
+        {
+            lineLen += snprintf( &line[ lineLen ],
+                                 sizeof( line ) - lineLen,
+                                 "   " );
+            printable[ i ] = ' ';
+        }
+    }
+
+    PrintMsg( color, prefix, source, "%04X:%.*s | %.*s",
+              offset, lineLen, line, sizeof( printable ), printable );
+}
+
+void Util::Log::PrintMsg( Color color, char prefix, const char* source,
+                          const char* format, ... )
 {
     va_list ap;
-    va_start( ap, fmt );
+    va_start( ap, format );
 
-    PrintMsgVa( color, pfx, source, fmt, ap );
+    PrintMsgVa( color, prefix, source, format, ap );
 
     va_end( ap );
 }
 
-void Util::Log::PrintMsgVa( Color color, char pfx, const char* source, const char* fmt, va_list ap )
+void Util::Log::PrintMsgVa( Color color, char prefix, const char* source,
+                            const char* format, va_list ap )
 {
     Mt::MutexLock l( mMutex );
 
     PrintTime();
 
     SetColor( color );
-    Print( " %c ", pfx );
+    Print( " %c ", prefix );
 
     if( source && *source )
     {
@@ -239,7 +256,7 @@ void Util::Log::PrintMsgVa( Color color, char pfx, const char* source, const cha
         SetColor( color );
     }
 
-    PrintVa( fmt, ap );
+    PrintVa( format, ap );
     Print( "\n" );
 
     SetColor( COLOR_DEFAULT );
@@ -247,48 +264,46 @@ void Util::Log::PrintMsgVa( Color color, char pfx, const char* source, const cha
 
 void Util::Log::PrintTime()
 {
-    Mt::MutexLock l( mMutex );
+    Std::Tm t = sTimeMgr.nowTm();
+    Time::Timeval tv = sTimeMgr.nowUnix();
 
-    // this will be replaced my a timing thread somehow
-    SetTime( time( NULL ) );
-
-    tm t;
-    localtime_r( &mTime, &t );
-
-    Print( "%02u:%02u:%02u", t.tm_hour, t.tm_min, t.tm_sec );
+    Print( "%04d-%02d-%02d %02d:%02d:%02d.%06d",
+           1900 + t.year(), 1 + t.mon(), t.mday(),
+           t.hour(), t.min(), t.sec(),
+           tv.usec() );
 }
 
-void Util::Log::Print( const char* fmt, ... )
+void Util::Log::Print( const char* format, ... )
 {
     va_list ap;
-    va_start( ap, fmt );
+    va_start( ap, format );
 
-    PrintVa( fmt, ap );
+    PrintVa( format, ap );
 
     va_end( ap );
 }
 
-void Util::Log::PrintVa( const char* fmt, va_list ap )
+void Util::Log::PrintVa( const char* format, va_list ap )
 {
     Mt::MutexLock l( mMutex );
 
-    if( NULL != mLogfile )
+    if( hasLogfile() )
     {
         // this is a design flaw ( UNIX related )
         va_list ap2;
         va_copy( ap2, ap );
 
-        vfprintf( mLogfile, fmt, ap2 );
+        vfprintf( mLogfile, format, ap2 );
 
 #ifndef NDEBUG
-        // flush immediately so logfile is accurate if we crash
+        // flush immediately so the logfile is accurate if we crash
         fflush( mLogfile );
 #endif /* !NDEBUG */
 
         va_end( ap2 );
     }
 
-    vprintf( fmt, ap );
+    vprintf( format, ap );
 }
 
 void Util::Log::SetColor( Color color )
@@ -302,25 +317,4 @@ void Util::Log::SetColor( Color color )
 #else /* !WIN32 */
     fputs( COLOR_TABLE[ color ], stdout );
 #endif /* !WIN32 */
-}
-
-void Util::Log::SetLogfileDefault()
-{
-    Mt::MutexLock l( mMutex );
-
-    // set initial log system time
-    SetTime( time( NULL ) );
-
-    tm t;
-    localtime_r( &mTime, &t );
-
-    // open default logfile
-    char filename[ FILENAME_MAX + 1 ];
-    snprintf( filename, FILENAME_MAX + 1, EVEMU_ROOT_DIR"/log/log_%02u-%02u-%04u-%02u-%02u.log",
-              t.tm_mday, t.tm_mon + 1, t.tm_year + 1900, t.tm_hour, t.tm_min );
-
-    if( SetLogfile( filename ) )
-        Success( "Util::Log", "Opened logfile '%s'.", filename );
-    else
-        Warning( "Util::Log", "Unable to open logfile '%s': %s", filename, strerror( errno ) );
 }

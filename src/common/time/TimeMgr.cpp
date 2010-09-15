@@ -25,55 +25,95 @@
 
 #include "CommonPCH.h"
 
-#include "mt/Condition.h"
+#include "mt/ThreadMgr.h"
 #include "time/TimeMgr.h"
-#include "time/Timespec.h"
+#include "util/Log.h"
 
 /*************************************************************************/
-/* Mt::Condition                                                         */
+/* Time::TimeMgr                                                         */
 /*************************************************************************/
-void Mt::Condition::Signal()
+Time::TimeMgr::TimeMgr( size_t period )
+: mRun( true ),
+  mRunTimer( period )
 {
+    // do a single update ourselves
+    Update();
+    // start the update thread
+    sThreadMgr.Run( this );
+}
+
+Std::Tm Time::TimeMgr::nowTm() const
+{
+    Std::Tm t;
+
+    {
+        Mt::MutexLock lock( mMutex );
+        t = mTm;
+    }
+
+    return t;
+}
+
+Time::WinTime Time::TimeMgr::nowWin() const
+{
+    WinTime wt;
+
+    {
+        Mt::MutexLock lock( mMutex );
+
+#   ifdef WIN32
+        wt = mWinTime;
+#   else /* !WIN32 */
+        wt = mTimeval + Timeval::SEC * EPOCH_DIFF_SEC;
+#   endif /* !WIN32 */
+    }
+
+    return wt;
+}
+
+Time::Timeval Time::TimeMgr::nowUnix() const
+{
+    Timeval tv;
+
+    {
+        Mt::MutexLock lock( mMutex );
+
+#   ifdef WIN32
+        tv = mWinTime - WinTime::SEC * EPOCH_DIFF_SEC;
+#   else /* !WIN32 */
+        tv = mTimeval;
+#   endif /* !WIN32 */
+    }
+
+    return tv;
+}
+
+void Time::TimeMgr::Update()
+{
+    Mt::MutexLock lock( mMutex );
+
 #ifdef WIN32
-    BOOL success = mCondition.Signal();
-    assert( TRUE == success );
+    mWinTime = WinTime::now();
+    mTm = Std::Tm::now();
 #else /* !WIN32 */
-    int code = mCondition.Signal();
-    assert( 0 == code );
+    mTimeval = Timeval::now();
+    mTm = mTimeval.sec();
 #endif /* !WIN32 */
 }
 
-void Mt::Condition::Broadcast()
+void Time::TimeMgr::Run()
 {
-#ifdef WIN32
-    BOOL success = mCondition.Broadcast();
-    assert( TRUE == success );
-#else /* !WIN32 */
-    int code = mCondition.Broadcast();
-    assert( 0 == code );
-#endif /* !WIN32 */
-}
+    Mt::MutexLock lock( mMutex );
 
-void Mt::Condition::Wait( Mutex& mutex )
-{
-#ifdef WIN32
-    BOOL success = mCondition.Wait( mutex.mCriticalSection );
-    assert( TRUE == success );
-#else /* !WIN32 */
-    int code = mCondition.Wait( mutex.mMutex );
-    assert( 0 == code );
-#endif /* !WIN32 */
-}
+    mRunTimer.Start();
+    while( mRun )
+    {
+        // update the time stuff
+        Update();
 
-void Mt::Condition::TimedWait( Mutex& mutex, const Time::Msec& timeout )
-{
-#ifdef WIN32
-    BOOL success = mCondition.Wait( mutex.mCriticalSection,
-                                    static_cast< DWORD >( timeout ) );
-    assert( TRUE == success );
-#else /* !WIN32 */
-    Time::Timespec ts = sTimeMgr.nowUnix() + timeout;
-    int code = mCondition.TimedWait( mutex.mMutex, &ts.ts() );
-    assert( 0 == code );
-#endif /* !WIN32 */
+        // wait for the next update time
+        lock.Unlock();
+        mRunTimer.Sleep();
+        lock.Relock();
+    }
 }

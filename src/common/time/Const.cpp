@@ -25,21 +25,23 @@
 
 #include "CommonPCH.h"
 
-#include "time/TimeConst.h"
+#include "time/Const.h"
 
 /*
  * Even though these values might seem oversimplified, do not
- * alter them! Win32Time-related calculations depend on these
+ * alter them! WinTime-related calculations depend on these
  * specific values.
  */
-const size_t NSEC_PER_USEC = 1000;
-const size_t USEC_PER_MSEC = 1000;
-const size_t MSEC_PER_SEC = 1000;
-const size_t SEC_PER_MIN = 60;
-const size_t MIN_PER_HOUR = 60;
-const size_t HOUR_PER_DAY = 24;
-const size_t DAY_PER_MONTH = 30;
-const size_t MONTH_PER_YEAR = 12;
+const size_t Time::NSEC_PER_USEC = 1000;
+const size_t Time::USEC_PER_MSEC = 1000;
+const size_t Time::MSEC_PER_SEC = 1000;
+const size_t Time::SEC_PER_MIN = 60;
+const size_t Time::MIN_PER_HOUR = 60;
+const size_t Time::HOUR_PER_DAY = 24;
+const size_t Time::DAY_PER_MONTH = 30;
+const size_t Time::MONTH_PER_YEAR = 12;
 
-const size_t WIN32TIME_PER_USEC = 10;
-const size_t WIN32TIME_SEC_EPOCH_DIFF = SEC_PER_MIN * MIN_PER_HOUR * HOUR_PER_DAY * 134774;
+const size_t Time::NSEC_PER_WINTIME = 100;
+const size_t Time::WINTIME_PER_USEC = 10;
+
+const size_t Time::EPOCH_DIFF_SEC = Time::SEC_PER_MIN * Time::MIN_PER_HOUR * Time::HOUR_PER_DAY * 134774;

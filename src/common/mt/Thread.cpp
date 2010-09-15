@@ -26,7 +26,7 @@
 #include "CommonPCH.h"
 
 #include "mt/Thread.h"
-#include "time/TimeConst.h"
+#include "time/Const.h"
 
 /*************************************************************************/
 /* Mt::Thread                                                            */
@@ -40,17 +40,14 @@ Mt::Thread Mt::Thread::self()
 #endif /* !WIN32 */
 }
 
-void Mt::Thread::Sleep( size_t milliseconds )
+void Mt::Thread::Sleep( const Time::Msec& period )
 {
-    if( 0 < milliseconds )
-    {
 #ifdef WIN32
-        Win::Thread::Sleep( static_cast< DWORD >( milliseconds ) );
+    Win::Thread::Sleep( static_cast< DWORD >( period.count() ) );
 #else /* !WIN32 */
-        int code = Posix::Thread::Sleep( static_cast< useconds_t >( milliseconds * USEC_PER_MSEC ) );
-        assert( 0 == code );
+    int code = Posix::Thread::Sleep( static_cast< useconds_t >( Time::USEC_PER_MSEC * period.count() ) );
+    assert( 0 == code );
 #endif /* !WIN32 */
-    }
 }
 
 Mt::Thread::Thread()

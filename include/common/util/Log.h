@@ -49,66 +49,70 @@ namespace Util
         /// Destructor, closes the logfile.
         ~Log();
 
+        /// Checks if we have an opened logfile.
+        bool hasLogfile() const { return NULL != mLogfile; }
+
         /**
          * @brief Logs a message to file.
          *
          * @param[in] source is the source from where the message is printed.
-         * @param[in] fmt is the message itself.
+         * @param[in] format is the message itself.
          */
-        void Message( const char* source, const char* fmt, ... );
+        void Message( const char* source, const char* format, ... );
         /**
          * @brief Logs error message to console and file.
          *
          * @param[in] source is the source from where the message is printed.
-         * @param[in] fmt is the error message itself.
+         * @param[in] format is the error message itself.
          */
-        void Error( const char* source, const char* fmt, ... );
+        void Error( const char* source, const char* format, ... );
         /**
          * @brief Logs a warning message to file.
          *
          * @param[in] source is the source from where the message is printed.
-         * @param[in] fmt is the message itself.
+         * @param[in] format is the message itself.
          */
-        void Warning( const char* source, const char* fmt, ... );
+        void Warning( const char* source, const char* format, ... );
         /**
          * @brief Logs a success message to file.
          *
          * @param[in] source is the source from where the message is printed.
-         * @param[in] fmt is the message itself.
+         * @param[in] format is the message itself.
          */
-        void Success( const char* source, const char* fmt, ... );
+        void Success( const char* source, const char* format, ... );
         /**
          * @brief Logs a debug message to file and console.
          *
          * Optimized out on a release build.
          *
          * @param[in] source is the source from where the message is printed.
-         * @param[in] fmt is the message itself.
+         * @param[in] format is the message itself.
          */
-        void Debug( const char* source, const char* fmt, ... );
+        void Debug( const char* source, const char* format, ... );
         /**
          * @brief Print a hex dump with custom message to file and console.
          *
          * @param[in] source is the source from where the message is printed.
-         * @param[in] data is the data to be dumped.
-         * @param[in] len is the length of data.
-         * @param[in] fmt is the custom message.
+         * @param[in] data   is the data to be dumped.
+         * @param[in] length is the length of data.
+         * @param[in] format is the custom message.
          */
-        void Dump( const char* source, const void* data, size_t len, const char* fmt, ... );
+        void Dump( const char* source, const void* data, size_t length,
+                   const char* format, ... );
 
         /**
-         * @brief Sets the logfile to be used.
+         * @brief Opens a logfile.
          *
-         * @param[in] filename A name of file.
+         * @param[in] filename A name of the logfile.
          *
          * @retval true  The new logfile was successfully opened.
          * @retval false Failed to open the new logfile.
          */
-        bool SetLogfile( const char* filename );
+        bool OpenLogfile( const char* filename );
         /**
          * @brief Sets the logfile to be used.
          *
-         * Passed @a file is closed during destruction.
+         * Passed <var>file</var> is closed during destruction.
          *
          * @param[in] file A handle to file.
          *
@@ -116,13 +120,6 @@ namespace Util
          * @retval false Failed to open the new logfile.
          */
         bool SetLogfile( FILE* file );
-
-        /**
-         * @brief Sets the log system time every main loop.
-         *
-         * @param[in] time is the timestamp.
-         */
-        void SetTime( time_t time ) { mTime = time; }
 
     protected:
         /// A convenience color enum.
@@ -142,33 +139,56 @@ namespace Util
         };
 
         /**
-         * @brief Prints a message.
-         *
-         * This prints a generic message.
+         * @brief Prints a hexadecimal dump.
          *
          * @param[in] color  Color of the message.
-         * @param[in] pfx    Single-character prefix/identificator.
+         * @param[in] prefix Single-character prefix/identificator.
          * @param[in] source Origin of message.
-         * @param[in] fmt    The format string.
-         * @param[in] ...    The arguments.
+         * @param[in] data   Data to be dumped.
+         * @param[in] length Length of <var>data</var> (in bytes).
          */
-        void PrintMsg( Color color, char pfx, const char* source, const char* fmt, ... );
+        void PrintDump( Color color, char prefix, const char* source,
+                        const void* data, size_t length );
         /**
-         * @brief Prints a message.
-         *
-         * This prints a generic message.
+         * @brief Prints a line of a hexadecimal dump.
          *
          * @param[in] color  Color of the message.
-         * @param[in] pfx    Single-character prefix/identificator.
+         * @param[in] prefix Single-character prefix/identificator.
          * @param[in] source Origin of message.
-         * @param[in] fmt    The format string.
-         * @param[in] ap     The arguments.
+         * @param[in] data   Data to be dumped.
+         * @param[in] length Length of <var>data</var> (in bytes).
+         * @param[in] offset An offset in <var>data</var> (in bytes).
          */
-        void PrintMsgVa( Color color, char pfx, const char* source, const char* fmt, va_list ap );
+        void PrintDumpLine( Color color, char prefix, const char* source,
+                            const void* data, size_t length, size_t offset );
 
         /**
-         * @brief Prints current time.
+         * @brief Prints a message.
+         *
+         * This prints a generic message.
+         *
+         * @param[in] color  Color of the message.
+         * @param[in] prefix Single-character prefix/identificator.
+         * @param[in] source Origin of message.
+         * @param[in] format The format string.
+         * @param[in] ...    The arguments.
          */
+        void PrintMsg( Color color, char prefix, const char* source,
+                       const char* format, ... );
+        /**
+         * @brief Prints a message.
+         *
+         * This prints a generic message.
+         *
+         * @param[in] color  Color of the message.
+         * @param[in] prefix Single-character prefix/identificator.
+         * @param[in] source Origin of message.
+         * @param[in] format The format string.
+         * @param[in] ap     The arguments.
+         */
+        void PrintMsgVa( Color color, char prefix, const char* source,
+                         const char* format, va_list ap );
+        /// Prints time.
         void PrintTime();
 
         /**
@@ -177,20 +197,20 @@ namespace Util
          * This method only handles printing to all desired
          * destinations (standard output and logfile at the moment).
          *
-         * @param[in] fmt The format string.
-         * @param[in] ... The arguments.
+         * @param[in] format The format string.
+         * @param[in] ...    The arguments.
          */
-        void Print( const char* fmt, ... );
+        void Print( const char* format, ... );
         /**
          * @brief Prints a raw message.
          *
          * This method only handles printing to all desired
          * destinations (standard output and logfile at the moment).
          *
-         * @param[in] fmt The format string.
-         * @param[in] ap  The arguments.
+         * @param[in] format The format string.
+         * @param[in] ap     The arguments.
          */
-        void PrintVa( const char* fmt, va_list ap );
+        void PrintVa( const char* format, va_list ap );
 
         /**
          * @brief Sets the color of the output text.
@@ -198,15 +218,9 @@ namespace Util
          * @param[in] color The new color of output text.
          */
         void SetColor( Color color );
-        /**
-         * @brief Sets the default logfile.
-         */
-        void SetLogfileDefault();
 
         /// The active logfile.
         FILE* mLogfile;
-        /// Current timestamp.
-        time_t mTime; // crap there should be 1 generic easy to understand time manager.
         /// Protection against concurrent log messages
         Mt::Mutex mMutex;
 

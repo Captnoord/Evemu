@@ -95,29 +95,31 @@ ENDIF( NOT WIN32 )
 SET( std_INCLUDE
      "${TARGET_INCLUDE_DIR}/std/Common.h"
      "${TARGET_INCLUDE_DIR}/std/File.h"
+     "${TARGET_INCLUDE_DIR}/std/Tm.h"
      "${TARGET_INCLUDE_DIR}/std/Types.h"
      "${TARGET_INCLUDE_DIR}/std/Utils.h" )
 SET( std_SOURCE
      "${TARGET_SOURCE_DIR}/std/File.cpp"
+     "${TARGET_SOURCE_DIR}/std/Tm.cpp"
      "${TARGET_SOURCE_DIR}/std/Utils.cpp" )
 
 SET( time_INCLUDE
-     "${TARGET_INCLUDE_DIR}/time/TimeCommon.h"
-     "${TARGET_INCLUDE_DIR}/time/TimeConst.h"
-     "${TARGET_INCLUDE_DIR}/time/TimeMsec.h"
+     "${TARGET_INCLUDE_DIR}/time/Common.h"
+     "${TARGET_INCLUDE_DIR}/time/Const.h"
+     "${TARGET_INCLUDE_DIR}/time/Msec.h"
+     "${TARGET_INCLUDE_DIR}/time/TimeMgr.h"
      "${TARGET_INCLUDE_DIR}/time/Timer.h"
-     "${TARGET_INCLUDE_DIR}/time/TimeTimespec.h"
-     "${TARGET_INCLUDE_DIR}/time/TimeTimeval.h"
-     "${TARGET_INCLUDE_DIR}/time/TimeTm.h"
-     "${TARGET_INCLUDE_DIR}/time/TimeWin.h" )
+     "${TARGET_INCLUDE_DIR}/time/Timespec.h"
+     "${TARGET_INCLUDE_DIR}/time/Timeval.h"
+     "${TARGET_INCLUDE_DIR}/time/WinTime.h" )
 SET( time_SOURCE
-     "${TARGET_SOURCE_DIR}/time/TimeConst.cpp"
-     "${TARGET_SOURCE_DIR}/time/TimeMsec.cpp"
+     "${TARGET_SOURCE_DIR}/time/Const.cpp"
+     "${TARGET_SOURCE_DIR}/time/Msec.cpp"
+     "${TARGET_SOURCE_DIR}/time/TimeMgr.cpp"
      "${TARGET_SOURCE_DIR}/time/Timer.cpp"
-     "${TARGET_SOURCE_DIR}/time/TimeTimespec.cpp"
-     "${TARGET_SOURCE_DIR}/time/TimeTimeval.cpp"
-     "${TARGET_SOURCE_DIR}/time/TimeTm.cpp"
-     "${TARGET_SOURCE_DIR}/time/TimeWin.cpp" )
+     "${TARGET_SOURCE_DIR}/time/Timespec.cpp"
+     "${TARGET_SOURCE_DIR}/time/Timeval.cpp"
+     "${TARGET_SOURCE_DIR}/time/WinTime.cpp" )
 
 SET( util_INCLUDE
      "${TARGET_INCLUDE_DIR}/util/Buffer.h"

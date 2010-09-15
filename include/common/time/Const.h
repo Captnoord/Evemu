@@ -23,17 +23,35 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __TIME__TIME_TIMESPEC_H__INCL__
-#define __TIME__TIME_TIMESPEC_H__INCL__
+#ifndef __TIME__CONST_H__INCL__
+#define __TIME__CONST_H__INCL__
 
-#ifndef WIN32
-/**
- * @brief Obtains representation of @a msec in @c timespec.
- *
- * @param[out] ts   Where to store the result.
- * @param[in]  msec Number of milliseconds to convert.
- */
-void SetTimespecByMsec( timespec& t, const size_t& msec );
-#endif /* !WIN32 */
+namespace Time
+{
+    /// Number of nanoseconds in a microsecond.
+    extern const size_t NSEC_PER_USEC;
+    /// Number of microseconds in a millisecond.
+    extern const size_t USEC_PER_MSEC;
+    /// Number of milliseconds in a second.
+    extern const size_t MSEC_PER_SEC;
+    /// Number of seconds in a minute.
+    extern const size_t SEC_PER_MIN;
+    /// Number of minutes in an hour.
+    extern const size_t MIN_PER_HOUR;
+    /// Number of hours in a day.
+    extern const size_t HOUR_PER_DAY;
+    /// Number of days in a month.
+    extern const size_t DAY_PER_MONTH;
+    /// Number of months in a year.
+    extern const size_t MONTH_PER_YEAR;
 
-#endif /* !__TIME__TIME_TIMESPEC_H__INCL__ */
+    /// Number of nanoseconds in a WinTime-unit.
+    extern const size_t NSEC_PER_WINTIME;
+    /// Number of WinTime-units in a microsecond.
+    extern const size_t WINTIME_PER_USEC;
+
+    /// Number of seconds between Unix Epoch (January 1, 1970) and Windows Epoch (January 1, 1601).
+    extern const size_t EPOCH_DIFF_SEC;
+}
+
+#endif /* !__TIME__CONST_H__INCL__ */

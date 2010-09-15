@@ -27,6 +27,7 @@
 #define __MT__THREAD_H__INCL__
 
 #include "mt/Target.h"
+#include "time/Msec.h"
 
 #ifdef WIN32
 #   include "win/Thread.h"
@@ -54,9 +55,9 @@ namespace Mt
         /**
          * @brief Makes the calling thread sleep.
          *
-         * @param[in] milliseconds Amount of milliseconds to sleep.
+         * @param[in] period How long to sleep.
          */
-        static void Sleep( size_t milliseconds );
+        static void Sleep( const Time::Msec& period );
 
         /**
          * @brief A default constructor.

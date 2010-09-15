@@ -27,6 +27,7 @@
 #define __MT__CONDITION_H__INCL__
 
 #include "mt/Mutex.h"
+#include "time/Msec.h"
 
 #ifdef WIN32
 #   include "win/Condition.h"
@@ -59,9 +60,9 @@ namespace Mt
          * @brief Waits on the condition variable with a timeout.
          *
          * @param[in] mutex   The mutex this condition is bound to.
-         * @param[in] timeout The timeout (in milliseconds).
+         * @param[in] timeout The timeout.
          */
-        void TimedWait( Mutex& mutex, size_t timeout );
+        void TimedWait( Mutex& mutex, const Time::Msec& timeout );
 
     protected:
 #   ifdef WIN32

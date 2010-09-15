@@ -34,16 +34,11 @@
 Mt::ThreadMgr::ThreadMgr( size_t limit )
 : mLimit( limit )
 {
-    sLog.Debug( "Mt::ThreadMgr", "Thread manager started" );
 }
 
 Mt::ThreadMgr::~ThreadMgr()
 {
-    sLog.Debug( "Mt::ThreadMgr", "Thread manager shutting down" );
-
     Stop();
-
-    sLog.Debug( "Mt::ThreadMgr", "Thread manager shut down" );
 }
 
 void Mt::ThreadMgr::Run( Mt::TargetEx* target )

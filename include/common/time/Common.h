@@ -20,30 +20,21 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:     Bloody.Rabbit
+    Author:     Aim, Captnoord, Zhur, Bloody.Rabbit
 */
 
-#include "CommonPCH.h"
+#ifndef __TIME__COMMON_H__INCL__
+#define __TIME__COMMON_H__INCL__
 
-#include "time/TimeConst.h"
-#include "time/TimeTimeval.h"
-#include "time/TimeWin.h"
+/**
+ * @namespace Time
+ * @brief Classes dealing with time.
+ */
 
-void SetTimevalByNow( timeval& tv )
-{
 #ifdef WIN32
-    Win32Time t;
-    SetWin32TimeByNow( t );
-
-    SetTimevalByWin32Time( tv, t );
+#   include "win/Common.h"
 #else /* !WIN32 */
-    int code = ::gettimeofday( &tv, NULL );
-    assert( 0 == code );
+#   include "posix/Common.h"
 #endif /* !WIN32 */
-}
 
-void SetTimevalByWin32Time( timeval& tv, const Win32Time& t )
-{
-    tv.tv_sec = t / ( WIN32TIME_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC );
-    tv.tv_usec = ( t % ( WIN32TIME_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC ) ) / WIN32TIME_PER_USEC;
-}
+#endif /* !__TIME__COMMON_H__INCL__ */

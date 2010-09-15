@@ -26,37 +26,47 @@
 #include "CommonPCH.h"
 
 #include "mt/Thread.h"
-#include "time/TimeMsec.h"
+#include "time/Msec.h"
+#include "time/TimeMgr.h"
 #include "time/Timer.h"
 
 /*************************************************************************/
-/* Timer                                                                 */
+/* Time::Timer                                                           */
 /*************************************************************************/
-Timer::Timer( size_t period, bool accurate )
-: mEnd( 0 ),
+Time::Timer::Timer( size_t period, bool accurate )
+: mTimeout( 0 ),
   mPeriod( period ),
   mAccurate( accurate )
 {
 }
 
-Timer::~Timer()
+Time::Timer::~Timer()
 {
 }
 
-void Timer::Start()
+void Time::Timer::Start()
 {
-    if( !accurate() || 0 == mEnd )
-        SetMsecByNow( mEnd );
+    if( !accurate() || mTimeout == 0 )
+    {
+#   ifdef WIN32
+        mTimeout = sTimeMgr.nowWin();
+#   else /* !WIN32 */
+        mTimeout = sTimeMgr.nowUnix();
+#   endif /* !WIN32 */
+    }
 
-    mEnd += period();
+    mTimeout += period();
 }
 
-bool Timer::Check( bool restart )
+bool Time::Timer::Check( bool restart )
 {
-    size_t msec;
-    SetMsecByNow( msec );
+#ifdef WIN32
+    Msec msec = sTimeMgr.nowWin();
+#else /* !WIN32 */
+    Msec msec = sTimeMgr.nowUnix();
+#endif /* !WIN32 */
 
-    if( mEnd <= msec )
+    if( mTimeout <= msec )
     {
         if( restart )
             Start();
@@ -67,13 +77,16 @@ bool Timer::Check( bool restart )
         return false;
 }
 
-void Timer::Sleep( bool restart )
+void Time::Timer::Sleep( bool restart )
 {
-    size_t msec;
-    SetMsecByNow( msec );
+#ifdef WIN32
+    Msec msec = sTimeMgr.nowWin();
+#else /* !WIN32 */
+    Msec msec = sTimeMgr.nowUnix();
+#endif /* !WIN32 */
 
-    if( msec < mEnd )
-        Mt::Thread::Sleep( mEnd - msec );
+    if( msec < mTimeout )
+        Mt::Thread::Sleep( mTimeout - msec );
 
     if( restart )
         Start();

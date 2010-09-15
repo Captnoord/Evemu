@@ -23,30 +23,37 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __TIME__TIME_MSEC_H__INCL__
-#define __TIME__TIME_MSEC_H__INCL__
+#include "CommonPCH.h"
 
-#include "time/TimeWin.h"
+#include "std/Tm.h"
 
-/**
- * @brief Obtains representation of "now" in milliseconds.
- *
- * @param[out] msec Where to store the result.
- */
-void SetMsecByNow( size_t& msec );
-/**
- * @brief Obtains representation of @a tv in milliseconds.
- *
- * @param[out] msec Where to store the result.
- * @param[in]  tv   The @c timeval to convert.
- */
-void SetMsecByTimeval( size_t& msec, const timeval& tv );
-/**
- * @brief Obtains representation of @a t in milliseconds.
- *
- * @param[out] msec Where to store the result.
- * @param[in]  t    The Win32Time to convert.
- */
-void SetMsecByWin32Time( size_t& msec, const Win32Time& t );
+/*************************************************************************/
+/* Std::Tm                                                               */
+/*************************************************************************/
+Std::Tm Std::Tm::now()
+{
+    const time_t t = ::time( NULL );
+    assert( -1 != t );
 
-#endif /* !__TIME__TIME_MSEC_H__INCL__ */
+    return Tm( t );
+}
+
+Std::Tm::Tm()
+{
+}
+
+Std::Tm::Tm( const tm& t )
+: mTm( t )
+{
+}
+
+Std::Tm::Tm( time_t t )
+{
+    const tm* result = ::localtime_r( &t, &mTm );
+    assert( &mTm == result );
+}
+
+Std::Tm::Tm( const Tm& oth )
+: mTm( oth.t() )
+{
+}
