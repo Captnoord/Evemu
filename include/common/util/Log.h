@@ -29,6 +29,10 @@
 #include "mt/Mutex.h"
 #include "util/Singleton.h"
 
+#ifdef WIN32
+#   include "win/ConsoleScreenBuffer.h"
+#endif /* WIN32 */
+
 namespace Util
 {
     /**
@@ -225,10 +229,8 @@ namespace Util
         Mt::Mutex mMutex;
 
 #   ifdef WIN32
-        /// Handle to standard output stream.
-        const HANDLE mStdOutHandle;
-        /// Handle to standard error stream.
-        const HANDLE mStdErrHandle;
+        /// A handle to the output screen buffer.
+        Win::ConsoleScreenBuffer mOutputScreen;
 
         /// Color translation table.
         static const WORD COLOR_TABLE[ COLOR_COUNT ];

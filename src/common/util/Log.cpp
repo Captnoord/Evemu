@@ -63,8 +63,7 @@ const char* const Util::Log::COLOR_TABLE[ COLOR_COUNT ] =
 Util::Log::Log()
 #ifdef WIN32
 : mLogfile( NULL ),
-  mStdOutHandle( GetStdHandle( STD_OUTPUT_HANDLE ) ),
-  mStdErrHandle( GetStdHandle( STD_ERROR_HANDLE ) )
+  mOutputScreen( Win::ConsoleScreenBuffer::DEFAULT_OUTPUT_SCREEN )
 #else /* !WIN32 */
 : mLogfile( NULL )
 #endif /* !WIN32 */
@@ -313,7 +312,8 @@ void Util::Log::SetColor( Color color )
     Mt::MutexLock l( mMutex );
 
 #ifdef WIN32
-    SetConsoleTextAttribute( mStdOutHandle, COLOR_TABLE[ color ] );
+    BOOL success = mOutputScreen.SetTextAttributes( COLOR_TABLE[ color ] );
+    assert( TRUE == success );
 #else /* !WIN32 */
     fputs( COLOR_TABLE[ color ], stdout );
 #endif /* !WIN32 */
