@@ -11,6 +11,10 @@ SET( TARGET_NAME        "test-common" )
 SET( TARGET_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/test/${TARGET_NAME}" )
 SET( TARGET_SOURCE_DIR  "${PROJECT_SOURCE_DIR}/test/${TARGET_NAME}" )
 
+SET( EVEMU_TEST_COMMON_XML
+     CACHE PATH "XML output file of test-common (none if empty)." )
+MARK_AS_ADVANCED( EVEMU_TEST_COMMON_XML )
+
 #########
 # Files #
 #########
@@ -35,14 +39,14 @@ SOURCE_GROUP( "src"     FILES ${SOURCE} )
 ADD_EXECUTABLE( "${TARGET_NAME}"
                 ${INCLUDE} ${SOURCE} )
 ADD_TEST( NAME "${TARGET_NAME}"
-          COMMAND "${TARGET_NAME}" )
+          COMMAND "${TARGET_NAME}" "${EVEMU_TEST_COMMON_XML}" )
+
 TARGET_BUILD_PCH( "${TARGET_NAME}"
                   "TestCommonPCH.h"
                   "TestCommon.cpp" )
 TARGET_LINK_LIBRARIES( "${TARGET_NAME}"
                        "common"
-                       ${CPPUNIT_LIBRARIES}
-                       ${PROJECT_STANDARD_LIBRARIES} )
+                       ${CPPUNIT_LIBRARIES} )
 
 ######################
 # Export directories #

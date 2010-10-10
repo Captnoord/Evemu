@@ -11,6 +11,10 @@ SET( TARGET_NAME        "common" )
 SET( TARGET_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include/${TARGET_NAME}" )
 SET( TARGET_SOURCE_DIR  "${PROJECT_SOURCE_DIR}/src/${TARGET_NAME}" )
 
+FIND_PACKAGE( "Threads" REQUIRED )
+FIND_PACKAGE( "MySQL" 5.0 REQUIRED )
+FIND_PACKAGE( "ZLIB" REQUIRED )
+
 #########
 # Files #
 #########
@@ -226,6 +230,15 @@ ADD_LIBRARY( "${TARGET_NAME}"
 TARGET_BUILD_PCH( "${TARGET_NAME}"
                   "CommonPCH.h"
                   "Common.cpp" )
+TARGET_LINK_LIBRARIES( "${TARGET_NAME}"
+                       ${GANGSTA_LIBRARIES} ${MYSQL_LIBRARIES}
+                       ${TINYXML_LIBRARIES} ${ZLIB_LIBRARIES}
+                       ${CMAKE_THREAD_LIBS_INIT} )
+
+IF( WIN32 )
+    TARGET_LINK_LIBRARIES( "${TARGET_NAME}"
+                           "wsock32" )
+ENDIF( WIN32 )
 
 ######################
 # Export directories #

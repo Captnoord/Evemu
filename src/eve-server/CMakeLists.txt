@@ -427,11 +427,7 @@ TARGET_BUILD_PCH( "${TARGET_NAME}"
                   "EVEServerPCH.h"
                   "main.cpp" )
 TARGET_LINK_LIBRARIES( "${TARGET_NAME}"
-                       "eve-common" "common"
-                       "utils"
-                       ${GANGSTA_LIBRARIES} ${TINYXML_LIBRARIES}
-                       ${MYSQL_LIBRARIES} ${ZLIB_LIBRARIES}
-                       ${PROJECT_STANDARD_LIBRARIES} )
+                       "eve-common" )
 
 INSTALL( TARGETS "${TARGET_NAME}"
          RUNTIME DESTINATION "bin" )

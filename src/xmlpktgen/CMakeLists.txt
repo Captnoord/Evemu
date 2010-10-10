@@ -55,9 +55,7 @@ TARGET_BUILD_PCH( "${TARGET_NAME}"
                   "XMLPktGenPCH.h"
                   "main.cpp" )
 TARGET_LINK_LIBRARIES( "${TARGET_NAME}"
-                       "common"
-                       ${TINYXML_LIBRARIES}
-                       ${PROJECT_STANDARD_LIBRARIES} )
+                       "common" )
 
 ######################
 # Export directories #

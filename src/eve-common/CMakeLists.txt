@@ -215,6 +215,8 @@ ADD_LIBRARY( "${TARGET_NAME}"
 TARGET_BUILD_PCH( "${TARGET_NAME}"
                   "EVECommonPCH.h"
                   "utils/EVEUtils.cpp" )
+TARGET_LINK_LIBRARIES( "${TARGET_NAME}"
+                       "common" "utils" )
 
 ######################
 # Export directories #
