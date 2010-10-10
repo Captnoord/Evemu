@@ -27,7 +27,7 @@
 #define __NET__STREAM_SOCKET_H__INCL__
 
 #include "net/Socket.h"
-#include "utils/Buffer.h"
+#include "util/Buffer.h"
 
 namespace Net
 {
@@ -98,7 +98,7 @@ namespace Net
          *
          * @return An error code (< 0) or number of received bytes (>= 0).
          */
-        int Receive( Buffer& into, int flags = 0 )
+        int Receive( Util::Buffer& into, int flags = 0 )
         {
             int res = ::recv( _Base::mSocket, &into[0], into.size(), flags );
             if( 0 > res )
@@ -114,7 +114,7 @@ namespace Net
          *
          * @return An error code (< 0) or number of sent bytes (>= 0).
          */
-        int Send( const Buffer& data, int flags = 0 )
+        int Send( const Util::Buffer& data, int flags = 0 )
         {
             int res = ::send( _Base::mSocket, &data[0], data.size(), flags );
             if( 0 > res )

@@ -9,8 +9,8 @@
 ##############
 SET( TARGET_NAME        "eve-server" )
 SET( TARGET_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include/${TARGET_NAME}" )
+SET( TARGET_CONTRIB_DIR "${PROJECT_SOURCE_DIR}/contrib" )
 SET( TARGET_SOURCE_DIR  "${PROJECT_SOURCE_DIR}/src/${TARGET_NAME}" )
-SET( TARGET_UTILS_DIR   "${PROJECT_SOURCE_DIR}/utils" )
 
 #########
 # Files #
@@ -435,7 +435,7 @@ TARGET_LINK_LIBRARIES( "${TARGET_NAME}"
 
 INSTALL( TARGETS "${TARGET_NAME}"
          RUNTIME DESTINATION "bin" )
-INSTALL( FILES "${TARGET_UTILS_DIR}/eve-server.xml"
+INSTALL( FILES "${TARGET_CONTRIB_DIR}/eve-server.xml"
          DESTINATION "etc" )
 
 ######################
