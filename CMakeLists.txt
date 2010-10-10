@@ -12,7 +12,7 @@ CMAKE_MINIMUM_REQUIRED( VERSION 2.6 FATAL_ERROR )
 PROJECT( "evemu" )
 SET( PROJECT_DESCRIPTION_SUMMARY "A server emulator for EVE Online" )
 SET( PROJECT_VENDOR              "The EVEmu development team" )
-SET( PROJECT_VERSION             "0.7-trunk" )
+SET( PROJECT_VERSION             "0.7-common-rewrite" )
 
 SET( CMAKE_MODULE_PATH
      "${PROJECT_SOURCE_DIR}/cmake"
@@ -32,6 +32,8 @@ SET( EVEMU_DOC_ENABLE       OFF
      CACHE BOOL   "Generate HTML documentation (requires Doxygen)." )
 SET( EVEMU_SOURCE_SCM       ""
      CACHE STRING "Source SCM in use; valid values: '', 'svn', 'git'" )
+SET( EVEMU_TEST_ENABLE      OFF
+     CACHE BOOL   "Build tests." )
 SET( EVEMU_TOOL_ENABLE      OFF
      CACHE BOOL   "Build eve-tool." )
 
@@ -43,18 +45,18 @@ SET( TINYXML_USE_STL ON
      CACHE BOOL "tinyxml will use native STL." )
 MARK_AS_ADVANCED( TINYXML_USE_STL )
 
-#########
-# Tests #
-#########
+##################
+# Platform tests #
+##################
 TEST_X64( X64 )
 
 CHECK_SYMBOL_EXISTS( "__FreeBSD__" "" FREE_BSD )
 
 SET( GNUC ${CMAKE_COMPILER_IS_GNUCXX} )
 
-################
-# Dependencies #
-################
+######################
+# Build dependencies #
+######################
 FIND_PACKAGE( "Threads" REQUIRED )
 FIND_PACKAGE( "MySQL" 5.0 REQUIRED )
 FIND_PACKAGE( "ZLIB" REQUIRED )
@@ -71,15 +73,20 @@ IF( NOT EVEMU_SOURCE_REVISION )
     ENDIF( EVEMU_SOURCE_SCM STREQUAL "svn" )
 ENDIF( NOT EVEMU_SOURCE_REVISION )
 
+IF( EVEMU_TEST_ENABLE )
+    FIND_PACKAGE( "CppUnit" REQUIRED )
+ENDIF( EVEMU_TEST_ENABLE )
+
 FIND_PACKAGE( "Gangsta" QUIET )
 FIND_PACKAGE( "TinyXML" QUIET )
 FIND_PACKAGE( "UTF8CPP" QUIET )
 
-#################
-# Configuration #
-#################
+#######################
+# Build configuration #
+#######################
 IF( WIN32 )
-    SET( PROJECT_STANDARD_LIBRARIES "wsock32" ${CMAKE_THREAD_LIBS_INIT} )
+    SET( PROJECT_STANDARD_LIBRARIES ${CMAKE_THREAD_LIBS_INIT}
+                                    "wsock32" )
 ELSE( WIN32 )
     SET( PROJECT_STANDARD_LIBRARIES ${CMAKE_THREAD_LIBS_INIT} )
 ENDIF( WIN32 )
@@ -212,6 +219,15 @@ IF( NOT CMAKE_CROSSCOMPILING )
                 FILE "${EVEMU_TARGETS_EXPORT}" )
     ENDIF( EVEMU_TARGETS_EXPORT )
 ENDIF( NOT CMAKE_CROSSCOMPILING )
+
+###############
+# EVEmu tests #
+###############
+IF( EVEMU_TEST_ENABLE )
+    ENABLE_TESTING()
+
+    ADD_SUBDIRECTORY( "test/test-common" )
+ENDIF( EVEMU_TEST_ENABLE )
 
 ###############
 # CPack setup #
