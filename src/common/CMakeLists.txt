@@ -63,15 +63,15 @@ SET( net_INCLUDE
      "${TARGET_INCLUDE_DIR}/net/Socket.h"
      "${TARGET_INCLUDE_DIR}/net/StreamPacketizer.h"
      "${TARGET_INCLUDE_DIR}/net/StreamSocket.h"
-     "${TARGET_INCLUDE_DIR}/net/TcpConnection.h"
-     "${TARGET_INCLUDE_DIR}/net/TcpServer.h"
+#     "${TARGET_INCLUDE_DIR}/net/TcpConnection.h"
+#     "${TARGET_INCLUDE_DIR}/net/TcpServer.h"
      "${TARGET_INCLUDE_DIR}/net/Utils.h" )
 SET( net_SOURCE
      "${TARGET_SOURCE_DIR}/net/Ip4.cpp"
      "${TARGET_SOURCE_DIR}/net/Ip6.cpp"
      "${TARGET_SOURCE_DIR}/net/StreamPacketizer.cpp"
-     "${TARGET_SOURCE_DIR}/net/TcpConnection.cpp"
-     "${TARGET_SOURCE_DIR}/net/TcpServer.cpp"
+#     "${TARGET_SOURCE_DIR}/net/TcpConnection.cpp"
+#     "${TARGET_SOURCE_DIR}/net/TcpServer.cpp"
      "${TARGET_SOURCE_DIR}/net/Utils.cpp" )
 
 IF( NOT WIN32 )
