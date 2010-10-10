@@ -29,7 +29,18 @@
 /*
  * Static includes specific to test-common.
  */
+
+/*************************************************************************/
+/* dep includes                                                          */
+/*************************************************************************/
+#include <cppunit/TestCase.h>
 #include <cppunit/TextTestRunner.h>
 #include <cppunit/XmlOutputter.h>
+
+/*************************************************************************/
+/* common includes                                                       */
+/*************************************************************************/
+#include "net/Ip4.h"
+#include "net/StreamSocket.h"
 
 #endif /* !__TEST_COMMON_H__INCL__ */

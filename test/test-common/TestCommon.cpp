@@ -25,6 +25,8 @@
 
 #include "TestCommonPCH.h"
 
+#include "StreamSocketTest.h"
+
 /**
  * @brief Runs all tests.
  *
@@ -38,6 +40,8 @@ bool RunTests( CppUnit::OStream* xmlFile = NULL )
     CppUnit::TextTestRunner runner;
     if( NULL != xmlFile )
         runner.setOutputter( new CppUnit::XmlOutputter( &runner.result(), *xmlFile ) );
+
+    runner.addTest( new StreamSocketTest< Net::Ip4 > );
 
     return runner.run();
 }

@@ -15,6 +15,7 @@ SET( TARGET_SOURCE_DIR  "${PROJECT_SOURCE_DIR}/test/${TARGET_NAME}" )
 # Files #
 #########
 SET( INCLUDE
+     "${TARGET_INCLUDE_DIR}/StreamSocketTest.h"
      "${TARGET_INCLUDE_DIR}/TestCommon.h"
      "${TARGET_INCLUDE_DIR}/TestCommonPCH.h" )
 SET( SOURCE
