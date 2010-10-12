@@ -41,7 +41,7 @@ namespace Zlib
      * @retval true  Data is deflated.
      * @retval false Data is not deflated.
      */
-    bool IsDeflated( const Util::Buffer& data );
+    bool IsDeflated( const Util::Data& data );
 
     /**
      * @brief Deflates given data.
@@ -61,7 +61,7 @@ namespace Zlib
      * @retval true  Deflation ran successfully.
      * @retval false Error occurred during deflation.
      */
-    bool DeflateData( const Util::Buffer& input, Util::Buffer& output );
+    bool DeflateData( const Util::Data& input, Util::Buffer& output );
 
     /**
      * @brief Inflates given data.
@@ -98,7 +98,7 @@ namespace Zlib
      * @retval true  Inflation ran successfully.
      * @retval false Failed to inflate data.
      */
-    bool InflateData( const Util::Buffer& input, Util::Buffer& output );
+    bool InflateData( const Util::Data& input, Util::Buffer& output );
 }
 
 #endif /* !__ZLIB__UTILS_H__INCL__ */

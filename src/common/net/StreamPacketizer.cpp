@@ -35,14 +35,14 @@ Net::StreamPacketizer::~StreamPacketizer()
     ClearBuffers();
 }
 
-void Net::StreamPacketizer::InputData( const Util::Buffer& data )
+void Net::StreamPacketizer::InputData( const Util::Data& data )
 {
-    mBuffer.AppendSeq( data.begin< uint8 >(), data.end< uint8 >() );
+    mBuffer.Append( data.begin< uint8 >(), data.end< uint8 >() );
 }
 
 void Net::StreamPacketizer::Process()
 {
-    Util::Buffer::const_iterator< uint8 > cur, end;
+    Util::Buffer::ConstIterator< uint8 > cur, end;
     cur = mBuffer.begin< uint8 >();
     end = mBuffer.end< uint8 >();
     while( true )
@@ -50,8 +50,8 @@ void Net::StreamPacketizer::Process()
         if( sizeof( uint32 ) > ( end - cur ) )
             break;
 
-        const Util::Buffer::const_iterator< uint32 > len = cur.As< uint32 >();
-        const Util::Buffer::const_iterator< uint8 > start = ( len + 1 ).As< uint8 >();
+        const Util::Buffer::ConstIterator< uint32 > len = cur.as< uint32 >();
+        const Util::Buffer::ConstIterator< uint8 > start = ( len + 1 ).as< uint8 >();
 
         if( *len > (uint32)( end - start ) )
             break;
@@ -61,7 +61,7 @@ void Net::StreamPacketizer::Process()
     }
 
     if( cur != mBuffer.begin< uint8 >() )
-        mBuffer.AssignSeq( cur, end );
+        mBuffer.Assign( cur, end );
 }
 
 Util::Buffer* Net::StreamPacketizer::PopPacket()

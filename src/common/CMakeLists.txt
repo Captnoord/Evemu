@@ -128,6 +128,7 @@ SET( time_SOURCE
 SET( util_INCLUDE
      "${TARGET_INCLUDE_DIR}/util/Buffer.h"
      "${TARGET_INCLUDE_DIR}/util/Crc32.h"
+     "${TARGET_INCLUDE_DIR}/util/Data.h"
      "${TARGET_INCLUDE_DIR}/util/Lock.h"
      "${TARGET_INCLUDE_DIR}/util/Log.h"
      "${TARGET_INCLUDE_DIR}/util/Misc.h"

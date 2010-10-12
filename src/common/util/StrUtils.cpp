@@ -209,7 +209,7 @@ void Util::MakeLowerString( const char* source, char* target )
     *target = 0;
 }
 
-bool Util::PyDecodeEscape( const char* str, Buffer& into )
+bool Util::PyDecodeEscape( const char* str, Util::Buffer& into )
 {
     const size_t len = strlen( str );
     const char* const end = str + len;

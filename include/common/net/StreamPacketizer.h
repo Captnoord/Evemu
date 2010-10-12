@@ -38,16 +38,22 @@ namespace Net
     class StreamPacketizer
     {
     public:
-        /// A destructor.
+        /**
+         * @brief A destructor.
+         *
+         * Performs cleanup by calling ClearBuffers.
+         */
         ~StreamPacketizer();
 
         /**
          * @brief Inputs new data.
          *
-         * @param[in] data A buffer with new data.
+         * @param[in] data The data.
          */
-        void InputData( const Util::Buffer& data );
-        /// Processes data into packets.
+        void InputData( const Util::Data& data );
+        /**
+         * @brief Processes input data into packets.
+         */
         void Process();
 
         /**
@@ -57,7 +63,9 @@ namespace Net
          */
         Util::Buffer* PopPacket();
 
-        /// Clears all buffers.
+        /**
+         * @brief Deletes all remaining packets.
+         */
         void ClearBuffers();
 
     protected:

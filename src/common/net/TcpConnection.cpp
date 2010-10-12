@@ -367,7 +367,7 @@ bool Net::TcpConnection::SendData( char* errbuf )
         else if( (size_t)status < buf->size() )
         {
             if( status > 0 )
-                buf->AssignSeq( buf->begin< uint8 >() + status, buf->end< uint8 >() );
+                buf->Assign( buf->begin< uint8 >() + status, buf->end< uint8 >() );
 
             Mt::MutexLock queueLock( mMSendQueue );
 

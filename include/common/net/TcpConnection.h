@@ -108,7 +108,8 @@ namespace Net
         /**
          * @brief Enqueues data to be sent.
          *
-         * @param[in] data Buffer with data; pointer is invalidated by the function.
+         * @param[in] data A buffer with data; the pointer
+         *                 is invalidated by the function.
          *
          * @retval true  Data successfully enqueued.
          * @retval false Failed to enqueue data.
