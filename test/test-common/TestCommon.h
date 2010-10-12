@@ -45,6 +45,7 @@
 #include "net/Ip4.h"
 #include "net/StreamSocket.h"
 
+#include "util/Buffer.h"
 #include "util/Data.h"
 
 #endif /* !__TEST_COMMON_H__INCL__ */

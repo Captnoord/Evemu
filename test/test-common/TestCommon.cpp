@@ -25,6 +25,7 @@
 
 #include "TestCommonPCH.h"
 
+#include "BufferTest.h"
 #include "DataTest.h"
 #include "StreamSocketTest.h"
 
@@ -42,6 +43,7 @@ bool RunTests( CppUnit::OStream* xmlFile = NULL )
     if( NULL != xmlFile )
         runner.setOutputter( new CppUnit::XmlOutputter( &runner.result(), *xmlFile ) );
 
+    runner.addTest( BufferTest::suite() );
     runner.addTest( DataTest::suite() );
 
     runner.addTest( new StreamSocketTest< Net::Ip4 > );
