@@ -19,10 +19,12 @@ MARK_AS_ADVANCED( EVEMU_TEST_COMMON_XML )
 # Files #
 #########
 SET( INCLUDE
+     "${TARGET_INCLUDE_DIR}/DataTest.h"
      "${TARGET_INCLUDE_DIR}/StreamSocketTest.h"
      "${TARGET_INCLUDE_DIR}/TestCommon.h"
      "${TARGET_INCLUDE_DIR}/TestCommonPCH.h" )
 SET( SOURCE
+     "${TARGET_SOURCE_DIR}/DataTest.cpp"
      "${TARGET_SOURCE_DIR}/TestCommon.cpp" )
 
 ########################

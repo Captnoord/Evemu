@@ -254,7 +254,8 @@ namespace Util
                 // make sure we have identical data sources
                 assert( oth.mData == mData );
                 // return difference in element offset
-                return ( mIndex - oth.mIndex ) / sizeof( value_type );
+                return static_cast< difference_type >( mIndex - oth.mIndex )
+                     / static_cast< difference_type >( sizeof( value_type ) );
             }
 
             /**
@@ -382,7 +383,7 @@ namespace Util
              * @return The new Iterator.
              */
             template< typename T2 >
-            Iterator< T2 > as() const { return Iterator< T2 >( Base::mData, Base::mIndex ); }
+            Iterator< T2 > as() const { return Iterator< T2 >( const_cast< Data* >( Base::mData ), Base::mIndex ); }
 
             /**
              * @brief A dereference operator.
@@ -508,8 +509,8 @@ namespace Util
          * @param[in] val The content.
          */
         template< typename T >
-        Data( const T& val )
-        : mData( &val ),
+        Data( T& val )
+        : mData( reinterpret_cast< uint8* >( &val ) ),
           mSize( sizeof( T ) )
         {
         }

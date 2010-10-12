@@ -88,8 +88,8 @@ public:
                               acceptedClient.Receive( buf ) );
 
         // Compare the data
-        CPPUNIT_ASSERT_EQUAL( true, std::equal( MESSAGE, MESSAGE + sizeof( MESSAGE ),
-                                                buf.begin< char >() ) );
+        CPPUNIT_ASSERT( std::equal( MESSAGE, MESSAGE + sizeof( MESSAGE ),
+                                    buf.begin< char >() ) );
 
         // Close the sockets.
         CPPUNIT_ASSERT_EQUAL( 0, acceptedClient.Close() );

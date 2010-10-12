@@ -34,6 +34,8 @@
 /* dep includes                                                          */
 /*************************************************************************/
 #include <cppunit/TestCase.h>
+#include <cppunit/TestCaller.h>
+#include <cppunit/TestSuite.h>
 #include <cppunit/TextTestRunner.h>
 #include <cppunit/XmlOutputter.h>
 
@@ -42,5 +44,7 @@
 /*************************************************************************/
 #include "net/Ip4.h"
 #include "net/StreamSocket.h"
+
+#include "util/Data.h"
 
 #endif /* !__TEST_COMMON_H__INCL__ */
