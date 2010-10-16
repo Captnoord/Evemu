@@ -26,7 +26,8 @@
 #ifndef __XML__PARSER_EX_H__INCL__
 #define __XML__PARSER_EX_H__INCL__
 
-#include "utils/str2conv.h"
+#include "util/Log.h"
+#include "util/StrConv.h"
 #include "xml/Parser.h"
 
 namespace Xml
@@ -174,7 +175,7 @@ namespace Xml
             }
 
             // parse the text
-            mValue = str2< Value >( contents->Value() );
+            mValue = Util::strTo< Value >( contents->Value() );
 
             // return
             return true;

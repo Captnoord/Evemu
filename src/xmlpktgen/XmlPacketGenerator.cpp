@@ -23,14 +23,14 @@
     Author:     Zhur
 */
 
-#include "XMLPktGenPCH.h"
+#include "XmlPktGenPCH.h"
 
-#include "XMLPacketGen.h"
+#include "XmlPacketGenerator.h"
 
 /************************************************************************/
-/* XMLPacketGen                                                         */
+/* XmlPacketGenerator                                                   */
 /************************************************************************/
-const char* const XMLPacketGen::smGenFileComment =
+const char* const XmlPacketGenerator::FILE_COMMENT =
 "/*  EVEmu: EVE Online Server Emulator\n"
 "  \n"
 "  **************************************************************\n"
@@ -56,29 +56,46 @@ const char* const XMLPacketGen::smGenFileComment =
 "  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA\n"
 "*/";
 
-XMLPacketGen::XMLPacketGen( const char* header, const char* source )
+std::string XmlPacketGenerator::FNameToDef( const char* buf )
+{
+    std::string res;
+    res += "__";
+
+    for(; '\0' != *buf; ++buf )
+    {
+        if( !Util::IsPrintable( *buf ) || *buf == '/' || *buf == '\\' || *buf == ':' || *buf == '.' || *buf == '-' )
+            res += '_';
+        else
+            res += (char)toupper( *buf );
+    }
+
+    res += "__";
+    return res;
+}
+
+XmlPacketGenerator::XmlPacketGenerator( const char* header, const char* source )
 : mHeaderFile( NULL ),
   mHeaderFileName( header ),
   mSourceFile( NULL ),
   mSourceFileName( source )
 {
-    AddMemberParser( "elements",   &XMLPacketGen::ParseElements );
-    AddMemberParser( "include",    &XMLPacketGen::ParseInclude );
-    AddMemberParser( "elementDef", &XMLPacketGen::ParseElementDef );
+    AddMemberParser( "elements",   &XmlPacketGenerator::ParseElements );
+    AddMemberParser( "include",    &XmlPacketGenerator::ParseInclude );
+    AddMemberParser( "elementDef", &XmlPacketGenerator::ParseElementDef );
 }
 
-XMLPacketGen::~XMLPacketGen()
+XmlPacketGenerator::~XmlPacketGenerator()
 {
     // Close the files
     SetHeaderFile( "" );
     SetSourceFile( "" );
 }
 
-bool XMLPacketGen::ParseElements( const TiXmlElement* field )
+bool XmlPacketGenerator::ParseElements( const TiXmlElement* field )
 {
     if( !OpenFiles() )
     {
-        sLog.Error( "XMLPacketGen", "Unable to open output files: %s.", strerror( errno ) );
+        sLog.Error( "XmlPacketGenerator", "Unable to open output files: %s.", strerror( errno ) );
         return false;
     }
 
@@ -94,7 +111,7 @@ bool XMLPacketGen::ParseElements( const TiXmlElement* field )
         "#include \"python/PyVisitor.h\"\n"
         "#include \"python/PyRep.h\"\n"
         "\n",
-        smGenFileComment,
+        FILE_COMMENT,
         def.c_str(),
         def.c_str()
     );
@@ -102,10 +119,10 @@ bool XMLPacketGen::ParseElements( const TiXmlElement* field )
         "%s\n"
         "\n"
         "#include \"EVECommonPCH.h\"\n"
-	    "\n"
+        "\n"
         "#include \"%s\"\n"
         "\n",
-        smGenFileComment,
+        FILE_COMMENT,
         mHeaderFileName.c_str()
     );
 
@@ -122,13 +139,13 @@ bool XMLPacketGen::ParseElements( const TiXmlElement* field )
     return res;
 }
 
-bool XMLPacketGen::ParseInclude( const TiXmlElement* field )
+bool XmlPacketGenerator::ParseInclude( const TiXmlElement* field )
 {
     const char* file = field->Attribute( "file" );
     if( file == NULL )
     {
-	    _log( COMMON__ERROR, "field at line %d is missing the file attribute, skipping.", field->Row() );
-	    return false;
+        sLog.Error( "XmlPacketGenerator", "field at line %d is missing the file attribute, skipping.", field->Row() );
+        return false;
     }
 
     fprintf( mHeaderFile,
@@ -139,7 +156,7 @@ bool XMLPacketGen::ParseInclude( const TiXmlElement* field )
     return true;
 }
 
-bool XMLPacketGen::ParseElementDef( const TiXmlElement* field )
+bool XmlPacketGenerator::ParseElementDef( const TiXmlElement* field )
 {
     bool res = ( mClone.ParseElement( field )
                  && mConstruct.ParseElement( field )
@@ -152,7 +169,7 @@ bool XMLPacketGen::ParseElementDef( const TiXmlElement* field )
     return res;
 }
 
-void XMLPacketGen::SetHeaderFile( const char* header )
+void XmlPacketGenerator::SetHeaderFile( const char* header )
 {
     if( mHeaderFileName != header )
     {
@@ -169,7 +186,7 @@ void XMLPacketGen::SetHeaderFile( const char* header )
     }
 }
 
-void XMLPacketGen::SetSourceFile( const char* source )
+void XmlPacketGenerator::SetSourceFile( const char* source )
 {
     if( mSourceFileName != source )
     {
@@ -191,7 +208,7 @@ void XMLPacketGen::SetSourceFile( const char* source )
     }
 }
 
-bool XMLPacketGen::OpenFiles()
+bool XmlPacketGenerator::OpenFiles()
 {
     bool res = true;
 
@@ -228,28 +245,3 @@ bool XMLPacketGen::OpenFiles()
 
     return res;
 }
-
-std::string XMLPacketGen::FNameToDef( const char* buf )
-{
-    std::string res;
-    res += "__";
-
-    for(; '\0' != *buf; ++buf )
-    {
-        if( !IsPrintable( *buf ) || *buf == '/' || *buf == '\\' || *buf == ':' || *buf == '.' || *buf == '-' )
-            res += '_';
-        else
-            res += (char)toupper( *buf );
-    }
-
-    res += "__";
-    return res;
-}
-
-
-
-
-
-
-
-

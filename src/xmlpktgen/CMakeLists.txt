@@ -23,10 +23,10 @@ SET( INCLUDE
      "${TARGET_INCLUDE_DIR}/DumpGenerator.h"
      "${TARGET_INCLUDE_DIR}/EncodeGenerator.h"
      "${TARGET_INCLUDE_DIR}/HeaderGenerator.h"
-     "${TARGET_INCLUDE_DIR}/XMLPacketGen.h"
-     "${TARGET_INCLUDE_DIR}/XMLPktGenPCH.h" )
+     "${TARGET_INCLUDE_DIR}/XmlPacketGenerator.h"
+     "${TARGET_INCLUDE_DIR}/XmlPktGen.h"
+     "${TARGET_INCLUDE_DIR}/XmlPktGenPCH.h" )
 SET( SOURCE
-     "${TARGET_SOURCE_DIR}/main.cpp"
      "${TARGET_SOURCE_DIR}/Generator.cpp"
      "${TARGET_SOURCE_DIR}/CloneGenerator.cpp"
      "${TARGET_SOURCE_DIR}/ConstructGenerator.cpp"
@@ -35,7 +35,8 @@ SET( SOURCE
      "${TARGET_SOURCE_DIR}/DumpGenerator.cpp"
      "${TARGET_SOURCE_DIR}/EncodeGenerator.cpp"
      "${TARGET_SOURCE_DIR}/HeaderGenerator.cpp"
-     "${TARGET_SOURCE_DIR}/XMLPacketGen.cpp" )
+     "${TARGET_SOURCE_DIR}/XmlPacketGenerator.cpp"
+     "${TARGET_SOURCE_DIR}/XmlPktGen.cpp" )
 
 ########################
 # Setup the executable #

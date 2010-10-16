@@ -23,24 +23,19 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __XMLPKTGEN_H__INCL__
-#define __XMLPKTGEN_H__INCL__
-
-#include "Common.h"
-
-/************************************************************************/
-/* dep includes                                                         */
-/************************************************************************/
-#include <tinyxml.h>
+#ifndef __XML_PKT_GEN_PCH_H__INCL__
+#define __XML_PKT_GEN_PCH_H__INCL__
 
 /************************************************************************/
 /* common includes                                                      */
 /************************************************************************/
-#include "log/logsys.h"
-#include "log/LogNew.h"
+#include "Common.h"
 
-#include "utils/str2conv.h"
-#include "utils/utils_string.h"
-#include "utils/XMLParserEx.h"
+#include "xml/Common.h"
 
-#endif /* !__XMLPKTGEN_H__INCL__ */
+/*************************************************************************/
+/* xmlpktgen includes                                                    */
+/*************************************************************************/
+#include "XmlPktGen.h"
+
+#endif /* !__XML_PKT_GEN_PCH_H__INCL__ */
