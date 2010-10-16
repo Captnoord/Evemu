@@ -170,21 +170,21 @@ ADD_SUBDIRECTORY( "src/common" )
 
 # Build eve-xmlpktgen
 IF( NOT CMAKE_CROSSCOMPILING )
-    ADD_SUBDIRECTORY( "src/eve-xmlpktgen" )
+    ADD_SUBDIRECTORY( "src/eve/eve-xmlpktgen" )
 ENDIF( NOT CMAKE_CROSSCOMPILING )
 
 # Build eve-common
-ADD_SUBDIRECTORY( "src/eve-common" )
+ADD_SUBDIRECTORY( "src/eve/eve-common" )
 
 # Build eve-server
-ADD_SUBDIRECTORY( "src/eve-server" )
+ADD_SUBDIRECTORY( "src/eve/eve-server" )
 
 # Build eve-collector
 SET( EVEMU_COLLECTOR_ENABLE OFF
      CACHE BOOL "Build eve-collector." )
 
 IF( EVEMU_COLLECTOR_ENABLE )
-    ADD_SUBDIRECTORY( "src/eve-collector" )
+    ADD_SUBDIRECTORY( "src/eve/eve-collector" )
 ENDIF( EVEMU_COLLECTOR_ENABLE )
 
 # Build eve-tool
@@ -192,7 +192,7 @@ SET( EVEMU_TOOL_ENABLE OFF
      CACHE BOOL "Build eve-tool." )
 
 IF( EVEMU_TOOL_ENABLE )
-    ADD_SUBDIRECTORY( "src/eve-tool" )
+    ADD_SUBDIRECTORY( "src/eve/eve-tool" )
 ENDIF( EVEMU_TOOL_ENABLE )
 
 ###############

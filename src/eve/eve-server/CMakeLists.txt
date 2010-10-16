@@ -8,9 +8,9 @@
 # Initialize #
 ##############
 SET( TARGET_NAME        "eve-server" )
-SET( TARGET_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include/${TARGET_NAME}" )
+SET( TARGET_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include/eve/${TARGET_NAME}" )
 SET( TARGET_CONTRIB_DIR "${PROJECT_SOURCE_DIR}/contrib" )
-SET( TARGET_SOURCE_DIR  "${PROJECT_SOURCE_DIR}/src/${TARGET_NAME}" )
+SET( TARGET_SOURCE_DIR  "${PROJECT_SOURCE_DIR}/src/eve/${TARGET_NAME}" )
 
 #########
 # Files #
