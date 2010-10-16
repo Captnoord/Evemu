@@ -156,14 +156,10 @@ SET( utils_SOURCE
 #####################
 # Setup the library #
 #####################
-INCLUDE_DIRECTORIES( "${MYSQL_INCLUDE_DIR}" )
-INCLUDE_DIRECTORIES( "${UTF8CPP_INCLUDE_DIR}" )
-
-INCLUDE_DIRECTORIES( "${utils_INCLUDE_DIR}" )
-
-INCLUDE_DIRECTORIES( "${common_INCLUDE_DIR}" )
-INCLUDE_DIRECTORIES( "${TARGET_INCLUDE_DIR}" )
-INCLUDE_DIRECTORIES( "${TARGET_PACKETS_DIR}" )
+INCLUDE_DIRECTORIES( "${MYSQL_INCLUDE_DIR}" "${UTF8CPP_INCLUDE_DIR}"
+                     "${utils_INCLUDE_DIR}"
+                     "${common_INCLUDE_DIR}" "${TARGET_INCLUDE_DIR}"
+                     "${TARGET_PACKETS_DIR}" )
 
 SOURCE_GROUP( "include"                  FILES ${INCLUDE} )
 SOURCE_GROUP( "include\\cache"           FILES ${cache_INCLUDE} )

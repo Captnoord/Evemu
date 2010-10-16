@@ -41,10 +41,8 @@ SET( SOURCE
 ########################
 # Setup the executable #
 ########################
-INCLUDE_DIRECTORIES( "${TINYXML_INCLUDE_DIR}" )
-
-INCLUDE_DIRECTORIES( "${common_INCLUDE_DIR}" )
-INCLUDE_DIRECTORIES( "${TARGET_INCLUDE_DIR}" )
+INCLUDE_DIRECTORIES( "${TINYXML_INCLUDE_DIR}"
+                     "${common_INCLUDE_DIR}" "${TARGET_INCLUDE_DIR}" )
 
 SOURCE_GROUP( "include" FILES ${INCLUDE} )
 SOURCE_GROUP( "src"     FILES ${SOURCE} )
