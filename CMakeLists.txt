@@ -118,7 +118,7 @@ ENDIF( CMAKE_CROSSCOMPILING )
 FIND_PACKAGE( "Gangsta" QUIET )
 
 IF( NOT GANGSTA_FOUND )
-    ADD_SUBDIRECTORY( "dep/gangsta" )
+    ADD_SUBDIRECTORY( "src/dep/gangsta" )
 
     SET( GANGSTA_FOUND       TRUE )
     SET( GANGSTA_INCLUDE_DIR "${gangsta_INCLUDE_DIR}" )
@@ -129,7 +129,7 @@ ENDIF( NOT GANGSTA_FOUND )
 FIND_PACKAGE( "TinyXML" QUIET )
 
 IF( NOT TINYXML_FOUND )
-    ADD_SUBDIRECTORY( "dep/tinyxml" )
+    ADD_SUBDIRECTORY( "src/dep/tinyxml" )
 
     SET( TINYXML_FOUND       TRUE )
     SET( TINYXML_INCLUDE_DIR "${tinyxml_INCLUDE_DIR}" )
@@ -140,7 +140,7 @@ ENDIF( NOT TINYXML_FOUND )
 FIND_PACKAGE( "Utf8Cpp" QUIET )
 
 IF( NOT UTF8CPP_FOUND )
-    ADD_SUBDIRECTORY( "dep/utf8cpp" )
+    ADD_SUBDIRECTORY( "src/dep/utf8cpp" )
 
     SET( UTF8CPP_FOUND       TRUE )
     SET( UTF8CPP_INCLUDE_DIR "${utf8cpp_INCLUDE_DIR}" )
@@ -148,7 +148,7 @@ IF( NOT UTF8CPP_FOUND )
 ENDIF( NOT UTF8CPP_FOUND )
 
 # Build utils
-ADD_SUBDIRECTORY( "dep/utils" )
+ADD_SUBDIRECTORY( "src/dep/utils" )
 
 ###########################
 # Generated documentation #
@@ -205,7 +205,7 @@ IF( EVEMU_TEST_ENABLE )
     FIND_PACKAGE( "CppUnit" REQUIRED )
     ENABLE_TESTING()
 
-    ADD_SUBDIRECTORY( "test/test-common" )
+    ADD_SUBDIRECTORY( "src/test/test-common" )
 ENDIF( EVEMU_TEST_ENABLE )
 
 ##################

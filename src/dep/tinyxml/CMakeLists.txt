@@ -7,19 +7,21 @@
 ##############
 # Initialize #
 ##############
-SET( TARGET_NAME        "utils" )
-SET( TARGET_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/dep/${TARGET_NAME}" )
-SET( TARGET_SOURCE_DIR  "${PROJECT_SOURCE_DIR}/dep/${TARGET_NAME}" )
+SET( TARGET_NAME        "tinyxml" )
+SET( TARGET_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include/dep/${TARGET_NAME}" )
+SET( TARGET_SOURCE_DIR  "${PROJECT_SOURCE_DIR}/src/dep/${TARGET_NAME}" )
 
 #########
 # Files #
 #########
 SET( INCLUDE
-     "${TARGET_INCLUDE_DIR}/Base64.h"
-     "${TARGET_INCLUDE_DIR}/TriFile.h" )
+     "${TARGET_INCLUDE_DIR}/tinystr.h"
+     "${TARGET_INCLUDE_DIR}/tinyxml.h" )
 SET( SOURCE
-     "${TARGET_SOURCE_DIR}/Base64.cpp"
-     "${TARGET_SOURCE_DIR}/TriFile.cpp" )
+     "${TARGET_SOURCE_DIR}/tinystr.cpp"
+     "${TARGET_SOURCE_DIR}/tinyxml.cpp"
+     "${TARGET_SOURCE_DIR}/tinyxmlerror.cpp"
+     "${TARGET_SOURCE_DIR}/tinyxmlparser.cpp" )
 
 #####################
 # Setup the library #

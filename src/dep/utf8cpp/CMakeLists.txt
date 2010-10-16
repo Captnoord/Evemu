@@ -8,8 +8,8 @@
 # Initialize #
 ##############
 SET( TARGET_NAME        "utf8cpp" )
-SET( TARGET_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/dep/${TARGET_NAME}" )
-SET( TARGET_SOURCE_DIR  "${PROJECT_SOURCE_DIR}/dep/${TARGET_NAME}" )
+SET( TARGET_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include/dep/${TARGET_NAME}" )
+SET( TARGET_SOURCE_DIR  "${PROJECT_SOURCE_DIR}/src/dep/${TARGET_NAME}" )
 
 #########
 # Files #
