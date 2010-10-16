@@ -23,19 +23,15 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __XML_PKT_GEN_PCH_H__INCL__
-#define __XML_PKT_GEN_PCH_H__INCL__
-
-/************************************************************************/
-/* common includes                                                      */
-/************************************************************************/
-#include "Common.h"
-
-#include "xml/Common.h"
+#ifndef __EVE_XML_PKT_GEN_H__INCL__
+#define __EVE_XML_PKT_GEN_H__INCL__
 
 /*************************************************************************/
-/* xmlpktgen includes                                                    */
+/* common includes                                                       */
 /*************************************************************************/
-#include "XmlPktGen.h"
+#include "util/StrConv.h"
+#include "util/StrUtils.h"
 
-#endif /* !__XML_PKT_GEN_PCH_H__INCL__ */
+#include "xml/ParserEx.h"
+
+#endif /* !__EVE_XML_PKT_GEN_H__INCL__ */

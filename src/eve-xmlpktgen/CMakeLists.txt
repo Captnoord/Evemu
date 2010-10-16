@@ -7,7 +7,7 @@
 ##############
 # Initialize #
 ##############
-SET( TARGET_NAME        "xmlpktgen" )
+SET( TARGET_NAME        "eve-xmlpktgen" )
 SET( TARGET_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include/${TARGET_NAME}" )
 SET( TARGET_SOURCE_DIR  "${PROJECT_SOURCE_DIR}/src/${TARGET_NAME}" )
 
@@ -15,6 +15,8 @@ SET( TARGET_SOURCE_DIR  "${PROJECT_SOURCE_DIR}/src/${TARGET_NAME}" )
 # Files #
 #########
 SET( INCLUDE
+     "${TARGET_INCLUDE_DIR}/EVEXmlPktGen.h"
+     "${TARGET_INCLUDE_DIR}/EVEXmlPktGenPCH.h"
      "${TARGET_INCLUDE_DIR}/Generator.h"
      "${TARGET_INCLUDE_DIR}/CloneGenerator.h"
      "${TARGET_INCLUDE_DIR}/ConstructGenerator.h"
@@ -23,10 +25,9 @@ SET( INCLUDE
      "${TARGET_INCLUDE_DIR}/DumpGenerator.h"
      "${TARGET_INCLUDE_DIR}/EncodeGenerator.h"
      "${TARGET_INCLUDE_DIR}/HeaderGenerator.h"
-     "${TARGET_INCLUDE_DIR}/XmlPacketGenerator.h"
-     "${TARGET_INCLUDE_DIR}/XmlPktGen.h"
-     "${TARGET_INCLUDE_DIR}/XmlPktGenPCH.h" )
+     "${TARGET_INCLUDE_DIR}/XmlPacketGenerator.h" )
 SET( SOURCE
+     "${TARGET_SOURCE_DIR}/EVEXmlPktGen.cpp"
      "${TARGET_SOURCE_DIR}/Generator.cpp"
      "${TARGET_SOURCE_DIR}/CloneGenerator.cpp"
      "${TARGET_SOURCE_DIR}/ConstructGenerator.cpp"
@@ -35,8 +36,7 @@ SET( SOURCE
      "${TARGET_SOURCE_DIR}/DumpGenerator.cpp"
      "${TARGET_SOURCE_DIR}/EncodeGenerator.cpp"
      "${TARGET_SOURCE_DIR}/HeaderGenerator.cpp"
-     "${TARGET_SOURCE_DIR}/XmlPacketGenerator.cpp"
-     "${TARGET_SOURCE_DIR}/XmlPktGen.cpp" )
+     "${TARGET_SOURCE_DIR}/XmlPacketGenerator.cpp" )
 
 ########################
 # Setup the executable #
@@ -53,8 +53,8 @@ ADD_EXECUTABLE( "${TARGET_NAME}"
                 ${INCLUDE} ${SOURCE} )
 
 TARGET_BUILD_PCH( "${TARGET_NAME}"
-                  "XMLPktGenPCH.h"
-                  "main.cpp" )
+                  "EVEXmlPktGenPCH.h"
+                  "EVEXmlPktGen.cpp" )
 TARGET_LINK_LIBRARIES( "${TARGET_NAME}"
                        "common" )
 

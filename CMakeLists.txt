@@ -168,9 +168,9 @@ INCLUDE( "TargetBuildPCH" )
 # Build common
 ADD_SUBDIRECTORY( "src/common" )
 
-# Build xmlpktgen
+# Build eve-xmlpktgen
 IF( NOT CMAKE_CROSSCOMPILING )
-    ADD_SUBDIRECTORY( "src/xmlpktgen" )
+    ADD_SUBDIRECTORY( "src/eve-xmlpktgen" )
 ENDIF( NOT CMAKE_CROSSCOMPILING )
 
 # Build eve-common
@@ -217,7 +217,7 @@ IF( NOT CMAKE_CROSSCOMPILING )
     MARK_AS_ADVANCED( EVEMU_TARGETS_EXPORT )
 
     IF( EVEMU_TARGETS_EXPORT )
-        EXPORT( TARGETS "xmlpktgen"
+        EXPORT( TARGETS "eve-xmlpktgen"
                 FILE "${EVEMU_TARGETS_EXPORT}" )
     ENDIF( EVEMU_TARGETS_EXPORT )
 ENDIF( NOT CMAKE_CROSSCOMPILING )
