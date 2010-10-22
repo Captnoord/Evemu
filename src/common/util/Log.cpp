@@ -27,7 +27,7 @@
 
 #include "time/TimeMgr.h"
 #include "util/Log.h"
-#include "util/StrUtils.h"
+#include "util/String.h"
 
 /*************************************************************************/
 /* Util::Log                                                             */
@@ -209,7 +209,7 @@ void Util::Log::PrintDumpLine( Color color, char prefix, const char* source,
             lineLen += snprintf( &line[ lineLen ],
                                  sizeof( line ) - lineLen,
                                  " %02X", b );
-            printable[ i ] = ( IsPrintable( b )
+            printable[ i ] = ( Util::String< char >::isPrintable( b )
                                ? static_cast< const char >( b )
                                : '.' );
         }

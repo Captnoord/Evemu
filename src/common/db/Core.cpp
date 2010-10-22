@@ -27,7 +27,6 @@
 
 #include "db/Core.h"
 #include "util/Log.h"
-#include "util/StrConv.h"
 
 /************************************************************************/
 /* Db::Error                                                            */

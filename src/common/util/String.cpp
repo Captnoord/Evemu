@@ -20,16 +20,17 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:     Captnoord, Bloody.Rabbit
+    Author:     Bloody.Rabbit
 */
 
 #include "CommonPCH.h"
 
 #include "util/Log.h"
-#include "util/StrUtils.h"
+#include "util/String.h"
 
-const std::string Util::NULL_STRING = "NULL";
-
+/*************************************************************************/
+/* Util                                                                  */
+/*************************************************************************/
 std::string Util::GenerateKey( size_t length )
 {
     static const char CHARS[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -41,118 +42,6 @@ std::string Util::GenerateKey( size_t length )
         key += CHARS[ MakeRandomInt( 0, CHARS_COUNT - 1 ) ];
 
     return key;
-}
-
-bool Util::IsNumber( char c )
-{
-    return 0 != isdigit( c );
-}
-
-bool Util::IsNumber( const char* str, size_t len )
-{
-    // skip sign if there is one
-    if( 1 >= len )
-    {
-        if(    '-' == str[0]
-            || '+' == str[0] )
-        {
-            str += 1;
-            len -= 1;
-        }
-    }
-
-    if( 0 == len )
-        return false;
-
-    bool seenDec = false;
-    for(; len > 0; ++str, --len)
-    {
-        if( !IsNumber( *str ) )
-        {
-            if( !seenDec && '.' == *str )
-                seenDec = true;
-            else
-                return false;
-        }
-    }
-
-    return true;
-}
-
-bool Util::IsNumber( const std::string& str )
-{
-    return IsNumber( str.c_str(), str.length() );
-}
-
-bool Util::IsHexNumber( char c )
-{
-    return 0 != isxdigit( c );
-}
-
-bool Util::IsHexNumber( const char* str, size_t len )
-{
-    // skip sign if there is one
-    if( 1 >= len )
-    {
-        if(    '-' == str[0]
-            || '+' == str[0] )
-        {
-            str += 1;
-            len -= 1;
-        }
-    }
-
-    // skip "0x" or "0X" prefix if there is one
-    if( 2 >= len )
-    {
-        if(    '0' == str[0]
-            && (    'x' == str[1]
-                 || 'X' == str[1] ) )
-        {
-            str += 2;
-            len -= 2;
-        }
-    }
-
-    if( 0 == len )
-        return false;
-
-    for(; len > 0; ++str, --len)
-    {
-        if( !IsHexNumber( *str ) )
-            return false;
-    }
-
-    return true;
-}
-
-bool Util::IsHexNumber( const std::string& str )
-{
-    return IsHexNumber( str.c_str(), str.length() );
-}
-
-bool Util::IsPrintable( char c )
-{
-    // They seem to expect it unsigned ...
-    const unsigned char _c = c;
-
-    return ( isgraph( _c ) || isspace( _c ) );
-}
-
-bool Util::IsPrintable( const char* str, size_t len )
-{
-    for(; len > 0; ++str, --len)
-    {
-        if( !IsPrintable( *str ) )
-            return false;
-    }
-
-    return true;
-}
-
-bool Util::IsPrintable( const std::string& str )
-{
-    return IsPrintable( str.c_str(), str.size() );
 }
 
 void Util::ListToINString( const std::vector<int32>& ints, std::string& into, const char* if_empty )
@@ -185,28 +74,6 @@ void Util::ListToINString( const std::vector<int32>& ints, std::string& into, co
             // last value to be printed
             format_index += snprintf( &into[ format_index ], 11, "%d", *cur );
     }
-}
-
-void Util::MakeUpperString( const char* source, char* target )
-{
-    if( !target )
-        return;
-
-    for(; *source; ++target, ++source )
-        *target = toupper( *source );
-
-    *target = 0;
-}
-
-void Util::MakeLowerString( const char* source, char* target )
-{
-    if( !target )
-        return;
-
-    for(; *source; ++target, ++source )
-        *target = tolower( *source );
-
-    *target = 0;
 }
 
 bool Util::PyDecodeEscape( const char* str, Util::Buffer& into )
@@ -300,7 +167,7 @@ bool Util::PyDecodeEscape( const char* str, Util::Buffer& into )
 void Util::SearchReplace( std::string& subject, const std::string& search, const std::string& replace )
 {
     std::string::size_type pos = 0;
-    while( ( pos = subject.find( search, pos ) ) != std::string::npos )
+    while( std::string::npos != ( pos = subject.find( search, pos ) ) )
     {
         subject.replace( pos, search.length(), replace );
         pos += replace.length();
@@ -384,4 +251,230 @@ void Util::SplitPath( const std::string& path, std::vector<std::string>& into )
 
     if( begin < p )
         into.push_back( std::string( begin, len ) );
+}
+
+/*************************************************************************/
+/* Util::String< char >                                                  */
+/*************************************************************************/
+const std::string Util::String< char >::NULL_STRING = "NULL";
+
+template<>
+std::string Util::String< char >::from< bool >( const bool& val )
+{
+    return val ? "true" : "false";
+}
+
+template<>
+std::string Util::String< char >::from< int64 >( const int64& val )
+{
+    std::string str;
+    ::sprintf( str, "%"PRId64, val );
+    return str;
+}
+
+template<>
+std::string Util::String< char >::from< uint64 >( const uint64& val )
+{
+    std::string str;
+    ::sprintf( str, "%"PRIu64, val );
+    return str;
+}
+
+template<>
+std::string Util::String< char >::from< long double >( const long double& val )
+{
+    std::string str;
+    ::sprintf( str, "%Lf", val );
+    return str;
+}
+
+bool Util::String< char >::isNumber( char c )
+{
+    return 0 != ::isdigit( c );
+}
+
+bool Util::String< char >::isNumber( const char* str, size_t len )
+{
+    // skip sign if there is one
+    if( 1 >= len )
+    {
+        if(    '-' == str[0]
+            || '+' == str[0] )
+        {
+            str += 1;
+            len -= 1;
+        }
+    }
+
+    if( 0 == len )
+        return false;
+
+    bool seenDec = false;
+    for(; len > 0; ++str, --len)
+    {
+        if( !isNumber( *str ) )
+        {
+            if( !seenDec && '.' == *str )
+                seenDec = true;
+            else
+                return false;
+        }
+    }
+
+    return true;
+}
+
+bool Util::String< char >::isNumber( const std::string& str )
+{
+    return isNumber( str.c_str(), str.length() );
+}
+
+bool Util::String< char >::isHexNumber( char c )
+{
+    return 0 != ::isxdigit( c );
+}
+
+bool Util::String< char >::isHexNumber( const char* str, size_t len )
+{
+    // skip sign if there is one
+    if( 0 < len )
+    {
+        if(    '-' == str[0]
+            || '+' == str[0] )
+        {
+            str += 1;
+            len -= 1;
+        }
+    }
+
+    // skip "0x" or "0X" prefix if there is one
+    if( 1 < len )
+    {
+        if(    '0' == str[0]
+            && (    'x' == str[1]
+                 || 'X' == str[1] ) )
+        {
+            str += 2;
+            len -= 2;
+        }
+    }
+
+    if( 0 == len )
+        return false;
+
+    for(; 0 < len; ++str, --len)
+    {
+        if( !isHexNumber( *str ) )
+            return false;
+    }
+
+    return true;
+}
+
+bool Util::String< char >::isHexNumber( const std::string& str )
+{
+    return isHexNumber( str.c_str(), str.length() );
+}
+
+bool Util::String< char >::isPrintable( char c )
+{
+    // They seem to expect it unsigned ...
+    const unsigned char _c = c;
+
+    return ( ::isgraph( _c ) || ::isspace( _c ) );
+}
+
+bool Util::String< char >::isPrintable( const char* str, size_t len )
+{
+    for(; 0 < len; ++str, --len)
+    {
+        if( !isPrintable( *str ) )
+            return false;
+    }
+
+    return true;
+}
+
+bool Util::String< char >::isPrintable( const std::string& str )
+{
+    return isPrintable( str.c_str(), str.size() );
+}
+
+template<>
+bool Util::String< char >::to< bool >( const char* str )
+{
+    if( !::strcasecmp( str, "true" ) )
+        return true;
+    else if( !::strcasecmp( str, "false" ) )
+        return false;
+    else if( !::strcasecmp( str, "yes" ) )
+        return true;
+    else if( !::strcasecmp( str, "no" ) )
+        return false;
+    else if( !::strcasecmp( str, "y" ) )
+        return true;
+    else if( !::strcasecmp( str, "n" ) )
+        return false;
+    else if( !::strcasecmp( str, "on" ) )
+        return true;
+    else if( !::strcasecmp( str, "off" ) )
+        return false;
+    else if( !::strcasecmp( str, "enable" ) )
+        return true;
+    else if( !::strcasecmp( str, "disable" ) )
+        return false;
+    else if( !::strcasecmp( str, "enabled" ) )
+        return true;
+    else if( !::strcasecmp( str, "disabled" ) )
+        return false;
+    else if( 0 != to< int >( str ) )
+        return true;
+    else
+        return false;
+}
+
+template<>
+int64 Util::String< char >::to< int64 >( const char* str )
+{
+    int64 v = 0;
+    ::sscanf( str, "%"SCNd64, &v );
+    return v;
+}
+
+template<>
+uint64 Util::String< char >::to< uint64 >( const char* str )
+{
+    uint64 v = 0;
+    ::sscanf( str, "%"SCNu64, &v );
+    return v;
+}
+
+template<>
+long double Util::String< char >::to< long double >( const char* str )
+{
+    long double v = 0.0;
+    ::sscanf( str, "%Lf", &v );
+    return v;
+}
+
+void Util::String< char >::toUpper( const char* source, char* target )
+{
+    if( target )
+    {
+        for(; '\0' != *source; ++target, ++source )
+            *target = ::toupper( *source );
+
+        *target = '\0';
+    }
+}
+
+void Util::String< char >::toLower( const char* source, char* target )
+{
+    if( target )
+    {
+        for(; '\0' != *source; ++target, ++source )
+            *target = ::tolower( *source );
+
+        *target = '\0';
+    }
 }

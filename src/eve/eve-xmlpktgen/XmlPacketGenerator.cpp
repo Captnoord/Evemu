@@ -63,10 +63,19 @@ std::string XmlPacketGenerator::FNameToDef( const char* buf )
 
     for(; '\0' != *buf; ++buf )
     {
-        if( !Util::IsPrintable( *buf ) || *buf == '/' || *buf == '\\' || *buf == ':' || *buf == '.' || *buf == '-' )
+        if( !Util::String< char >::isPrintable( *buf )
+            || *buf == '/'
+            || *buf == '\\'
+            || *buf == ':'
+            || *buf == '.'
+            || *buf == '-' )
+        {
             res += '_';
+        }
         else
-            res += (char)toupper( *buf );
+        {
+            res += ::toupper( *buf );
+        }
     }
 
     res += "__";

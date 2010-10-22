@@ -41,17 +41,6 @@ namespace Util
     uint16 crc_hqx( const uint8* data, size_t len, uint16 crc = 0 );
 
     /**
-     * @brief Calculates next (greater or equal)
-     *        power-of-two number.
-     *
-     * @param[in] num Base number.
-     *
-     * @return Power-of-two number which is greater than or
-     *         equal to the base number.
-     */
-    uint64 npowof2( uint64 num );
-
-    /**
      * @brief Generates random integer from interval [low; high].
      *
      * @param[in] low  Low boundary of interval.
@@ -69,6 +58,17 @@ namespace Util
      * @return The generated real.
      */
     double MakeRandomFloat( double low = 0, double high = 1 );
+
+    /**
+     * @brief Calculates next (greater or equal)
+     *        power-of-two number.
+     *
+     * @param[in] num Base number.
+     *
+     * @return Power-of-two number which is greater than or
+     *         equal to the base number.
+     */
+    uint64 npowof2( uint64 num );
 }
 
 #endif /* !__UTIL__MISC_H__INCL__ */

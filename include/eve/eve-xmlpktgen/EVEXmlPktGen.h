@@ -29,8 +29,7 @@
 /*************************************************************************/
 /* common includes                                                       */
 /*************************************************************************/
-#include "util/StrConv.h"
-#include "util/StrUtils.h"
+#include "util/String.h"
 
 #include "xml/ParserEx.h"
 

@@ -71,20 +71,6 @@ uint16 Util::crc_hqx( const uint8* data, size_t len, uint16 crc )
     return crc;
 }
 
-uint64 Util::npowof2( uint64 num )
-{
-    --num;
-    num |= ( num >>  1 );
-    num |= ( num >>  2 );
-    num |= ( num >>  4 );
-    num |= ( num >>  8 );
-    num |= ( num >> 16 );
-    num |= ( num >> 32 );
-    ++num;
-
-    return num;
-}
-
 int64 Util::MakeRandomInt( int64 low, int64 high )
 {
     return (int64)MakeRandomFloat( (double)low, (double)high );
@@ -119,4 +105,18 @@ double Util::MakeRandomFloat( double low, double high )
 
 #   undef SeedRandom
 #   undef GenerateRandom
+}
+
+uint64 Util::npowof2( uint64 num )
+{
+    --num;
+    num |= ( num >>  1 );
+    num |= ( num >>  2 );
+    num |= ( num >>  4 );
+    num |= ( num >>  8 );
+    num |= ( num >> 16 );
+    num |= ( num >> 32 );
+    ++num;
+
+    return num;
 }

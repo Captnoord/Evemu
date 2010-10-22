@@ -32,7 +32,7 @@
 #include "db/Type.h"
 #include "mt/Mutex.h"
 #include "util/Singleton.h"
-#include "util/StrConv.h"
+#include "util/String.h"
 
 namespace Db
 {
@@ -128,7 +128,7 @@ namespace Db
         T as( size_t index ) const
         {
             assert( !isNull( index ) );
-            return Util::strTo< T >( mRow[ index ] );
+            return Util::String< char >::to< T >( mRow[ index ] );
         }
 
     protected:

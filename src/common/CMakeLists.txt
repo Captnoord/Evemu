@@ -135,14 +135,12 @@ SET( util_INCLUDE
      "${TARGET_INCLUDE_DIR}/util/RefPtr.h"
      "${TARGET_INCLUDE_DIR}/util/SafeDelete.h"
      "${TARGET_INCLUDE_DIR}/util/Singleton.h"
-     "${TARGET_INCLUDE_DIR}/util/StrConv.h"
-     "${TARGET_INCLUDE_DIR}/util/StrUtils.h" )
+     "${TARGET_INCLUDE_DIR}/util/String.h" )
 SET( util_SOURCE
      "${TARGET_SOURCE_DIR}/util/Crc32.cpp"
      "${TARGET_SOURCE_DIR}/util/Log.cpp"
      "${TARGET_SOURCE_DIR}/util/Misc.cpp"
-     "${TARGET_SOURCE_DIR}/util/StrConv.cpp"
-     "${TARGET_SOURCE_DIR}/util/StrUtils.cpp" )
+     "${TARGET_SOURCE_DIR}/util/String.cpp" )
 
 IF( WIN32 )
     SET( win_INCLUDE
