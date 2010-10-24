@@ -26,7 +26,6 @@
 #include "CommonPCH.h"
 
 #include "posix/Mutex.h"
-#include "posix/MutexAttribute.h"
 
 /*************************************************************************/
 /* Posix::Mutex                                                          */
@@ -41,17 +40,13 @@ const Posix::Mutex::Attribute Posix::Mutex::DEFAULT_ATTRIBUTE(
 
 Posix::Mutex::Mutex( const Attribute& attr )
 {
-    int code;
-
-    code = ::pthread_mutex_init( &mMutex, &attr.mAttribute );
+    int code = ::pthread_mutex_init( &mMutex, &attr.mAttribute );
     assert( 0 == code );
 }
 
 Posix::Mutex::~Mutex()
 {
-    int code;
-
-    code = ::pthread_mutex_destroy( &mMutex );
+    int code = ::pthread_mutex_destroy( &mMutex );
     assert( 0 == code );
 }
 
@@ -68,4 +63,38 @@ int Posix::Mutex::TryLock()
 int Posix::Mutex::Unlock()
 {
     return ::pthread_mutex_unlock( &mMutex );
+}
+
+/*************************************************************************/
+/* Posix::Mutex::Attribute                                               */
+/*************************************************************************/
+Posix::Mutex::Attribute::Attribute()
+{
+    int code = ::pthread_mutexattr_init( &mAttribute );
+    assert( 0 == code );
+}
+
+Posix::Mutex::Attribute::Attribute( int type )
+{
+    int code = ::pthread_mutexattr_init( &mAttribute );
+    assert( 0 == code );
+
+    code = SetType( type );
+    assert( 0 == code );
+}
+
+Posix::Mutex::Attribute::~Attribute()
+{
+    int code = ::pthread_mutexattr_destroy( &mAttribute );
+    assert( 0 == code );
+}
+
+int Posix::Mutex::Attribute::GetType( int* type ) const
+{
+    return ::pthread_mutexattr_gettype( &mAttribute, type );
+}
+
+int Posix::Mutex::Attribute::SetType( int type )
+{
+    return ::pthread_mutexattr_settype( &mAttribute, type );
 }

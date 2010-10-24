@@ -49,7 +49,9 @@ namespace Posix
          * @param[in] attr The mutex attribute to use.
          */
         Mutex( const Attribute& attr = DEFAULT_ATTRIBUTE );
-        /// A destructor.
+        /**
+         * @brief A destructor.
+         */
         ~Mutex();
 
         /**
@@ -81,6 +83,53 @@ namespace Posix
     protected:
         /// The mutex itself.
         pthread_mutex_t mMutex;
+    };
+
+    /**
+     * @brief Wrapper around <code>pthread_mutexattr_t</code>.
+     *
+     * @author Bloody.Rabbit
+     */
+    class Mutex::Attribute
+    {
+        friend class Mutex;
+
+    public:
+        /**
+         * @brief The default constructor.
+         */
+        Attribute();
+        /**
+         * @brief The primary constructor.
+         *
+         * @param[in] type Type to be set.
+         */
+        Attribute( int type );
+        /**
+         * @brief A destructor.
+         */
+        ~Attribute();
+
+        /**
+         * @brief Obtains the type.
+         *
+         * @param[out] type A variable which receives the type.
+         *
+         * @return A value returned by <code>pthread_mutexattr_gettype</code>.
+         */
+        int GetType( int* type ) const;
+        /**
+         * @brief Sets the type.
+         *
+         * @param[in] type Type to be set.
+         *
+         * @return A value returned by <code>pthread_mutexattr_settype</code>.
+         */
+        int SetType( int type );
+
+    protected:
+        /// The attribute itself.
+        pthread_mutexattr_t mAttribute;
     };
 }
 

@@ -50,7 +50,9 @@ namespace Posix
          * @param[in] attr An attribute for the condition.
          */
         Condition( const Attribute& attr = DEFAULT_ATTRIBUTE );
-        /// A destructor.
+        /**
+         * @brief A destructor.
+         */
         ~Condition();
 
         /**
@@ -87,6 +89,53 @@ namespace Posix
     protected:
         /// The condition variable itself.
         pthread_cond_t mCondition;
+    };
+
+    /**
+     * @brief A wrapper around <code>pthread_condattr_t</code>.
+     *
+     * @author Bloody.Rabbit
+     */
+    class Condition::Attribute
+    {
+        friend class Condition;
+
+    public:
+        /**
+         * @brief A default constructor.
+         */
+        Attribute();
+        /**
+         * @brief A primary constructor.
+         *
+         * @param[in] processShared The value for process-shared attribute.
+         */
+        Attribute( int processShared );
+        /**
+         * @brief A destructor.
+         */
+        ~Attribute();
+
+        /**
+         * @brief Obtains a value of process-shared attribute.
+         *
+         * @param[out] processShared A variable which receives the value.
+         *
+         * @return A value returned by <code>pthread_condattr_getpshared</code>.
+         */
+        int GetProcessShared( int* processShared ) const;
+        /**
+         * @brief Sets the value of process-shared attribute.
+         *
+         * @param[in] processShared A value of process-shared attribute to set.
+         *
+         * @return A value returned by <code>pthread_condattr_setpshared</code>.
+         */
+        int SetProcessShared( int processShared );
+
+    protected:
+        /// The condition attribute itself.
+        pthread_condattr_t mAttribute;
     };
 }
 

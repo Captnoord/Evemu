@@ -83,7 +83,9 @@ namespace Posix
          * @return A value returned by <code>pthread_setcanceltype</code>.
          */
         static int SetCancelType( int type, int* oldType );
-        /// Creates a cancellation point in the calling thread.
+        /**
+         * @brief Creates a cancellation point in the calling thread.
+         */
         static void TestCancel();
 
         /**
@@ -95,7 +97,9 @@ namespace Posix
          */
         static int Sleep( const Time::Timeval& period );
 
-        /// A default constructor.
+        /**
+         * @brief A default constructor.
+         */
         Thread();
         /**
          * @brief A primary constructor.
@@ -202,6 +206,168 @@ namespace Posix
 
         /// The thread handle itself.
         pthread_t mThread;
+    };
+
+    /**
+     * @brief Wrapper around <code>pthread_attr_t</code>.
+     *
+     * @author Bloody.Rabbit
+     */
+    class Thread::Attribute
+    {
+        friend class Thread;
+
+    public:
+        /**
+         * @brief A default constructor.
+         */
+        Attribute();
+        /**
+         * @brief A destructor.
+         */
+        ~Attribute();
+
+        /**
+         * @brief Obtains the detach state.
+         *
+         * @param[out] detachState A variable which receives the value.
+         *
+         * @return A value returned by <code>pthread_attr_getdetachstate</code>.
+         */
+        int GetDetachState( int* detachState ) const;
+        /**
+         * @brief Sets the detach state.
+         *
+         * @param[in] detachState A detach state to set.
+         *
+         * @return A value returned by <code>pthread_attr_setdetachstate</code>.
+         */
+        int SetDetachState( int detachState );
+
+        /**
+         * @brief Obtains the guard size.
+         *
+         * @param[out] guardSize A variable which receives the value.
+         *
+         * @return A value returned by <code>pthread_attr_getguardsize</code>.
+         */
+        int GetGuardSize( size_t* guardSize ) const;
+        /**
+         * @brief Sets the guard size.
+         *
+         * @param[in] guardSize A guard size to set.
+         *
+         * @return A value returned by <code>pthread_attr_setguardsize</code>.
+         */
+        int SetGuardSize( size_t guardSize );
+
+        /**
+         * @brief Obtains the scheduling inheritance.
+         *
+         * @param[out] inheritSched A variable which receives the value.
+         *
+         * @return A value returned by <code>pthread_attr_getinheritsched</code>.
+         */
+        int GetInheritSched( int* inheritSched ) const;
+        /**
+         * @brief Sets the scheduling inheritance.
+         *
+         * @param[in] inheritSched A scheduling inheritance to set.
+         *
+         * @return A value returned by <code>pthread_attr_setinheritsched</code>.
+         */
+        int SetInheritSched( int inheritSched );
+
+        /**
+         * @brief Obtains the scheduling param.
+         *
+         * @param[out] schedParam A variable which receives the value.
+         *
+         * @return A value returned by <code>pthread_attr_getschedparam</code>.
+         */
+        int GetSchedParam( sched_param* schedParam ) const;
+        /**
+         * @brief Sets the scheduling param.
+         *
+         * @param[in] schedParam A scheduling param to set.
+         *
+         * @return A value returned by <code>pthread_attr_setschedparam</code>.
+         */
+        int SetSchedParam( const sched_param* schedParam );
+
+        /**
+         * @brief Obtains the scheduling policy.
+         *
+         * @param[out] schedPolicy A variable which receives the value.
+         *
+         * @return A value returned by <code>pthread_attr_getschedpolicy</code>.
+         */
+        int GetSchedPolicy( int* schedPolicy ) const;
+        /**
+         * @brief Sets the scheduling policy.
+         *
+         * @param[in] schedPolicy A scheduling policy to set.
+         *
+         * @return A value returned by <code>pthread_attr_setschedpolicy</code>.
+         */
+        int SetSchedPolicy( int schedPolicy );
+
+        /**
+         * @brief Obtains the scope.
+         *
+         * @param[out] scope A variable which receives the value.
+         *
+         * @return A value returned by <code>pthread_attr_getscope</code>.
+         */
+        int GetScope( int* scope ) const;
+        /**
+         * @brief Sets the scope.
+         *
+         * @param[in] scope A scope to set.
+         *
+         * @return A value returned by <code>pthread_attr_setscope</code>.
+         */
+        int SetScope( int scope );
+
+        /**
+         * @brief Obtains the stack address and size.
+         *
+         * @param[out] stackAddr A variable which receives the value.
+         * @param[out] stackSize A variable which receives the value.
+         *
+         * @return A value returned by <code>pthread_attr_getstack</code>.
+         */
+        int GetStack( void** stackAddr, size_t* stackSize ) const;
+        /**
+         * @brief Sets the stack address and size.
+         *
+         * @param[in] stackAddr A stack address to set.
+         * @param[in] stackSize A stack size to set.
+         *
+         * @return A value returned by <code>pthread_attr_setstack</code>.
+         */
+        int SetStack( void* stackAddr, size_t stackSize );
+
+        /**
+         * @brief Obtains the stack size.
+         *
+         * @param[out] stackSize A variable which receives the value.
+         *
+         * @return A value returned by <code>pthread_attr_getstacksize</code>.
+         */
+        int GetStackSize( size_t* stackSize ) const;
+        /**
+         * @brief Sets the stack size.
+         *
+         * @param[in] stackSize The stack size to set.
+         *
+         * @return A value returned by <code>pthread_attr_setstacksize</code>.
+         */
+        int SetStackSize( size_t stackSize );
+
+    protected:
+        /// The thread attribute itself.
+        pthread_attr_t mAttribute;
     };
 }
 

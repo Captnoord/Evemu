@@ -26,7 +26,6 @@
 #include "CommonPCH.h"
 
 #include "posix/Thread.h"
-#include "posix/ThreadAttribute.h"
 #include "time/Const.h"
 
 /*************************************************************************/
@@ -81,9 +80,7 @@ Posix::Thread::Thread( pthread_t thread )
 
 Posix::Thread::Thread( void* ( *startRoutine )( void* ), void* arg, const Attribute& attr )
 {
-    int code;
-
-    code = Create( startRoutine, arg, attr );
+    int code = Create( startRoutine, arg, attr );
     assert( 0 == code );
 }
 
@@ -131,4 +128,99 @@ int Posix::Thread::SetSchedPolicyParam( int policy, const sched_param* schedPara
 Posix::Thread& Posix::Thread::operator=( const Posix::Thread& oth )
 {
     mThread = oth.mThread;
+}
+
+/*************************************************************************/
+/* Posix::Thread::Attribute                                              */
+/*************************************************************************/
+Posix::Thread::Attribute::Attribute()
+{
+    int code = ::pthread_attr_init( &mAttribute );
+    assert( 0 == code );
+}
+
+Posix::Thread::Attribute::~Attribute()
+{
+    int code = ::pthread_attr_destroy( &mAttribute );
+    assert( 0 == code );
+}
+
+int Posix::Thread::Attribute::GetDetachState( int* detachState ) const
+{
+    return ::pthread_attr_getdetachstate( &mAttribute, detachState );
+}
+
+int Posix::Thread::Attribute::SetDetachState( int detachState )
+{
+    return ::pthread_attr_setdetachstate( &mAttribute, detachState );
+}
+
+int Posix::Thread::Attribute::GetGuardSize( size_t* guardSize ) const
+{
+    return ::pthread_attr_getguardsize( &mAttribute, guardSize );
+}
+
+int Posix::Thread::Attribute::SetGuardSize( size_t guardSize )
+{
+    return ::pthread_attr_setguardsize( &mAttribute, guardSize );
+}
+
+int Posix::Thread::Attribute::GetInheritSched( int* inheritSched ) const
+{
+    return ::pthread_attr_getinheritsched( &mAttribute, inheritSched );
+}
+
+int Posix::Thread::Attribute::SetInheritSched( int inheritSched )
+{
+    return ::pthread_attr_setinheritsched( &mAttribute, inheritSched );
+}
+
+int Posix::Thread::Attribute::GetSchedParam( sched_param* schedParam ) const
+{
+    return ::pthread_attr_getschedparam( &mAttribute, schedParam );
+}
+
+int Posix::Thread::Attribute::SetSchedParam( const sched_param* schedParam )
+{
+    return ::pthread_attr_setschedparam( &mAttribute, schedParam );
+}
+
+int Posix::Thread::Attribute::GetSchedPolicy( int* schedPolicy ) const
+{
+    return ::pthread_attr_getschedpolicy( &mAttribute, schedPolicy );
+}
+
+int Posix::Thread::Attribute::SetSchedPolicy( int schedPolicy )
+{
+    return ::pthread_attr_setschedpolicy( &mAttribute, schedPolicy );
+}
+
+int Posix::Thread::Attribute::GetScope( int* scope ) const
+{
+    return ::pthread_attr_getscope( &mAttribute, scope );
+}
+
+int Posix::Thread::Attribute::SetScope( int scope )
+{
+    return ::pthread_attr_setscope( &mAttribute, scope );
+}
+
+int Posix::Thread::Attribute::GetStack( void** stackAddr, size_t* stackSize ) const
+{
+    return ::pthread_attr_getstack( &mAttribute, stackAddr, stackSize );
+}
+
+int Posix::Thread::Attribute::SetStack( void* stackAddr, size_t stackSize )
+{
+    return ::pthread_attr_setstack( &mAttribute, stackAddr, stackSize );
+}
+
+int Posix::Thread::Attribute::GetStackSize( size_t* stackSize ) const
+{
+    return ::pthread_attr_getstacksize( &mAttribute, stackSize );
+}
+
+int Posix::Thread::Attribute::SetStackSize( size_t stackSize )
+{
+    return ::pthread_attr_setstacksize( &mAttribute, stackSize );
 }

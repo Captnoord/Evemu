@@ -26,7 +26,6 @@
 #include "CommonPCH.h"
 
 #include "posix/Condition.h"
-#include "posix/ConditionAttribute.h"
 
 /*************************************************************************/
 /* Posix::Condition                                                      */
@@ -35,17 +34,13 @@ const Posix::Condition::Attribute Posix::Condition::DEFAULT_ATTRIBUTE;
 
 Posix::Condition::Condition( const Attribute& attr )
 {
-    int code;
-
-    code = ::pthread_cond_init( &mCondition, &attr.mAttribute );
+    int code = ::pthread_cond_init( &mCondition, &attr.mAttribute );
     assert( 0 == code );
 }
 
 Posix::Condition::~Condition()
 {
-    int code;
-
-    code = ::pthread_cond_destroy( &mCondition );
+    int code = ::pthread_cond_destroy( &mCondition );
     assert( 0 == code );
 }
 
@@ -67,4 +62,38 @@ int Posix::Condition::Wait( Posix::Mutex& mutex )
 int Posix::Condition::TimedWait( Posix::Mutex& mutex, const Time::Timespec& time )
 {
     return ::pthread_cond_timedwait( &mCondition, &mutex.mMutex, &time.ts() );
+}
+
+/*************************************************************************/
+/* Posix::Condition::Attribute                                           */
+/*************************************************************************/
+Posix::Condition::Attribute::Attribute()
+{
+    int code = ::pthread_condattr_init( &mAttribute );
+    assert( 0 == code );
+}
+
+Posix::Condition::Attribute::Attribute( int processShared )
+{
+    int code = ::pthread_condattr_init( &mAttribute );
+    assert( 0 == code );
+
+    code = SetProcessShared( processShared );
+    assert( 0 == code );
+}
+
+Posix::Condition::Attribute::~Attribute()
+{
+    int code = ::pthread_condattr_destroy( &mAttribute );
+    assert( 0 == code );
+}
+
+int Posix::Condition::Attribute::GetProcessShared( int* processShared ) const
+{
+    return ::pthread_condattr_getpshared( &mAttribute, processShared );
+}
+
+int Posix::Condition::Attribute::SetProcessShared( int processShared )
+{
+    return ::pthread_condattr_setpshared( &mAttribute, processShared );
 }
