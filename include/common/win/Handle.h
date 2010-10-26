@@ -65,13 +65,13 @@ namespace Win
          * @retval FALSE The handle is invalid.
          */
         BOOL isValid() const { return ( INVALID_HANDLE_VALUE == mHandle ? FALSE : TRUE ); }
-
         /**
          * @brief Convenience cast to bool, calls isValid().
          *
          * @return A value returned by isValid().
          */
         operator BOOL() const { return isValid(); }
+
         /**
          * @brief Compares two handles for equality.
          *
@@ -85,20 +85,13 @@ namespace Win
         /**
          * @brief Closes the handle.
          *
-         * @return A value returned by <code>CloseHandle</code>.
+         * This method does not fail if the handle
+         * is already closed.
+         *
+         * @retval TRUE  The handle is now closed.
+         * @retval FALSE Failed to close the handle.
          */
         BOOL Close();
-        /**
-         * @brief Closes the handle if necessary.
-         *
-         * This method closes the handle only if necessary.
-         * In other words, call this whenever you need to
-         * make sure the handle is closed.
-         *
-         * @return TRUE if already closed; a value returned
-         *         by <code>CloseHandle</code> otherwise.
-         */
-        BOOL CloseEx();
 
         /**
          * @brief Copy operator, duplicates the handle.
@@ -115,7 +108,7 @@ namespace Win
     };
 
     /**
-     * @brief A Handle which you can wait for.
+     * @brief A handle which you can wait for.
      *
      * @author Bloody.Rabbit
      */

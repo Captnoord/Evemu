@@ -78,8 +78,8 @@ BOOL Win::Thread::GetExitCode( PDWORD exitCode ) const
 
 BOOL Win::Thread::Create( PTHREAD_START_ROUTINE startAddress, PVOID param, SIZE_T stackSize )
 {
-    BOOL success = CloseEx();
-    assert( TRUE == success );
+    if( TRUE != Close () )
+        return FALSE;
 
     mHandle = ::CreateThread( NULL, stackSize,
                               startAddress, param,

@@ -48,8 +48,8 @@ Win::ConsoleScreenBuffer::ConsoleScreenBuffer( DWORD desiredAccess, DWORD shareM
 
 BOOL Win::ConsoleScreenBuffer::Create( DWORD desiredAccess, DWORD shareMode )
 {
-    BOOL success = CloseEx();
-    assert( TRUE == success );
+    if( TRUE != Close () )
+        return FALSE;
 
     mHandle = ::CreateConsoleScreenBuffer( desiredAccess, shareMode,
                                            NULL, CONSOLE_TEXTMODE_BUFFER, NULL );

@@ -45,13 +45,25 @@ Win::Handle::Handle( const Win::Handle& oth )
 
 Win::Handle::~Handle()
 {
-    BOOL success = CloseEx();
+    BOOL success = Close();
     assert( TRUE == success );
+}
+
+BOOL Win::Handle::Close()
+{
+    if( TRUE == isValid() )
+    {
+        if( TRUE != ::CloseHandle( mHandle ) )
+            return FALSE;
+    }
+
+    mHandle = INVALID_HANDLE_VALUE;
+    return TRUE;
 }
 
 Win::Handle& Win::Handle::operator=( const Win::Handle& oth )
 {
-    BOOL success = CloseEx();
+    BOOL success = Close();
     assert( TRUE == success );
 
     if( TRUE == oth.isValid() )
@@ -61,20 +73,8 @@ Win::Handle& Win::Handle::operator=( const Win::Handle& oth )
                                      0, FALSE, DUPLICATE_SAME_ACCESS );
         assert( TRUE == success );
     }
-    else
-        mHandle = INVALID_HANDLE_VALUE;
 
     return *this;
-}
-
-BOOL Win::Handle::Close()
-{
-    return ::CloseHandle( mHandle );
-}
-
-BOOL Win::Handle::CloseEx()
-{
-    return TRUE == isValid() ? Close() : TRUE;
 }
 
 /*************************************************************************/

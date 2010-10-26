@@ -40,8 +40,8 @@ Win::Event::Event( BOOL manualReset, BOOL initialState )
 
 BOOL Win::Event::Create( BOOL manualReset, BOOL initialState )
 {
-    BOOL success = CloseEx();
-    assert( TRUE == success );
+    if( TRUE != Close() )
+        return FALSE;
 
     mHandle = ::CreateEvent( NULL, manualReset, initialState, NULL );
     return isValid();
