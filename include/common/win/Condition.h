@@ -41,7 +41,9 @@ namespace Win
     class Condition
     {
     public:
-        /// A primary constructor.
+        /**
+         * @brief A primary constructor.
+         */
         Condition();
 
         /**

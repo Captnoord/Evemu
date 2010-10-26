@@ -38,41 +38,31 @@ Win::Handle::Handle( HANDLE handle )
 Win::Handle::Handle( const Win::Handle& oth )
 : mHandle( INVALID_HANDLE_VALUE )
 {
-    // pass to copy operator
+    /* Actual handle duplication is quite complex,
+       so use our copy operator. */
     *this = oth;
 }
 
 Win::Handle::~Handle()
 {
-    BOOL success;
-
-    if( TRUE == isValid() )
-    {
-        success = Close();
-        assert( TRUE == success );
-    }
+    BOOL success = CloseEx();
+    assert( TRUE == success );
 }
 
 Win::Handle& Win::Handle::operator=( const Win::Handle& oth )
 {
-    BOOL success;
+    BOOL success = CloseEx();
+    assert( TRUE == success );
 
-    if( TRUE == isValid() )
+    if( TRUE == oth.isValid() )
     {
-        success = Close();
-        assert( TRUE == success );
-    }
-
-    // duplicate the target handle
-    if( FALSE == oth.isValid() )
-        mHandle = INVALID_HANDLE_VALUE;
-    else
-    {
-        success = ::DuplicateHandle( GetCurrentProcess(), oth.mHandle,
-                                     GetCurrentProcess(), &mHandle,
+        success = ::DuplicateHandle( ::GetCurrentProcess(), oth.mHandle,
+                                     ::GetCurrentProcess(), &mHandle,
                                      0, FALSE, DUPLICATE_SAME_ACCESS );
         assert( TRUE == success );
     }
+    else
+        mHandle = INVALID_HANDLE_VALUE;
 
     return *this;
 }
@@ -80,6 +70,11 @@ Win::Handle& Win::Handle::operator=( const Win::Handle& oth )
 BOOL Win::Handle::Close()
 {
     return ::CloseHandle( mHandle );
+}
+
+BOOL Win::Handle::CloseEx()
+{
+    return TRUE == isValid() ? Close() : TRUE;
 }
 
 /*************************************************************************/
@@ -90,7 +85,7 @@ Win::WaitableHandle::WaitableHandle( HANDLE handle )
 {
 }
 
-DWORD Win::WaitableHandle::Wait( DWORD timeout ) const
+DWORD Win::WaitableHandle::Wait( const Time::Msec& timeout ) const
 {
-    return ::WaitForSingleObject( mHandle, timeout );
+    return ::WaitForSingleObject( mHandle, static_cast< DWORD >( timeout.count() ) );
 }

@@ -31,27 +31,20 @@
 /* Win::Event                                                            */
 /*************************************************************************/
 Win::Event::Event( BOOL manualReset, BOOL initialState )
+: Win::Handle(),
+  Win::WaitableHandle()
 {
-    BOOL success;
-
-    success = Create( manualReset, initialState );
+    BOOL success = Create( manualReset, initialState );
     assert( TRUE == success );
 }
 
 BOOL Win::Event::Create( BOOL manualReset, BOOL initialState )
 {
-    BOOL success;
-
-    if( TRUE == isValid() )
-    {
-        success = Close();
-        assert( TRUE == success );
-    }
+    BOOL success = CloseEx();
+    assert( TRUE == success );
 
     mHandle = ::CreateEvent( NULL, manualReset, initialState, NULL );
-    success = isValid();
-
-    return success;
+    return isValid();
 }
 
 BOOL Win::Event::Set()

@@ -32,7 +32,8 @@
 /*************************************************************************/
 Win::Thread Win::Thread::self()
 {
-    return Win::Thread( ::GetCurrentThread(), ::GetCurrentThreadId() );
+    return Win::Thread( ::GetCurrentThread(),
+                        ::GetCurrentThreadId() );
 }
 
 VOID Win::Thread::Sleep( const Time::Msec& period )
@@ -40,18 +41,34 @@ VOID Win::Thread::Sleep( const Time::Msec& period )
     ::Sleep( static_cast< DWORD >( period.count() ) );
 }
 
-Win::Thread::Thread( PTHREAD_START_ROUTINE startAddress, PVOID param, SIZE_T stackSize )
+Win::Thread::Thread()
+: Win::Handle(),
+  Win::WaitableHandle(),
+  mThreadId( 0 )
 {
-    BOOL success;
+}
 
-    success = Create( startAddress, param, stackSize );
+Win::Thread::Thread( HANDLE handle, DWORD id )
+: Win::Handle( handle ),
+  Win::WaitableHandle( handle ),
+  mThreadId( id )
+{
+}
+
+Win::Thread::Thread( PTHREAD_START_ROUTINE startAddress, PVOID param, SIZE_T stackSize )
+: Win::Handle(),
+  Win::WaitableHandle(),
+  mThreadId( 0 )
+{
+    BOOL success = Create( startAddress, param, stackSize );
     assert( TRUE == success );
 }
 
 Win::Thread::Thread( const Win::Thread& oth )
+: Win::Handle( oth ),
+  Win::WaitableHandle( oth ),
+  mThreadId( oth.id() )
 {
-    // let the copy operator do the job
-    *this = oth;
 }
 
 BOOL Win::Thread::GetExitCode( PDWORD exitCode ) const
@@ -61,18 +78,13 @@ BOOL Win::Thread::GetExitCode( PDWORD exitCode ) const
 
 BOOL Win::Thread::Create( PTHREAD_START_ROUTINE startAddress, PVOID param, SIZE_T stackSize )
 {
-    BOOL success;
+    BOOL success = CloseEx();
+    assert( TRUE == success );
 
-    if( TRUE == isValid() )
-    {
-        success = Close();
-        assert( TRUE == success );
-    }
-
-    mHandle = ::CreateThread( NULL, stackSize, startAddress, param, 0, &mThreadID );
-    success = isValid();
-
-    return success;
+    mHandle = ::CreateThread( NULL, stackSize,
+                              startAddress, param,
+                              0, &mThreadId );
+    return isValid();
 }
 
 BOOL Win::Thread::Terminate( DWORD exitCode )
@@ -97,8 +109,8 @@ BOOL Win::Thread::SetPriority( int priority )
 
 Win::Thread& Win::Thread::operator=( const Win::Thread& oth )
 {
-    *(Win::WaitableHandle*)this = oth;
-    mThreadID = oth.mThreadID;
+    static_cast< Win::WaitableHandle& >( *this ) = oth;
+    mThreadId = oth.id();
 
     return *this;
 }

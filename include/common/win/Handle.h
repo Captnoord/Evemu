@@ -26,6 +26,8 @@
 #ifndef __WIN__HANDLE_H__INCL__
 #define __WIN__HANDLE_H__INCL__
 
+#include "time/Msec.h"
+
 namespace Win
 {
     /**
@@ -51,7 +53,9 @@ namespace Win
          * @param[in] oth The handle to duplicate.
          */
         Handle( const Handle& oth );
-        /// A destructor, closes the handle.
+        /**
+         * @brief A destructor, closes the handle.
+         */
         ~Handle();
 
         /**
@@ -84,6 +88,17 @@ namespace Win
          * @return A value returned by <code>CloseHandle</code>.
          */
         BOOL Close();
+        /**
+         * @brief Closes the handle if necessary.
+         *
+         * This method closes the handle only if necessary.
+         * In other words, call this whenever you need to
+         * make sure the handle is closed.
+         *
+         * @return TRUE if already closed; a value returned
+         *         by <code>CloseHandle</code> otherwise.
+         */
+        BOOL CloseEx();
 
         /**
          * @brief Copy operator, duplicates the handle.
@@ -105,11 +120,11 @@ namespace Win
      * @author Bloody.Rabbit
      */
     class WaitableHandle
-    : public Handle
+    : virtual public Handle
     {
     public:
         /**
-         * @brief Primary constructor.
+         * @brief A primary constructor.
          *
          * @param[in] handle The handle.
          */
@@ -122,7 +137,7 @@ namespace Win
          *
          * @return A value returned by <code>WaitForSingleObject</code>.
          */
-        DWORD Wait( DWORD timeout = INFINITE ) const;
+        DWORD Wait( const Time::Msec& timeout = INFINITE ) const;
     };
 }
 

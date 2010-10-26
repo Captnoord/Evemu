@@ -54,7 +54,9 @@ namespace Win
          */
         static VOID Sleep( const Time::Msec& period );
 
-        /// A default constructor.
+        /**
+         * @brief A default constructor.
+         */
         Thread();
         /**
          * @brief Primary constructor, creates a new thread.
@@ -76,7 +78,7 @@ namespace Win
          *
          * @return A thread ID.
          */
-        DWORD id() const { return mThreadID; }
+        DWORD id() const { return mThreadId; }
 
         /**
          * @brief Obtains an exit code of the thread.
@@ -151,7 +153,7 @@ namespace Win
         Thread( HANDLE handle, DWORD id );
 
         /// A thread ID.
-        DWORD mThreadID;
+        DWORD mThreadId;
     };
 }
 

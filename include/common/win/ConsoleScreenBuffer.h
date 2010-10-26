@@ -52,6 +52,20 @@ namespace Win
                              DWORD shareMode = FILE_SHARE_READ );
 
         /**
+         * @brief Creates a new console screen buffer.
+         *
+         * Any previous handle is closed.
+         *
+         * @param[in] desiredAccess A desired access to the buffer.
+         * @param[in] shareMode     A share mode for the buffer.
+         *
+         * @retval TRUE  Creation succeeded.
+         * @retval FALSE Creation failed.
+         */
+        BOOL Create( DWORD desiredAccess = GENERIC_READ | GENERIC_WRITE,
+                     DWORD shareMode = FILE_SHARE_READ );
+
+        /**
          * @brief Sets this buffer as active.
          *
          * An active console screen buffer is the one

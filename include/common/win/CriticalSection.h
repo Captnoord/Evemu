@@ -36,9 +36,13 @@ namespace Win
     class CriticalSection
     {
     public:
-        /// Primary constructor.
+        /**
+         * @brief Primary constructor.
+         */
         CriticalSection();
-        /// A destructor.
+        /**
+         * @brief A destructor.
+         */
         ~CriticalSection();
 
         /**
@@ -56,7 +60,9 @@ namespace Win
          */
         BOOL TryEnter();
 
-        /// Leaves the critical section.
+        /**
+         * @brief Leaves the critical section.
+         */
         VOID Leave();
 
     protected:

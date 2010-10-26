@@ -30,18 +30,30 @@
 /*************************************************************************/
 /* Win::ConsoleScreenBuffer                                              */
 /*************************************************************************/
-const Win::ConsoleScreenBuffer Win::ConsoleScreenBuffer::DEFAULT_OUTPUT_SCREEN =
-    Win::ConsoleScreenBuffer( ::GetStdHandle( STD_OUTPUT_HANDLE ) );
-
-Win::ConsoleScreenBuffer::ConsoleScreenBuffer( DWORD desiredAccess, DWORD shareMode )
-: Win::Handle( ::CreateConsoleScreenBuffer( desiredAccess, shareMode,
-                                            NULL, CONSOLE_TEXTMODE_BUFFER, NULL ) )
-{
-}
+const Win::ConsoleScreenBuffer Win::ConsoleScreenBuffer::DEFAULT_OUTPUT_SCREEN(
+    ::GetStdHandle( STD_OUTPUT_HANDLE )
+);
 
 Win::ConsoleScreenBuffer::ConsoleScreenBuffer( HANDLE handle )
 : Win::Handle( handle )
 {
+}
+
+Win::ConsoleScreenBuffer::ConsoleScreenBuffer( DWORD desiredAccess, DWORD shareMode )
+: Win::Handle()
+{
+    BOOL success = Create( desiredAccess, shareMode );
+    assert( TRUE == success );
+}
+
+BOOL Win::ConsoleScreenBuffer::Create( DWORD desiredAccess, DWORD shareMode )
+{
+    BOOL success = CloseEx();
+    assert( TRUE == success );
+
+    mHandle = ::CreateConsoleScreenBuffer( desiredAccess, shareMode,
+                                           NULL, CONSOLE_TEXTMODE_BUFFER, NULL );
+    return isValid();
 }
 
 BOOL Win::ConsoleScreenBuffer::SetActive()

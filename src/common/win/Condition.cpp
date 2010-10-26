@@ -60,7 +60,7 @@ DWORD Win::Condition::Wait( Win::CriticalSection& criticalSection, const Time::M
     }
 
     criticalSection.Leave();
-    DWORD code = mWaitEvent.Wait( timeout.count() );
+    DWORD code = mWaitEvent.Wait( timeout );
     criticalSection.Enter();
 
     {
