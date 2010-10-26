@@ -44,7 +44,7 @@ namespace Std
          * @param[in] oldName An old name of the file.
          * @param[in] newName A new name for the file.
          *
-         * @return A value returned by <code>rename</code>.
+         * @return An error code.
          */
         static int Rename( const char* oldName, const char* newName );
         /**
@@ -52,11 +52,13 @@ namespace Std
          *
          * @param[in] name A name of the file to be removed.
          *
-         * @return A value returned by <code>remove</code>.
+         * @return An error code.
          */
         static int Remove( const char* name );
 
-        /// A default constructor.
+        /**
+         * @brief A default constructor.
+         */
         File();
         /**
          * @brief A primary constructor.
@@ -65,7 +67,9 @@ namespace Std
          * @param[in] mode A mode to open the file in.
          */
         File( const char* name, const char* mode );
-        /// A destructor, closes the file.
+        /**
+         * @brief A destructor, closes the file.
+         */
         ~File();
 
         /**
@@ -85,15 +89,17 @@ namespace Std
         /**
          * @brief Checks if the end of the file has been reached.
          *
-         * @return A value returned by <code>feof</code>.
+         * @retval true  The End-of-File has been reached.
+         * @retval false The End-of-File has not been reached yet.
          */
-        int eof() const;
+        bool eof() const;
         /**
          * @brief Checks if an error occurred.
          *
-         * @return A value returned by <code>ferror</code>.
+         * @retval true  An error occurred.
+         * @retval false No error.
          */
-        int error() const;
+        bool error() const;
         /**
          * @brief Obtains current position in the file.
          *
@@ -116,20 +122,13 @@ namespace Std
         /**
          * @brief Closes the file.
          *
-         * @return A value returned by <code>fclose</code>.
-         */
-        int Close();
-        /**
-         * @brief Closes the file if necessary.
+         * This method does not fail if the file
+         * is already closed.
          *
-         * This method does not fail if the file is already closed.
-         * In other words, call this method anytime you need to
-         * assure the handle is closed/invalid.
-         *
-         * @return 0 if already closed; a value returned by
-         *         <code>fclose</code> otherwise.
+         * @retval true  The file has been successfully closed.
+         * @retval false Failed to close the file.
          */
-        int CloseEx();
+        bool Close();
 
         /**
          * @brief Seeks within the file.
@@ -137,9 +136,17 @@ namespace Std
          * @param[in] offset An offset.
          * @param[in] origin An origin of the offset.
          *
-         * @return A value returned by <code>fseek</code>.
+         * @retval true  Seek successfull.
+         * @retval false Failed to seek.
          */
-        int Seek( long int offset, int origin );
+        bool Seek( long int offset, int origin );
+        /**
+         * @brief Flushes all buffers, writing all data to disk.
+         *
+         * @retval true  Flush successfull.
+         * @retval false Failed to flush the file.
+         */
+        bool Flush();
 
         /**
          * @brief Reads data from the file.
@@ -157,12 +164,6 @@ namespace Std
          * @return A value returned by <code>fwrite</code>.
          */
         size_t Write( const Util::Buffer& data );
-        /**
-         * @brief Flushes all buffers, writing all data to disk.
-         *
-         * @return A value returned by <code>fflush</code>.
-         */
-        int Flush();
 
     protected:
         /// The file.

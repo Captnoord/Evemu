@@ -27,6 +27,7 @@
 
 #include "BufferTest.h"
 #include "DataTest.h"
+#include "StdFileTest.h"
 #include "StreamSocketTest.h"
 
 /**
@@ -46,6 +47,7 @@ bool RunTests( CppUnit::OStream* xmlFile = NULL )
     runner.addTest( BufferTest::suite() );
     runner.addTest( DataTest::suite() );
 
+    runner.addTest( new StdFileTest );
     runner.addTest( new StreamSocketTest< Net::Ip4 > );
 
     return runner.run();

@@ -45,6 +45,8 @@
 #include "net/Ip4.h"
 #include "net/StreamSocket.h"
 
+#include "std/File.h"
+
 #include "util/Buffer.h"
 #include "util/Data.h"
 

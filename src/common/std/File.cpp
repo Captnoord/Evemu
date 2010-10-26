@@ -32,12 +32,18 @@
 /*************************************************************************/
 int Std::File::Rename( const char* oldName, const char* newName )
 {
-    return ::rename( oldName, newName );
+    if( 0 != ::rename( oldName, newName ) )
+        return errno;
+
+    return 0;
 }
 
 int Std::File::Remove( const char* name )
 {
-    return ::remove( name );
+    if( 0 != ::remove( name ) )
+        return errno;
+
+    return 0;
 }
 
 Std::File::File()
@@ -49,23 +55,23 @@ Std::File::File( const char* name, const char* mode )
 : mFile( NULL )
 {
     bool success = Open( name, mode );
-    assert( true == success );
+    assert( success );
 }
 
 Std::File::~File()
 {
-    int code = CloseEx();
-    assert( 0 == code );
+    bool success = Close();
+    assert( success );
 }
 
-int Std::File::eof() const
+bool Std::File::eof() const
 {
-    return ::feof( mFile );
+    return 0 != ::feof( mFile );
 }
 
-int Std::File::error() const
+bool Std::File::error() const
 {
-    return ::ferror( mFile );
+    return 0 != ::ferror( mFile );
 }
 
 long int Std::File::tell() const
@@ -75,26 +81,33 @@ long int Std::File::tell() const
 
 bool Std::File::Open( const char* name, const char* mode )
 {
-    if( !CloseEx() )
+    if( !Close() )
         return false;
 
     mFile = ::fopen( name, mode );
     return isValid();
 }
 
-int Std::File::Close()
+bool Std::File::Close()
 {
-    return ::fclose( mFile );
+    if( isValid() )
+    {
+        if( 0 != ::fclose( mFile ) )
+            return false;
+    }
+
+    mFile = NULL;
+    return true;
 }
 
-int Std::File::CloseEx()
+bool Std::File::Seek( long int offset, int origin )
 {
-    return isValid() ? Close() : 0;
+    return 0 == ::fseek( mFile, offset, origin );
 }
 
-int Std::File::Seek( long int offset, int origin )
+bool Std::File::Flush()
 {
-    return ::fseek( mFile, offset, origin );
+    return 0 == ::fflush( mFile );
 }
 
 size_t Std::File::Read( Util::Buffer& into )
@@ -105,9 +118,4 @@ size_t Std::File::Read( Util::Buffer& into )
 size_t Std::File::Write( const Util::Buffer& data )
 {
     return ::fwrite( &data[0], 1, data.size(), mFile );
-}
-
-int Std::File::Flush()
-{
-    return ::fflush( mFile );
 }

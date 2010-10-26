@@ -23,20 +23,38 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __TEST_COMMON_PCH_H__INCL__
-#define __TEST_COMMON_PCH_H__INCL__
+#ifndef __STD_FILE_TEST_H__INCL__
+#define __STD_FILE_TEST_H__INCL__
 
-/*************************************************************************/
-/* common includes                                                       */
-/*************************************************************************/
-#include "Common.h"
+/**
+ * @brief Test of Std::File.
+ *
+ * @author Bloody.Rabbit
+ */
+class StdFileTest
+: public CppUnit::TestCase
+{
+public:
+    /// A name for the test file
+    static const char NAME[];
+    /// An alternate name for the file.
+    static const char NAME_ALT[];
+    /// Some plain data to be used during testing.
+    static const uint8 PLAIN_DATA[];
 
-#include "net/Common.h"
-#include "std/Common.h"
+    /**
+     * @brief A default constructor.
+     */
+    StdFileTest();
 
-/*************************************************************************/
-/* test-common includes                                                  */
-/*************************************************************************/
-#include "TestCommon.h"
+    /**
+     * @brief Runs the test.
+     */
+    void runTest();
 
-#endif /* !__TEST_COMMON_PCH_H__INCL__ */
+protected:
+    /// The file being tested.
+    Std::File mFile;
+};
+
+#endif /* !__STD_FILE_TEST_H__INCL__ */
