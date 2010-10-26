@@ -32,15 +32,19 @@
  */
 
 /*
- * Non-MSVC configuration.
+ * Since there is a slight chance that the standard headers below
+ * will include platform-dependent headers, we need to include the
+ * platform headers beforehand so that our platform configuration
+ * is preserved.
  */
-#ifndef MSVC
-// We must "explicitly request" the format strings ...
-#   define __STDC_FORMAT_MACROS 1
-#endif /* !MSVC */
+#ifdef WIN32
+#   include "win/Common.h"
+#else /* !WIN32 */
+#   include "posix/Common.h"
+#endif /* !WIN32 */
 
 /*
- * MSVC configuration.
+ * (Non-)MSVC configuration.
  */
 #ifdef MSVC
 #   define _CRT_SECURE_NO_WARNINGS                  1
@@ -52,7 +56,10 @@
 #   endif /* !NDEBUG */
 
 #   define _SCL_SECURE_NO_WARNINGS 1
-#endif /* MSVC */
+#else /* !MSVC */
+// We must "explicitly request" the format strings ...
+#   define __STDC_FORMAT_MACROS 1
+#endif /* !MSVC */
 
 /*
  * Standard C library includes.

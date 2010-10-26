@@ -54,6 +54,8 @@ namespace Win
          */
         static VOID Sleep( const Time::Msec& period );
 
+        /// A default constructor.
+        Thread();
         /**
          * @brief Primary constructor, creates a new thread.
          *

@@ -44,7 +44,7 @@ namespace Win
          *
          * @param[in] handle The handle.
          */
-        Handle( HANDLE handle = INVALID_HANDLE );
+        Handle( HANDLE handle = INVALID_HANDLE_VALUE );
         /**
          * @brief Copy constructor, duplicates the handle.
          *
@@ -60,7 +60,7 @@ namespace Win
          * @retval TRUE  The handle is valid.
          * @retval FALSE The handle is invalid.
          */
-        BOOL isValid() const { return ( INVALID_HANDLE == mHandle ? FALSE : TRUE ); }
+        BOOL isValid() const { return ( INVALID_HANDLE_VALUE == mHandle ? FALSE : TRUE ); }
 
         /**
          * @brief Convenience cast to bool, calls isValid().
@@ -113,7 +113,7 @@ namespace Win
          *
          * @param[in] handle The handle.
          */
-        WaitableHandle( HANDLE handle = INVALID_HANDLE );
+        WaitableHandle( HANDLE handle = INVALID_HANDLE_VALUE );
 
         /**
          * @brief Waits for the handle.
@@ -122,7 +122,7 @@ namespace Win
          *
          * @return A value returned by <code>WaitForSingleObject</code>.
          */
-        DWORD Wait( DWORD timeout = INFINITE );
+        DWORD Wait( DWORD timeout = INFINITE ) const;
     };
 }
 

@@ -36,7 +36,7 @@ Win::Handle::Handle( HANDLE handle )
 }
 
 Win::Handle::Handle( const Win::Handle& oth )
-: mHandle( INVALID_HANDLE )
+: mHandle( INVALID_HANDLE_VALUE )
 {
     // pass to copy operator
     *this = oth;
@@ -65,7 +65,7 @@ Win::Handle& Win::Handle::operator=( const Win::Handle& oth )
 
     // duplicate the target handle
     if( FALSE == oth.isValid() )
-        mHandle = INVALID_HANDLE;
+        mHandle = INVALID_HANDLE_VALUE;
     else
     {
         success = ::DuplicateHandle( GetCurrentProcess(), oth.mHandle,
@@ -90,7 +90,7 @@ Win::WaitableHandle::WaitableHandle( HANDLE handle )
 {
 }
 
-DWORD Win::WaitableHandle::Wait( DWORD timeout )
+DWORD Win::WaitableHandle::Wait( DWORD timeout ) const
 {
     return ::WaitForSingleObject( mHandle, timeout );
 }

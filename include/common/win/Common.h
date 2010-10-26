@@ -39,5 +39,6 @@
 #include <process.h>
 #include <windows.h>
 #include <winsock2.h>
+#include <ws2tcpip.h>
 
 #endif /* !__WIN__COMMON_H__INCL__ */

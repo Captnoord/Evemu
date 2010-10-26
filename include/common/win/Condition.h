@@ -29,7 +29,7 @@
 #include "mt/Mutex.h"
 #include "time/Msec.h"
 #include "win/CriticalSection.h"
-#incldue "win/Event.h"
+#include "win/Event.h"
 
 namespace Win
 {
@@ -88,7 +88,7 @@ namespace Win
         SIZE_T mToFreeCount;
 
         /// A mutex to protect this whole stuff.
-        Mutex mMutex;
+        Mt::Mutex mMutex;
     };
 }
 
