@@ -49,5 +49,6 @@
 
 #include "util/Buffer.h"
 #include "util/Data.h"
+#include "util/Test.h"
 
 #endif /* !__TEST_COMMON_H__INCL__ */

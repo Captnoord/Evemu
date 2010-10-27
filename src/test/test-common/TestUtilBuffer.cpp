@@ -25,68 +25,68 @@
 
 #include "TestCommonPCH.h"
 
-#include "BufferTest.h"
+#include "TestUtilBuffer.h"
 
 /*************************************************************************/
-/* BufferTest                                                            */
+/* Util::Test< Util::Buffer >                                            */
 /*************************************************************************/
-const uint8 BufferTest::PLAIN_DATA[] =
+const uint8 Util::Test< Util::Buffer >::PLAIN_DATA[] =
 {
     0xA8, 0xDA, 0x06, 0x84, 0x43, 0x69, 0xC8
 };
 
-CppUnit::TestSuite* BufferTest::suite()
+CppUnit::TestSuite* Util::Test< Util::Buffer >::suite()
 {
-    CppUnit::TestSuite* s = new CppUnit::TestSuite( "BufferTest" );
+    CppUnit::TestSuite* s = new CppUnit::TestSuite( "TestUtilBuffer" );
 
-    s->addTest( new CppUnit::TestCaller< BufferTest> ( "BufferTest::testConstructorSize",
-                                                       &BufferTest::testConstructorSize ) );
-    s->addTest( new CppUnit::TestCaller< BufferTest> ( "BufferTest::testConstructorRange",
-                                                       &BufferTest::testConstructorRange ) );
-    s->addTest( new CppUnit::TestCaller< BufferTest> ( "BufferTest::testConstructorCopy",
-                                                       &BufferTest::testConstructorCopy ) );
+    s->addTest( new CppUnit::TestCaller< Util::Test< Util::Buffer > >( "TestUtilBuffer::testConstructorSize",
+                                                                       &Util::Test< Util::Buffer >::testConstructorSize ) );
+    s->addTest( new CppUnit::TestCaller< Util::Test< Util::Buffer > >( "TestUtilBuffer::testConstructorRange",
+                                                                       &Util::Test< Util::Buffer >::testConstructorRange ) );
+    s->addTest( new CppUnit::TestCaller< Util::Test< Util::Buffer > >( "TestUtilBuffer::testConstructorCopy",
+                                                                       &Util::Test< Util::Buffer >::testConstructorCopy ) );
 
-    s->addTest( new CppUnit::TestCaller< BufferTest >( "BufferTest::testOperatorAppend",
-                                                       &BufferTest::testOperatorAppend ) );
-    s->addTest( new CppUnit::TestCaller< BufferTest >( "BufferTest::testOperatorAssign",
-                                                       &BufferTest::testOperatorAssign ) );
-    s->addTest( new CppUnit::TestCaller< BufferTest >( "BufferTest::testOperatorCopy",
-                                                       &BufferTest::testOperatorCopy ) );
+    s->addTest( new CppUnit::TestCaller< Util::Test< Util::Buffer > >( "TestUtilBuffer::testOperatorAppend",
+                                                                       &Util::Test< Util::Buffer >::testOperatorAppend ) );
+    s->addTest( new CppUnit::TestCaller< Util::Test< Util::Buffer > >( "TestUtilBuffer::testOperatorAssign",
+                                                                       &Util::Test< Util::Buffer >::testOperatorAssign ) );
+    s->addTest( new CppUnit::TestCaller< Util::Test< Util::Buffer > >( "TestUtilBuffer::testOperatorCopy",
+                                                                       &Util::Test< Util::Buffer >::testOperatorCopy ) );
 
-    s->addTest( new CppUnit::TestCaller< BufferTest >( "BufferTest::testAppendValue",
-                                                       &BufferTest::testAppendValue ) );
-    s->addTest( new CppUnit::TestCaller< BufferTest >( "BufferTest::testAppendRange",
-                                                       &BufferTest::testAppendRange ) );
+    s->addTest( new CppUnit::TestCaller< Util::Test< Util::Buffer > >( "TestUtilBuffer::testAppendValue",
+                                                                       &Util::Test< Util::Buffer >::testAppendValue ) );
+    s->addTest( new CppUnit::TestCaller< Util::Test< Util::Buffer > >( "TestUtilBuffer::testAppendRange",
+                                                                       &Util::Test< Util::Buffer >::testAppendRange ) );
 
-    s->addTest( new CppUnit::TestCaller< BufferTest >( "BufferTest::testAssignValue",
-                                                       &BufferTest::testAssignValue ) );
-    s->addTest( new CppUnit::TestCaller< BufferTest >( "BufferTest::testAssignRange",
-                                                       &BufferTest::testAssignRange ) );
+    s->addTest( new CppUnit::TestCaller< Util::Test< Util::Buffer > >( "TestUtilBuffer::testAssignValue",
+                                                                       &Util::Test< Util::Buffer >::testAssignValue ) );
+    s->addTest( new CppUnit::TestCaller< Util::Test< Util::Buffer > >( "TestUtilBuffer::testAssignRange",
+                                                                       &Util::Test< Util::Buffer >::testAssignRange ) );
 
-    s->addTest( new CppUnit::TestCaller< BufferTest >( "BufferTest::testReserve",
-                                                       &BufferTest::testReserve ) );
-    s->addTest( new CppUnit::TestCaller< BufferTest >( "BufferTest::testReserveAt",
-                                                       &BufferTest::testReserveAt ) );
+    s->addTest( new CppUnit::TestCaller< Util::Test< Util::Buffer > >( "TestUtilBuffer::testReserve",
+                                                                       &Util::Test< Util::Buffer >::testReserve ) );
+    s->addTest( new CppUnit::TestCaller< Util::Test< Util::Buffer > >( "TestUtilBuffer::testReserveAt",
+                                                                       &Util::Test< Util::Buffer >::testReserveAt ) );
 
-    s->addTest( new CppUnit::TestCaller< BufferTest >( "BufferTest::testResize",
-                                                       &BufferTest::testResize ) );
-    s->addTest( new CppUnit::TestCaller< BufferTest >( "BufferTest::testResizeAt",
-                                                       &BufferTest::testResizeAt ) );
+    s->addTest( new CppUnit::TestCaller< Util::Test< Util::Buffer > >( "TestUtilBuffer::testResize",
+                                                                       &Util::Test< Util::Buffer >::testResize ) );
+    s->addTest( new CppUnit::TestCaller< Util::Test< Util::Buffer > >( "TestUtilBuffer::testResizeAt",
+                                                                       &Util::Test< Util::Buffer >::testResizeAt ) );
 
     return s;
 }
 
-void BufferTest::setUp()
+void Util::Test< Util::Buffer >::setUp()
 {
     mBuffer = new Util::Buffer;
 }
 
-void BufferTest::tearDown()
+void Util::Test< Util::Buffer >::tearDown()
 {
     SafeDelete( mBuffer );
 }
 
-void BufferTest::testConstructorSize()
+void Util::Test< Util::Buffer >::testConstructorSize()
 {
     const size_t size = 8;
     const uint8 fill = PLAIN_DATA[ 5 ];
@@ -98,7 +98,7 @@ void BufferTest::testConstructorSize()
     CPPUNIT_ASSERT_EQUAL( fill, mBuffer->Get< uint8 >( size - 1 ) );
 }
 
-void BufferTest::testConstructorRange()
+void Util::Test< Util::Buffer >::testConstructorRange()
 {
     const uint32* begin = reinterpret_cast< const uint32* >( &PLAIN_DATA[ 0 ] );
     const uint32* end = reinterpret_cast< const uint32* >( &PLAIN_DATA[ 7 ] );
@@ -118,7 +118,7 @@ void BufferTest::testConstructorRange()
                                 begin ) );
 }
 
-void BufferTest::testConstructorCopy()
+void Util::Test< Util::Buffer >::testConstructorCopy()
 {
     const Util::Buffer buf( &PLAIN_DATA[ 0 ], &PLAIN_DATA[ 7 ] );
 
@@ -130,7 +130,7 @@ void BufferTest::testConstructorCopy()
                                 mBuffer->begin< uint8 >() ) );
 }
 
-void BufferTest::testOperatorAppend()
+void Util::Test< Util::Buffer >::testOperatorAppend()
 {
     const Util::Buffer::ConstIterator< uint32 > itr = mBuffer->end< uint32 >();
     const uint32 val = reinterpret_cast< const uint32& >( PLAIN_DATA[ 1 ] );
@@ -141,7 +141,7 @@ void BufferTest::testOperatorAppend()
     CPPUNIT_ASSERT_EQUAL( val, *itr );
 }
 
-void BufferTest::testOperatorAssign()
+void Util::Test< Util::Buffer >::testOperatorAssign()
 {
     const uint32 val = reinterpret_cast< const uint32& >( PLAIN_DATA[ 3 ] );
 
@@ -151,7 +151,7 @@ void BufferTest::testOperatorAssign()
     CPPUNIT_ASSERT_EQUAL( val, mBuffer->Get< uint32 >( 0 ) );
 }
 
-void BufferTest::testOperatorCopy()
+void Util::Test< Util::Buffer >::testOperatorCopy()
 {
     const Util::Buffer buf( &PLAIN_DATA[ 0 ], &PLAIN_DATA[ 7 ] );
 
@@ -162,7 +162,7 @@ void BufferTest::testOperatorCopy()
                                 mBuffer->begin< uint8 >() ) );
 }
 
-void BufferTest::testAppendValue()
+void Util::Test< Util::Buffer >::testAppendValue()
 {
     const Util::Buffer::ConstIterator< uint32 > itr = mBuffer->end< uint32 >();
     const uint32 val = reinterpret_cast< const uint32& >( PLAIN_DATA[ 2 ] );
@@ -173,7 +173,7 @@ void BufferTest::testAppendValue()
     CPPUNIT_ASSERT_EQUAL( val, *itr );
 }
 
-void BufferTest::testAppendRange()
+void Util::Test< Util::Buffer >::testAppendRange()
 {
     const Util::Buffer::Iterator< uint32 > itr = mBuffer->end< uint32 >();
     const uint32* begin = reinterpret_cast< const uint32* >( &PLAIN_DATA[ 0 ] );
@@ -190,7 +190,7 @@ void BufferTest::testAppendRange()
     CPPUNIT_ASSERT( std::equal( itr, mBuffer->end< uint32 >(), begin ) );
 }
 
-void BufferTest::testAssignValue()
+void Util::Test< Util::Buffer >::testAssignValue()
 {
     const uint32 val = reinterpret_cast< const uint32& >( PLAIN_DATA[ 1 ] );
 
@@ -200,7 +200,7 @@ void BufferTest::testAssignValue()
     CPPUNIT_ASSERT_EQUAL( val, mBuffer->Get< uint32 >( 0 ) );
 }
 
-void BufferTest::testAssignRange()
+void Util::Test< Util::Buffer >::testAssignRange()
 {
     const uint32* begin = reinterpret_cast< const uint32* >( &PLAIN_DATA[ 0 ] );
     const uint32* end = reinterpret_cast< const uint32* >( &PLAIN_DATA[ 7 ] );
@@ -219,7 +219,7 @@ void BufferTest::testAssignRange()
                                 begin ) );
 }
 
-void BufferTest::testReserve()
+void Util::Test< Util::Buffer >::testReserve()
 {
     const size_t count = 4;
 
@@ -228,7 +228,7 @@ void BufferTest::testReserve()
     CPPUNIT_ASSERT( count * sizeof( uint32 ) <= mBuffer->capacity() );
 }
 
-void BufferTest::testReserveAt()
+void Util::Test< Util::Buffer >::testReserveAt()
 {
     mBuffer->Resize< uint32 >( 4 );
     const Util::Buffer::ConstIterator< uint32 > itr = mBuffer->begin< uint32 >() + 4;
@@ -239,7 +239,7 @@ void BufferTest::testReserveAt()
     CPPUNIT_ASSERT( ( count + 4 ) * sizeof( uint32 ) <= mBuffer->capacity() );
 }
 
-void BufferTest::testResize()
+void Util::Test< Util::Buffer >::testResize()
 {
     mBuffer->Resize< uint32 >( 0 );
     const size_t size = 4;
@@ -251,7 +251,7 @@ void BufferTest::testResize()
     CPPUNIT_ASSERT_EQUAL( fill, mBuffer->Get< uint32 >( size - 1 ) );
 }
 
-void BufferTest::testResizeAt()
+void Util::Test< Util::Buffer >::testResizeAt()
 {
     mBuffer->Resize< uint32 >( 4 );
     const Util::Buffer::ConstIterator< uint32 > itr = mBuffer->begin< uint32 >() + 4;

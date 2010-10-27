@@ -23,38 +23,42 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __STD_FILE_TEST_H__INCL__
-#define __STD_FILE_TEST_H__INCL__
+#ifndef __TEST_STD_FILE_H__INCL__
+#define __TEST_STD_FILE_H__INCL__
 
-/**
- * @brief Test of Std::File.
- *
- * @author Bloody.Rabbit
- */
-class StdFileTest
-: public CppUnit::TestCase
+namespace Util
 {
-public:
-    /// A name for the test file
-    static const char NAME[];
-    /// An alternate name for the file.
-    static const char NAME_ALT[];
-    /// Some plain data to be used during testing.
-    static const uint8 PLAIN_DATA[];
-
     /**
-     * @brief A default constructor.
+     * @brief Tests Std::File.
+     *
+     * @author Bloody.Rabbit
      */
-    StdFileTest();
+    template<>
+    class Test< Std::File >
+    : public CppUnit::TestCase
+    {
+    public:
+        /// A name for the test file
+        static const char NAME[];
+        /// An alternate name for the file.
+        static const char NAME_ALT[];
+        /// Some plain data to be used during testing.
+        static const uint8 PLAIN_DATA[];
 
-    /**
-     * @brief Runs the test.
-     */
-    void runTest();
+        /**
+         * @brief A default constructor.
+         */
+        Test();
 
-protected:
-    /// The file being tested.
-    Std::File mFile;
-};
+        /**
+         * @brief Runs the test.
+         */
+        void runTest();
 
-#endif /* !__STD_FILE_TEST_H__INCL__ */
+    protected:
+        /// The file being tested.
+        Std::File mFile;
+    };
+}
+
+#endif /* !__TEST_STD_FILE_H__INCL__ */

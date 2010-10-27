@@ -25,24 +25,24 @@
 
 #include "TestCommonPCH.h"
 
-#include "StdFileTest.h"
+#include "TestStdFile.h"
 
 /*************************************************************************/
-/* StdFileTest                                                           */
+/* Util::Test< Std::File >                                               */
 /*************************************************************************/
-const char StdFileTest::NAME[] = "StdFileTest.tmp";
-const char StdFileTest::NAME_ALT[] = "StdFileTest-Alt.tmp";
-const uint8 StdFileTest::PLAIN_DATA[] =
+const char Util::Test< Std::File >::NAME[] = "TestStdFile.tmp";
+const char Util::Test< Std::File >::NAME_ALT[] = "TestStdFile-Alt.tmp";
+const uint8 Util::Test< Std::File >::PLAIN_DATA[] =
 {
     0xA8, 0xDA, 0x06, 0x84, 0x43, 0x69, 0xC8,
 };
 
-StdFileTest::StdFileTest()
-: CppUnit::TestCase( "StdFileTest" )
+Util::Test< Std::File >::Test()
+: CppUnit::TestCase( "TestStdFile" )
 {
 }
 
-void StdFileTest::runTest()
+void Util::Test< Std::File >::runTest()
 {
     CPPUNIT_ASSERT( mFile.Open( NAME, "wb" ) );
 

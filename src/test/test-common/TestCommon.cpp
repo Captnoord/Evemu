@@ -25,10 +25,10 @@
 
 #include "TestCommonPCH.h"
 
-#include "BufferTest.h"
-#include "DataTest.h"
-#include "StdFileTest.h"
-#include "StreamSocketTest.h"
+#include "TestNetStreamSocket.h"
+#include "TestStdFile.h"
+#include "TestUtilBuffer.h"
+#include "TestUtilData.h"
 
 /**
  * @brief Runs all tests.
@@ -44,11 +44,11 @@ bool RunTests( CppUnit::OStream* xmlFile = NULL )
     if( NULL != xmlFile )
         runner.setOutputter( new CppUnit::XmlOutputter( &runner.result(), *xmlFile ) );
 
-    runner.addTest( BufferTest::suite() );
-    runner.addTest( DataTest::suite() );
+    runner.addTest( Util::Test< Util::Buffer >::suite() );
+    runner.addTest( Util::Test< Util::Data >::suite() );
 
-    runner.addTest( new StdFileTest );
-    runner.addTest( new StreamSocketTest< Net::Ip4 > );
+    runner.addTest( new Util::Test< Std::File > );
+    runner.addTest( new Util::Test< Net::StreamSocket< Net::Ip4 > > );
 
     return runner.run();
 }

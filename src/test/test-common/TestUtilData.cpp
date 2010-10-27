@@ -25,66 +25,66 @@
 
 #include "TestCommonPCH.h"
 
-#include "DataTest.h"
+#include "TestUtilData.h"
 
 /*************************************************************************/
-/* DataTest                                                              */
+/* Util::Test< Util::Data >                                              */
 /*************************************************************************/
-uint8 DataTest::PLAIN_DATA[] =
+uint8 Util::Test< Util::Data >::PLAIN_DATA[] =
 {
     0xA8, 0xDA, 0x06, 0x84, 0x43, 0x69, 0xC8,
 };
 
-CppUnit::TestSuite* DataTest::suite()
+CppUnit::TestSuite* Util::Test< Util::Data >::suite()
 {
-    CppUnit::TestSuite* s = new CppUnit::TestSuite( "DataTest" );
+    CppUnit::TestSuite* s = new CppUnit::TestSuite( "TestUtilData" );
 
-    s->addTest( new CppUnit::TestCaller< DataTest >( "DataTest::testConstructorDefault",
-                                                     &DataTest::testConstructorDefault ) );
-    s->addTest( new CppUnit::TestCaller< DataTest >( "DataTest::testConstructorValue",
-                                                     &DataTest::testConstructorValue ) );
-    s->addTest( new CppUnit::TestCaller< DataTest >( "DataTest::testConstructorRange",
-                                                     &DataTest::testConstructorRange ) );
-    s->addTest( new CppUnit::TestCaller< DataTest >( "DataTest::testConstructorCopy",
-                                                     &DataTest::testConstructorCopy ) );
+    s->addTest( new CppUnit::TestCaller< Util::Test< Util::Data > >( "TestUtilData::testConstructorDefault",
+                                                                     &Util::Test< Util::Data >::testConstructorDefault ) );
+    s->addTest( new CppUnit::TestCaller< Util::Test< Util::Data > >( "TestUtilData::testConstructorValue",
+                                                                     &Util::Test< Util::Data >::testConstructorValue ) );
+    s->addTest( new CppUnit::TestCaller< Util::Test< Util::Data > >( "TestUtilData::testConstructorRange",
+                                                                     &Util::Test< Util::Data >::testConstructorRange ) );
+    s->addTest( new CppUnit::TestCaller< Util::Test< Util::Data > >( "TestUtilData::testConstructorCopy",
+                                                                     &Util::Test< Util::Data >::testConstructorCopy ) );
 
-    s->addTest( new CppUnit::TestCaller< DataTest >( "DataTest::testGet",
-                                                     &DataTest::testGet ) );
+    s->addTest( new CppUnit::TestCaller< Util::Test< Util::Data > >( "TestUtilData::testGet",
+                                                                     &Util::Test< Util::Data >::testGet ) );
 
-    s->addTest( new CppUnit::TestCaller< DataTest >( "DataTest::testOperatorSubscript",
-                                                     &DataTest::testOperatorSubscript ) );
+    s->addTest( new CppUnit::TestCaller< Util::Test< Util::Data > >( "TestUtilData::testOperatorSubscript",
+                                                                     &Util::Test< Util::Data >::testOperatorSubscript ) );
 
-    s->addTest( new CppUnit::TestCaller< DataTest >( "DataTest::testIteratorConstructorCopy",
-                                                     &DataTest::testIteratorConstructorCopy ) );
+    s->addTest( new CppUnit::TestCaller< Util::Test< Util::Data > >( "TestUtilData::testIteratorConstructorCopy",
+                                                                     &Util::Test< Util::Data >::testIteratorConstructorCopy ) );
 
-    s->addTest( new CppUnit::TestCaller< DataTest >( "DataTest::testIteratorOperatorCopy",
-                                                     &DataTest::testIteratorOperatorCopy ) );
-    s->addTest( new CppUnit::TestCaller< DataTest >( "DataTest::testIteratorOperatorDereference",
-                                                     &DataTest::testIteratorOperatorDereference ) );
-    s->addTest( new CppUnit::TestCaller< DataTest >( "DataTest::testIteratorOperatorSubscript",
-                                                     &DataTest::testIteratorOperatorSubscript ) );
-    s->addTest( new CppUnit::TestCaller< DataTest >( "DataTest::testIteratorOperatorComparison",
-                                                     &DataTest::testIteratorOperatorComparison ) );
-    s->addTest( new CppUnit::TestCaller< DataTest >( "DataTest::testIteratorOperatorArithmetic",
-                                                     &DataTest::testIteratorOperatorArithmetic ) );
+    s->addTest( new CppUnit::TestCaller< Util::Test< Util::Data > >( "TestUtilData::testIteratorOperatorCopy",
+                                                                     &Util::Test< Util::Data >::testIteratorOperatorCopy ) );
+    s->addTest( new CppUnit::TestCaller< Util::Test< Util::Data > >( "TestUtilData::testIteratorOperatorDereference",
+                                                                     &Util::Test< Util::Data >::testIteratorOperatorDereference ) );
+    s->addTest( new CppUnit::TestCaller< Util::Test< Util::Data > >( "TestUtilData::testIteratorOperatorSubscript",
+                                                                     &Util::Test< Util::Data >::testIteratorOperatorSubscript ) );
+    s->addTest( new CppUnit::TestCaller< Util::Test< Util::Data > >( "TestUtilData::testIteratorOperatorComparison",
+                                                                     &Util::Test< Util::Data >::testIteratorOperatorComparison ) );
+    s->addTest( new CppUnit::TestCaller< Util::Test< Util::Data > >( "TestUtilData::testIteratorOperatorArithmetic",
+                                                                     &Util::Test< Util::Data >::testIteratorOperatorArithmetic ) );
 
-    s->addTest( new CppUnit::TestCaller< DataTest >( "DataTest::testIteratorAs",
-                                                     &DataTest::testIteratorAs ) );
+    s->addTest( new CppUnit::TestCaller< Util::Test< Util::Data > >( "TestUtilData::testIteratorAs",
+                                                                     &Util::Test< Util::Data >::testIteratorAs ) );
 
     return s;
 }
 
-void DataTest::setUp()
+void Util::Test< Util::Data >::setUp()
 {
     mData = new Util::Data( &PLAIN_DATA[ 0 ], &PLAIN_DATA[ sizeof( PLAIN_DATA ) ] );
 }
 
-void DataTest::tearDown()
+void Util::Test< Util::Data >::tearDown()
 {
     SafeDelete( mData );
 }
 
-void DataTest::testConstructorDefault()
+void Util::Test< Util::Data >::testConstructorDefault()
 {
     const size_t size = 0;
 
@@ -98,7 +98,7 @@ void DataTest::testConstructorDefault()
     setUp();
 }
 
-void DataTest::testConstructorValue()
+void Util::Test< Util::Data >::testConstructorValue()
 {
     uint32 val = reinterpret_cast< const uint32& >( PLAIN_DATA[ 2 ] );
 
@@ -113,7 +113,7 @@ void DataTest::testConstructorValue()
     setUp();
 }
 
-void DataTest::testConstructorRange()
+void Util::Test< Util::Data >::testConstructorRange()
 {
     uint32* begin = reinterpret_cast< uint32* >( &PLAIN_DATA[ 0 ] );
     uint32* end = reinterpret_cast< uint32* >( &PLAIN_DATA[ 7 ] );
@@ -137,7 +137,7 @@ void DataTest::testConstructorRange()
     setUp();
 }
 
-void DataTest::testConstructorCopy()
+void Util::Test< Util::Data >::testConstructorCopy()
 {
     const Util::Data data( &PLAIN_DATA[ 0 ], &PLAIN_DATA[ sizeof( PLAIN_DATA ) ] );
 
@@ -153,7 +153,7 @@ void DataTest::testConstructorCopy()
     setUp();
 }
 
-void DataTest::testGet()
+void Util::Test< Util::Data >::testGet()
 {
     uint32& ref = mData->Get< uint32 >( 0 );
     uint32 val = reinterpret_cast< const uint32& >( PLAIN_DATA[ 0 ] );
@@ -165,7 +165,7 @@ void DataTest::testGet()
     CPPUNIT_ASSERT_EQUAL( val, ref );
 }
 
-void DataTest::testOperatorSubscript()
+void Util::Test< Util::Data >::testOperatorSubscript()
 {
     const size_t index = 3;
     uint8 val = PLAIN_DATA[ index ];
@@ -177,14 +177,14 @@ void DataTest::testOperatorSubscript()
     CPPUNIT_ASSERT_EQUAL( val, ( *mData )[ index ] );
 }
 
-void DataTest::testIteratorConstructorCopy()
+void Util::Test< Util::Data >::testIteratorConstructorCopy()
 {
     const Util::Data::ConstIterator< uint32 > itr( mData->begin< uint32 >() );
 
     CPPUNIT_ASSERT( mData->begin< uint32 >() == itr );
 }
 
-void DataTest::testIteratorOperatorCopy()
+void Util::Test< Util::Data >::testIteratorOperatorCopy()
 {
     Util::Data::ConstIterator< uint32 > itr;
     itr = mData->begin< uint32 >();
@@ -192,7 +192,7 @@ void DataTest::testIteratorOperatorCopy()
     CPPUNIT_ASSERT( mData->begin< uint32 >() == itr );
 }
 
-void DataTest::testIteratorOperatorDereference()
+void Util::Test< Util::Data >::testIteratorOperatorDereference()
 {
     const Util::Data::Iterator< uint16 > itr = mData->begin< uint16 >();
     uint16 val = reinterpret_cast< const uint16& >( PLAIN_DATA[ 0 ] );
@@ -204,7 +204,7 @@ void DataTest::testIteratorOperatorDereference()
     CPPUNIT_ASSERT_EQUAL( val, *itr );
 }
 
-void DataTest::testIteratorOperatorSubscript()
+void Util::Test< Util::Data >::testIteratorOperatorSubscript()
 {
     const Util::Data::Iterator< uint16 > itr = mData->begin< uint16 >();
     uint16 val = reinterpret_cast< const uint16& >( PLAIN_DATA[ 4 ] );
@@ -216,7 +216,7 @@ void DataTest::testIteratorOperatorSubscript()
     CPPUNIT_ASSERT_EQUAL( val, itr[ 2 ] );
 }
 
-void DataTest::testIteratorOperatorComparison()
+void Util::Test< Util::Data >::testIteratorOperatorComparison()
 {
     const Util::Data::ConstIterator< uint8 > begin = mData->begin< uint8 >();
     const Util::Data::ConstIterator< uint8 > end = mData->end< uint8 >();
@@ -243,7 +243,7 @@ void DataTest::testIteratorOperatorComparison()
     CPPUNIT_ASSERT( itr2 >= itr1 );
 }
 
-void DataTest::testIteratorOperatorArithmetic()
+void Util::Test< Util::Data >::testIteratorOperatorArithmetic()
 {
     Util::Data::ConstIterator< uint8 > itr = mData->begin< uint8 >();
 
@@ -268,7 +268,7 @@ void DataTest::testIteratorOperatorArithmetic()
     CPPUNIT_ASSERT( mData->begin< uint8 >() == itr );
 }
 
-void DataTest::testIteratorAs()
+void Util::Test< Util::Data >::testIteratorAs()
 {
     const Util::Data::ConstIterator< uint8 > itr = mData->begin< uint8 >() + 3;
     const uint32 val = reinterpret_cast< const uint32& >( PLAIN_DATA[ 3 ] );

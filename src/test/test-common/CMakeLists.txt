@@ -19,17 +19,17 @@ MARK_AS_ADVANCED( EVEMU_TEST_COMMON_XML )
 # Files #
 #########
 SET( INCLUDE
-     "${TARGET_INCLUDE_DIR}/BufferTest.h"
-     "${TARGET_INCLUDE_DIR}/DataTest.h"
-     "${TARGET_INCLUDE_DIR}/StdFileTest.h"
-     "${TARGET_INCLUDE_DIR}/StreamSocketTest.h"
      "${TARGET_INCLUDE_DIR}/TestCommon.h"
-     "${TARGET_INCLUDE_DIR}/TestCommonPCH.h" )
+     "${TARGET_INCLUDE_DIR}/TestCommonPCH.h"
+     "${TARGET_INCLUDE_DIR}/TestNetStreamSocket.h"
+     "${TARGET_INCLUDE_DIR}/TestStdFile.h"
+     "${TARGET_INCLUDE_DIR}/TestUtilBuffer.h"
+     "${TARGET_INCLUDE_DIR}/TestUtilData.h" )
 SET( SOURCE
-     "${TARGET_SOURCE_DIR}/BufferTest.cpp"
-     "${TARGET_SOURCE_DIR}/DataTest.cpp"
-     "${TARGET_SOURCE_DIR}/StdFileTest.cpp"
-     "${TARGET_SOURCE_DIR}/TestCommon.cpp" )
+     "${TARGET_SOURCE_DIR}/TestCommon.cpp"
+     "${TARGET_SOURCE_DIR}/TestStdFile.cpp"
+     "${TARGET_SOURCE_DIR}/TestUtilBuffer.cpp"
+     "${TARGET_SOURCE_DIR}/TestUtilData.cpp" )
 
 ########################
 # Setup the executable #
