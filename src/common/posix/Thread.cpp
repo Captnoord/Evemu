@@ -65,11 +65,17 @@ void Posix::Thread::TestCancel()
 
 int Posix::Thread::Sleep( const Time::Timeval& period )
 {
-    return ::usleep( static_cast< useconds_t >( Time::USEC_PER_MSEC * Time::MSEC_PER_SEC * period.sec()
-                                                + period.usec() ) );
+    if( 0 != ::sleep( period.sec() ) )
+        return -1;
+
+    if( 0 != ::usleep( period.usec() ) )
+        return errno;
+
+    return 0;
 }
 
 Posix::Thread::Thread()
+: mThread()
 {
 }
 
@@ -79,15 +85,15 @@ Posix::Thread::Thread( pthread_t thread )
 }
 
 Posix::Thread::Thread( void* ( *startRoutine )( void* ), void* arg, const Attribute& attr )
+: mThread()
 {
     int code = Create( startRoutine, arg, attr );
     assert( 0 == code );
 }
 
 Posix::Thread::Thread( const Posix::Thread& oth )
+: mThread( oth.mThread )
 {
-    // let the copy constructor do the job
-    *this = oth;
 }
 
 int Posix::Thread::Join( void** retVal ) const
@@ -128,6 +134,8 @@ int Posix::Thread::SetSchedPolicyParam( int policy, const sched_param* schedPara
 Posix::Thread& Posix::Thread::operator=( const Posix::Thread& oth )
 {
     mThread = oth.mThread;
+
+    return *this;
 }
 
 /*************************************************************************/

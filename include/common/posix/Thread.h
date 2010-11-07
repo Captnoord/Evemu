@@ -93,7 +93,7 @@ namespace Posix
          *
          * @param[in] period How much time to spend sleeping.
          *
-         * @return A value returned by <code>usleep</code>.
+         * @return An error code.
          */
         static int Sleep( const Time::Timeval& period );
 
