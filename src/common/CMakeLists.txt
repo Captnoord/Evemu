@@ -129,6 +129,7 @@ SET( util_INCLUDE
      "${TARGET_INCLUDE_DIR}/util/RefPtr.h"
      "${TARGET_INCLUDE_DIR}/util/SafeDelete.h"
      "${TARGET_INCLUDE_DIR}/util/Singleton.h"
+     "${TARGET_INCLUDE_DIR}/util/Stream.h"
      "${TARGET_INCLUDE_DIR}/util/String.h"
      "${TARGET_INCLUDE_DIR}/util/Test.h" )
 SET( util_SOURCE
