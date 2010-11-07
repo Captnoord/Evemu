@@ -1,0 +1,116 @@
+/*
+    ------------------------------------------------------------------------------------
+    LICENSE:
+    ------------------------------------------------------------------------------------
+    This file is part of EVEmu: EVE Online Server Emulator
+    Copyright 2006 - 2008 The EVEmu Team
+    For the latest information visit http://evemu.mmoforge.org
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+    Foundation; either version 2 of the License, or (at your option) any later
+    version.
+
+    This program is distributed in the hope that it will be useful, but WITHOUT
+    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+    FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License along with
+    this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+    Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+    http://www.gnu.org/copyleft/lesser.txt.
+    ------------------------------------------------------------------------------------
+    Author:     Bloody.Rabbit
+*/
+
+#ifndef __WIN__FILE_H__INCL__
+#define __WIN__FILE_H__INCL__
+
+#include "win/Handle.h"
+
+namespace Win
+{
+    /**
+     * @brief A Windows' file.
+     *
+     * @author Bloody.Rabbit
+     */
+    class File
+    : public ReadableHandle,
+      public WritableHandle
+    {
+    public:
+        /**
+         * @brief Deletes a file.
+         *
+         * @param[in] name A name of the file.
+         *
+         * @return A value returned by <code>DeleteFile</code>.
+         */
+        static BOOL Delete( PCTSTR name );
+        /**
+         * @brief Moves a file.
+         *
+         * @param[in] nameOld The old name.
+         * @param[in] nameNew The new name.
+         *
+         * @return A value returned by <code>MoveFile</code>.
+         */
+        static BOOL Move( PCTSTR nameOld, PCTSTR nameNew );
+
+        /**
+         * @brief A default constructor.
+         */
+        File();
+        /**
+         * @brief A primary constructor, opens a file.
+         *
+         * @param[in] name   A name of the file.
+         * @param[in] mode   Desired access to the file.
+         * @param[in] share  Share mode flags.
+         * @param[in] create Creation flags.
+         */
+        File( PCTSTR name, DWORD mode, DWORD share, DWORD create );
+
+        /**
+         * @brief Obtains size of the file.
+         *
+         * @param[out] size Where to store the size.
+         *
+         * @return A value returned by <code>GetFileSizeEx</code>.
+         */
+        BOOL GetSize( LARGE_INTEGER& size ) const;
+
+        /**
+         * @brief Opens a file.
+         *
+         * @param[in] name   A name of the file.
+         * @param[in] mode   Desired access to the file.
+         * @param[in] share  Share mode flags.
+         * @param[in] create Creation flags.
+         *
+         * @retval TRUE  Open succeeded.
+         * @retval FALSE Open failed.
+         */
+        BOOL Open( PCTSTR name, DWORD mode, DWORD share, DWORD create );
+
+        /**
+         * @brief Sets the internal file pointer.
+         *
+         * @param[in]  dist   The distance to move.
+         * @param[in]  method The starting point.
+         * @param[out] result The result of the move.
+         *
+         * @return A value returned by <code>SetFilePointerEx</code>.
+         */
+        BOOL SetPointer( LARGE_INTEGER dist, DWORD method, PLARGE_INTEGER result = NULL );
+        /**
+         * @brief Flushes buffers of the file.
+         *
+         * @return A value returned by <code>FlushFileBuffers</code>.
+         */
+        BOOL FlushBuffers();
+    };
+}
+
+#endif /* !__WIN__FILE_H__INCL__ */
