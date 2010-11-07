@@ -110,12 +110,30 @@ bool Std::File::Flush()
     return 0 == ::fflush( mFile );
 }
 
-size_t Std::File::Read( Util::Buffer& into )
+Std::File::Error Std::File::Read( Util::Data& data, size_t* bytesRead )
 {
-    return ::fread( &into[0], 1, into.size(), mFile );
+    size_t code = ::fread( &data[0], 1, data.size(), mFile );
+
+    if( NULL != bytesRead )
+        *bytesRead = code;
+
+    if( data.size() == code )
+        return ERROR_OK;
+    else if( eof() )
+        return ERROR_EOS;
+    else
+        return ERROR_READ;
 }
 
-size_t Std::File::Write( const Util::Buffer& data )
+Std::File::Error Std::File::Write( const Util::Data& data, size_t* bytesWritten )
 {
-    return ::fwrite( &data[0], 1, data.size(), mFile );
+    size_t code = ::fwrite( &data[0], 1, data.size(), mFile );
+
+    if( NULL != bytesWritten )
+        *bytesWritten = code;
+
+    if( data.size() == code )
+        return ERROR_OK;
+    else
+        return ERROR_WRITE;
 }

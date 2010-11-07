@@ -26,7 +26,7 @@
 #ifndef __STD__FILE_H__INCL__
 #define __STD__FILE_H__INCL__
 
-#include "util/Buffer.h"
+#include "util/Stream.h"
 
 namespace Std
 {
@@ -36,8 +36,15 @@ namespace Std
      * @author Bloody.Rabbit
      */
     class File
+    : public Util::InputStream< void >,
+      public Util::OutputStream< void >
     {
     public:
+        /// Typedef for a stream element due to reference ambiguity.
+        typedef Util::Stream< void >::Element Element;
+        /// Typedef for a stream error due to reference ambiguity.
+        typedef Util::Stream< void >::Error   Error;
+
         /**
          * @brief Renames a file.
          *
@@ -151,19 +158,23 @@ namespace Std
         /**
          * @brief Reads data from the file.
          *
-         * @param[out] into Where to store the read data.
+         * @param[out] data      Where to store the read data.
+         * @param[out] bytesRead Where to store the number
+         *                       of read bytes.
          *
-         * @return A value returned by <code>fread</code>.
+         * @return An error code.
          */
-        size_t Read( Util::Buffer& into );
+        Error Read( Util::Data& data, size_t* bytesRead = NULL );
         /**
          * @brief Writes data to the file.
          *
-         * @param[in] data The data to be written.
+         * @param[in]  data         The data to be written.
+         * @param[out] bytesWritten Where to store the number
+         *                          of written bytes.
          *
-         * @return A value returned by <code>fwrite</code>.
+         * @return An error code.
          */
-        size_t Write( const Util::Buffer& data );
+        Error Write( const Util::Data& data, size_t* bytesWritten = NULL );
 
     protected:
         /// The file.
