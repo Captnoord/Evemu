@@ -84,12 +84,14 @@ IF( NOT WIN32 )
          "${TARGET_INCLUDE_DIR}/posix/Condition.h"
          "${TARGET_INCLUDE_DIR}/posix/Directory.h"
          "${TARGET_INCLUDE_DIR}/posix/Fd.h"
+         "${TARGET_INCLUDE_DIR}/posix/File.h"
          "${TARGET_INCLUDE_DIR}/posix/Mutex.h"
          "${TARGET_INCLUDE_DIR}/posix/Thread.h" )
     SET( posix_SOURCE
          "${TARGET_SOURCE_DIR}/posix/Condition.cpp"
          "${TARGET_SOURCE_DIR}/posix/Directory.cpp"
          "${TARGET_SOURCE_DIR}/posix/Fd.cpp"
+         "${TARGET_SOURCE_DIR}/posix/File.cpp"
          "${TARGET_SOURCE_DIR}/posix/Mutex.cpp"
          "${TARGET_SOURCE_DIR}/posix/Thread.cpp" )
 ENDIF( NOT WIN32 )
