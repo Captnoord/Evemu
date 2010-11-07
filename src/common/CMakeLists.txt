@@ -33,9 +33,10 @@ SET( db_SOURCE
      "${TARGET_SOURCE_DIR}/db/Type.cpp" )
 
 SET( fs_INCLUDE
-     "${TARGET_INCLUDE_DIR}/fs/Common.h" )
+     "${TARGET_INCLUDE_DIR}/fs/Common.h"
+     "${TARGET_INCLUDE_DIR}/fs/Directory.h" )
 SET( fs_SOURCE
-     "" )
+     "${TARGET_SOURCE_DIR}/fs/Directory.cpp" )
 
 SET( ga_INCLUDE
      "${TARGET_INCLUDE_DIR}/ga/Common.h"
