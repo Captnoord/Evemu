@@ -150,6 +150,7 @@ IF( WIN32 )
          "${TARGET_INCLUDE_DIR}/win/Condition.h"
          "${TARGET_INCLUDE_DIR}/win/ConsoleScreenBuffer.h"
          "${TARGET_INCLUDE_DIR}/win/CriticalSection.h"
+         "${TARGET_INCLUDE_DIR}/win/Directory.h"
          "${TARGET_INCLUDE_DIR}/win/Event.h"
          "${TARGET_INCLUDE_DIR}/win/Handle.h"
          "${TARGET_INCLUDE_DIR}/win/Thread.h" )
@@ -157,6 +158,7 @@ IF( WIN32 )
          "${TARGET_SOURCE_DIR}/win/Condition.cpp"
          "${TARGET_SOURCE_DIR}/win/ConsoleScreenBuffer.cpp"
          "${TARGET_SOURCE_DIR}/win/CriticalSection.cpp"
+         "${TARGET_SOURCE_DIR}/win/Directory.cpp"
          "${TARGET_SOURCE_DIR}/win/Event.cpp"
          "${TARGET_SOURCE_DIR}/win/Handle.cpp"
          "${TARGET_SOURCE_DIR}/win/Thread.cpp" )
