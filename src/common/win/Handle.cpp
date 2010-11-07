@@ -38,9 +38,13 @@ Win::Handle::Handle( HANDLE handle )
 Win::Handle::Handle( const Win::Handle& oth )
 : mHandle( INVALID_HANDLE_VALUE )
 {
-    /* Actual handle duplication is quite complex,
-       so use our copy operator. */
-    *this = oth;
+    if( TRUE == oth.isValid() )
+    {
+        BOOL success = ::DuplicateHandle( ::GetCurrentProcess(), oth.mHandle,
+                                          ::GetCurrentProcess(), &mHandle,
+                                          0, FALSE, DUPLICATE_SAME_ACCESS );
+        assert( TRUE == success );
+    }
 }
 
 Win::Handle::~Handle()

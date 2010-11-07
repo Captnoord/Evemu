@@ -41,7 +41,7 @@ BOOL Win::Condition::Signal()
     Mt::MutexLock lock( mMutex );
 
     mToFreeCount = std::min( mToFreeCount + 1, mCurrentCount );
-    return ( 0 < mToFreeCount ? mWaitEvent.Set() : TRUE );
+    return 0 < mToFreeCount ? mWaitEvent.Set() : TRUE;
 }
 
 BOOL Win::Condition::Broadcast()
@@ -49,7 +49,7 @@ BOOL Win::Condition::Broadcast()
     Mt::MutexLock lock( mMutex );
 
     mToFreeCount = mCurrentCount;
-    return ( 0 < mToFreeCount ? mWaitEvent.Set() : TRUE );
+    return 0 < mToFreeCount ? mWaitEvent.Set() : TRUE;
 }
 
 DWORD Win::Condition::Wait( Win::CriticalSection& criticalSection, const Time::Msec& timeout )

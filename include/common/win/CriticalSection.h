@@ -57,6 +57,8 @@ namespace Win
          *
          * This method returns immediately; the returned value
          * indicates whether the critical section has been entered.
+         *
+         * @return A value returned by <code>TryEnterCriticalSection</code>.
          */
         BOOL TryEnter();
 
