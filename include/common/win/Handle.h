@@ -27,6 +27,7 @@
 #define __WIN__HANDLE_H__INCL__
 
 #include "time/Msec.h"
+#include "util/Stream.h"
 
 namespace Win
 {
@@ -105,6 +106,62 @@ namespace Win
     protected:
         /// The handle itself.
         HANDLE mHandle;
+    };
+
+    /**
+     * @brief A handle which you can read from.
+     *
+     * @author Bloody.Rabbit
+     */
+    class ReadableHandle
+    : virtual public Handle,
+      public Util::InputStream< void >
+    {
+    public:
+        /**
+         * @brief A primary constructor.
+         *
+         * @param[in] handle The handle.
+         */
+        ReadableHandle( HANDLE handle = INVALID_HANDLE_VALUE );
+
+        /**
+         * @brief Reads data from the handle.
+         *
+         * @param[out] data      Where to store the read data.
+         * @param[out] bytesRead Where to store a number of read bytes.
+         *
+         * @return An error code.
+         */
+        Error Read( Util::Data& data, size_t* bytesRead = NULL );
+    };
+
+    /**
+     * @brief A handle which you can write to.
+     *
+     * @author Bloody.Rabbit
+     */
+    class WritableHandle
+    : virtual public Handle,
+      public Util::OutputStream< void >
+    {
+    public:
+        /**
+         * @brief A primary constructor.
+         *
+         * @param[in] handle The handle.
+         */
+        WritableHandle( HANDLE handle = INVALID_HANDLE_VALUE );
+
+        /**
+         * @brief Writes data to the handle.
+         *
+         * @param[in]  data         The data to be written.
+         * @param[out] bytesWritten Where to store a number of written bytes.
+         *
+         * @return An error code.
+         */
+        Error Write( const Util::Data& data, size_t* bytesWritten = NULL );
     };
 
     /**

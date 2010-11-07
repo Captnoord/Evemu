@@ -82,6 +82,54 @@ Win::Handle& Win::Handle::operator=( const Win::Handle& oth )
 }
 
 /*************************************************************************/
+/* Win::ReadableHandle                                                   */
+/*************************************************************************/
+Win::ReadableHandle::ReadableHandle( HANDLE handle )
+: Win::Handle( handle )
+{
+}
+
+Win::ReadableHandle::Error Win::ReadableHandle::Read( Util::Data& data, size_t* bytesRead )
+{
+    DWORD read;
+    BOOL success = ::ReadFile( mHandle,
+                               &data[0], data.size(),
+                               &read, NULL );
+
+    if( NULL != bytesRead )
+        *bytesRead = read;
+
+    if( TRUE == success )
+        return ERROR_OK;
+    else
+        return ERROR_READ;
+}
+
+/*************************************************************************/
+/* Win::WritableHandle                                                   */
+/*************************************************************************/
+Win::WritableHandle::WritableHandle( HANDLE handle )
+: Win::Handle( handle )
+{
+}
+
+Win::WritableHandle::Error Win::WritableHandle::Write( const Util::Data& data, size_t* bytesWritten )
+{
+    DWORD written;
+    BOOL success = ::WriteFile( mHandle,
+                                &data[0], data.size(),
+                                &written, NULL );
+
+    if( NULL != bytesWritten )
+        *bytesWritten = written;
+
+    if( TRUE == success )
+        return ERROR_OK;
+    else
+        return ERROR_WRITE;
+}
+
+/*************************************************************************/
 /* Win::WaitableHandle                                                   */
 /*************************************************************************/
 Win::WaitableHandle::WaitableHandle( HANDLE handle )
