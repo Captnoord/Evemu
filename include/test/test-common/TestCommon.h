@@ -42,6 +42,9 @@
 /*************************************************************************/
 /* common includes                                                       */
 /*************************************************************************/
+#include "fs/File.h"
+#include "fs/Directory.h"
+
 #include "net/Ip4.h"
 #include "net/StreamSocket.h"
 

@@ -23,21 +23,40 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __TEST_COMMON_PCH_H__INCL__
-#define __TEST_COMMON_PCH_H__INCL__
+#ifndef __TEST_FS_DIRECTORY_H__INCL__
+#define __TEST_FS_DIRECTORY_H__INCL__
 
-/*************************************************************************/
-/* common includes                                                       */
-/*************************************************************************/
-#include "Common.h"
+namespace Util
+{
+    /**
+     * @brief Tests Fs::Directory.
+     *
+     * @author Bloody.Rabbit
+     */
+    template<>
+    class Test< Fs::Directory >
+    : public CppUnit::TestCase
+    {
+    public:
+        /// A directory name used during the test.
+        static const char NAME_TOP[];
+        /// Another directory name used during the test.
+        static const char NAME_BOTTOM[];
 
-#include "fs/Common.h"
-#include "net/Common.h"
-#include "std/Common.h"
+        /**
+         * @brief A primary constructor.
+         */
+        Test();
 
-/*************************************************************************/
-/* test-common includes                                                  */
-/*************************************************************************/
-#include "TestCommon.h"
+        /**
+         * @brief Runs the directory test.
+         */
+        void runTest();
 
-#endif /* !__TEST_COMMON_PCH_H__INCL__ */
+    protected:
+        /// The directory being tested.
+        Fs::Directory mDirectory;
+    };
+}
+
+#endif /* !__TEST_FS_DIRECTORY_H__INCL__ */

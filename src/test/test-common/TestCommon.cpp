@@ -25,6 +25,8 @@
 
 #include "TestCommonPCH.h"
 
+#include "TestFsDirectory.h"
+#include "TestFsFile.h"
 #include "TestNetStreamSocket.h"
 #include "TestStdFile.h"
 #include "TestUtilBuffer.h"
@@ -44,9 +46,11 @@ bool RunTests( CppUnit::OStream* xmlFile = NULL )
     if( NULL != xmlFile )
         runner.setOutputter( new CppUnit::XmlOutputter( &runner.result(), *xmlFile ) );
 
+    runner.addTest( Util::Test< Fs::File >::suite() );
     runner.addTest( Util::Test< Util::Buffer >::suite() );
     runner.addTest( Util::Test< Util::Data >::suite() );
 
+    runner.addTest( new Util::Test< Fs::Directory > );
     runner.addTest( new Util::Test< Std::File > );
     runner.addTest( new Util::Test< Net::StreamSocket< Net::Ip4 > > );
 
