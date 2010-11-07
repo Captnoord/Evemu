@@ -82,12 +82,12 @@ namespace Util
 
             // Send the data (asynchronously)
             Util::Buffer buf( MESSAGE, MESSAGE + sizeof( MESSAGE ) );
-            CPPUNIT_ASSERT_EQUAL( static_cast< int >( sizeof( MESSAGE ) ),
-                                  mClient.Send( buf ) );
+            CPPUNIT_ASSERT_EQUAL( Net::StreamSocket< L3 >::ERROR_OK,
+                                  mClient.Write( buf ) );
 
             // Receive the data (blocking)
-            CPPUNIT_ASSERT_EQUAL( static_cast< int >( sizeof( MESSAGE ) ),
-                                  acceptedClient.Receive( buf ) );
+            CPPUNIT_ASSERT_EQUAL( Net::StreamSocket< L3 >::ERROR_OK,
+                                  acceptedClient.Read( buf ) );
 
             // Compare the data
             CPPUNIT_ASSERT( std::equal( MESSAGE, MESSAGE + sizeof( MESSAGE ),

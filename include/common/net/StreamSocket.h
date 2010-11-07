@@ -27,7 +27,7 @@
 #define __NET__STREAM_SOCKET_H__INCL__
 
 #include "net/Socket.h"
-#include "util/Buffer.h"
+#include "util/Stream.h"
 
 namespace Net
 {
@@ -38,12 +38,19 @@ namespace Net
      */
     template< typename L3 >
     class StreamSocket
-    : public Socket< L3 >
+    : public Socket< L3 >,
+      public Util::InputStream< void >,
+      public Util::OutputStream< void >
     {
         /// Typedef for our base due to readability.
-        typedef Socket< L3 > _Base;
+        typedef Socket< L3 > Base;
 
     public:
+        /// Typedef for a stream element due to reference ambiguity.
+        typedef Util::Stream< void >::Element Element;
+        /// Typedef for a stream error due to reference ambiguity.
+        typedef Util::Stream< void >::Error   Error;
+
         /**
          * @brief A default constructor.
          */
@@ -56,7 +63,7 @@ namespace Net
          * @param[in] prot A protocol to use.
          */
         StreamSocket( int prot )
-        : _Base( SOCK_STREAM, prot )
+        : Base( SOCK_STREAM, prot )
         {
         }
 
@@ -69,7 +76,7 @@ namespace Net
          */
         int Create( int prot )
         {
-            return _Base::Create( SOCK_STREAM, prot );
+            return Base::Create( SOCK_STREAM, prot );
         }
 
         /**
@@ -81,46 +88,64 @@ namespace Net
          */
         int Connect( const typename L3::SocketAddress& socketAddress )
         {
-            if( 0 != ::connect( _Base::mSocket,
+            if( 0 != ::connect( Base::mSocket,
                                 reinterpret_cast< const sockaddr* >( &socketAddress ),
                                 sizeof( socketAddress ) ) )
                 return NET_ERRNO;
 
-            _Base::mSocketAddress = socketAddress;
+            Base::mSocketAddress = socketAddress;
             return 0;
         }
 
         /**
          * @brief Receives data from socket.
          *
-         * @param[out] into  Where to store received data.
-         * @param[in]  flags Receive options.
+         * @param[out] data      Where to store received data.
+         * @param[out] bytesRead Where to store the number
+         *                       of received bytes.
          *
-         * @return An error code (< 0) or number of received bytes (>= 0).
+         * @return An error code.
          */
-        int Receive( Util::Buffer& into, int flags = 0 )
+        Error Read( Util::Data& data, size_t* bytesRead = NULL )
         {
-            int res = ::recv( _Base::mSocket, &into[0], into.size(), flags );
-            if( 0 > res )
-                return NET_ERRNO;
+            int code = ::recv( Base::mSocket, &data[0], data.size(), 0 );
+            if( 0 < code )
+            {
+                if( NULL != bytesRead )
+                    *bytesRead = code;
 
-            return res;
+                return ERROR_OK;
+            }
+            else if( 0 == code )
+                return ERROR_EOS;
+            else if( EWOULDBLOCK == NET_ERRNO )
+                return ERROR_TRYLATER;
+            else
+                return ERROR_READ;
         }
         /**
          * @brief Sends data to socket.
          *
-         * @param[in] data  The data to send.
-         * @param[in] flags Send options.
+         * @param[in]  data         The data to send.
+         * @param[out] bytesWritten Where to store the number
+         *                          of bytes written.
          *
-         * @return An error code (< 0) or number of sent bytes (>= 0).
+         * @return An error code.
          */
-        int Send( const Util::Buffer& data, int flags = 0 )
+        Error Write( const Util::Data& data, size_t* bytesWritten = NULL )
         {
-            int res = ::send( _Base::mSocket, &data[0], data.size(), flags );
-            if( 0 > res )
-                return NET_ERRNO;
+            int code = ::send( Base::mSocket, &data[0], data.size(), 0 );
+            if( 0 <= code )
+            {
+                if( NULL != bytesWritten )
+                    *bytesWritten = code;
 
-            return res;
+                return ERROR_OK;
+            }
+            else if( EWOULDBLOCK == NET_ERRNO )
+                return ERROR_TRYLATER;
+            else
+                return ERROR_WRITE;
         }
 
         /**
@@ -132,7 +157,7 @@ namespace Net
          */
         int Listen( int backlog = SOMAXCONN )
         {
-            if( 0 != ::listen( _Base::mSocket, backlog ) )
+            if( 0 != ::listen( Base::mSocket, backlog ) )
                 return NET_ERRNO;
 
             return 0;
@@ -147,9 +172,7 @@ namespace Net
          */
         int Listen( const typename L3::SocketAddress& socketAddress, int backlog = SOMAXCONN )
         {
-            int code;
-
-            code = Bind( socketAddress );
+            int code = Bind( socketAddress );
             if( 0 != code )
                 return code;
 
@@ -168,16 +191,23 @@ namespace Net
          */
         int Accept( StreamSocket< L3 >& into )
         {
+            // Close the socket first
+            int code = into.Close();
+            if( 0 != code )
+                return code;
+
+            // Obtain the new socket
             typename L3::SocketAddress socketAddress;
             socklen_t len = sizeof( socketAddress );
 
-            SOCKET socket = ::accept( _Base::mSocket,
+            SOCKET socket = ::accept( Base::mSocket,
                                       reinterpret_cast< sockaddr* >( &socketAddress ),
                                       &len );
             if( INVALID_SOCKET == socket )
                 return NET_ERRNO;
 
-            int code = into.Assign( socket, socketAddress );
+            // Assign it
+            code = into.Assign( socket, socketAddress );
             if( 0 != code )
                 return code;
 

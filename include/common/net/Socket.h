@@ -65,14 +65,22 @@ namespace Net
          */
         ~Socket()
         {
-            int code = Assign( INVALID_SOCKET, L3::SOCKET_ADDRESS_ANY );
+            int code = Close();
             assert( 0 == code );
         }
 
-        /// Obtains validity of the socket.
+        /**
+         * @brief Obtains validity of the socket.
+         *
+         * @retval true  The socket is valid.
+         * @retval false The socket is invalid.
+         */
         bool isValid() const { return INVALID_SOCKET != mSocket; }
-
-        /// Obtains the socket address.
+        /**
+         * @brief Obtains the socket address.
+         *
+         * @return The socket address.
+         */
         const typename L3::SocketAddress& socketAddress() const { return mSocketAddress; }
 
         /**
@@ -87,11 +95,18 @@ namespace Net
          */
         int Create( int type, int prot )
         {
+            // Close the socket first
+            int code = Close();
+            if( 0 != code )
+                return code;
+
+            // Create the new socket
             SOCKET socket = ::socket( L3::ADDRESS_FAMILY, type, prot );
             if( INVALID_SOCKET == socket )
                 return NET_ERRNO;
 
-            int code = Assign( socket, L3::SOCKET_ADDRESS_ANY );
+            // Assign it
+            code = Assign( socket, L3::SOCKET_ADDRESS_ANY );
             if( 0 != code )
                 return code;
 
@@ -104,23 +119,7 @@ namespace Net
          */
         int Close()
         {
-            /* There is a problem that we may be shutting down
-               a listening socket, for which the shutdown will
-               fail. Thus we ignore ENOTCONN error. */
-            if( 0 != ::shutdown( mSocket, SHUT_WR ) )
-                if( ENOTCONN != NET_ERRNO )
-                    return NET_ERRNO;
-
-            if( 0 != ::shutdown( mSocket, SHUT_RD ) )
-                if( ENOTCONN != NET_ERRNO )
-                    return NET_ERRNO;
-
-            if( 0 != ::close( mSocket ) )
-                return NET_ERRNO;
-
-            mSocket = INVALID_SOCKET;
-            mSocketAddress = L3::SOCKET_ADDRESS_ANY;
-            return 0;
+            return Assign( INVALID_SOCKET, L3::SOCKET_ADDRESS_ANY );
         }
 
         /**
@@ -200,7 +199,8 @@ namespace Net
          * Any previous socket is closed.
          *
          * @param[in] socket        The new socket.
-         * @param[in] socketAddress The address the @a socket is bound to.
+         * @param[in] socketAddress The address the <var>socket</var>
+         *                          is bound to.
          *
          * @return An error code.
          */
@@ -208,9 +208,19 @@ namespace Net
         {
             if( isValid() )
             {
-                int code = Close();
-                if( 0 != code )
-                    return code;
+                /* There is a problem that we may be shutting down
+                   a listening socket, for which the shutdown will
+                   fail. Thus we ignore ENOTCONN error. */
+                if( 0 != ::shutdown( mSocket, SHUT_WR ) )
+                    if( ENOTCONN != NET_ERRNO )
+                        return NET_ERRNO;
+
+                if( 0 != ::shutdown( mSocket, SHUT_RD ) )
+                    if( ENOTCONN != NET_ERRNO )
+                        return NET_ERRNO;
+
+                if( 0 != ::close( mSocket ) )
+                    return NET_ERRNO;
             }
 
             mSocket = socket;
