@@ -312,8 +312,8 @@ void Util::Log::SetColor( Color color )
     Mt::MutexLock l( mMutex );
 
 #ifdef WIN32
-    BOOL success = mOutputScreen.SetTextAttributes( COLOR_TABLE[ color ] );
-    assert( TRUE == success );
+    DWORD code = mOutputScreen.SetTextAttributes( COLOR_TABLE[ color ] );
+    assert( ERROR_SUCCESS == code );
 #else /* !WIN32 */
     fputs( COLOR_TABLE[ color ], stdout );
 #endif /* !WIN32 */

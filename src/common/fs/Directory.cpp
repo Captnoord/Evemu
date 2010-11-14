@@ -39,12 +39,8 @@ const mode_t Fs::Directory::MODE = S_IRUSR | S_IWUSR | S_IXUSR
 bool Fs::Directory::Create( const char* path )
 {
 #ifdef WIN32
-    if( TRUE == Win::Directory::Create( path ) )
-        return true;
-    else if( ERROR_ALREADY_EXISTS == ::GetLastError() )
-        return true;
-    else
-        return false;
+    DWORD code = Win::Directory::Create( path );
+    return ERROR_SUCCESS == code || ERROR_ALREADY_EXISTS == code;
 #else /* !WIN32 */
     int code = Posix::Directory::Create( path, MODE );
     return 0 == code || EEXIST == code;
@@ -54,7 +50,7 @@ bool Fs::Directory::Create( const char* path )
 bool Fs::Directory::Remove( const char* path )
 {
 #ifdef WIN32
-    return TRUE == Win::Directory::Remove( path );
+    return ERROR_SUCCESS == Win::Directory::Remove( path );
 #else /* !WIN32 */
     return 0 == Posix::Directory::Remove( path );
 #endif /* !WIN32 */
@@ -63,7 +59,7 @@ bool Fs::Directory::Remove( const char* path )
 bool Fs::Directory::isValid() const
 {
 #ifdef WIN32
-    return mSearch.isValid();
+    return TRUE == mSearch.isValid();
 #else /* !WIN32 */
     return mDirectory.isValid();
 #endif /* !WIN32 */
@@ -73,7 +69,7 @@ bool Fs::Directory::Open( const char* path, char* name, size_t len )
 {
 #ifdef WIN32
     WIN32_FIND_DATA findData;
-    if( TRUE != mSearch.Find( path, &findData ) )
+    if( ERROR_SUCCESS != mSearch.Find( path, &findData ) )
         return false;
 
     ::strncpy( name, findData.cFileName, len );
@@ -92,7 +88,7 @@ bool Fs::Directory::Next( char* name, size_t len )
 {
 #ifdef WIN32
     WIN32_FIND_DATA findData;
-    if( TRUE != mSearch.FindNext( &findData ) )
+    if( ERROR_SUCCESS != mSearch.FindNext( &findData ) )
         return false;
 
     ::strncpy( name, findData.cFileName, len );
@@ -115,7 +111,7 @@ bool Fs::Directory::Next( char* name, size_t len )
 bool Fs::Directory::Close()
 {
 #ifdef WIN32
-    return TRUE == mSearch.Close();
+    return ERROR_SUCCESS == mSearch.Close();
 #else /* !WIN32 */
     return 0 == mDirectory.Close();
 #endif /* !WIN32 */

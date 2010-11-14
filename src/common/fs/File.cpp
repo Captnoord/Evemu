@@ -55,7 +55,7 @@ const int Fs::File::POSIX_ORIGIN[ Fs::File::ORIGIN_COUNT ] =
 bool Fs::File::Rename( const char* nameOld, const char* nameNew )
 {
 #ifdef WIN32
-    return TRUE == Win::File::Move( nameOld, nameNew );
+    return ERROR_SUCCESS == Win::File::Move( nameOld, nameNew );
 #else /* !WIN32 */
     return 0 == Posix::File::Rename( nameOld, nameNew );
 #endif /* !WIN32 */
@@ -64,7 +64,7 @@ bool Fs::File::Rename( const char* nameOld, const char* nameNew )
 bool Fs::File::Remove( const char* name )
 {
 #ifdef WIN32
-    return TRUE == Win::File::Delete( name );
+    return ERROR_SUCCESS == Win::File::Delete( name );
 #else /* !WIN32 */
     return 0 == Posix::File::Remove( name );
 #endif /* !WIN32 */
@@ -82,14 +82,18 @@ Fs::File::File( const char* name, Mode mode )
 
 bool Fs::File::isValid() const
 {
+#ifdef WIN32
+    return TRUE == mFile.isValid();
+#else /* !WIN32 */
     return mFile.isValid();
+#endif /* !WIN32 */
 }
 
 bool Fs::File::GetSize( size_t& size ) const
 {
 #ifdef WIN32
     LARGE_INTEGER sizeWin;
-    if( TRUE != mFile.GetSize( sizeWin ) )
+    if( ERROR_SUCCESS != mFile.GetSize( sizeWin ) )
         return false;
 
     size = sizeWin.QuadPart;
@@ -130,7 +134,7 @@ bool Fs::File::Open( const char* name, Mode mode )
     else
         winCreate = OPEN_EXISTING;
 
-    return TRUE == mFile.Open( name, winMode, winShare, winCreate );
+    return ERROR_SUCCESS == mFile.Open( name, winMode, winShare, winCreate );
 #else /* !WIN32 */
     int flags = 0;
 
@@ -158,7 +162,7 @@ bool Fs::File::Open( const char* name, Mode mode )
 bool Fs::File::Close()
 {
 #ifdef WIN32
-    return TRUE == mFile.Close();
+    return ERROR_SUCCESS == mFile.Close();
 #else /* !WIN32 */
     return 0 == mFile.Close();
 #endif /* !WIN32 */
@@ -172,7 +176,7 @@ bool Fs::File::Seek( long int offset, Origin origin )
     LARGE_INTEGER offsetWin;
     offsetWin.QuadPart = offset;
 
-    return TRUE == mFile.SetPointer( offsetWin, WIN_ORIGIN[ origin ] );
+    return ERROR_SUCCESS == mFile.SetPointer( offsetWin, WIN_ORIGIN[ origin ] );
 #else /* !WIN32 */
     return 0 == mFile.Seek( offset, POSIX_ORIGIN[ origin ] );
 #endif /* !WIN32 */
@@ -181,7 +185,7 @@ bool Fs::File::Seek( long int offset, Origin origin )
 bool Fs::File::Flush()
 {
 #ifdef WIN32
-    return TRUE == mFile.FlushBuffers();
+    return ERROR_SUCCESS == mFile.FlushBuffers();
 #else /* !WIN32 */
     return 0 == mFile.Sync();
 #endif /* !WIN32 */

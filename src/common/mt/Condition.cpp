@@ -35,8 +35,8 @@
 void Mt::Condition::Signal()
 {
 #ifdef WIN32
-    BOOL success = mCondition.Signal();
-    assert( TRUE == success );
+    DWORD code = mCondition.Signal();
+    assert( ERROR_SUCCESS == code );
 #else /* !WIN32 */
     int code = mCondition.Signal();
     assert( 0 == code );
@@ -46,8 +46,8 @@ void Mt::Condition::Signal()
 void Mt::Condition::Broadcast()
 {
 #ifdef WIN32
-    BOOL success = mCondition.Broadcast();
-    assert( TRUE == success );
+    DWORD code = mCondition.Broadcast();
+    assert( ERROR_SUCCESS == code );
 #else /* !WIN32 */
     int code = mCondition.Broadcast();
     assert( 0 == code );
@@ -57,8 +57,8 @@ void Mt::Condition::Broadcast()
 void Mt::Condition::Wait( Mutex& mutex )
 {
 #ifdef WIN32
-    BOOL success = mCondition.Wait( mutex.mCriticalSection );
-    assert( TRUE == success );
+    DWORD code = mCondition.Wait( mutex.mCriticalSection );
+    assert( ERROR_SUCCESS == code );
 #else /* !WIN32 */
     int code = mCondition.Wait( mutex.mMutex );
     assert( 0 == code );
@@ -68,8 +68,8 @@ void Mt::Condition::Wait( Mutex& mutex )
 void Mt::Condition::TimedWait( Mutex& mutex, const Time::Msec& timeout )
 {
 #ifdef WIN32
-    BOOL success = mCondition.Wait( mutex.mCriticalSection, timeout );
-    assert( TRUE == success );
+    DWORD code = mCondition.Wait( mutex.mCriticalSection, timeout );
+    assert( ERROR_SUCCESS == code );
 #else /* !WIN32 */
     int code = mCondition.TimedWait( mutex.mMutex, sTimeMgr.nowUnix() + timeout );
     assert( 0 == code );

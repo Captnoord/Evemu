@@ -77,7 +77,7 @@ void Mt::Thread::Wait() const
 {
 #ifdef WIN32
     DWORD code = mThread.Wait();
-    assert( WAIT_FAILED != code );
+    assert( ERROR_SUCCESS == code );
 #else /* !WIN32 */
     int code = mThread.Join( NULL );
     assert( 0 == code );
@@ -87,8 +87,8 @@ void Mt::Thread::Wait() const
 void Mt::Thread::Create( Mt::Target* target )
 {
 #ifdef WIN32
-    BOOL success = mThread.Create( ThreadMain, target );
-    assert( TRUE == success );
+    DWORD code = mThread.Create( ThreadMain, target );
+    assert( ERROR_SUCCESS == code );
 #else /* !WIN32 */
     int code = mThread.Create( ThreadMain, target );
     assert( 0 == code );
@@ -98,8 +98,8 @@ void Mt::Thread::Create( Mt::Target* target )
 void Mt::Thread::Terminate()
 {
 #ifdef WIN32
-    BOOL success = mThread.Terminate( -1 );
-    assert( TRUE == success );
+    DWORD code = mThread.Terminate( -1 );
+    assert( ERROR_SUCCESS == code );
 #else /* !WIN32 */
     int code = mThread.Cancel();
     assert( 0 == code );
@@ -115,9 +115,7 @@ void* Mt::Thread::ThreadMain( void* arg )
 #ifndef WIN32
     /* Setup correct cancelability state and type so that
        cancel works as desired. */
-    int code;
-
-    code = Posix::Thread::SetCancelState( PTHREAD_CANCEL_ENABLE, NULL );
+    int code = Posix::Thread::SetCancelState( PTHREAD_CANCEL_ENABLE, NULL );
     assert( 0 == code );
 
     code = Posix::Thread::SetCancelType( PTHREAD_CANCEL_ASYNCHRONOUS, NULL );
