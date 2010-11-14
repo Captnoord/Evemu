@@ -36,20 +36,20 @@ Win::Condition::Condition()
 {
 }
 
-BOOL Win::Condition::Signal()
+DWORD Win::Condition::Signal()
 {
     Mt::MutexLock lock( mMutex );
 
     mToFreeCount = std::min( mToFreeCount + 1, mCurrentCount );
-    return 0 < mToFreeCount ? mWaitEvent.Set() : TRUE;
+    return 0 < mToFreeCount ? mWaitEvent.Set() : ERROR_SUCCESS;
 }
 
-BOOL Win::Condition::Broadcast()
+DWORD Win::Condition::Broadcast()
 {
     Mt::MutexLock lock( mMutex );
 
     mToFreeCount = mCurrentCount;
-    return 0 < mToFreeCount ? mWaitEvent.Set() : TRUE;
+    return 0 < mToFreeCount ? mWaitEvent.Set() : ERROR_SUCCESS;
 }
 
 DWORD Win::Condition::Wait( Win::CriticalSection& criticalSection, const Time::Msec& timeout )
@@ -60,7 +60,8 @@ DWORD Win::Condition::Wait( Win::CriticalSection& criticalSection, const Time::M
     }
 
     criticalSection.Leave();
-    DWORD code = mWaitEvent.Wait( timeout );
+    DWORD wakeupEvent;
+    DWORD code = mWaitEvent.Wait( timeout, &wakeupEvent );
     criticalSection.Enter();
 
     {
@@ -69,7 +70,7 @@ DWORD Win::Condition::Wait( Win::CriticalSection& criticalSection, const Time::M
 
         /* It is important to do the stuff below ONLY IF
            we have been woken up intentionally. */
-        if( WAIT_OBJECT_0 == code )
+        if( ERROR_SUCCESS == code && WAIT_OBJECT_0 == wakeupEvent )
         {
             assert( 0 < mToFreeCount );
             --mToFreeCount;

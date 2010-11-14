@@ -89,10 +89,9 @@ namespace Win
          * This method does not fail if the handle
          * is already closed.
          *
-         * @retval TRUE  The handle is now closed.
-         * @retval FALSE Failed to close the handle.
+         * @return An error code.
          */
-        BOOL Close();
+        DWORD Close();
 
         /**
          * @brief Copy operator, duplicates the handle.
@@ -183,11 +182,12 @@ namespace Win
         /**
          * @brief Waits for the handle.
          *
-         * @param[in] timeout The wait timeout.
+         * @param[in]  timeout     The wait timeout.
+         * @param[out] wakeupEvent Where to store any wakeup event.
          *
-         * @return A value returned by <code>WaitForSingleObject</code>.
+         * @return An error code.
          */
-        DWORD Wait( const Time::Msec& timeout = INFINITE ) const;
+        DWORD Wait( const Time::Msec& timeout = INFINITE, PDWORD wakeupEvent = NULL ) const;
     };
 }
 

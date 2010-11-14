@@ -85,9 +85,9 @@ namespace Win
          *
          * @param[out] exitCode A variable which receives the value.
          *
-         * @return A value returned by <code>GetExitCodeThread</code>.
+         * @return An error code.
          */
-        BOOL GetExitCode( PDWORD exitCode ) const;
+        DWORD GetExitCode( PDWORD exitCode ) const;
 
         /**
          * @brief Creates a new thread.
@@ -99,40 +99,43 @@ namespace Win
          * @param[in] param        Parameter to pass to start method.
          * @param[in] stackSize    The size of stack of the new thread.
          *
-         * @retval TRUE  Creation succeeded.
-         * @retval FALSE Creation failed.
+         * @return An error code.
          */
-        BOOL Create( PTHREAD_START_ROUTINE startAddress, PVOID param, SIZE_T stackSize = 0 );
+        DWORD Create( PTHREAD_START_ROUTINE startAddress, PVOID param, SIZE_T stackSize = 0 );
         /**
          * @brief Terminates the thread.
          *
          * @param[in] exitCode An exit code for the thread.
          *
-         * @return A value returned by <code>TerminateThread</code>.
+         * @return An error code.
          */
-        BOOL Terminate( DWORD exitCode );
+        DWORD Terminate( DWORD exitCode );
 
         /**
          * @brief Suspends the thread.
          *
-         * @return A value returned by <code>SuspendThread</code>.
+         * @param[out] prevCount Where to store the previous suspend count.
+         *
+         * @return An error code.
          */
-        DWORD Suspend();
+        DWORD Suspend( PDWORD prevCount = NULL );
         /**
          * @brief Resumes a thread.
          *
-         * @return A value returned by <code>ResumeThread</code>.
+         * @param[out] prevCount Where to store the previous suspend count.
+         *
+         * @return An error code.
          */
-        DWORD Resume();
+        DWORD Resume( PDWORD prevCount = NULL );
 
         /**
          * @brief Sets the thread's priority.
          *
          * @param[in] priority The priority to set.
          *
-         * @return A value returned by <code>SetThreadPriority</code>.
+         * @return An error code.
          */
-        BOOL SetPriority( int priority );
+        DWORD SetPriority( int priority );
 
         /**
          * @brief Copy operator; duplicates the thread handle.

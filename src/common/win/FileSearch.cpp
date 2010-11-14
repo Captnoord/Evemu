@@ -37,32 +37,39 @@ Win::FileSearch::FileSearch()
 
 Win::FileSearch::~FileSearch()
 {
-    BOOL success = Close();
-    assert( TRUE == success );
+    DWORD code = Close();
+    assert( ERROR_SUCCESS == code );
 }
 
-BOOL Win::FileSearch::Find( PCTSTR name, PWIN32_FIND_DATA data )
+DWORD Win::FileSearch::Find( PCTSTR name, PWIN32_FIND_DATA data )
 {
-    if( TRUE != Close() )
-        return FALSE;
+    DWORD code = Close();
+    if( ERROR_SUCCESS != code )
+        return code;
 
     mHandle = ::FindFirstFile( name, data );
-    return isValid();
+    if( TRUE != isValid() )
+        return ::GetLastError();
+
+    return ERROR_SUCCESS;
 }
 
-BOOL Win::FileSearch::FindNext( PWIN32_FIND_DATA data )
+DWORD Win::FileSearch::FindNext( PWIN32_FIND_DATA data )
 {
-    return ::FindNextFile( mHandle, data );
+    if( TRUE != ::FindNextFile( mHandle, data ) )
+        return ::GetLastError();
+
+    return ERROR_SUCCESS;
 }
 
-BOOL Win::FileSearch::Close()
+DWORD Win::FileSearch::Close()
 {
     if( TRUE == isValid() )
     {
         if( TRUE != ::FindClose( mHandle ) )
-            return FALSE;
+            return ::GetLastError();
     }
 
     mHandle = INVALID_HANDLE_VALUE;
-    return TRUE;
+    return ERROR_SUCCESS;
 }

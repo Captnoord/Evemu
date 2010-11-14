@@ -54,10 +54,9 @@ namespace Win
          * @param[in]  name A full name of a file to find.
          * @param[out] data Where to store the result.
          *
-         * @retval TRUE  Operation succeeded.
-         * @retval FALSE Operation failed (probably file not found).
+         * @return An error code.
          */
-        BOOL Find( PCTSTR name, PWIN32_FIND_DATA data );
+        DWORD Find( PCTSTR name, PWIN32_FIND_DATA data );
         /**
          * @brief Finds another file.
          *
@@ -65,19 +64,18 @@ namespace Win
          *
          * @param[out] data Where to store the result.
          *
-         * @return A value returned by <code>FindNextFile</code>.
+         * @return An error code.
          */
-        BOOL FindNext( PWIN32_FIND_DATA data );
+        DWORD FindNext( PWIN32_FIND_DATA data );
 
         /**
          * @brief Closes the search.
          *
          * Does not fail even if the handle is already invalid.
          *
-         * @retval TRUE  Search closed.
-         * @retval FALSE Failed to close the search.
+         * @return An error code.
          */
-        BOOL Close();
+        DWORD Close();
     };
 }
 

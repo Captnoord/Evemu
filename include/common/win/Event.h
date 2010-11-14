@@ -56,23 +56,22 @@ namespace Win
          * @param[in] manualReset  If TRUE, a manual-reset event is created.
          * @param[in] initialState If TRUE, the event is created signaled.
          *
-         * @retval TRUE  Creation successfull.
-         * @retval FALSE Creation failed.
+         * @return An error code.
          */
-        BOOL Create( BOOL manualReset = FALSE, BOOL initialState = FALSE );
+        DWORD Create( BOOL manualReset = FALSE, BOOL initialState = FALSE );
 
         /**
          * @brief Sets the event to signaled state.
          *
-         * @return A value returned by <code>SetEvent</code>.
+         * @return An error code.
          */
-        BOOL Set();
+        DWORD Set();
         /**
          * @brief Resets the event to nonsignaled state.
          *
-         * @return A value returned by <code>ResetEvent</code>.
+         * @return An error code.
          */
-        BOOL Reset();
+        DWORD Reset();
     };
 }
 

@@ -34,25 +34,35 @@ Win::Event::Event( BOOL manualReset, BOOL initialState )
 : Win::Handle(),
   Win::WaitableHandle()
 {
-    BOOL success = Create( manualReset, initialState );
-    assert( TRUE == success );
+    DWORD code = Create( manualReset, initialState );
+    assert( ERROR_SUCCESS == code );
 }
 
-BOOL Win::Event::Create( BOOL manualReset, BOOL initialState )
+DWORD Win::Event::Create( BOOL manualReset, BOOL initialState )
 {
-    if( TRUE != Close() )
-        return FALSE;
+    DWORD code = Close();
+    if( ERROR_SUCCESS != code )
+        return code;
 
     mHandle = ::CreateEvent( NULL, manualReset, initialState, NULL );
-    return isValid();
+    if( TRUE != isValid() )
+        return ::GetLastError();
+
+    return ERROR_SUCCESS;
 }
 
-BOOL Win::Event::Set()
+DWORD Win::Event::Set()
 {
-    return ::SetEvent( mHandle );
+    if( TRUE != ::SetEvent( mHandle ) )
+        return ::GetLastError();
+
+    return ERROR_SUCCESS;
 }
 
-BOOL Win::Event::Reset()
+DWORD Win::Event::Reset()
 {
-    return ::ResetEvent( mHandle );
+    if( TRUE != ::ResetEvent( mHandle ) )
+        return ::GetLastError();
+
+    return ERROR_SUCCESS;
 }

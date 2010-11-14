@@ -30,12 +30,18 @@
 /*************************************************************************/
 /* Win::Directory                                                        */
 /*************************************************************************/
-BOOL Win::Directory::Create( PCTSTR path )
+DWORD Win::Directory::Create( PCTSTR path )
 {
-    return ::CreateDirectory( path, NULL );
+    if( TRUE != ::CreateDirectory( path, NULL ) )
+        return ::GetLastError();
+
+    return ERROR_SUCCESS;
 }
 
-BOOL Win::Directory::Remove( PCTSTR path )
+DWORD Win::Directory::Remove( PCTSTR path )
 {
-    return ::RemoveDirectory( path );
+    if( TRUE != ::RemoveDirectory( path ) )
+        return ::GetLastError();
+
+    return ERROR_SUCCESS;
 }

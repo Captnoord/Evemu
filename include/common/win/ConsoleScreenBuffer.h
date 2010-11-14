@@ -59,11 +59,10 @@ namespace Win
          * @param[in] desiredAccess A desired access to the buffer.
          * @param[in] shareMode     A share mode for the buffer.
          *
-         * @retval TRUE  Creation succeeded.
-         * @retval FALSE Creation failed.
+         * @return An error code.
          */
-        BOOL Create( DWORD desiredAccess = GENERIC_READ | GENERIC_WRITE,
-                     DWORD shareMode = FILE_SHARE_READ );
+        DWORD Create( DWORD desiredAccess = GENERIC_READ | GENERIC_WRITE,
+                      DWORD shareMode = FILE_SHARE_READ );
 
         /**
          * @brief Sets this buffer as active.
@@ -71,17 +70,17 @@ namespace Win
          * An active console screen buffer is the one
          * which is currently displayed.
          *
-         * @return A value returned by <code>SetConsoleActiveScreenBuffer</code>.
+         * @return An error code.
          */
-        BOOL SetActive();
+        DWORD SetActive();
         /**
          * @brief Sets attributes of console text.
          *
          * @param[in] attributes The new attributes.
          *
-         * @return A value returned by <code>SetConsoleTextAttribute</code>.
+         * @return An error code.
          */
-        BOOL SetTextAttributes( WORD attributes );
+        DWORD SetTextAttributes( WORD attributes );
 
     protected:
         /**

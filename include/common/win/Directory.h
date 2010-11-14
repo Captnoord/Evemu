@@ -41,17 +41,17 @@ namespace Win
          *
          * @param[in] path The directory path.
          *
-         * @return A value returned by <code>CreateDirectory</code>.
+         * @return An error code.
          */
-        static BOOL Create( PCTSTR path );
+        static DWORD Create( PCTSTR path );
         /**
          * @brief Removes a directory.
          *
          * @param[in] path The directory path.
          *
-         * @return A value returned by <code>RemoveDirectory</code>.
+         * @return An error code.
          */
-        static BOOL Remove( PCTSTR path );
+        static DWORD Remove( PCTSTR path );
     };
 }
 

@@ -49,32 +49,32 @@ Win::Handle::Handle( const Win::Handle& oth )
 
 Win::Handle::~Handle()
 {
-    BOOL success = Close();
-    assert( TRUE == success );
+    DWORD code = Close();
+    assert( ERROR_SUCCESS == code );
 }
 
-BOOL Win::Handle::Close()
+DWORD Win::Handle::Close()
 {
     if( TRUE == isValid() )
     {
         if( TRUE != ::CloseHandle( mHandle ) )
-            return FALSE;
+            return ::GetLastError();
     }
 
     mHandle = INVALID_HANDLE_VALUE;
-    return TRUE;
+    return ERROR_SUCCESS;
 }
 
 Win::Handle& Win::Handle::operator=( const Win::Handle& oth )
 {
-    BOOL success = Close();
-    assert( TRUE == success );
+    DWORD code = Close();
+    assert( ERROR_SUCCESS == code );
 
     if( TRUE == oth.isValid() )
     {
-        success = ::DuplicateHandle( ::GetCurrentProcess(), oth.mHandle,
-                                     ::GetCurrentProcess(), &mHandle,
-                                     0, FALSE, DUPLICATE_SAME_ACCESS );
+        BOOL success = ::DuplicateHandle( ::GetCurrentProcess(), oth.mHandle,
+                                          ::GetCurrentProcess(), &mHandle,
+                                          0, FALSE, DUPLICATE_SAME_ACCESS );
         assert( TRUE == success );
     }
 
@@ -92,17 +92,15 @@ Win::ReadableHandle::ReadableHandle( HANDLE handle )
 Win::ReadableHandle::Error Win::ReadableHandle::Read( Util::Data& data, size_t* bytesRead )
 {
     DWORD read;
-    BOOL success = ::ReadFile( mHandle,
-                               &data[0], data.size(),
-                               &read, NULL );
+
+    BOOL success = ::ReadFile( mHandle, &data[0], data.size(), &read, NULL );
+    if( TRUE != success )
+        return ERROR_READ;
 
     if( NULL != bytesRead )
         *bytesRead = read;
 
-    if( TRUE == success )
-        return ERROR_OK;
-    else
-        return ERROR_READ;
+    return ERROR_OK;
 }
 
 /*************************************************************************/
@@ -116,17 +114,15 @@ Win::WritableHandle::WritableHandle( HANDLE handle )
 Win::WritableHandle::Error Win::WritableHandle::Write( const Util::Data& data, size_t* bytesWritten )
 {
     DWORD written;
-    BOOL success = ::WriteFile( mHandle,
-                                &data[0], data.size(),
-                                &written, NULL );
+
+    BOOL success = ::WriteFile( mHandle, &data[0], data.size(), &written, NULL );
+    if( TRUE != success )
+        return ERROR_WRITE;
 
     if( NULL != bytesWritten )
         *bytesWritten = written;
 
-    if( TRUE == success )
-        return ERROR_OK;
-    else
-        return ERROR_WRITE;
+    return ERROR_OK;
 }
 
 /*************************************************************************/
@@ -137,7 +133,14 @@ Win::WaitableHandle::WaitableHandle( HANDLE handle )
 {
 }
 
-DWORD Win::WaitableHandle::Wait( const Time::Msec& timeout ) const
+DWORD Win::WaitableHandle::Wait( const Time::Msec& timeout, PDWORD wakeupEvent ) const
 {
-    return ::WaitForSingleObject( mHandle, static_cast< DWORD >( timeout.count() ) );
+    DWORD wakeup = ::WaitForSingleObject( mHandle, static_cast< DWORD >( timeout.count() ) );
+    if( WAIT_FAILED == wakeup )
+        return ::GetLastError();
+
+    if( NULL != wakeupEvent )
+        *wakeupEvent = wakeup;
+
+    return ERROR_SUCCESS;
 }

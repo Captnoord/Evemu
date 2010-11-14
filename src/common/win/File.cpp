@@ -30,14 +30,20 @@
 /*************************************************************************/
 /* Win::File                                                             */
 /*************************************************************************/
-BOOL Win::File::Delete( PCTSTR name )
+DWORD Win::File::Delete( PCTSTR name )
 {
-    return ::DeleteFile( name );
+    if( TRUE != ::DeleteFile( name ) )
+        return ::GetLastError();
+
+    return ERROR_SUCCESS;
 }
 
-BOOL Win::File::Move( PCTSTR nameOld, PCTSTR nameNew )
+DWORD Win::File::Move( PCTSTR nameOld, PCTSTR nameNew )
 {
-    return ::MoveFile( nameOld, nameNew );
+    if( TRUE != ::MoveFile( nameOld, nameNew ) )
+        return ::GetLastError();
+
+    return ERROR_SUCCESS;
 }
 
 Win::File::File()
@@ -52,30 +58,43 @@ Win::File::File( PCTSTR name, DWORD mode, DWORD share, DWORD create )
   Win::ReadableHandle(),
   Win::WritableHandle()
 {
-    BOOL success = Open( name, mode, share, create );
-    assert( TRUE == success );
+    DWORD code = Open( name, mode, share, create );
+    assert( ERROR_SUCCESS == code );
 }
 
-BOOL Win::File::GetSize( LARGE_INTEGER& size ) const
+DWORD Win::File::GetSize( LARGE_INTEGER& size ) const
 {
-    return ::GetFileSizeEx( mHandle, &size );
+    if( TRUE != ::GetFileSizeEx( mHandle, &size ) )
+        return ::GetLastError();
+
+    return ERROR_SUCCESS;
 }
 
-BOOL Win::File::Open( PCTSTR name, DWORD mode, DWORD share, DWORD create )
+DWORD Win::File::Open( PCTSTR name, DWORD mode, DWORD share, DWORD create )
 {
-    if( TRUE != Close() )
-        return FALSE;
+    DWORD code = Close();
+    if( ERROR_SUCCESS != code )
+        return code;
 
     mHandle = ::CreateFile( name, mode, share, NULL, create, 0, NULL );
-    return isValid();
+    if( TRUE != isValid() )
+        return ::GetLastError();
+
+    return ERROR_SUCCESS;
 }
 
-BOOL Win::File::SetPointer( LARGE_INTEGER dist, DWORD method, PLARGE_INTEGER result )
+DWORD Win::File::SetPointer( LARGE_INTEGER dist, DWORD method, PLARGE_INTEGER result )
 {
-    return ::SetFilePointerEx( mHandle, dist, result, method );
+    if( TRUE != ::SetFilePointerEx( mHandle, dist, result, method ) )
+        return ::GetLastError();
+
+    return ERROR_SUCCESS;
 }
 
-BOOL Win::File::FlushBuffers()
+DWORD Win::File::FlushBuffers()
 {
-    return ::FlushFileBuffers( mHandle );
+    if( TRUE != ::FlushFileBuffers( mHandle ) )
+        return ::GetLastError();
+
+    return ERROR_SUCCESS;
 }

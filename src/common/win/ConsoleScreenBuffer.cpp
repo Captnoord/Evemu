@@ -42,26 +42,35 @@ Win::ConsoleScreenBuffer::ConsoleScreenBuffer( HANDLE handle )
 Win::ConsoleScreenBuffer::ConsoleScreenBuffer( DWORD desiredAccess, DWORD shareMode )
 : Win::Handle()
 {
-    BOOL success = Create( desiredAccess, shareMode );
-    assert( TRUE == success );
+    DWORD code = Create( desiredAccess, shareMode );
+    assert( ERROR_SUCCESS == code );
 }
 
-BOOL Win::ConsoleScreenBuffer::Create( DWORD desiredAccess, DWORD shareMode )
+DWORD Win::ConsoleScreenBuffer::Create( DWORD desiredAccess, DWORD shareMode )
 {
-    if( TRUE != Close () )
-        return FALSE;
+    DWORD code = Close();
+    if( ERROR_SUCCESS != code )
+        return code;
 
-    mHandle = ::CreateConsoleScreenBuffer( desiredAccess, shareMode,
-                                           NULL, CONSOLE_TEXTMODE_BUFFER, NULL );
-    return isValid();
+    mHandle = ::CreateConsoleScreenBuffer( desiredAccess, shareMode, NULL, CONSOLE_TEXTMODE_BUFFER, NULL );
+    if( TRUE != isValid() )
+        return ::GetLastError();
+
+    return ERROR_SUCCESS;
 }
 
-BOOL Win::ConsoleScreenBuffer::SetActive()
+DWORD Win::ConsoleScreenBuffer::SetActive()
 {
-    return ::SetConsoleActiveScreenBuffer( mHandle );
+    if( TRUE != ::SetConsoleActiveScreenBuffer( mHandle ) )
+        return ::GetLastError();
+
+    return ERROR_SUCCESS;
 }
 
-BOOL Win::ConsoleScreenBuffer::SetTextAttributes( WORD attributes )
+DWORD Win::ConsoleScreenBuffer::SetTextAttributes( WORD attributes )
 {
-    return ::SetConsoleTextAttribute( mHandle, attributes );
+    if( TRUE != ::SetConsoleTextAttribute( mHandle, attributes ) )
+        return ::GetLastError();
+
+    return ERROR_SUCCESS;
 }

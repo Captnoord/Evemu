@@ -45,18 +45,18 @@ namespace Win
          *
          * @param[in] name A name of the file.
          *
-         * @return A value returned by <code>DeleteFile</code>.
+         * @return An error code.
          */
-        static BOOL Delete( PCTSTR name );
+        static DWORD Delete( PCTSTR name );
         /**
          * @brief Moves a file.
          *
          * @param[in] nameOld The old name.
          * @param[in] nameNew The new name.
          *
-         * @return A value returned by <code>MoveFile</code>.
+         * @return An error code.
          */
-        static BOOL Move( PCTSTR nameOld, PCTSTR nameNew );
+        static DWORD Move( PCTSTR nameOld, PCTSTR nameNew );
 
         /**
          * @brief A default constructor.
@@ -77,9 +77,9 @@ namespace Win
          *
          * @param[out] size Where to store the size.
          *
-         * @return A value returned by <code>GetFileSizeEx</code>.
+         * @return An error code.
          */
-        BOOL GetSize( LARGE_INTEGER& size ) const;
+        DWORD GetSize( LARGE_INTEGER& size ) const;
 
         /**
          * @brief Opens a file.
@@ -89,10 +89,9 @@ namespace Win
          * @param[in] share  Share mode flags.
          * @param[in] create Creation flags.
          *
-         * @retval TRUE  Open succeeded.
-         * @retval FALSE Open failed.
+         * @return An error code.
          */
-        BOOL Open( PCTSTR name, DWORD mode, DWORD share, DWORD create );
+        DWORD Open( PCTSTR name, DWORD mode, DWORD share, DWORD create );
 
         /**
          * @brief Sets the internal file pointer.
@@ -101,15 +100,15 @@ namespace Win
          * @param[in]  method The starting point.
          * @param[out] result The result of the move.
          *
-         * @return A value returned by <code>SetFilePointerEx</code>.
+         * @return An error code.
          */
-        BOOL SetPointer( LARGE_INTEGER dist, DWORD method, PLARGE_INTEGER result = NULL );
+        DWORD SetPointer( LARGE_INTEGER dist, DWORD method, PLARGE_INTEGER result = NULL );
         /**
          * @brief Flushes buffers of the file.
          *
-         * @return A value returned by <code>FlushFileBuffers</code>.
+         * @return An error code.
          */
-        BOOL FlushBuffers();
+        DWORD FlushBuffers();
     };
 }
 

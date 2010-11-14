@@ -60,8 +60,8 @@ Win::Thread::Thread( PTHREAD_START_ROUTINE startAddress, PVOID param, SIZE_T sta
   Win::WaitableHandle(),
   mThreadId( 0 )
 {
-    BOOL success = Create( startAddress, param, stackSize );
-    assert( TRUE == success );
+    DWORD code = Create( startAddress, param, stackSize );
+    assert( ERROR_SUCCESS == code );
 }
 
 Win::Thread::Thread( const Win::Thread& oth )
@@ -71,40 +71,65 @@ Win::Thread::Thread( const Win::Thread& oth )
 {
 }
 
-BOOL Win::Thread::GetExitCode( PDWORD exitCode ) const
+DWORD Win::Thread::GetExitCode( PDWORD exitCode ) const
 {
-    return ::GetExitCodeThread( mHandle, exitCode );
+    if( TRUE != ::GetExitCodeThread( mHandle, exitCode ) )
+        return ::GetLastError();
+
+    return ERROR_SUCCESS;
 }
 
-BOOL Win::Thread::Create( PTHREAD_START_ROUTINE startAddress, PVOID param, SIZE_T stackSize )
+DWORD Win::Thread::Create( PTHREAD_START_ROUTINE startAddress, PVOID param, SIZE_T stackSize )
 {
-    if( TRUE != Close () )
-        return FALSE;
+    DWORD code = Close();
+    if( ERROR_SUCCESS != code )
+        return code;
 
-    mHandle = ::CreateThread( NULL, stackSize,
-                              startAddress, param,
-                              0, &mThreadId );
-    return isValid();
+    mHandle = ::CreateThread( NULL, stackSize, startAddress, param, 0, &mThreadId );
+    if( TRUE != isValid() )
+        return ::GetLastError();
+
+    return ERROR_SUCCESS;
 }
 
-BOOL Win::Thread::Terminate( DWORD exitCode )
+DWORD Win::Thread::Terminate( DWORD exitCode )
 {
-    return ::TerminateThread( mHandle, exitCode );
+    if( TRUE != ::TerminateThread( mHandle, exitCode ) )
+        return ::GetLastError();
+
+    return ERROR_SUCCESS;
 }
 
-DWORD Win::Thread::Suspend()
+DWORD Win::Thread::Suspend( PDWORD prevCount )
 {
-    return ::SuspendThread( mHandle );
+    DWORD count = ::SuspendThread( mHandle );
+    if( -1 == count )
+        return ::GetLastError();
+
+    if( NULL != prevCount )
+        *prevCount = count;
+
+    return ERROR_SUCCESS;
 }
 
-DWORD Win::Thread::Resume()
+DWORD Win::Thread::Resume( PDWORD prevCount )
 {
-    return ::ResumeThread( mHandle );
+    DWORD count = ::ResumeThread( mHandle );
+    if( -1 == count )
+        return ::GetLastError();
+
+    if( NULL != prevCount )
+        *prevCount = count;
+
+    return ERROR_SUCCESS;
 }
 
-BOOL Win::Thread::SetPriority( int priority )
+DWORD Win::Thread::SetPriority( int priority )
 {
-    return ::SetThreadPriority( mHandle, priority );
+    if( TRUE != ::SetThreadPriority( mHandle, priority ) )
+        return ::GetLastError();
+
+    return ERROR_SUCCESS;
 }
 
 Win::Thread& Win::Thread::operator=( const Win::Thread& oth )

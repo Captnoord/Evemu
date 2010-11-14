@@ -53,10 +53,9 @@ namespace Win
          * waiting thread wake up. If there is none,
          * the signal has no effect.
          *
-         * @retval TRUE  Signal succeeded.
-         * @retval FALSE Signal failed.
+         * @return An error code.
          */
-        BOOL Signal();
+        DWORD Signal();
         /**
          * @brief Broadcasts the condition variable.
          *
@@ -64,10 +63,9 @@ namespace Win
          * threads wake up. If there are none, the
          * broadcast has no effect.
          *
-         * @retval TRUE  Broadcast succeeded.
-         * @retval FALSE Broadcast failed.
+         * @return An error code.
          */
-        BOOL Broadcast();
+        DWORD Broadcast();
 
         /**
          * @brief Waits on the condition variable.
@@ -76,7 +74,7 @@ namespace Win
          *                            condition is bound to.
          * @param[in] timeout         The wait timeout.
          *
-         * @return A value returned by <code>WaitForSingleObject</code>.
+         * @return An error code.
          */
         DWORD Wait( CriticalSection& criticalSection, const Time::Msec& timeout = INFINITE );
 
