@@ -412,7 +412,7 @@ public:
 	/**
 	 * @return Timestamp at which current skill training finishes.
 	 */
-	uint64 GetEndOfTraining() const;
+	EvilNumber GetEndOfTraining() const;
 
 	/* InjectSkillIntoBrain(InventoryItem *skill)
 	 * 

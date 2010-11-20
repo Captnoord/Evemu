@@ -283,7 +283,7 @@ protected:
 	GPoint m_movePoint;
 	void _ExecuteJump();
 
-	uint64 m_timeEndTrain;
+	EvilNumber m_timeEndTrain;
 
     /********************************************************************/
     /* EVEClientSession interface                                       */

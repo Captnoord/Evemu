@@ -492,9 +492,6 @@ SkillRef Character::GetSkillInTraining() const
 
 EvilNumber Character::GetSPPerMin( SkillRef skill )
 {
-    //double primaryVal = attributes.GetReal( (EVEAttributeMgr::Attr)skill->primaryAttribute() );
-    //double secondaryVal = attributes.GetReal( (EVEAttributeMgr::Attr)skill->secondaryAttribute() );
-
     EvilNumber primaryVal = mAttributeMap.GetAttribute(AttrPrimaryAttribute);
     EvilNumber secondaryVal = mAttributeMap.GetAttribute(AttrSecondaryAttribute);
 
@@ -509,23 +506,16 @@ EvilNumber Character::GetSPPerMin( SkillRef skill )
     primaryVal = primaryVal * (EvilNumber(1.0f) + EvilNumber(0.02f) * skillLearningLevel);
     primaryVal = primaryVal * EvilNumber(2.0f); /* this is hacky and should be applied only if total SP < 1.6M */
 
-    // pure guess that it is a float
-    //return primaryVal.get_float();
     return primaryVal;
-
-    //return (primaryVal + secondaryVal / 2.0f)
-      //   * (1.0f + 0.02f * skillLearningLevel)
-        // *  2.0f;
 }
 
-uint64 Character::GetEndOfTraining() const
+EvilNumber Character::GetEndOfTraining() const
 {
     SkillRef skill = GetSkillInTraining();
     if( !skill )
         return 0;
 
-    // major bleh.. it also supports int64 shit:S
-    return skill->GetAttribute(AttrExpiryTime).get_int();
+    return skill->GetAttribute(AttrExpiryTime);
 }
 
 bool Character::InjectSkillIntoBrain(SkillRef skill)
