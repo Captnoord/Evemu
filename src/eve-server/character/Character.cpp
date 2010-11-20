@@ -490,7 +490,7 @@ SkillRef Character::GetSkillInTraining() const
     return SkillRef::StaticCast( item );
 }
 
-double Character::GetSPPerMin( SkillRef skill )
+EvilNumber Character::GetSPPerMin( SkillRef skill )
 {
     //double primaryVal = attributes.GetReal( (EVEAttributeMgr::Attr)skill->primaryAttribute() );
     //double secondaryVal = attributes.GetReal( (EVEAttributeMgr::Attr)skill->secondaryAttribute() );
@@ -507,12 +507,11 @@ double Character::GetSPPerMin( SkillRef skill )
 
     primaryVal = primaryVal + secondaryVal / 2.0f;
     primaryVal = primaryVal * (EvilNumber(1.0f) + EvilNumber(0.02f) * skillLearningLevel);
-    primaryVal = primaryVal * 2.0f; /* this is hacky and should be applied only if total SP < 1.6M */
-
-
+    primaryVal = primaryVal * EvilNumber(2.0f); /* this is hacky and should be applied only if total SP < 1.6M */
 
     // pure guess that it is a float
-    return primaryVal.get_float();
+    //return primaryVal.get_float();
+    return primaryVal;
 
     //return (primaryVal + secondaryVal / 2.0f)
       //   * (1.0f + 0.02f * skillLearningLevel)
@@ -721,7 +720,7 @@ void Character::UpdateSkillQueue()
 
             _log( ITEM__TRACE, "%s (%u): Starting training of skill %s (%u).", m_itemName.c_str(), m_itemID, currentTraining->itemName().c_str(), currentTraining->itemID() );
 
-            double SPPerMinute = GetSPPerMin( currentTraining );
+            EvilNumber SPPerMinute = GetSPPerMin( currentTraining );
             //  double SPToNextLevel = currentTraining->GetSPForLevel( currentTraining->skillLevel() + 1 ) - currentTraining->skillPoints();
             EvilNumber SPToNextLevel = currentTraining->GetSPForLevel( currentTraining->GetAttribute(AttrSkillLevel) + 1) - currentTraining->GetAttribute(AttrSkillPoints);
 

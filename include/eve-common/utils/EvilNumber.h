@@ -13,20 +13,16 @@ enum EVIL_NUMBER_TYPE
 class PyRep;
 
 /**
-* @brief this is a class that kinda mimics how python polymorph's numbers.
-*
-* @author Captnoord.
-* @date Juni 2010
-*/
+ * @brief this is a class that kinda mimics how python polymorph's numbers.
+ *
+ * @author Captnoord.
+ * @date Juni 2010
+ */
 class EvilNumber
 {
 public:
-    /*typedef union _GenVal{
-    float fVal;
-    int32 iVal;
-    } GenVal;*/
-
-    typedef union _GenVal{
+    /* generic value union */
+    typedef union _GenVal {
         double fVal;
         int64 iVal;
     } GenVal;
@@ -98,29 +94,33 @@ public:
             return false;
     }
 
-    bool operator!=(const uint32 val)
-    {
-        if (this->mType == evil_number_int)
-            return val != this->mValue.iVal;
-        else
-            return float(val) != this->mValue.fVal;
+/* code generating macro... which I hate, but for this solution its the cleanest way
+ * @note: we need to add a file type (lets say .xx) to generate these codes...
+ */
+#define LOGIC_OPERATOR(a, b) \
+    bool operator ##a ( ##b val) \
+    { \
+        if (this->mType == evil_number_int) \
+            return this->mValue.iVal < val; \
+        else \
+            return this->mValue.fVal < double(val); \
     }
 
-    bool operator<(const uint8 val)
-    {
-        if (this->mType == evil_number_int)
-            return this->mValue.iVal < val;
-        else
-            return this->mValue.fVal < float(val);
-    }
+    /* using a code generating macro to generate logic operator handlers */
+    LOGIC_OPERATOR( < , const uint8)
+    LOGIC_OPERATOR( < , const uint16)
+    LOGIC_OPERATOR( < , const uint32)
+    LOGIC_OPERATOR( < , const double)
 
-    bool operator>(const uint32 val)
-    {
-        if (this->mType == evil_number_int)
-            return this->mValue.iVal > val;
-        else
-            return this->mValue.fVal > float(val);
-    }
+
+    LOGIC_OPERATOR( > , const int)
+    LOGIC_OPERATOR( > , const uint8)
+    LOGIC_OPERATOR( > , const uint16)
+    LOGIC_OPERATOR( > , const uint32)
+
+    LOGIC_OPERATOR( > , const double)
+
+    LOGIC_OPERATOR( != , const uint32)
 
     bool operator>(const EvilNumber& val)
     {
