@@ -194,6 +194,7 @@ public:
 	void MoveToPosition(const GPoint &pt);
 	void MoveItem(uint32 itemID, uint32 location, EVEItemFlags flag);
 	bool EnterSystem();
+    bool UpdateLocation();
 	bool SelectCharacter( uint32 char_id );
 	void JoinCorporationUpdate(uint32 corp_id);
 	void SavePosition();
@@ -254,6 +255,7 @@ public:
 protected:
 	void _ReduceDamage(Damage &d);
     void _UpdateSession( const CharacterConstRef& character );
+    void _UpdateSession2( uint32 characterID  );
 
     // Packet stuff
 	void _SendCallReturn( const PyAddress& source, uint64 callID, PyRep** return_value, const char* channel = NULL );

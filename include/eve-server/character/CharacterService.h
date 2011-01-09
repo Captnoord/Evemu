@@ -34,6 +34,10 @@ public:
 	CharacterService(PyServiceMgr *mgr);
 	virtual ~CharacterService();
 	
+    //void GetCharacterData(uint32 characterID, std::vector<uint32> &characterDataVector);
+    void GetCharacterData(uint32 characterID, std::map<std::string, uint32> &characterDataMap);
+
+
 protected:
 	class Dispatcher;
 	Dispatcher *const m_dispatch;

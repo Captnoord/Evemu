@@ -300,6 +300,10 @@ bool Client::EnterSystem() {
         m_system->AddClient(this);
     }
 
+    return true;
+}
+
+bool Client::UpdateLocation() {
     if(IsStation(GetLocationID())) {
         //we entered station, delete m_destiny
         delete m_destiny;
@@ -378,6 +382,7 @@ void Client::MoveToLocation( uint32 location, const GPoint& pt )
     _UpdateSession( GetChar() );
 
     EnterSystem();
+    UpdateLocation();
 
     _SendSessionChange();
 }
@@ -392,6 +397,7 @@ void Client::MoveToPosition(const GPoint &pt) {
 
 void Client::MoveItem(uint32 itemID, uint32 location, EVEItemFlags flag)
 {
+    m_services.item_factory.SetUsingClient( this );
     InventoryItemRef item = m_services.item_factory.GetItem( itemID );
     if( !item ) {
 		sLog.Error("Client","%s: Unable to load item %u", GetName(), itemID);
@@ -468,6 +474,82 @@ void Client::_UpdateSession( const CharacterConstRef& character )
     mSession.SetLong( "rolesAtOther", character->rolesAtOther() );
 
     mSession.SetInt( "shipid", character->locationID() );
+}
+
+void Client::_UpdateSession2( uint32 characterID )
+{
+    std::vector<uint32> characterDataVector;
+    std::map<std::string, uint32> characterDataMap;
+
+    if( characterID == 0 )
+    {
+        sLog.Error( "Client::_UpdateSession2()", "characterID == 0, which is illegal" );
+        return;
+    }
+
+    uint32 corporationID = 0;
+    uint32 stationID = 0;
+    uint32 solarSystemID = 0;
+    uint32 constellationID = 0;
+    uint32 regionID = 0;
+    uint32 corporationHQ = 0;
+    uint32 corpRole = 0;
+    uint32 rolesAtAll = 0;
+    uint32 rolesAtBase = 0;
+    uint32 rolesAtHQ = 0;
+    uint32 rolesAtOther = 0;
+    uint32 locationID = 0;
+
+    ((CharacterService *)(m_services.LookupService("character")))->GetCharacterData( characterID, characterDataMap );
+
+    if( characterDataMap.size() == 0 )
+    {
+        sLog.Error( "Client::_UpdateSession2()", "characterDataMap.size() returned zero." );
+        return;
+    }
+
+    corporationID = characterDataMap["corporationID"];
+    stationID = characterDataMap["stationID"];
+    solarSystemID = characterDataMap["solarSystemID"];
+    constellationID = characterDataMap["constellationID"];
+    regionID = characterDataMap["regionID"];
+    corporationHQ = characterDataMap["corporationHQ"];
+    corpRole = characterDataMap["corpRole"];
+    rolesAtAll = characterDataMap["rolesAtAll"];
+    rolesAtBase = characterDataMap["rolesAtBase"];
+    rolesAtHQ = characterDataMap["rolesAtHQ"];
+    rolesAtOther = characterDataMap["rolesAtOther"];
+    locationID = characterDataMap["locationID"];
+
+
+    mSession.SetInt( "charid", characterID );
+    mSession.SetInt( "corpid", corporationID );
+    if( stationID == 0 )
+    {
+        mSession.Clear( "stationid" );
+
+        mSession.SetInt( "solarsystemid", solarSystemID );
+        mSession.SetInt( "locationid", solarSystemID );
+    }
+    else
+    {
+        mSession.Clear( "solarsystemid" );
+
+        mSession.SetInt( "stationid", stationID );
+        mSession.SetInt( "locationid", stationID );
+    }
+    mSession.SetInt( "solarsystemid2", solarSystemID );
+    mSession.SetInt( "constellationid", constellationID );
+    mSession.SetInt( "regionid", regionID );
+
+    mSession.SetInt( "hqID", corporationHQ );
+    mSession.SetLong( "corprole", corpRole );
+    mSession.SetLong( "rolesAtAll", rolesAtAll );
+    mSession.SetLong( "rolesAtBase", rolesAtBase );
+    mSession.SetLong( "rolesAtHQ", rolesAtHQ );
+    mSession.SetLong( "rolesAtOther", rolesAtOther );
+
+    mSession.SetInt( "shipid", locationID );
 }
 
 void Client::_SendCallReturn( const PyAddress& source, uint64 callID, PyRep** return_value, const char* channel )
@@ -872,20 +954,27 @@ bool Client::AddBalance(double amount) {
 
 bool Client::SelectCharacter( uint32 char_id )
 {
+    _UpdateSession2( char_id );
+
+    if( !EnterSystem() )
+        return false;
+
+    m_services.item_factory.SetUsingClient( this );
     m_char = m_services.item_factory.GetCharacter( char_id );
     if( !GetChar() )
         return false;
-
-    _UpdateSession( GetChar() );
 
     ShipRef ship = m_services.item_factory.GetShip( GetShipID() );
     if( !ship )
         return false;
 
+    ship->Load( m_services.item_factory, GetShipID() );
+
     BoardShip( ship );
 
-    if( !EnterSystem() )
-        return false;
+    UpdateLocation();
+//    if( !EnterSystem() )
+//        return false;
 
     // update skill queue
     GetChar()->UpdateSkillQueue();

@@ -68,6 +68,11 @@ CharacterService::~CharacterService() {
     delete m_dispatch;
 }
 
+//void CharacterService::GetCharacterData(uint32 characterID, std::vector<uint32> &characterDataVector)
+void CharacterService::GetCharacterData(uint32 characterID, std::map<std::string, uint32> &characterDataMap) {
+    m_db.GetCharacterData( characterID, characterDataMap );
+}
+
 PyResult CharacterService::Handle_GetCharactersToSelect(PyCallArgs &call) {
     return(m_db.GetCharacterList(call.client->GetAccountID()));
 }
@@ -170,6 +175,7 @@ PyResult CharacterService::Handle_CreateCharacter2(PyCallArgs &call) {
             arg.bloodlineID, arg.genderID, arg.ancestryID);
 
     // obtain character type
+    m_manager->item_factory.SetUsingClient( call.client );
     const CharacterType *char_type = m_manager->item_factory.GetCharacterTypeByBloodline(arg.bloodlineID);
     if(char_type == NULL)
         return NULL;
@@ -356,6 +362,7 @@ PyResult CharacterService::Handle_PrepareCharacterForDelete(PyCallArgs &call) {
     sLog.Debug( "CharacterService", "Called PrepareCharacterForDelete stub: deleting immediately." );
 
     { // character scope to make sure char_item is deleted immediately
+        m_manager->item_factory.SetUsingClient( call.client );
         CharacterRef char_item = m_manager->item_factory.GetCharacter( args.arg );
         if( !char_item ) {
             codelog(CLIENT__ERROR, "Failed to load char item %u.", args.arg);
@@ -500,6 +507,7 @@ PyResult CharacterService::Handle_GetCharacterDescription(PyCallArgs &call) {
         return NULL;
     }
 
+    m_manager->item_factory.SetUsingClient( call.client );
     CharacterRef c = m_manager->item_factory.GetCharacter(args.arg);
     if( !c ) {
         _log(CLIENT__ERROR, "Failed to load character %u.", args.arg);

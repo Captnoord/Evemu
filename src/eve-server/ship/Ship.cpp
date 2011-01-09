@@ -88,7 +88,17 @@ Ship::Ship(
 
 ShipRef Ship::Load(ItemFactory &factory, uint32 shipID)
 {
-    return InventoryItem::Load<Ship>( factory, shipID );
+    ShipRef sShipRef = InventoryItem::Load<Ship>( factory, shipID );
+
+    // Load dynamic attributes into new AttributeMap:
+    // NOTE: these are set to maximum or default, but they should be saved/loaded to/from the 'entity_attributes' table
+    sShipRef.get()->mAttributeMap.SetAttribute(AttrShieldCharge,sShipRef.get()->GetAttribute(AttrShieldCapacity),true);     // Shield Charge
+    sShipRef.get()->mAttributeMap.SetAttribute(AttrArmorDamage,sShipRef.get()->GetAttribute(AttrArmorHP),true);             // Armor Damage
+    sShipRef.get()->mAttributeMap.SetAttribute(AttrMass,EvilNumber(sShipRef.get()->type().attributes.mass()),true);         // Mass
+    sShipRef.get()->mAttributeMap.SetAttribute(AttrRadius,EvilNumber(sShipRef.get()->type().attributes.radius()),true);     // Radius
+    sShipRef.get()->mAttributeMap.SetAttribute(AttrInertia,EvilNumber(sShipRef.get()->type().attributes.Inertia()),true);   // Inertia
+
+   return sShipRef;//InventoryItem::Load<Ship>( factory, shipID );   // <--- This used to be here, but was moved at the top of the function
 }
 
 template<class _Ty>

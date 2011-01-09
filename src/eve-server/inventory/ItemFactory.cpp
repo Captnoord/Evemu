@@ -286,3 +286,13 @@ void ItemFactory::_DeleteItem(uint32 itemID)
         m_items.erase( res );
     }
 }
+
+void ItemFactory::SetUsingClient(Client *pClient)
+{
+    m_pClient = pClient;
+}
+
+Client * ItemFactory::GetUsingClient()
+{
+    return m_pClient;
+}

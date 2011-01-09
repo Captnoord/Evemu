@@ -178,6 +178,7 @@ public:
         return mType;
     }
 
+    /*
     int64 get_int()
     {
         assert(mType == evil_number_int);
@@ -187,6 +188,27 @@ public:
     double get_float()
     {
         assert(mType == evil_number_float);
+        return mValue.fVal;
+    }
+    */
+
+    int64 get_int()
+    {
+        if( !(mType == evil_number_int) )
+        {
+            mType = evil_number_int;
+            mValue.iVal = (int64)mValue.fVal;  // Cast double value to int64 value
+        }
+        return mValue.iVal;
+    }
+
+    double get_float()
+    {
+        if( !(mType == evil_number_float) )
+        {
+            mType = evil_number_float;
+            mValue.fVal = (double)mValue.iVal;  // Cast int64 value to double value
+        }
         return mValue.fVal;
     }
     // end of old system support

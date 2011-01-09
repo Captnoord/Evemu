@@ -49,6 +49,9 @@ public:
 	PyObject *GetOwnerNote(uint32 charID, uint32 noteID);
 	PyObject *GetCharacterAppearance(uint32 characterID);
 
+    //void GetCharacterData(uint32 characterID, std::vector<uint32> &characterDataVector);
+    void GetCharacterData(uint32 characterID, std::map<std::string, uint32> &characterDataMap);
+
 	bool ValidateCharName(const char *name);
 	/**
 	 * add_name_validation_set

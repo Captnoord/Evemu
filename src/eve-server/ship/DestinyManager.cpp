@@ -822,9 +822,9 @@ void DestinyManager::Orbit(SystemEntity *who, double distance, bool update) {
 
 void DestinyManager::SetShipCapabilities(InventoryItemRef ship)
 {
-	double mass = ship->GetAttribute(AttrMass).get_int();
-	double radius = ship->GetAttribute(AttrRadius).get_float();
-	double Inertia = ship->GetAttribute(AttrInertia).get_float();
+	double mass = ship->GetAttribute(AttrMass).get_int();               // Aknor: EVEAttributeMgr cant find this
+	double radius = ship->GetAttribute(AttrRadius).get_float();         // Aknor: EVEAttributeMgr cant find this, assertion failed: "mType == evil_number_float", line 189 EvilNumber.h
+	double Inertia = ship->GetAttribute(AttrInertia).get_float();       // Aknor: EVEAttributeMgr cant find this, assertion failed: "mType == evil_number_float", line 189 EvilNumber.h
 	double agility = ship->GetAttribute(AttrAgility).get_float();
 	int maxVelocity = ship->GetAttribute(AttrMaxVelocity).get_int();
 

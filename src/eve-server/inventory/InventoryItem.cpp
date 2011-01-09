@@ -678,13 +678,14 @@ void InventoryItem::SetOnline(bool newval) {
         return;
     }
 
-    Notify_OnModuleAttributeChange omac;
+    /*Notify_OnModuleAttributeChange omac;
     omac.ownerID = m_ownerID;
     omac.itemKey = m_itemID;
     omac.attributeID = AttrIsOnline;
     omac.time = Win32TimeNow();
     omac.newValue = new PyInt(newval?1:0);
     omac.oldValue = new PyInt(newval?0:1);   //hack... should use old, but its not cooperating today.
+    */
 
     Notify_OnGodmaShipEffect ogf;
     ogf.itemID = m_itemID; //0
@@ -705,7 +706,7 @@ void InventoryItem::SetOnline(bool newval) {
 
     Notify_OnMultiEvent multi;
     multi.events = new PyList;
-    multi.events->AddItem( omac.Encode() );
+    //multi.events->AddItem( omac.Encode() );
     multi.events->AddItem( ogf.Encode() );
 
     PyTuple* tmp = multi.Encode();   //this is consumed below

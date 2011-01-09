@@ -408,21 +408,34 @@ bool AttributeMap::SendAttributeChanges( PyTuple* attrChange )
         return false;
     }
 
-    // O hell this character finding needs to be optimized ( redesigned so its not needed.. ).
-    Client *client = sEntityList.FindCharacter(mItem.ownerID());
-
-    /*if (client == NULL)
+    // Oh hell, this character finding needs to be optimized ( redesigned so its not needed.. ).
+    if( (mItem.ownerID() == 1) || (IsStation(mItem.itemID())) )
     {
-        client = sEntityList.FindByShip(mItem.ownerID());
-    }*/
-
-    if (client == NULL) {
-        sLog.Error("AttributeMap", "unable to find client:%u", mItem.ownerID());
-        return false;
+        // This item is owned by the EVE System either directly, as in the case of a character object,
+        // or indirectly, as in the case of a Station, which is owned by the corporation that runs it.
+        // So, we don't need to queue up Destiny events in these cases.
+        return true;
     }
+    else
+    {
+        Client *client = sEntityList.FindCharacter(mItem.ownerID());
 
-    client->QueueDestinyEvent(&attrChange);
-    return true;
+        /*if (client == NULL)
+        {
+            client = sEntityList.FindByShip(mItem.ownerID());
+        }*/
+
+        if (client == NULL)
+        {
+            sLog.Error("AttributeMap", "unable to find client:%u", mItem.ownerID());
+            return false;
+        }
+        else
+        {
+            client->QueueDestinyEvent(&attrChange);
+            return true;
+        }
+    }
 }
 
 
@@ -526,7 +539,6 @@ EvilNumber AttributeMap::GetAttribute( const uint32 attributeId ) const
         return EvilNumber(0);
     }
 }
-
 /************************************************************************/
 /* End of new attribute system                                          */
 /************************************************************************/

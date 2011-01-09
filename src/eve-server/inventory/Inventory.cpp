@@ -95,19 +95,31 @@ bool Inventory::LoadContents(ItemFactory &factory)
     }
 
     //Now get each one from the factory (possibly recursing)
+    ItemData into;
     std::vector<uint32>::iterator cur, end;
     cur = items.begin();
     end = items.end();
     for(; cur != end; cur++)
     {
-        InventoryItemRef i = factory.GetItem( *cur );
-        if( !i )
+        // Each "cur" item should be checked to see if they are "owned" by the character connected to this client,
+        // and if not, then do not "get" the entire contents of this for() loop for that item.
+        factory.db().GetItem( *cur, into );
+        uint32 characterID = factory.GetUsingClient()->GetCharacterID();
+        if( (into.ownerID == characterID) || (characterID == 0) )
         {
-            sLog.Error("Inventory", "Failed to load item %u contained in %u. Skipping.", *cur, inventoryID() );
-            continue;
-        }
+            // Continue to GetItem() if the client calling this is owned by the character that owns this item
+            // --OR--
+            // The characterID == 0, which means this is attempting to load the character of this client for the first time.
 
-        AddItem( i );
+            InventoryItemRef i = factory.GetItem( *cur );
+            if( !i )
+            {
+                sLog.Error("Inventory", "Failed to load item %u contained in %u. Skipping.", *cur, inventoryID() );
+                continue;
+            }
+
+            AddItem( i );
+        }
     }
 
     mContentsLoaded = true;
