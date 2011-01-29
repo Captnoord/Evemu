@@ -223,10 +223,7 @@ RefPtr<_Ty> InventoryItem::_LoadItem(ItemFactory &factory, uint32 itemID,
 bool InventoryItem::_Load()
 {
     // load attributes
-    //if(!attributes.Load())
-    //    return false;
     mAttributeMap.Load();
-    
 
     // update inventory
     Inventory *inventory = m_factory.GetInventory( locationID(), false );
@@ -666,9 +663,19 @@ void InventoryItem::SendItemChange(uint32 toID, std::map<int32, PyRep *> &change
     c->SendNotification("OnItemChange", "charid", &tmp, false); //unsequenced.
 }
 
+
+typedef enum {
+    dgmEffPassive = 0,
+    dgmEffActivation = 1,
+    dgmEffTarget = 2,
+    dgmEffArea = 3,
+    dgmEffOnline = 4,
+    dgmEffOverload = 5,
+} EffectCategories;
+
+
 void InventoryItem::SetOnline(bool newval) {
-    //bool old = isOnline();
-    //Set_isOnline(newval);
+
     SetAttribute(AttrIsOnline, int(newval));
 
     Client *c = sEntityList.FindCharacter(m_ownerID);
@@ -678,14 +685,6 @@ void InventoryItem::SetOnline(bool newval) {
         return;
     }
 
-    /*Notify_OnModuleAttributeChange omac;
-    omac.ownerID = m_ownerID;
-    omac.itemKey = m_itemID;
-    omac.attributeID = AttrIsOnline;
-    omac.time = Win32TimeNow();
-    omac.newValue = new PyInt(newval?1:0);
-    omac.oldValue = new PyInt(newval?0:1);   //hack... should use old, but its not cooperating today.
-    */
 
     Notify_OnGodmaShipEffect ogf;
     ogf.itemID = m_itemID; //0
@@ -706,7 +705,7 @@ void InventoryItem::SetOnline(bool newval) {
 
     Notify_OnMultiEvent multi;
     multi.events = new PyList;
-    //multi.events->AddItem( omac.Encode() );
+    
     multi.events->AddItem( ogf.Encode() );
 
     PyTuple* tmp = multi.Encode();   //this is consumed below

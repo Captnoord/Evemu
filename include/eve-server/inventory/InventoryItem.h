@@ -183,30 +183,6 @@ public:
     /* end experimental new attribute system                                */
     /************************************************************************/
 
-
-    /*
-     * Redirections
-     */
-    /*#define ATTRFUNC(name, type) \
-        inline type name() const { \
-            return(attributes.name()); \
-        } \
-        inline void Set_##name(const type &value) { \
-            attributes.Set_##name(value); \
-        } \
-        inline void Set_##name##_persist(const type &value) { \
-            attributes.Set_##name##_persist(value); \
-        } \
-        inline void Clear_##name() { \
-            attributes.Clear_##name(); \
-        }
-    #define ATTRI(ID, name, default_value, persistent) \
-        ATTRFUNC(name, int)
-    #define ATTRD(ID, name, default_value, persistent) \
-        ATTRFUNC(name, double)
-    #include "EVEAttributes.h"
-    */
-
 protected:
     InventoryItem(
         ItemFactory &_factory,
