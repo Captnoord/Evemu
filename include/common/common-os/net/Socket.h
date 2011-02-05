@@ -44,35 +44,24 @@ namespace common
         class Socket
         {
         public:
+            /// Convenient typedef for the socket address.
+            typedef typename L3::SocketAddress Address;
+
             /**
              * @brief The default constructor.
              */
-            Socket()
-            : mSocket( INVALID_SOCKET ),
-              mSocketAddress( L3::SOCKET_ADDRESS_ANY )
-            {
-            }
+            Socket();
             /**
              * @brief The primary constructor.
              *
              * @param[in] type Type of socket to create.
              * @param[in] prot Protocol to use.
              */
-            Socket( int type, int prot )
-            : mSocket( INVALID_SOCKET ),
-              mSocketAddress( L3::SOCKET_ADDRESS_ANY )
-            {
-                int code = Create( type, prot );
-                assert( 0 == code );
-            }
+            Socket( int type, int prot );
             /**
              * @brief A destructor, closes the socket.
              */
-            ~Socket()
-            {
-                int code = Close();
-                assert( 0 == code );
-            }
+            ~Socket();
 
             /**
              * @brief Obtains validity of the socket.
@@ -86,7 +75,7 @@ namespace common
              *
              * @return The socket address.
              */
-            const typename L3::SocketAddress& socketAddress() const { return mSocketAddress; }
+            const Address& address() const { return mAddress; }
 
             /**
              * @brief Creates a new socket.
@@ -98,34 +87,13 @@ namespace common
              *
              * @return An error code.
              */
-            int Create( int type, int prot )
-            {
-                // Close the socket first
-                int code = Close();
-                if( 0 != code )
-                    return code;
-
-                // Create the new socket
-                SOCKET socket = ::socket( L3::ADDRESS_FAMILY, type, prot );
-                if( INVALID_SOCKET == socket )
-                    return NET_ERRNO;
-
-                // Assign it
-                code = Assign( socket, L3::SOCKET_ADDRESS_ANY );
-                if( 0 != code )
-                    return code;
-
-                return 0;
-            }
+            int Create( int type, int prot );
             /**
              * @brief Closes the current socket.
              *
              * @return An error code.
              */
-            int Close()
-            {
-                return Assign( INVALID_SOCKET, L3::SOCKET_ADDRESS_ANY );
-            }
+            int Close();
 
             /**
              * @brief Binds the socket to an address.
@@ -134,16 +102,7 @@ namespace common
              *
              * @return An error code.
              */
-            int Bind( const typename L3::SocketAddress& socketAddress )
-            {
-                if( 0 != ::bind( mSocket,
-                                 reinterpret_cast< const sockaddr* >( &socketAddress ),
-                                 sizeof( socketAddress ) ) )
-                    return NET_ERRNO;
-
-                mSocketAddress = socketAddress;
-                return 0;
-            }
+            int Bind( const Address& address );
 
             /**
              * @brief Sets a socket option.
@@ -155,30 +114,18 @@ namespace common
              * @return An error code.
              */
             template< typename T >
-            int SetOption( int level, int name, const T& val )
-            {
-                if( 0 != ::setsockopt( mSocket, level, name, &val, sizeof( val ) ) )
-                    return NET_ERRNO;
-
-                return 0;
-            }
+            int SetOption( int level, int name, const T& val );
 
 #       ifdef WIN32
             /**
-             * @brief Sets advances options of socket.
+             * @brief Sets advanced options of socket.
              *
              * @param[in] cmd A command to perform.
              * @param[in] arg An argument for command.
              *
              * @return An error code.
              */
-            int Ioctl( long cmd, unsigned long arg )
-            {
-                if( 0 != ::ioctlsocket( mSocket, cmd, &arg ) )
-                    return NET_ERRNO;
-
-                return 0;
-            }
+            int Ioctl( long cmd, unsigned long arg );
 #       else /* !WIN32 */
             /**
              * @brief Sets advanced options of socket.
@@ -188,13 +135,7 @@ namespace common
              *
              * @return An error code.
              */
-            int Fcntl( int cmd, long arg )
-            {
-                if( 0 != ::fcntl( mSocket, cmd, arg ) )
-                    return NET_ERRNO;
-
-                return 0;
-            }
+            int Fcntl( int cmd, long arg );
 #       endif /* !WIN32 */
 
         protected:
@@ -209,35 +150,15 @@ namespace common
              *
              * @return An error code.
              */
-            int Assign( SOCKET socket, const typename L3::SocketAddress& socketAddress )
-            {
-                if( isValid() )
-                {
-                    /* There is a problem that we may be shutting down
-                       a listening socket, for which the shutdown will
-                       fail. Thus we ignore ENOTCONN error. */
-                    if( 0 != ::shutdown( mSocket, SHUT_WR ) )
-                        if( ENOTCONN != NET_ERRNO )
-                            return NET_ERRNO;
-
-                    if( 0 != ::shutdown( mSocket, SHUT_RD ) )
-                        if( ENOTCONN != NET_ERRNO )
-                            return NET_ERRNO;
-
-                    if( 0 != ::close( mSocket ) )
-                        return NET_ERRNO;
-                }
-
-                mSocket = socket;
-                mSocketAddress = socketAddress;
-                return 0;
-            }
+            int Assign( SOCKET socket, const Address& address );
 
             /// The socket itself.
             SOCKET mSocket;
             /// The socket address this socket is associated with.
-            typename L3::SocketAddress mSocketAddress;
+            Address mAddress;
         };
+
+#   include "net/Socket.inl"
     }
 }
 

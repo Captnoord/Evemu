@@ -41,19 +41,16 @@ namespace common
          */
         class RefObject
         {
-            template<typename X>
+            template< typename T >
             friend class RefPtr;
 
         public:
             /**
              * @brief Initializes reference count.
              *
-             * @param[in] initRefCount Initial reference count.
+             * @param[in] refCount Initial reference count.
              */
-            RefObject( size_t initRefCount )
-            : mRefCount( initRefCount )
-            {
-            }
+            RefObject( size_t refCount );
 
             /**
              * @brief Destructor; must be virtual.
@@ -61,31 +58,20 @@ namespace common
              * Must be virtual if proper destructor should be
              * invoked upon destruction.
              */
-            virtual ~RefObject()
-            {
-                assert( 0 == mRefCount );
-            }
+            virtual ~RefObject();
 
         protected:
-            /// Increments reference count of object by one.
-            void IncRef() const
-            {
-                ++mRefCount;
-            }
+            /**
+             * @brief Increments reference count of object by one.
+             */
+            void IncRef() const;
             /**
              * @brief Decrements reference count of object by one.
              *
              * If reference count of object reaches zero, object
              * is deleted.
              */
-            void DecRef() const
-            {
-                assert( 0 < mRefCount );
-                --mRefCount;
-
-                if( 0 == mRefCount )
-                    delete this;
-            }
+            void DecRef() const;
 
             /// Reference count of instance.
             mutable size_t mRefCount;
@@ -99,121 +85,95 @@ namespace common
          *
          * @author Bloody.Rabbit
          */
-        template<typename X>
+        template< typename T >
         class RefPtr
         {
         public:
+            /**
+             * @brief Acts as static_cast.
+             */
+            template< typename T2 >
+            static RefPtr StaticCast( const RefPtr< T2 >& oth );
+
             /**
              * @brief Primary constructor.
              *
              * @param[in] p Pointer to object to be referenced.
              */
-            explicit RefPtr( X* p = NULL )
-            : mPtr( p )
-            {
-                if( *this )
-                    (*this)->IncRef();
-            }
+            explicit RefPtr( T* p = NULL );
             /**
              * @brief Copy constructor.
              *
              * @param[in] oth Object to copy the reference from.
              */
-            RefPtr( const RefPtr& oth )
-            : mPtr( oth.get() )
-            {
-                if( *this )
-                    (*this)->IncRef();
-            }
+            RefPtr( const RefPtr& oth );
             /**
              * @brief Casting copy constructor.
              *
              * @param[in] oth Object to copy the reference from.
              */
-            template<typename Y>
-            RefPtr( const RefPtr<Y>& oth )
-            : mPtr( oth.get() )
-            {
-                if( *this )
-                    (*this)->IncRef();
-            }
-
-            /// Destructor, releases reference.
-            ~RefPtr()
-            {
-                if( *this )
-                    (*this)->DecRef();
-            }
+            template< typename T2 >
+            RefPtr( const RefPtr< T2 >& oth );
+            /**
+             * @brief Destructor, releases reference.
+             */
+            ~RefPtr();
 
             /**
              * @brief Copy operator.
              *
              * @param[in] oth Object to copy the reference from.
              */
-            RefPtr& operator=( const RefPtr& oth )
-            {
-                if( *this )
-                    (*this)->DecRef();
-
-                mPtr = oth.get();
-
-                if( *this )
-                    (*this)->IncRef();
-
-                return *this;
-            }
+            RefPtr& operator=( const RefPtr& oth );
             /**
              * @brief Casting copy operator.
              *
              * @param[in] oth Object to copy the reference from.
              */
-            template<typename Y>
-            RefPtr& operator=( const RefPtr<Y>& oth )
-            {
-                if( *this )
-                    (*this)->DecRef();
+            template< typename T2 >
+            RefPtr& operator=( const RefPtr< T2 >& oth );
 
-                mPtr = oth.get();
+            /**
+             * @brief Obtains the stored reference.
+             *
+             * @return The stored reference.
+             */
+            T* get() const { return mPtr; }
 
-                if( *this )
-                    (*this)->IncRef();
+            /**
+             * @brief Checks for validity of the stored reference.
+             *
+             * @return True if stores a reference, false otherwise.
+             */
+            operator bool() const { return NULL != get(); }
 
-                return *this;
-            }
-
-            /// @return Stored reference.
-            X* get() const { return mPtr; }
-
-            /// @return True if stores a reference, false otherwise.
-            operator bool() const { return !( get() == NULL ); }
-
-            /// @return Stored reference.
-            X& operator*() const { assert( *this ); return *get(); }
-            /// @return Stored reference.
-            X* operator->() const { assert( *this ); return get(); }
+            /**
+             * @brief Obtains the stored reference.
+             *
+             * @return The stored reference.
+             */
+            T& operator*() const { assert( *this ); return *get(); }
+            /**
+             * @brief Obtains the stored reference.
+             *
+             * @return The stored reference.
+             */
+            T* operator->() const { assert( *this ); return get(); }
 
             /**
              * @brief Compares two references.
              *
              * @return True if both references are of same object, false if not.
              */
-            template<typename Y>
-            bool operator==( const RefPtr<Y>& oth ) const
-            {
-                return ( get() == oth.get() );
-            }
-
-            /// Acts as static_cast.
-            template<typename Y>
-            static RefPtr StaticCast( const RefPtr<Y>& oth )
-            {
-                return RefPtr( static_cast<X*>( oth.get() ) );
-            }
+            template< typename T2 >
+            bool operator==( const RefPtr< T2 >& oth ) const { return get() == oth.get(); }
 
         protected:
             /// The pointer to the reference-counted object.
-            X* mPtr;
+            T* mPtr;
         };
+
+#       include "util/RefPtr.inl"
     }
 }
 

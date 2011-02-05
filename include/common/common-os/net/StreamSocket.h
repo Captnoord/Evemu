@@ -47,24 +47,22 @@ namespace common
             typedef Socket< L3 > Base;
 
         public:
+            /// Conventient typedef for the socket address.
+            typedef typename Base::Address Address;
+
             /// Typedef for a stream element due to reference ambiguity.
             typedef void Element;
 
             /**
              * @brief A default constructor.
              */
-            StreamSocket()
-            {
-            }
+            StreamSocket();
             /**
              * @brief A primary constructor.
              *
              * @param[in] prot A protocol to use.
              */
-            StreamSocket( int prot )
-            : Base( SOCK_STREAM, prot )
-            {
-            }
+            StreamSocket( int prot );
 
             /**
              * @brief Creates a new socket.
@@ -73,28 +71,16 @@ namespace common
              *
              * @return An error code.
              */
-            int Create( int prot )
-            {
-                return Base::Create( SOCK_STREAM, prot );
-            }
+            int Create( int prot );
 
             /**
              * @brief Connects to specified address.
              *
-             * @param[in] socketAddress The address to connect.
+             * @param[in] address The address to connect.
              *
              * @return An error code.
              */
-            int Connect( const typename L3::SocketAddress& socketAddress )
-            {
-                if( 0 != ::connect( Base::mSocket,
-                                    reinterpret_cast< const sockaddr* >( &socketAddress ),
-                                    sizeof( socketAddress ) ) )
-                    return NET_ERRNO;
-
-                Base::mSocketAddress = socketAddress;
-                return 0;
-            }
+            int Connect( const Address& address );
 
             /**
              * @brief Receives data from socket.
@@ -105,23 +91,7 @@ namespace common
              *
              * @return An error code.
              */
-            stream::Error Read( util::Data& data, size_t* bytesRead = NULL )
-            {
-                int code = ::recv( Base::mSocket, &data[0], data.size(), 0 );
-                if( 0 < code )
-                {
-                    if( NULL != bytesRead )
-                        *bytesRead = code;
-
-                    return stream::ERROR_OK;
-                }
-                else if( 0 == code )
-                    return stream::ERROR_EOS;
-                else if( EWOULDBLOCK == NET_ERRNO )
-                    return stream::ERROR_TRYLATER;
-                else
-                    return stream::ERROR_READ;
-            }
+            stream::Error Read( util::Data& data, size_t* bytesRead = NULL );
             /**
              * @brief Sends data to socket.
              *
@@ -131,21 +101,7 @@ namespace common
              *
              * @return An error code.
              */
-            stream::Error Write( const util::Data& data, size_t* bytesWritten = NULL )
-            {
-                int code = ::send( Base::mSocket, &data[0], data.size(), 0 );
-                if( 0 <= code )
-                {
-                    if( NULL != bytesWritten )
-                        *bytesWritten = code;
-
-                    return stream::ERROR_OK;
-                }
-                else if( EWOULDBLOCK == NET_ERRNO )
-                    return stream::ERROR_TRYLATER;
-                else
-                    return stream::ERROR_WRITE;
-            }
+            stream::Error Write( const util::Data& data, size_t* bytesWritten = NULL );
 
             /**
              * @brief Starts listening on socket.
@@ -154,33 +110,16 @@ namespace common
              *
              * @return An error code.
              */
-            int Listen( int backlog = SOMAXCONN )
-            {
-                if( 0 != ::listen( Base::mSocket, backlog ) )
-                    return NET_ERRNO;
-
-                return 0;
-            }
+            int Listen( int backlog = SOMAXCONN );
             /**
              * @brief Starts listening on socket, binding to an address.
              *
-             * @param[in] socketAddress The address to bind to.
-             * @param[in] backlog       Limit for number of connections.
+             * @param[in] address The address to bind to.
+             * @param[in] backlog Limit for number of connections.
              *
              * @return An error code.
              */
-            int Listen( const typename L3::SocketAddress& socketAddress, int backlog = SOMAXCONN )
-            {
-                int code = Bind( socketAddress );
-                if( 0 != code )
-                    return code;
-
-                code = Listen( backlog );
-                if( 0 != code )
-                    return code;
-
-                return 0;
-            }
+            int Listen( const Address& address, int backlog = SOMAXCONN );
             /**
              * @brief Accepts a connection.
              *
@@ -188,31 +127,10 @@ namespace common
              *
              * @return An error code.
              */
-            int Accept( StreamSocket< L3 >& into )
-            {
-                // Close the socket first
-                int code = into.Close();
-                if( 0 != code )
-                    return code;
-
-                // Obtain the new socket
-                typename L3::SocketAddress socketAddress;
-                socklen_t len = sizeof( socketAddress );
-
-                SOCKET socket = ::accept( Base::mSocket,
-                                          reinterpret_cast< sockaddr* >( &socketAddress ),
-                                          &len );
-                if( INVALID_SOCKET == socket )
-                    return NET_ERRNO;
-
-                // Assign it
-                code = into.Assign( socket, socketAddress );
-                if( 0 != code )
-                    return code;
-
-                return 0;
-            }
+            int Accept( StreamSocket& into );
         };
+
+#   include "net/StreamSocket.inl"
     }
 }
 

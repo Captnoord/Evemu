@@ -62,6 +62,7 @@ SET( stdx_SOURCE
 SET( stream_INCLUDE
      "${TARGET_INCLUDE_DIR}/stream/Error.h"
      "${TARGET_INCLUDE_DIR}/stream/Hub.h"
+     "${TARGET_INCLUDE_DIR}/stream/Hub.inl"
      "${TARGET_INCLUDE_DIR}/stream/Input.h"
      "${TARGET_INCLUDE_DIR}/stream/Output.h" )
 SET( stream_SOURCE
@@ -78,11 +79,14 @@ SET( time_SOURCE
 
 SET( util_INCLUDE
      "${TARGET_INCLUDE_DIR}/util/Buffer.h"
+     "${TARGET_INCLUDE_DIR}/util/Buffer.inl"
      "${TARGET_INCLUDE_DIR}/util/Crc32.h"
      "${TARGET_INCLUDE_DIR}/util/Data.h"
+     "${TARGET_INCLUDE_DIR}/util/Data.inl"
      "${TARGET_INCLUDE_DIR}/util/Lock.h"
      "${TARGET_INCLUDE_DIR}/util/Misc.h"
      "${TARGET_INCLUDE_DIR}/util/RefPtr.h"
+     "${TARGET_INCLUDE_DIR}/util/RefPtr.inl"
      "${TARGET_INCLUDE_DIR}/util/SafeDelete.h"
      "${TARGET_INCLUDE_DIR}/util/Singleton.h"
      "${TARGET_INCLUDE_DIR}/util/String.h" )

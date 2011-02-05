@@ -57,12 +57,7 @@ namespace common
              * @param[in] len  Length of buffer to be created.
              * @param[in] fill Value to fill the buffer with.
              */
-            Buffer( size_t len = 0, const uint8& fill = 0 )
-            : mCapacity( 0 )
-            {
-                // Resize the buffer
-                Resize< uint8 >( len, fill );
-            }
+            Buffer( size_t len = 0, const uint8& fill = 0 );
             /**
              * @brief Creates a buffer with given content.
              *
@@ -73,33 +68,19 @@ namespace common
              * @param[in] last  Iterator pointing to element after the last one.
              */
             template< typename Iter >
-            Buffer( Iter first, Iter last )
-            : mCapacity( 0 )
-            {
-                // Assign the content
-                Assign( first, last );
-            }
+            Buffer( Iter first, Iter last );
             /**
              * @brief A copy constructor.
              *
              * @param[in] oth The buffer to copy.
              */
-            Buffer( const Buffer& oth )
-            : mCapacity( 0 )
-            {
-                // Use assigment operator
-                *this = oth;
-            }
+            Buffer( const Buffer& oth );
             /**
              * @brief A destructor.
              *
              * Deletes the buffer.
              */
-            ~Buffer()
-            {
-                // Release the buffer
-                SafeFree( mData );
-            }
+            ~Buffer();
 
             /********************************************************************/
             /* Write methods                                                    */
@@ -110,17 +91,7 @@ namespace common
              * @param[in] value Value to be appended.
              */
             template< typename T >
-            void Append( const T& value )
-            {
-                // we wish to append to the end
-                const Iterator< T > index = end< T >();
-
-                // make enough room; we're going to fill the gap immediately
-                _ResizeAt< T >( index, 1 );
-
-                // assign the value, filling the gap
-                *index = value;
-            }
+            void Append( const T& value );
             /**
              * @brief Appends a sequence of elements to the buffer.
              *
@@ -128,20 +99,7 @@ namespace common
              * @param[in] last  Iterator pointing to element after the last one.
              */
             template< typename Iter >
-            void Append( Iter first, Iter last )
-            {
-                // for readability
-                typedef typename std::iterator_traits< Iter >::value_type T;
-
-                // we wish to append to the end
-                const Iterator< T > index = end< T >();
-
-                // make enough room; we're going to fill the gap immediately
-                _ResizeAt< T >( index, last - first );
-
-                // assign the value, filling the gap
-                std::copy( first, last, index );
-            }
+            void Append( Iter first, Iter last );
 
             /**
              * @brief Assigns a single value to the buffer.
@@ -149,29 +107,7 @@ namespace common
              * @param[in] value New content.
              */
             template< typename T >
-            void Assign( const T& value )
-            {
-                // we wish to assign to beginning
-                const Iterator< T > index = begin< T >();
-
-                // do we have enough space?
-                if( end< T >() > index )
-                {
-                    // yes, we do: assign the value
-                    *index = value;
-
-                    // shrink the buffer; no gap will be created
-                    _ResizeAt< T >( index, 1 );
-                }
-                else
-                {
-                    // no, we don't: make enough room; we're going to fill the gap immediately
-                    _ResizeAt< T >( index, 1 );
-
-                    // assign the value, filling the gap
-                    *index = value;
-                }
-            }
+            void Assign( const T& value );
             /**
              * @brief Assigns a sequence of elements to the buffer.
              *
@@ -179,32 +115,7 @@ namespace common
              * @param[in] last  Iterator pointing to element after the last one.
              */
             template< typename Iter >
-            void Assign( Iter first, Iter last )
-            {
-                // for readability
-                typedef typename std::iterator_traits< Iter >::value_type T;
-
-                // we wish to assign to beginning
-                const Iterator< T > index = begin< T >();
-
-                // do we have enough space?
-                if( last - first <= end< T >() - index )
-                {
-                    // yes, we do: assign the value
-                    std::copy( first, last, index );
-
-                    // shrink the buffer; no gap will be created
-                    _ResizeAt< T >( index, last - first );
-                }
-                else
-                {
-                    // no, we don't: make enough room; we're going to fill the gap immediately
-                    _ResizeAt< T >( index, last - first );
-
-                    // assign the value, filling the gap
-                    std::copy( first, last, index );
-                }
-            }
+            void Assign( Iter first, Iter last );
 
             /**
              * @brief Appends a value to the buffer.
@@ -212,26 +123,14 @@ namespace common
              * @param[in] value Value to be appended.
              */
             template< typename T >
-            Buffer& operator<<( const T& value )
-            {
-                // append the value
-                Append< T >( value );
-                // return ourselves
-                return *this;
-            }
+            Buffer& operator<<( const T& value );
             /**
              * @brief Assigns a new value to the buffer.
              *
              * @param[in] value New content.
              */
             template< typename T >
-            Buffer& operator=( const T& value )
-            {
-                // assign the value
-                Assign< T >( value );
-                // return ourselves
-                return *this;
-            }
+            Buffer& operator=( const T& value );
 
             /**
              * @brief A copy operator.
@@ -240,13 +139,7 @@ namespace common
              *
              * @return A reference to self.
              */
-            Buffer& operator=( const Buffer& value )
-            {
-                // assign new content
-                Assign< ConstIterator< uint8 > >( value.begin< uint8 >(), value.end< uint8 >() );
-                // return ourselves
-                return *this;
-            }
+            Buffer& operator=( const Buffer& value );
 
             /********************************************************************/
             /* Size methods                                                     */
@@ -270,39 +163,25 @@ namespace common
              * @param[in] requiredCount The least reserved number of elements.
              */
             template< typename T >
-            void Reserve( size_t requiredCount )
-            {
-                // reserve at beginning
-                ReserveAt< T >( begin< T >(), requiredCount );
-            }
+            void Reserve( size_t requiredCount );
 
             /**
-             * @brief Reserves (pre-allocates) memory for the buffer at specific point.
+             * @brief Reserves (pre-allocates) memory for the buffer
+             *        at specific point.
              *
-             * Pre-allocates memory for buffer to hold at least <var>requiredCount</var>
-             * number of elements, counting from <var>index</var>.
+             * Pre-allocates memory for buffer to hold at least
+             * <var>requiredCount</var> number of elements, counting from
+             * <var>index</var>.
              *
-             * Should be used in cases where lazy reallocating can negatively affect
-             * performance.
+             * Should be used in cases where lazy reallocating can negatively
+             * affect performance.
              *
-             * @param[in] index         The point at which the memory should be reserved.
+             * @param[in] index         The point at which the memory should
+             *                          be reserved.
              * @param[in] requiredCount The least reserved number of elements.
              */
             template< typename T >
-            void ReserveAt( ConstIterator< T > index, size_t requiredCount )
-            {
-                // make sure we're not going off the bounds
-                assert( index <= end< T >() );
-
-                // turn Iterator into byte offset
-                const size_t _index = index.template as< uint8 >() - begin< uint8 >();
-                // obtain required size in bytes
-                const size_t _requiredSize = requiredCount * sizeof( T );
-
-                // reallocate if necessary
-                if( _index + _requiredSize > capacity() )
-                    _Reallocate( _index + _requiredSize );
-            }
+            void ReserveAt( ConstIterator< T > index, size_t requiredCount );
 
             /**
              * @brief Resizes buffer.
@@ -311,14 +190,11 @@ namespace common
              * number of elements, possibly reallocating it.
              *
              * @param[in] requiredCount The number of elements to hold.
-             * @param[in] fill          During buffer expansion the gap will be filled by this value.
+             * @param[in] fill          During buffer expansion the gap
+             *                          will be filled by this value.
              */
             template< typename T >
-            void Resize( size_t requiredCount, const T& fill = 0 )
-            {
-                // Resize at beginning
-                ResizeAt< T >( begin< T >(), requiredCount, fill );
-            }
+            void Resize( size_t requiredCount, const T& fill = 0 );
 
             /**
              * @brief Resizes buffer.
@@ -327,33 +203,15 @@ namespace common
              * number of elements, counting from <var>index</var>,
              * possibly reallocating it.
              *
-             * @param[in] index         The point at which the buffer should be resized.
+             * @param[in] index         The point at which the buffer
+             *                          should be resized.
              * @param[in] requiredCount The number of elements to hold.
-             * @param[in] fill          During buffer expansion the gap will be filled by this value.
+             * @param[in] fill          During buffer expansion the gap
+             *                          will be filled by this value.
              */
             template< typename T >
-            void ResizeAt( ConstIterator< T > index, size_t requiredCount, const T& fill = 0 )
-            {
-                // make sure we're not going off the bounds
-                assert( index <= end< T >() );
-
-                // keep old size
-                const size_t _oldSize = size();
-                // do actual resize
-                _ResizeAt< T >( index, requiredCount );
-
-                // turn Iterator into byte offset
-                const size_t _index = index.template as< uint8 >() - begin< uint8 >();
-                // obtain required size in bytes
-                const size_t _requiredSize = requiredCount * sizeof( T );
-
-                // has a gap been created?
-                if( _index + _requiredSize > _oldSize )
-                    // fill it with the fill
-                    std::fill_n( reinterpret_cast< T* >( &mData[ _oldSize ] ),
-                                 _index + _requiredSize - _oldSize,
-                                 fill );
-            }
+            void ResizeAt( ConstIterator< T > index, size_t requiredCount,
+                           const T& fill = 0 );
 
         protected:
             /// Current capacity of buffer, in bytes.
@@ -368,11 +226,7 @@ namespace common
              * @param[in] requiredCount The number of elements to hold.
              */
             template< typename T >
-            void _Resize( size_t requiredCount )
-            {
-                // resize at beginning
-                _ResizeAt< T >( begin< T >(), requiredCount );
-            }
+            void _Resize( size_t requiredCount );
 
             /**
              * @brief Resizes buffer.
@@ -380,25 +234,12 @@ namespace common
              * Similar to ResizeAt, but does not care
              * about the gaps that may be created.
              *
-             * @param[in] index         The point at which the buffer should be resized.
+             * @param[in] index         The point at which the buffer
+             *                          should be resized.
              * @param[in] requiredCount The number of elements to hold.
              */
             template< typename T >
-            void _ResizeAt( ConstIterator< T > index, size_t requiredCount )
-            {
-                // make sure we're not going off the bounds
-                assert( index <= end< T >() );
-
-                // turn index into byte offset
-                const size_t _index = index.template as< uint8 >() - begin< uint8 >();
-                // obtain required size in bytes
-                const size_t _requiredSize = requiredCount * sizeof( T );
-
-                // reallocate
-                _Reallocate( _index + _requiredSize );
-                // set new size
-                mSize = _index + _requiredSize;
-            }
+            void _ResizeAt( ConstIterator< T > index, size_t requiredCount );
 
             /**
              * @brief Reallocates buffer.
@@ -406,24 +247,10 @@ namespace common
              * Reallocates buffer so it can efficiently store
              * given amount of data.
              *
-             * @param[in] requiredSize The least required new size of buffer, in bytes.
+             * @param[in] requiredSize The least required new size
+             *                         of buffer, in bytes.
              */
-            void _Reallocate( size_t requiredSize )
-            {
-                // calculate new capacity for required size
-                size_t newCapacity = _CalcBufferCapacity( capacity(), requiredSize );
-                // make sure new capacity is bigger than required size
-                assert( requiredSize <= newCapacity );
-
-                // has the capacity changed?
-                if( newCapacity != capacity() )
-                {
-                    // reallocate
-                    mData = reinterpret_cast< uint8* >( ::realloc( mData, newCapacity ) );
-                    // set new capacity
-                    mCapacity = newCapacity;
-                }
-            }
+            void _Reallocate( size_t requiredSize );
 
             /**
              * @brief Calculates buffer capacity.
@@ -436,26 +263,11 @@ namespace common
              *
              * @return Capacity to be allocated.
              */
-            static size_t _CalcBufferCapacity( size_t currentCapacity, size_t requiredSize )
-            {
-                size_t newCapacity = 0;
-
-                // if more than 0x100 bytes required, return next power of 2
-                if( 0x100 < requiredSize )
-                    newCapacity = (size_t)npowof2( requiredSize );
-                // else if non-zero, return 0x100 bytes
-                else if( 0 < requiredSize )
-                    newCapacity = 0x100;
-                // else return 0 bytes
-
-                /* if current capacity is sufficient and at the same time smaller
-                   than the new capacity, return current one ... saves resources */
-                if( requiredSize <= currentCapacity && currentCapacity < newCapacity )
-                    return currentCapacity;
-                else
-                    return newCapacity;
-            }
+            static size_t _CalcBufferCapacity( size_t currentCapacity,
+                                               size_t requiredSize );
         };
+
+#       include "util/Buffer.inl"
     }
 }
 

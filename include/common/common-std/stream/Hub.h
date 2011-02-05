@@ -53,14 +53,7 @@ namespace common
             /**
              * @brief A destructor, destroys the target streams.
              */
-            ~OutputHub()
-            {
-                typename std::set< Target* >::iterator cur, end;
-                cur = mTargets.begin();
-                end = mTargets.end();
-                for(; cur != end; ++cur )
-                    delete *cur;
-            }
+            ~OutputHub();
 
             /**
              * @brief Writes an element into all target streams.
@@ -69,20 +62,7 @@ namespace common
              *
              * @return An error code.
              */
-            Error Write( const Element& e )
-            {
-                typename std::set< Target* >::iterator cur, end;
-                cur = mTargets.begin();
-                end = mTargets.end();
-                for(; cur != end; ++cur )
-                {
-                    const Error err = ( *cur )->Write( e );
-                    if( ERROR_OK != err )
-                        return err;
-                }
-
-                return ERROR_OK;
-            }
+            Error Write( const Element& e );
             /**
              * @brief Writes elements into all target streams.
              *
@@ -93,20 +73,7 @@ namespace common
              *
              * @return An error code.
              */
-            Error Write( const Element* ep, size_t count, size_t* countWritten = NULL )
-            {
-                typename std::set< Target* >::iterator cur, end;
-                cur = mTargets.begin();
-                end = mTargets.end();
-                for(; cur != end; ++cur )
-                {
-                    const Error err = ( *cur )->Write( ep, count, countWritten );
-                    if( ERROR_OK != err )
-                        return err;
-                }
-
-                return ERROR_OK;
-            }
+            Error Write( const Element* ep, size_t count, size_t* countWritten = NULL );
 
             /**
              * @brief Adds a target stream.
@@ -115,10 +82,7 @@ namespace common
              *
              * @param[in] t The target stream.
              */
-            void add( Target* t )
-            {
-                mTargets.insert( t );
-            }
+            void add( Target* t );
             /**
              * @brief Removes a target stream.
              *
@@ -127,15 +91,14 @@ namespace common
              *
              * @param[in] t The target stream.
              */
-            void remove( Target* t )
-            {
-                mTargets.remove( t );
-            }
+            void remove( Target* t );
 
         protected:
             /// All target streams.
             std::set< Target* > mTargets;
         };
+
+#       include "stream/Hub.inl"
     }
 }
 

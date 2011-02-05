@@ -82,21 +82,13 @@ namespace common
                  * @param[in] data  A data source.
                  * @param[in] index An index in data.
                  */
-                ConstIterator( const Data* data = NULL, size_t index = 0 )
-                : mData( data ),
-                  mIndex( index )
-                {
-                }
+                ConstIterator( const Data* data = NULL, size_t index = 0 );
                 /**
                  * @brief A copy constructor.
                  *
                  * @param[in] oth An iterator to copy.
                  */
-                ConstIterator( const ConstIterator& oth )
-                : mData( oth.mData ),
-                  mIndex( oth.mIndex )
-                {
-                }
+                ConstIterator( const ConstIterator& oth );
 
                 /**
                  * @brief A copy operator.
@@ -105,12 +97,7 @@ namespace common
                  *
                  * @return A reference to self.
                  */
-                ConstIterator& operator=( const ConstIterator& oth )
-                {
-                    mData = oth.mData;
-                    mIndex = oth.mIndex;
-                    return *this;
-                }
+                ConstIterator& operator=( const ConstIterator& oth );
 
                 /**
                  * @brief Converts ConstIterator to another ConstIterator
@@ -126,16 +113,7 @@ namespace common
                  *
                  * @return A reference to the value in the data.
                  */
-                const_reference operator*() const
-                {
-                    // make sure we have valid data source
-                    assert( mData );
-                    // make sure we're not going off the bounds
-                    assert( mData->end< value_type >() > *this );
-
-                    // obtain the value and return
-                    return *reinterpret_cast< const_pointer >( &( mData->mData )[ mIndex ] );
-                }
+                const_reference operator*() const;
                 /**
                  * @brief A dereference operator.
                  *
@@ -159,11 +137,7 @@ namespace common
                  *
                  * @return An iterator with the added index.
                  */
-                ConstIterator operator+( difference_type diff ) const
-                {
-                    ConstIterator res( *this );
-                    return res += diff;
-                }
+                ConstIterator operator+( difference_type diff ) const;
                 /**
                  * @brief An add operator.
                  *
@@ -171,23 +145,7 @@ namespace common
                  *
                  * @return A reference to self with the added index.
                  */
-                ConstIterator& operator+=( difference_type diff )
-                {
-                    // turn the diff into byte diff
-                    const difference_type res = diff * sizeof( value_type );
-
-                    // make sure we have a valid data source
-                    assert( mData );
-                    // make sure we won't go negative
-                    assert( 0 <= mIndex + res );
-                    // make sure we won't go past end
-                    assert( mIndex + res <= mData->size() );
-
-                    // set new index
-                    mIndex += res;
-
-                    return *this;
-                }
+                ConstIterator& operator+=( difference_type diff );
                 /**
                  * @brief A preincrement operator.
                  *
@@ -199,12 +157,7 @@ namespace common
                  *
                  * @return An incremented iterator.
                  */
-                ConstIterator operator++( int )
-                {
-                    ConstIterator res( *this );
-                    ++*this;
-                    return res;
-                }
+                ConstIterator operator++( int );
 
                 /**
                  * @brief A diff interator.
@@ -213,11 +166,7 @@ namespace common
                  *
                  * @return A copy of self with the substracted index.
                  */
-                ConstIterator operator-( difference_type diff ) const
-                {
-                    ConstIterator res( *this );
-                    return res -= diff;
-                }
+                ConstIterator operator-( difference_type diff ) const;
                 /**
                  * @brief A substract operator.
                  *
@@ -237,12 +186,7 @@ namespace common
                  *
                  * @return A copy of self with a decremented index.
                  */
-                ConstIterator operator--( int )
-                {
-                    ConstIterator res( *this );
-                    --*this;
-                    return res;
-                }
+                ConstIterator operator--( int );
 
                 /**
                  * @brief Obtains a difference between two iterators.
@@ -251,14 +195,7 @@ namespace common
                  *
                  * @return The difference.
                  */
-                difference_type operator-( const ConstIterator& oth ) const
-                {
-                    // make sure we have identical data sources
-                    assert( oth.mData == mData );
-                    // return difference in element offset
-                    return static_cast< difference_type >( mIndex - oth.mIndex )
-                         / static_cast< difference_type >( sizeof( value_type ) );
-                }
+                difference_type operator-( const ConstIterator& oth ) const;
 
                 /**
                  * @brief An equality operator.
@@ -355,19 +292,13 @@ namespace common
                  * @param[in] data  A data source.
                  * @param[in] index An index in the data.
                  */
-                Iterator( Data* data = NULL, size_t index = 0 )
-                : Base( data, index )
-                {
-                }
+                Iterator( Data* data = NULL, size_t index = 0 );
                 /**
                  * @brief A copy constructor.
                  *
                  * @param[in] oth The iterator to copy.
                  */
-                Iterator( const Iterator& oth )
-                : Base( oth )
-                {
-                }
+                Iterator( const Iterator& oth );
 
                 /**
                  * @brief A copy operator.
@@ -376,7 +307,7 @@ namespace common
                  *
                  * @return A reference to self.
                  */
-                Iterator& operator=( const Iterator& oth ) { static_cast< Base& >( *this ) = oth; return *this; }
+                Iterator& operator=( const Iterator& oth );
 
                 /**
                  * @brief Converts Iterator to another Iterator
@@ -385,14 +316,14 @@ namespace common
                  * @return The new Iterator.
                  */
                 template< typename T2 >
-                Iterator< T2 > as() const { return Iterator< T2 >( const_cast< Data* >( Base::mData ), Base::mIndex ); }
+                Iterator< T2 > as() const;
 
                 /**
                  * @brief A dereference operator.
                  *
                  * @return A reference to the value within the data.
                  */
-                reference operator*() const { return const_cast< reference >( *static_cast< const Base& >( *this ) ); }
+                reference operator*() const;
                 /**
                  * @brief A dereference operator.
                  *
@@ -416,11 +347,7 @@ namespace common
                  *
                  * @return An iterator with the added index.
                  */
-                Iterator operator+( difference_type diff ) const
-                {
-                    Iterator res( *this );
-                    return res += diff;
-                }
+                Iterator operator+( difference_type diff ) const;
                 /**
                  * @brief An add operator.
                  *
@@ -428,24 +355,19 @@ namespace common
                  *
                  * @return A reference to self with the added index.
                  */
-                Iterator& operator+=( difference_type diff ) { static_cast< Base& >( *this ) += diff; return *this; }
+                Iterator& operator+=( difference_type diff );
                 /**
                  * @brief A preincrement operator.
                  *
                  * @return A reference to self with the incremented index.
                  */
-                Iterator& operator++() { ++static_cast< Base& >( *this ); return *this; }
+                Iterator& operator++();
                 /**
                  * @brief A postincrement operator.
                  *
                  * @return A copy of self with the incremented index.
                  */
-                Iterator operator++( int )
-                {
-                    Iterator res( *this );
-                    ++*this;
-                    return res;
-                }
+                Iterator operator++( int );
 
                 /**
                  * @brief A diff operator.
@@ -454,11 +376,7 @@ namespace common
                  *
                  * @return A copy of self with the substracted index.
                  */
-                Iterator operator-( difference_type diff ) const
-                {
-                    Iterator res( *this );
-                    return res -= diff;
-                }
+                Iterator operator-( difference_type diff ) const;
                 /**
                  * @brief A substract operator.
                  *
@@ -466,24 +384,19 @@ namespace common
                  *
                  * @return A reference to self with the substracted index.
                  */
-                Iterator& operator-=( difference_type diff ) { static_cast< Base& >( *this ) -= diff; return *this; }
+                Iterator& operator-=( difference_type diff );
                 /**
                  * @brief A predecrement operator.
                  *
                  * @return A reference to self with the decremented index.
                  */
-                Iterator& operator--() { --static_cast< Base& >( *this ); return *this; }
+                Iterator& operator--();
                 /**
                  * @brief A postdecrement operator.
                  *
                  * @return A copy of self with the decremented index.
                  */
-                Iterator operator--( int )
-                {
-                    Iterator res( *this );
-                    --*this;
-                    return res;
-                }
+                Iterator operator--( int );
 
                 /**
                  * @brief Obtains a difference between two iterators.
@@ -492,17 +405,13 @@ namespace common
                  *
                  * @return The difference.
                  */
-                difference_type operator-( const Base& oth ) const { return static_cast< const Base& >( *this ) - oth; }
+                difference_type operator-( const Base& oth ) const;
             };
 
             /**
              * @brief Creates an empty data source.
              */
-            Data()
-            : mData( NULL ),
-              mSize( 0 )
-            {
-            }
+            Data();
             /**
              * @brief Creates a data source with some given content.
              *
@@ -511,11 +420,7 @@ namespace common
              * @param[in] val The content.
              */
             template< typename T >
-            Data( T& val )
-            : mData( reinterpret_cast< uint8* >( &val ) ),
-              mSize( sizeof( T ) )
-            {
-            }
+            Data( T& val );
             /**
              * @brief Creates a data source with some given content.
              *
@@ -526,29 +431,19 @@ namespace common
              * @param[in] last  Iterator pointing to element after the last one.
              */
             template< typename Iter >
-            Data( Iter first, Iter last )
-            : mData( reinterpret_cast< uint8* >( &*first ) ),
-              mSize( ( last - first ) * sizeof( typename std::iterator_traits< Iter >::value_type ) )
-            {
-            }
+            Data( Iter first, Iter last );
             /**
              * @brief A copy constructor.
              *
              * @param[in] oth The data to copy.
              */
-            Data( const Data& oth )
-            : mData( oth.mData ),
-              mSize( oth.mSize )
-            {
-            }
+            Data( const Data& oth );
             /**
              * @brief A destructor.
              *
              * Does nothing (no release of memory).
              */
-            virtual ~Data()
-            {
-            }
+            virtual ~Data();
 
             /********************************************************************/
             /* Read methods                                                     */
@@ -631,6 +526,8 @@ namespace common
             /// The amount of valid data at <var>mData</var>, in bytes.
             size_t mSize;
         };
+
+#       include "util/Data.inl"
     }
 }
 
