@@ -23,7 +23,7 @@
  * @author Zhur, Bloody.Rabbit
  */
 
-#include "CommonWin.h"
+#include "CommonOs.h"
 
 #include "win/InitWinsock.h"
 
