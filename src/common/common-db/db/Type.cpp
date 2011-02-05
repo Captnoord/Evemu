@@ -20,57 +20,51 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:        Bloody.Rabbit
+    Author:     Bloody.Rabbit
 */
 
-#include "CommonOs.h"
+#include "CommonDb.h"
 
-#include "log/Message.h"
-#include "time/TimeMgr.h"
+#include "db/Type.h"
 
 using namespace common;
-using namespace common::log;
+using namespace common::db;
 
 /*************************************************************************/
-/* common::log::Message                                                  */
+/* common::db                                                            */
 /*************************************************************************/
-const char Message::TYPE_PREFIXES[ TYPE_COUNT ] =
+uint8 db::TYPE_GetSizeBits( TYPE type )
 {
-    'N', // TYPE_NOTICE
-    'E', // TYPE_ERROR
-    'W', // TYPE_WARNING
-    'S', // TYPE_SUCCESS
-    'D', // TYPE_DEBUG
-    'H'  // TYPE_DUMP
-};
+    switch( type )
+    {
+        case TYPE_I8:
+        case TYPE_UI8:
+        case TYPE_R8:
+        case TYPE_CY:
+        case TYPE_FILETIME:
+            return 64;
+        case TYPE_I4:
+        case TYPE_UI4:
+        case TYPE_R4:
+            return 32;
+        case TYPE_I2:
+        case TYPE_UI2:
+            return 16;
+        case TYPE_I1:
+        case TYPE_UI1:
+            return 8;
+        case TYPE_BOOL:
+            return 1;
+        case TYPE_BYTES:
+        case TYPE_STR:
+        case TYPE_WSTR:
+            return 0;
+    }
 
-Message::Message( Type type, const char* source,
-                       const char* format, ... )
-: mType( type ),
-  mTime( sTimeMgr.nowTm() ),
-  mSource( source )
-{
-    va_list ap;
-    va_start( ap, format );
-
-    int code = vsprintf( mMessage, format, ap );
-    assert( 0 <= code );
-
-    va_end( ap );
+    return 0;
 }
 
-Message::Message( Type type, const char* source,
-                       const char* format, va_list ap )
-: mType( type ),
-  mTime( sTimeMgr.nowTm() ),
-  mSource( source )
+uint8 db::TYPE_GetSizeBytes( TYPE type )
 {
-    int code = vsprintf( mMessage, format, ap );
-    assert( 0 <= code );
-}
-
-char Message::prefix() const
-{
-    assert( 0 <= type() && type() < TYPE_COUNT );
-    return TYPE_PREFIXES[ type() ];
+    return ( TYPE_GetSizeBits( type ) + 7 ) >> 3;
 }

@@ -26,6 +26,8 @@
 #ifndef __COMMON__TIME__TIMER_H__INCL__
 #define __COMMON__TIME__TIMER_H__INCL__
 
+#include "time/Msec.h"
+
 namespace common
 {
     namespace time

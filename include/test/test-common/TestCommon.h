@@ -31,8 +31,6 @@
 /*************************************************************************/
 #include "CommonStd.h"
 
-#include "fs/File.h"
-#include "fs/Directory.h"
 #include "stdx/File.h"
 #include "util/Buffer.h"
 #include "util/Data.h"
@@ -42,6 +40,8 @@
 /*************************************************************************/
 #include "CommonOs.h"
 
+#include "fs/File.h"
+#include "fs/Directory.h"
 #include "net/Ip4.h"
 #include "net/StreamSocket.h"
 

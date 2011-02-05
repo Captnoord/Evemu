@@ -25,7 +25,14 @@
 
 #include "CommonOs.h"
 
+#include "time/Const.h"
+#include "time/Msec.h"
 #include "time/Timeval.h"
+#include "time/WinTime.h"
+
+#ifndef WIN32
+#   include "time/Timespec.h"
+#endif /* !WIN32 */
 
 using namespace common;
 using namespace common::time;
@@ -33,7 +40,128 @@ using namespace common::time;
 /*************************************************************************/
 /* common::time::Msec                                                    */
 /*************************************************************************/
+const Msec Msec::MSEC = 1;
+const Msec Msec::SEC = Msec::MSEC * MSEC_PER_SEC;
+const Msec Msec::MIN = Msec::SEC * SEC_PER_MIN;
+const Msec Msec::HOUR = Msec::MIN * MIN_PER_HOUR;
+const Msec Msec::DAY = Msec::HOUR * HOUR_PER_DAY;
+const Msec Msec::MONTH = Msec::DAY * DAY_PER_MONTH;
+const Msec Msec::YEAR = Msec::MONTH * MONTH_PER_YEAR;
+
+Msec::Msec( size_t msec )
+: mMsec( msec )
+{
+}
+
+Msec::Msec( const Msec& oth )
+: mMsec( oth.count() )
+{
+}
+
+#ifndef WIN32
+Msec::Msec( const Timespec& ts )
+: mMsec( MSEC_PER_SEC * ts.sec() + ts.nsec() / ( NSEC_PER_USEC * USEC_PER_MSEC ) )
+{
+}
+#endif /* !WIN32 */
+
 Msec::Msec( const Timeval& tv )
 : mMsec( MSEC_PER_SEC * tv.sec() + tv.usec() / USEC_PER_MSEC )
 {
+}
+
+Msec::Msec( const WinTime& time )
+: mMsec( time.count() / ( WINTIME_PER_USEC * USEC_PER_MSEC ) )
+{
+}
+
+bool Msec::operator==( const Msec& oth ) const
+{
+    return count() == oth.count();
+}
+
+bool Msec::operator!=( const Msec& oth ) const
+{
+    return count() != oth.count();
+}
+
+bool Msec::operator<( const Msec& oth ) const
+{
+    return count() < oth.count();
+}
+
+bool Msec::operator<=( const Msec& oth ) const
+{
+    return count() <= oth.count();
+}
+
+bool Msec::operator>( const Msec& oth ) const
+{
+    return count() > oth.count();
+}
+
+bool Msec::operator>=( const Msec& oth ) const
+{
+    return count() >= oth.count();
+}
+
+Msec Msec::operator+( const Msec& oth ) const
+{
+    return count() + oth.count();
+}
+
+Msec Msec::operator-( const Msec& oth ) const
+{
+    return count() - oth.count();
+}
+
+Msec Msec::operator*( size_t ratio ) const
+{
+    return count() * ratio;
+}
+
+Msec Msec::operator/( size_t ratio ) const
+{
+    return count() / ratio;
+}
+
+Msec Msec::operator%( size_t ratio ) const
+{
+    return count() % ratio;
+}
+
+Msec& Msec::operator=( const Msec& oth )
+{
+    mMsec = oth.count();
+    return *this;
+}
+
+Msec& Msec::operator+=( const Msec& oth )
+{
+    mMsec += oth.count();
+    return *this;
+}
+
+Msec& Msec::operator-=( const Msec& oth )
+{
+    mMsec -= oth.count();
+    return *this;
+}
+
+Msec& Msec::operator*=( size_t ratio )
+{
+    mMsec *= ratio;
+    return *this;
+}
+
+Msec& Msec::operator/=( size_t ratio )
+{
+    mMsec /= ratio;
+    return *this;
+}
+
+Msec& Msec::operator%=( size_t ratio )
+{
+    mMsec %= ratio;
+    return *this;
 }

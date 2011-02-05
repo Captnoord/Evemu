@@ -20,57 +20,60 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:        Bloody.Rabbit
+    Author:     Bloody.Rabbit
 */
 
 #include "CommonOs.h"
 
-#include "log/Message.h"
+#include "mt/Condition.h"
 #include "time/TimeMgr.h"
 
 using namespace common;
-using namespace common::log;
+using namespace common::mt;
 
 /*************************************************************************/
-/* common::log::Message                                                  */
+/* common::mt::Condition                                                 */
 /*************************************************************************/
-const char Message::TYPE_PREFIXES[ TYPE_COUNT ] =
+void Condition::Signal()
 {
-    'N', // TYPE_NOTICE
-    'E', // TYPE_ERROR
-    'W', // TYPE_WARNING
-    'S', // TYPE_SUCCESS
-    'D', // TYPE_DEBUG
-    'H'  // TYPE_DUMP
-};
-
-Message::Message( Type type, const char* source,
-                       const char* format, ... )
-: mType( type ),
-  mTime( sTimeMgr.nowTm() ),
-  mSource( source )
-{
-    va_list ap;
-    va_start( ap, format );
-
-    int code = vsprintf( mMessage, format, ap );
-    assert( 0 <= code );
-
-    va_end( ap );
+#ifdef WIN32
+    DWORD code = mCondition.Signal();
+    assert( ERROR_SUCCESS == code );
+#else /* !WIN32 */
+    int code = mCondition.Signal();
+    assert( 0 == code );
+#endif /* !WIN32 */
 }
 
-Message::Message( Type type, const char* source,
-                       const char* format, va_list ap )
-: mType( type ),
-  mTime( sTimeMgr.nowTm() ),
-  mSource( source )
+void Condition::Broadcast()
 {
-    int code = vsprintf( mMessage, format, ap );
-    assert( 0 <= code );
+#ifdef WIN32
+    DWORD code = mCondition.Broadcast();
+    assert( ERROR_SUCCESS == code );
+#else /* !WIN32 */
+    int code = mCondition.Broadcast();
+    assert( 0 == code );
+#endif /* !WIN32 */
 }
 
-char Message::prefix() const
+void Condition::Wait( Mutex& mutex )
 {
-    assert( 0 <= type() && type() < TYPE_COUNT );
-    return TYPE_PREFIXES[ type() ];
+#ifdef WIN32
+    DWORD code = mCondition.Wait( mutex.mMutex );
+    assert( ERROR_SUCCESS == code );
+#else /* !WIN32 */
+    int code = mCondition.Wait( mutex.mMutex );
+    assert( 0 == code );
+#endif /* !WIN32 */
+}
+
+void Condition::TimedWait( Mutex& mutex, const time::Msec& timeout )
+{
+#ifdef WIN32
+    DWORD code = mCondition.Wait( mutex.mMutex, timeout );
+    assert( ERROR_SUCCESS == code );
+#else /* !WIN32 */
+    int code = mCondition.TimedWait( mutex.mMutex, sTimeMgr.nowUnix() + timeout );
+    assert( 0 == code );
+#endif /* !WIN32 */
 }

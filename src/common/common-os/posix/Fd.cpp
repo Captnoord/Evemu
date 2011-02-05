@@ -20,57 +20,78 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:        Bloody.Rabbit
+    Author:     Bloody.Rabbit
 */
 
 #include "CommonOs.h"
 
-#include "log/Message.h"
-#include "time/TimeMgr.h"
+#include "posix/Fd.h"
 
 using namespace common;
-using namespace common::log;
+using namespace common::posix;
 
 /*************************************************************************/
-/* common::log::Message                                                  */
+/* common::posix::Fd                                                     */
 /*************************************************************************/
-const char Message::TYPE_PREFIXES[ TYPE_COUNT ] =
+Fd::Fd( int fd )
+: mFd( fd )
 {
-    'N', // TYPE_NOTICE
-    'E', // TYPE_ERROR
-    'W', // TYPE_WARNING
-    'S', // TYPE_SUCCESS
-    'D', // TYPE_DEBUG
-    'H'  // TYPE_DUMP
-};
-
-Message::Message( Type type, const char* source,
-                       const char* format, ... )
-: mType( type ),
-  mTime( sTimeMgr.nowTm() ),
-  mSource( source )
-{
-    va_list ap;
-    va_start( ap, format );
-
-    int code = vsprintf( mMessage, format, ap );
-    assert( 0 <= code );
-
-    va_end( ap );
 }
 
-Message::Message( Type type, const char* source,
-                       const char* format, va_list ap )
-: mType( type ),
-  mTime( sTimeMgr.nowTm() ),
-  mSource( source )
+Fd::~Fd()
 {
-    int code = vsprintf( mMessage, format, ap );
-    assert( 0 <= code );
+    int code = Close();
+    assert( 0 == code );
 }
 
-char Message::prefix() const
+int Fd::Close()
 {
-    assert( 0 <= type() && type() < TYPE_COUNT );
-    return TYPE_PREFIXES[ type() ];
+    if( isValid() )
+    {
+        if( 0 != ::close( mFd ) )
+            return errno;
+    }
+
+    mFd = -1;
+    return 0;
+}
+
+/*************************************************************************/
+/* common::posix::ReadableFd                                             */
+/*************************************************************************/
+ReadableFd::ReadableFd( int fd )
+: Fd( fd )
+{
+}
+
+stream::Error ReadableFd::Read( util::Data& data, size_t* bytesRead )
+{
+    ssize_t res = ::read( mFd, &data[0], data.size() );
+    if( 0 > res )
+        return stream::ERROR_READ;
+
+    if( NULL != bytesRead )
+        *bytesRead = res;
+
+    return data.size() == res ? stream::ERROR_OK : stream::ERROR_EOS;
+}
+
+/*************************************************************************/
+/* common::posix::WritableFd                                             */
+/*************************************************************************/
+WritableFd::WritableFd( int fd )
+: Fd( fd )
+{
+}
+
+stream::Error WritableFd::Write( const util::Data& data, size_t* bytesWritten )
+{
+    ssize_t res = ::write( mFd, &data[0], data.size() );
+    if( 0 > res )
+        return stream::ERROR_WRITE;
+
+    if( NULL != bytesWritten )
+        *bytesWritten = res;
+
+    return stream::ERROR_OK;
 }

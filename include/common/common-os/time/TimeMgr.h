@@ -26,8 +26,12 @@
 #ifndef __COMMON__TIME__TIME_MGR_H__INCL__
 #define __COMMON__TIME__TIME_MGR_H__INCL__
 
+#include "mt/Mutex.h"
+#include "mt/Target.h"
 #include "time/Timer.h"
 #include "time/Timeval.h"
+#include "time/Tm.h"
+#include "time/WinTime.h"
 
 namespace common
 {
@@ -66,7 +70,7 @@ namespace common
              *
              * @return The time.
              */
-            stdx::Tm nowTm() const;
+            Tm nowTm() const;
             /**
              * @brief Obtains time passed since the Windows Epoch.
              *
@@ -109,7 +113,7 @@ namespace common
             Timeval mTimeval;
 #       endif /* !WIN32 */
             /// "Now" in stdx::Tm.
-            stdx::Tm mTm;
+            Tm mTm;
 
             /// <code>true</code> if the thread should run.
             bool mRun;

@@ -20,56 +20,68 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:        Zhur
+    Author:     Bloody.Rabbit
 */
 
-#ifndef __COMMON_OS_H__INCL__
-#define __COMMON_OS_H__INCL__
+#ifndef __COMMON__MT__MUTEX_H__INCL__
+#define __COMMON__MT__MUTEX_H__INCL__
 
-/*************************************************************************/
-/* common-std                                                            */
-/*************************************************************************/
-#include "CommonStd.h"
+#include "util/Lock.h"
 
-#include "stream/Input.h"
-#include "stream/Output.h"
-#include "util/Buffer.h"
-#include "util/Singleton.h"
-#include "util/String.h"
-
-/*************************************************************************/
-/* common-os                                                             */
-/*************************************************************************/
 #ifdef WIN32
-// Define basic Windows configuration
-#   define WIN32_LEAN_AND_MEAN
-#   define _WIN32_WINNT 0x0500 // building for Win2k
-#   define NOMINMAX
-
-#   include <process.h>
-#   include <windows.h>
-#   include <winsock2.h>
-#   include <ws2tcpip.h>
+#   include "win/Mutex.h"
 #else /* !WIN32 */
-// Network
-#   include <arpa/inet.h>
-#   include <netdb.h>
-#   include <netinet/in.h>
-#   include <sys/socket.h>
-
-// Files
-#   include <dirent.h>
-#   include <fcntl.h>
-#   include <sys/stat.h>
-
-// Threads
-#   include <pthread.h>
-
-// Time
-#   include <sys/time.h>
-
-// Miscellaneous
-#   include <unistd.h>
+#   include "posix/Mutex.h"
 #endif /* !WIN32 */
 
-#endif /* !__NET__COMMON_H__INCL__ */
+namespace common
+{
+    /**
+     * @brief Classes and utilities to manage multithreading.
+     */
+    namespace mt
+    {
+        /**
+         * @brief Common wrapper for platform-specific mutexes.
+         *
+         * @author Zhur, Bloody.Rabbit
+         */
+        class Mutex
+        : public util::Lockable
+        {
+            friend class Condition;
+
+        public:
+            /**
+             * @brief Locks the mutex.
+             */
+            void Lock();
+            /**
+             * @brief Attempts to lock the mutex.
+             *
+             * @retval true  Mutex successfully locked.
+             * @retval false Mutex locked by another thread.
+             */
+            bool TryLock();
+
+            /**
+             * @brief Unlocks the mutex.
+             */
+            void Unlock();
+
+        protected:
+#       ifdef WIN32
+            /// Windows mutex.
+            win::Mutex mMutex;
+#       else /* !WIN32 */
+            /// Posix mutex.
+            posix::Mutex mMutex;
+#       endif /* !WIN32 */
+        };
+
+        /// Convenience typedef for Mutex lock.
+        typedef util::Lock< Mutex > MutexLock;
+    }
+}
+
+#endif /* !__COMMON__MT__MUTEX_H__INCL__ */

@@ -20,57 +20,32 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:        Bloody.Rabbit
+    Author:     Bloody.Rabbit
 */
 
+#ifndef __COMMON_DB_H__INCL__
+#define __COMMON_DB_H__INCL__
+
+/*************************************************************************/
+/* common-std                                                            */
+/*************************************************************************/
+#include "CommonStd.h"
+
+#include "util/Singleton.h"
+#include "util/String.h"
+
+/*************************************************************************/
+/* common-os                                                             */
+/*************************************************************************/
 #include "CommonOs.h"
 
-#include "log/Message.h"
-#include "time/TimeMgr.h"
-
-using namespace common;
-using namespace common::log;
+#include "mt/Mutex.h"
+#include "log/LogMgr.h"
 
 /*************************************************************************/
-/* common::log::Message                                                  */
+/* common-db                                                             */
 /*************************************************************************/
-const char Message::TYPE_PREFIXES[ TYPE_COUNT ] =
-{
-    'N', // TYPE_NOTICE
-    'E', // TYPE_ERROR
-    'W', // TYPE_WARNING
-    'S', // TYPE_SUCCESS
-    'D', // TYPE_DEBUG
-    'H'  // TYPE_DUMP
-};
+#include <mysql.h>
+#include <errmsg.h>
 
-Message::Message( Type type, const char* source,
-                       const char* format, ... )
-: mType( type ),
-  mTime( sTimeMgr.nowTm() ),
-  mSource( source )
-{
-    va_list ap;
-    va_start( ap, format );
-
-    int code = vsprintf( mMessage, format, ap );
-    assert( 0 <= code );
-
-    va_end( ap );
-}
-
-Message::Message( Type type, const char* source,
-                       const char* format, va_list ap )
-: mType( type ),
-  mTime( sTimeMgr.nowTm() ),
-  mSource( source )
-{
-    int code = vsprintf( mMessage, format, ap );
-    assert( 0 <= code );
-}
-
-char Message::prefix() const
-{
-    assert( 0 <= type() && type() < TYPE_COUNT );
-    return TYPE_PREFIXES[ type() ];
-}
+#endif /* !__DB__COMMON_H__INCL__ */

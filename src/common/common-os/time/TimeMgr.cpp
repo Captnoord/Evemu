@@ -25,6 +25,8 @@
 
 #include "CommonOs.h"
 
+#include "mt/ThreadMgr.h"
+#include "time/Const.h"
 #include "time/TimeMgr.h"
 
 using namespace common;
@@ -43,9 +45,9 @@ TimeMgr::TimeMgr( size_t period )
     sThreadMgr.Run( this );
 }
 
-stdx::Tm TimeMgr::nowTm() const
+Tm TimeMgr::nowTm() const
 {
-    stdx::Tm t;
+    Tm t;
 
     {
         mt::MutexLock lock( mMutex );

@@ -20,57 +20,59 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:        Bloody.Rabbit
+    Author:     Bloody.Rabbit
 */
 
-#include "CommonOs.h"
+#include "CommonStd.h"
 
-#include "log/Message.h"
-#include "time/TimeMgr.h"
+#include "log/File.h"
 
 using namespace common;
 using namespace common::log;
 
 /*************************************************************************/
-/* common::log::Message                                                  */
+/* common::log::File                                                     */
 /*************************************************************************/
-const char Message::TYPE_PREFIXES[ TYPE_COUNT ] =
+File::File( const char* name )
+: mFile( name, "a" )
 {
-    'N', // TYPE_NOTICE
-    'E', // TYPE_ERROR
-    'W', // TYPE_WARNING
-    'S', // TYPE_SUCCESS
-    'D', // TYPE_DEBUG
-    'H'  // TYPE_DUMP
-};
-
-Message::Message( Type type, const char* source,
-                       const char* format, ... )
-: mType( type ),
-  mTime( sTimeMgr.nowTm() ),
-  mSource( source )
-{
-    va_list ap;
-    va_start( ap, format );
-
-    int code = vsprintf( mMessage, format, ap );
-    assert( 0 <= code );
-
-    va_end( ap );
 }
 
-Message::Message( Type type, const char* source,
-                       const char* format, va_list ap )
-: mType( type ),
-  mTime( sTimeMgr.nowTm() ),
-  mSource( source )
+stream::Error File::Write( const Message& m )
 {
-    int code = vsprintf( mMessage, format, ap );
-    assert( 0 <= code );
+    const time::Tm& tm = m.time();
+
+    int code = mFile.Printf( "%04d-%02d-%02d %02d:%02d:%02d %c %s: %s\n",
+                             1900 + tm.year(), 1 + tm.mon(), tm.mday(),
+                             tm.hour(), tm.min(), tm.sec(),
+                             m.prefix(), m.source().c_str(),
+                             m.message().c_str() );
+
+#ifndef NDEBUG
+    /* Flush immediately to keep the log file
+       accurate even in case of a crash. */
+    mFile.Flush();
+#endif /* !NDEBUG */
+
+    return 0 <= code ? stream::ERROR_OK : stream::ERROR_WRITE;
 }
 
-char Message::prefix() const
+stream::Error File::Write( const Message* mp, size_t count, size_t* countWritten )
 {
-    assert( 0 <= type() && type() < TYPE_COUNT );
-    return TYPE_PREFIXES[ type() ];
+    for( size_t i = 0; i < count; ++i )
+    {
+        const stream::Error err = Write( mp[ i ] );
+        if( stream::ERROR_OK != err )
+        {
+            if( NULL != countWritten )
+                *countWritten = i;
+
+            return err;
+        }
+    }
+
+    if( NULL != countWritten )
+        *countWritten = count;
+
+    return stream::ERROR_OK;
 }

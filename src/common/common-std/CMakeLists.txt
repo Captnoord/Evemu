@@ -19,44 +19,12 @@ SET( INCLUDE
 SET( SOURCE
      "" )
 
-SET( db_INCLUDE
-     "${TARGET_INCLUDE_DIR}/db/Type.h" )
-SET( db_SOURCE
-     "${TARGET_SOURCE_DIR}/db/Type.cpp" )
-
-SET( fs_INCLUDE
-     "${TARGET_INCLUDE_DIR}/fs/Directory.h"
-     "${TARGET_INCLUDE_DIR}/fs/File.h" )
-SET( fs_SOURCE
-     "" )
-
-SET( log_INCLUDE
-     "${TARGET_INCLUDE_DIR}/log/Console.h"
-     "${TARGET_INCLUDE_DIR}/log/File.h"
-     "${TARGET_INCLUDE_DIR}/log/LogMgr.h"
-     "${TARGET_INCLUDE_DIR}/log/Message.h" )
-SET( log_SOURCE
-     "${TARGET_SOURCE_DIR}/log/File.cpp"
-     "${TARGET_SOURCE_DIR}/log/LogMgr.cpp" )
-
-SET( mt_INCLUDE
-     "${TARGET_INCLUDE_DIR}/mt/Condition.h"
-     "${TARGET_INCLUDE_DIR}/mt/Mutex.h"
-     "${TARGET_INCLUDE_DIR}/mt/Target.h"
-     "${TARGET_INCLUDE_DIR}/mt/Thread.h"
-     "${TARGET_INCLUDE_DIR}/mt/ThreadMgr.h" )
-SET( mt_SOURCE
-     "${TARGET_SOURCE_DIR}/mt/Target.cpp"
-     "${TARGET_SOURCE_DIR}/mt/ThreadMgr.cpp" )
-
 SET( stdx_INCLUDE
      "${TARGET_INCLUDE_DIR}/stdx/File.h"
-     "${TARGET_INCLUDE_DIR}/stdx/Tm.h"
      "${TARGET_INCLUDE_DIR}/stdx/Types.h"
      "${TARGET_INCLUDE_DIR}/stdx/Utils.h" )
 SET( stdx_SOURCE
      "${TARGET_SOURCE_DIR}/stdx/File.cpp"
-     "${TARGET_SOURCE_DIR}/stdx/Tm.cpp"
      "${TARGET_SOURCE_DIR}/stdx/Utils.cpp" )
 
 SET( stream_INCLUDE
@@ -67,15 +35,6 @@ SET( stream_INCLUDE
      "${TARGET_INCLUDE_DIR}/stream/Output.h" )
 SET( stream_SOURCE
      "" )
-
-SET( time_INCLUDE
-     "${TARGET_INCLUDE_DIR}/time/Const.h"
-     "${TARGET_INCLUDE_DIR}/time/Msec.h"
-     "${TARGET_INCLUDE_DIR}/time/WinTime.h" )
-SET( time_SOURCE
-     "${TARGET_SOURCE_DIR}/time/Const.cpp"
-     "${TARGET_SOURCE_DIR}/time/Msec.cpp"
-     "${TARGET_SOURCE_DIR}/time/WinTime.cpp" )
 
 SET( util_INCLUDE
      "${TARGET_INCLUDE_DIR}/util/Buffer.h"
@@ -101,47 +60,24 @@ SET( util_SOURCE
 INCLUDE_DIRECTORIES( "${TARGET_INCLUDE_DIR}" )
 
 SOURCE_GROUP( "include"         FILES ${INCLUDE} )
-SOURCE_GROUP( "include\\db"     FILES ${db_INCLUDE} )
-SOURCE_GROUP( "include\\fs"     FILES ${fs_INCLUDE} )
-SOURCE_GROUP( "include\\log"    FILES ${log_INCLUDE} )
-SOURCE_GROUP( "include\\mt"     FILES ${mt_INCLUDE} )
 SOURCE_GROUP( "include\\stdx"   FILES ${stdx_INCLUDE} )
 SOURCE_GROUP( "include\\stream" FILES ${stream_INCLUDE} )
-SOURCE_GROUP( "include\\time"   FILES ${time_INCLUDE} )
 SOURCE_GROUP( "include\\util"   FILES ${util_INCLUDE} )
 
 SOURCE_GROUP( "src"         FILES ${SOURCE} )
-SOURCE_GROUP( "src\\db"     FILES ${db_SOURCE} )
-SOURCE_GROUP( "src\\fs"     FILES ${fs_SOURCE} )
-SOURCE_GROUP( "src\\log"    FILES ${log_SOURCE} )
-SOURCE_GROUP( "src\\mt"     FILES ${mt_SOURCE} )
 SOURCE_GROUP( "src\\stdx"   FILES ${stdx_SOURCE} )
 SOURCE_GROUP( "src\\stream" FILES ${stream_SOURCE} )
-SOURCE_GROUP( "src\\time"   FILES ${time_SOURCE} )
 SOURCE_GROUP( "src\\util"   FILES ${util_SOURCE} )
 
 ADD_LIBRARY( "${TARGET_NAME}"
              ${INCLUDE}        ${SOURCE}
-             ${db_INCLUDE}     ${db_SOURCE}
-             ${fs_INCLUDE}     ${fs_SOURCE}
-             ${log_INCLUDE}    ${log_SOURCE}
-             ${mt_INCLUDE}     ${mt_SOURCE}
              ${stdx_INCLUDE}   ${stdx_SOURCE}
              ${stream_INCLUDE} ${stream_SOURCE}
-             ${time_INCLUDE}   ${time_SOURCE}
              ${util_INCLUDE}   ${util_SOURCE} )
 
 TARGET_BUILD_PCH( "${TARGET_NAME}"
                   "CommonStd.h"
-                  "log/LogMgr.cpp" )
-
-IF( WIN32 )
-    TARGET_LINK_LIBRARIES( "${TARGET_NAME}"
-                           "common-win" )
-ELSE( WIN32 )
-    TARGET_LINK_LIBRARIES( "${TARGET_NAME}"
-                           "common-posix" )
-ENDIF( WIN32 )
+                  "stdx/Utils.cpp" )
 
 ######################
 # Export directories #

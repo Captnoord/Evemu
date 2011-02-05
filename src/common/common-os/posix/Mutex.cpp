@@ -23,26 +23,81 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __COMMON_XML_H__INCL__
-#define __COMMON_XML_H__INCL__
-
-/*************************************************************************/
-/* common-std                                                            */
-/*************************************************************************/
-#include "CommonStd.h"
-
-#include "util/String.h"
-
-/*************************************************************************/
-/* common-os                                                             */
-/*************************************************************************/
 #include "CommonOs.h"
 
-#include "log/LogMgr.h"
+#include "posix/Mutex.h"
+
+using namespace common;
+using namespace common::posix;
 
 /*************************************************************************/
-/* common-xml                                                            */
+/* common::posix::Mutex                                                  */
 /*************************************************************************/
-#include <tinyxml.h>
+const Mutex::Attribute Mutex::DEFAULT_ATTRIBUTE(
+#if defined( CYGWIN ) || defined( APPLE )
+    PTHREAD_MUTEX_RECURSIVE
+#else
+    PTHREAD_MUTEX_RECURSIVE_NP
+#endif
+ );
 
-#endif /* !__COMMON_XML_H__INCL__ */
+Mutex::Mutex( const Attribute& attr )
+{
+    int code = ::pthread_mutex_init( &mMutex, &attr.mAttribute );
+    assert( 0 == code );
+}
+
+Mutex::~Mutex()
+{
+    int code = ::pthread_mutex_destroy( &mMutex );
+    assert( 0 == code );
+}
+
+int Mutex::Lock()
+{
+    return ::pthread_mutex_lock( &mMutex );
+}
+
+int Mutex::TryLock()
+{
+    return ::pthread_mutex_trylock( &mMutex );
+}
+
+int Mutex::Unlock()
+{
+    return ::pthread_mutex_unlock( &mMutex );
+}
+
+/*************************************************************************/
+/* common::posix::Mutex::Attribute                                       */
+/*************************************************************************/
+Mutex::Attribute::Attribute()
+{
+    int code = ::pthread_mutexattr_init( &mAttribute );
+    assert( 0 == code );
+}
+
+Mutex::Attribute::Attribute( int type )
+{
+    int code = ::pthread_mutexattr_init( &mAttribute );
+    assert( 0 == code );
+
+    code = SetType( type );
+    assert( 0 == code );
+}
+
+Mutex::Attribute::~Attribute()
+{
+    int code = ::pthread_mutexattr_destroy( &mAttribute );
+    assert( 0 == code );
+}
+
+int Mutex::Attribute::GetType( int* type ) const
+{
+    return ::pthread_mutexattr_gettype( &mAttribute, type );
+}
+
+int Mutex::Attribute::SetType( int type )
+{
+    return ::pthread_mutexattr_settype( &mAttribute, type );
+}

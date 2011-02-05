@@ -28,7 +28,6 @@ SET( ga_SOURCE
 # Setup the library #
 #####################
 INCLUDE_DIRECTORIES( "${GANGSTA_INCLUDE_DIR}"
-                     "${common-std_INCLUDE_DIR}"
                      "${TARGET_INCLUDE_DIR}" )
 
 SOURCE_GROUP( "include"     FILES ${INCLUDE} )
@@ -43,8 +42,7 @@ ADD_CUSTOM_TARGET( "${TARGET_NAME}"
                            ${ga_INCLUDE} ${ga_SOURCE} )
 
 TARGET_LINK_LIBRARIES( "${TARGET_NAME}"
-                       ${GANGSTA_LIBRARIES}
-                       "common-std" )
+                       ${GANGSTA_LIBRARIES} )
 
 ######################
 # Export directories #

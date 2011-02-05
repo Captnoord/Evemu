@@ -20,57 +20,95 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:        Bloody.Rabbit
+    Author:     Bloody.Rabbit
 */
 
 #include "CommonOs.h"
 
-#include "log/Message.h"
-#include "time/TimeMgr.h"
+#include "posix/Directory.h"
 
 using namespace common;
-using namespace common::log;
+using namespace common::posix;
 
 /*************************************************************************/
-/* common::log::Message                                                  */
+/* common::posix::Directory                                              */
 /*************************************************************************/
-const char Message::TYPE_PREFIXES[ TYPE_COUNT ] =
+int Directory::Create( const char* path, mode_t mode )
 {
-    'N', // TYPE_NOTICE
-    'E', // TYPE_ERROR
-    'W', // TYPE_WARNING
-    'S', // TYPE_SUCCESS
-    'D', // TYPE_DEBUG
-    'H'  // TYPE_DUMP
-};
+    if( 0 != ::mkdir( path, mode ) )
+        return errno;
 
-Message::Message( Type type, const char* source,
-                       const char* format, ... )
-: mType( type ),
-  mTime( sTimeMgr.nowTm() ),
-  mSource( source )
-{
-    va_list ap;
-    va_start( ap, format );
-
-    int code = vsprintf( mMessage, format, ap );
-    assert( 0 <= code );
-
-    va_end( ap );
+    return 0;
 }
 
-Message::Message( Type type, const char* source,
-                       const char* format, va_list ap )
-: mType( type ),
-  mTime( sTimeMgr.nowTm() ),
-  mSource( source )
+int Directory::Remove( const char* path )
 {
-    int code = vsprintf( mMessage, format, ap );
-    assert( 0 <= code );
+    if( 0 != ::rmdir( path ) )
+        return errno;
+
+    return 0;
 }
 
-char Message::prefix() const
+Directory::Directory()
+: mDir( NULL )
 {
-    assert( 0 <= type() && type() < TYPE_COUNT );
-    return TYPE_PREFIXES[ type() ];
+}
+
+Directory::Directory( const char* name )
+: mDir( NULL )
+{
+    int code = Open( name );
+    assert( 0 == code );
+}
+
+Directory::~Directory()
+{
+    int code = Close();
+    assert( 0 == code );
+}
+
+long int Directory::tell() const
+{
+    return ::telldir( mDir );
+}
+
+int Directory::Open( const char* name )
+{
+    int code = Close();
+    if( 0 != code )
+        return code;
+
+    mDir = ::opendir( name );
+    if( !isValid() )
+        return errno;
+
+    return 0;
+}
+
+int Directory::Close()
+{
+    if( isValid() )
+    {
+        int code = ::closedir( mDir );
+        if( 0 != code )
+            return errno;
+    }
+
+    mDir = NULL;
+    return 0;
+}
+
+int Directory::Read( dirent& entry, dirent*& result )
+{
+    return ::readdir_r( mDir, &entry, &result );
+}
+
+void Directory::Seek( long int loc )
+{
+    ::seekdir( mDir, loc );
+}
+
+void Directory::Rewind()
+{
+    ::rewinddir( mDir );
 }

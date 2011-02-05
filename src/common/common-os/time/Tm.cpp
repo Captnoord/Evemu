@@ -20,57 +20,35 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:        Bloody.Rabbit
+    Author:     Bloody.Rabbit
 */
 
 #include "CommonOs.h"
 
-#include "log/Message.h"
-#include "time/TimeMgr.h"
+#include "time/Tm.h"
 
 using namespace common;
-using namespace common::log;
+using namespace common::time;
 
 /*************************************************************************/
-/* common::log::Message                                                  */
+/* common::time::Tm                                                      */
 /*************************************************************************/
-const char Message::TYPE_PREFIXES[ TYPE_COUNT ] =
+Tm::Tm()
 {
-    'N', // TYPE_NOTICE
-    'E', // TYPE_ERROR
-    'W', // TYPE_WARNING
-    'S', // TYPE_SUCCESS
-    'D', // TYPE_DEBUG
-    'H'  // TYPE_DUMP
-};
-
-Message::Message( Type type, const char* source,
-                       const char* format, ... )
-: mType( type ),
-  mTime( sTimeMgr.nowTm() ),
-  mSource( source )
-{
-    va_list ap;
-    va_start( ap, format );
-
-    int code = vsprintf( mMessage, format, ap );
-    assert( 0 <= code );
-
-    va_end( ap );
 }
 
-Message::Message( Type type, const char* source,
-                       const char* format, va_list ap )
-: mType( type ),
-  mTime( sTimeMgr.nowTm() ),
-  mSource( source )
+Tm::Tm( const tm& t )
+: mTm( t )
 {
-    int code = vsprintf( mMessage, format, ap );
-    assert( 0 <= code );
 }
 
-char Message::prefix() const
+Tm::Tm( time_t t )
 {
-    assert( 0 <= type() && type() < TYPE_COUNT );
-    return TYPE_PREFIXES[ type() ];
+    const tm* result = localtime_r( &t, &mTm );
+    assert( &mTm == result );
+}
+
+Tm::Tm( const Tm& oth )
+: mTm( oth.t() )
+{
 }

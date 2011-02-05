@@ -38,7 +38,8 @@ SET( SOURCE
 # Setup the executable #
 ########################
 INCLUDE_DIRECTORIES( "${CPPUNIT_INCLUDE_DIR}"
-                     "${common-std_INCLUDE_DIR}" "${common-os_INCLUDE_DIR}"
+                     "${common-std_INCLUDE_DIR}"
+                     "${common-os_INCLUDE_DIR}"
                      "${TARGET_INCLUDE_DIR}" )
 
 SOURCE_GROUP( "include" FILES ${INCLUDE} )

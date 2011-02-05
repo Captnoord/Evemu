@@ -20,57 +20,96 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:        Bloody.Rabbit
+    Author:     Bloody.Rabbit
 */
 
 #include "CommonOs.h"
 
-#include "log/Message.h"
-#include "time/TimeMgr.h"
+#include "posix/File.h"
 
 using namespace common;
-using namespace common::log;
+using namespace common::posix;
 
 /*************************************************************************/
-/* common::log::Message                                                  */
+/* common::posix::File                                                   */
 /*************************************************************************/
-const char Message::TYPE_PREFIXES[ TYPE_COUNT ] =
+int File::Rename( const char* nameOld, const char* nameNew )
 {
-    'N', // TYPE_NOTICE
-    'E', // TYPE_ERROR
-    'W', // TYPE_WARNING
-    'S', // TYPE_SUCCESS
-    'D', // TYPE_DEBUG
-    'H'  // TYPE_DUMP
-};
+    if( 0 != ::rename( nameOld, nameNew ) )
+        return errno;
 
-Message::Message( Type type, const char* source,
-                       const char* format, ... )
-: mType( type ),
-  mTime( sTimeMgr.nowTm() ),
-  mSource( source )
-{
-    va_list ap;
-    va_start( ap, format );
-
-    int code = vsprintf( mMessage, format, ap );
-    assert( 0 <= code );
-
-    va_end( ap );
+    return 0;
 }
 
-Message::Message( Type type, const char* source,
-                       const char* format, va_list ap )
-: mType( type ),
-  mTime( sTimeMgr.nowTm() ),
-  mSource( source )
+int File::Remove( const char* name )
 {
-    int code = vsprintf( mMessage, format, ap );
-    assert( 0 <= code );
+    if( 0 != ::remove( name ) )
+        return errno;
+
+    return 0;
 }
 
-char Message::prefix() const
+int File::Stat( const char* name, struct stat& buf )
 {
-    assert( 0 <= type() && type() < TYPE_COUNT );
-    return TYPE_PREFIXES[ type() ];
+    if( 0 != ::stat( name, &buf ) )
+        return errno;
+
+    return 0;
+}
+
+File::File()
+: Fd(),
+  ReadableFd(),
+  WritableFd()
+{
+}
+
+File::File( const char* name, int flags, mode_t mode )
+: Fd(),
+  ReadableFd(),
+  WritableFd()
+{
+    int code = Open( name, flags, mode );
+    assert( 0 == code );
+}
+
+int File::Stat( struct stat& buf ) const
+{
+    if( 0 != ::fstat( mFd, &buf ) )
+        return errno;
+
+    return 0;
+}
+
+int File::Open( const char* name, int flags, mode_t mode )
+{
+    int code = Close();
+    if( 0 != code )
+        return code;
+
+    mFd = ::open( name, flags, mode );
+    if( !isValid() )
+        return errno;
+
+    return 0;
+}
+
+int File::Seek( off_t offset, int whence, off_t* result )
+{
+    off_t res = ::lseek( mFd, offset, whence );
+    if( 0 > res )
+        return errno;
+
+    if( NULL != result )
+        *result = res;
+
+    return 0;
+}
+
+int File::Sync()
+{
+    if( 0 != ::fsync( mFd ) )
+        return errno;
+
+    return 0;
 }

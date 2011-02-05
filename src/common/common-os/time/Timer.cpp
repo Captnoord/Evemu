@@ -25,6 +25,7 @@
 
 #include "CommonOs.h"
 
+#include "mt/Thread.h"
 #include "time/TimeMgr.h"
 #include "time/Timer.h"
 

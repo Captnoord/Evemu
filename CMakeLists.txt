@@ -159,18 +159,10 @@ ENDIF( EVEMU_DOC_ENABLE )
 ################
 INCLUDE( "TargetBuildPCH" )
 
-# The order is essential (determined by dependencies)
 ADD_SUBDIRECTORY( "src/common/common-std" )
-
 ADD_SUBDIRECTORY( "src/common/common-os" )
-IF( WIN32 )
-    ADD_SUBDIRECTORY( "src/common/common-win" )
-ELSE( WIN32 )
-    ADD_SUBDIRECTORY( "src/common/common-posix" )
-ENDIF( WIN32 )
-
+ADD_SUBDIRECTORY( "src/common/common-db" )
 ADD_SUBDIRECTORY( "src/common/common-ga" )
-ADD_SUBDIRECTORY( "src/common/common-mysql" )
 ADD_SUBDIRECTORY( "src/common/common-xml" )
 ADD_SUBDIRECTORY( "src/common/common-zlib" )
 

@@ -25,7 +25,14 @@
 
 #include "CommonOs.h"
 
+#include "time/Const.h"
+#include "time/Msec.h"
 #include "time/Timeval.h"
+#include "time/WinTime.h"
+
+#ifndef WIN32
+#   include "time/Timespec.h"
+#endif /* !WIN32 */
 
 using namespace common;
 using namespace common::time;
@@ -58,6 +65,14 @@ Timeval::Timeval( const Msec& msec )
     mTimeval.tv_sec = msec.count() / MSEC_PER_SEC;
     mTimeval.tv_usec = USEC_PER_MSEC * ( msec.count() % MSEC_PER_SEC );
 }
+
+#ifndef WIN32
+Timeval::Timeval( const Timespec& ts )
+{
+    mTimeval.tv_sec = ts.sec();
+    mTimeval.tv_usec = ts.nsec() / NSEC_PER_USEC;
+}
+#endif /* !WIN32 */
 
 Timeval::Timeval( const Timeval& oth )
 : mTimeval( oth.tv() )

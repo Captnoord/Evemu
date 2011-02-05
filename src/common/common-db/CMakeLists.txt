@@ -7,48 +7,51 @@
 ##############
 # Initialize #
 ##############
-SET( TARGET_NAME        "common-xml" )
+SET( TARGET_NAME        "common-db" )
 SET( TARGET_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include/common/${TARGET_NAME}" )
 SET( TARGET_SOURCE_DIR  "${PROJECT_SOURCE_DIR}/src/common/${TARGET_NAME}" )
+
+FIND_PACKAGE( "MySQL" 5.0 REQUIRED )
 
 #########
 # Files #
 #########
 SET( INCLUDE
-     "${TARGET_INCLUDE_DIR}/CommonXml.h" )
+     "${TARGET_INCLUDE_DIR}/CommonDb.h" )
 SET( SOURCE
      "" )
 
-SET( xml_INCLUDE
-     "${TARGET_INCLUDE_DIR}/xml/Parser.h"
-     "${TARGET_INCLUDE_DIR}/xml/ParserEx.h" )
-SET( xml_SOURCE
-     "${TARGET_SOURCE_DIR}/xml/Parser.cpp" )
+SET( db_INCLUDE
+     "${TARGET_INCLUDE_DIR}/db/Core.h"
+     "${TARGET_INCLUDE_DIR}/db/Type.h" )
+SET( db_SOURCE
+     "${TARGET_SOURCE_DIR}/db/Core.cpp"
+     "${TARGET_SOURCE_DIR}/db/Type.cpp" )
 
 #####################
 # Setup the library #
 #####################
-INCLUDE_DIRECTORIES( "${TINYXML_INCLUDE_DIR}"
+INCLUDE_DIRECTORIES( "${MYSQL_INCLUDE_DIR}"
                      "${common-std_INCLUDE_DIR}"
                      "${common-os_INCLUDE_DIR}"
                      "${TARGET_INCLUDE_DIR}" )
 
-SOURCE_GROUP( "include"      FILES ${INCLUDE} )
-SOURCE_GROUP( "include\\xml" FILES ${xml_INCLUDE} )
+SOURCE_GROUP( "include"     FILES ${INCLUDE} )
+SOURCE_GROUP( "include\\db" FILES ${db_INCLUDE} )
 
-SOURCE_GROUP( "src"      FILES ${SOURCE} )
-SOURCE_GROUP( "src\\xml" FILES ${xml_SOURCE} )
+SOURCE_GROUP( "src"     FILES ${SOURCE} )
+SOURCE_GROUP( "src\\db" FILES ${db_SOURCE} )
 
 ADD_LIBRARY( "${TARGET_NAME}"
-             ${INCLUDE}     ${SOURCE}
-             ${xml_INCLUDE} ${xml_SOURCE} )
+             ${INCLUDE}    ${SOURCE}
+             ${db_INCLUDE} ${db_SOURCE} )
 
 TARGET_BUILD_PCH( "${TARGET_NAME}"
-                  "CommonXml.h"
-                  "xml/Parser.cpp" )
+                  "CommonDb.h"
+                  "db/Core.cpp" )
 TARGET_LINK_LIBRARIES( "${TARGET_NAME}"
                        "common-os"
-                       ${TINYXML_LIBRARIES} )
+                       ${MYSQL_LIBRARIES} )
 
 ######################
 # Export directories #

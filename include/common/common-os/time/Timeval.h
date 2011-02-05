@@ -33,8 +33,11 @@ namespace common
     namespace time
     {
         class Msec;
-        class Timespec;
         class WinTime;
+
+#   ifndef WIN32
+        class Timespec;
+#   endif /* !WIN32 */
 
         /**
          * @brief A wrapper around <code>struct timeval</code>.
@@ -81,12 +84,14 @@ namespace common
              * @param[in] msec Msec to be converted.
              */
             Timeval( const Msec& msec );
+#       ifndef WIN32
             /**
              * @brief A conversion operator.
              *
              * @param[in] ts Timespec to be converted.
              */
             Timeval( const Timespec& ts );
+#       endif /* !WIN32 */
             /**
              * @brief A copy constructor.
              *

@@ -20,57 +20,47 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:        Bloody.Rabbit
+    Author:     Zhur
 */
 
 #include "CommonOs.h"
 
-#include "log/Message.h"
-#include "time/TimeMgr.h"
+#include "mt/Mutex.h"
 
 using namespace common;
-using namespace common::log;
+using namespace common::mt;
 
 /*************************************************************************/
-/* common::log::Message                                                  */
+/* common::mt::Mutex                                                     */
 /*************************************************************************/
-const char Message::TYPE_PREFIXES[ TYPE_COUNT ] =
+void Mutex::Lock()
 {
-    'N', // TYPE_NOTICE
-    'E', // TYPE_ERROR
-    'W', // TYPE_WARNING
-    'S', // TYPE_SUCCESS
-    'D', // TYPE_DEBUG
-    'H'  // TYPE_DUMP
-};
-
-Message::Message( Type type, const char* source,
-                       const char* format, ... )
-: mType( type ),
-  mTime( sTimeMgr.nowTm() ),
-  mSource( source )
-{
-    va_list ap;
-    va_start( ap, format );
-
-    int code = vsprintf( mMessage, format, ap );
-    assert( 0 <= code );
-
-    va_end( ap );
+#ifdef WIN32
+    mMutex.Enter();
+#else /* !WIN32 */
+    int code = mMutex.Lock();
+    assert( 0 == code );
+#endif /* !WIN32 */
 }
 
-Message::Message( Type type, const char* source,
-                       const char* format, va_list ap )
-: mType( type ),
-  mTime( sTimeMgr.nowTm() ),
-  mSource( source )
+bool Mutex::TryLock()
 {
-    int code = vsprintf( mMessage, format, ap );
-    assert( 0 <= code );
+#ifdef WIN32
+    return TRUE == mMutex.TryEnter();
+#else /* !WIN32 */
+    int code = mMutex.TryLock();
+    assert( 0 == code || EBUSY == code );
+
+    return 0 == code;
+#endif /* !WIN32 */
 }
 
-char Message::prefix() const
+void Mutex::Unlock()
 {
-    assert( 0 <= type() && type() < TYPE_COUNT );
-    return TYPE_PREFIXES[ type() ];
+#ifdef WIN32
+    mMutex.Leave();
+#else /* !WIN32 */
+    int code = mMutex.Unlock();
+    assert( 0 == code );
+#endif /* !WIN32 */
 }
