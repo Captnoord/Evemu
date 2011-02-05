@@ -7,9 +7,10 @@
 ##############
 # Initialize #
 ##############
+SET( TARGET_CATEGORY    "eve" )
 SET( TARGET_NAME        "eve-tool" )
-SET( TARGET_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include/eve/${TARGET_NAME}" )
-SET( TARGET_SOURCE_DIR  "${PROJECT_SOURCE_DIR}/src/eve/${TARGET_NAME}" )
+SET( TARGET_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include/${TARGET_CATEGORY}/${TARGET_NAME}" )
+SET( TARGET_SOURCE_DIR  "${PROJECT_SOURCE_DIR}/src/${TARGET_CATEGORY}/${TARGET_NAME}" )
 
 #########
 # Files #

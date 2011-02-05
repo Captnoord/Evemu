@@ -7,9 +7,10 @@
 ##############
 # Initialize #
 ##############
+SET( TARGET_CATEGORY    "common" )
 SET( TARGET_NAME        "common-std" )
-SET( TARGET_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include/common/${TARGET_NAME}" )
-SET( TARGET_SOURCE_DIR  "${PROJECT_SOURCE_DIR}/src/common/${TARGET_NAME}" )
+SET( TARGET_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include/${TARGET_CATEGORY}/${TARGET_NAME}" )
+SET( TARGET_SOURCE_DIR  "${PROJECT_SOURCE_DIR}/src/${TARGET_CATEGORY}/${TARGET_NAME}" )
 
 #########
 # Files #

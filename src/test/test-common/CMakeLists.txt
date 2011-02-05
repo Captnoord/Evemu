@@ -7,9 +7,10 @@
 ##############
 # Initialize #
 ##############
+SET( TARGET_CATEGORY    "test" )
 SET( TARGET_NAME        "test-common" )
-SET( TARGET_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include/test/${TARGET_NAME}" )
-SET( TARGET_SOURCE_DIR  "${PROJECT_SOURCE_DIR}/src/test/${TARGET_NAME}" )
+SET( TARGET_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include/${TARGET_CATEGORY}/${TARGET_NAME}" )
+SET( TARGET_SOURCE_DIR  "${PROJECT_SOURCE_DIR}/src/${TARGET_CATEGORY}/${TARGET_NAME}" )
 
 SET( EVEMU_TEST_COMMON_XML
      CACHE PATH "XML output file of test-common (none if empty)." )
