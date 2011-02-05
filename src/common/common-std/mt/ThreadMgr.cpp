@@ -27,20 +27,23 @@
 
 #include "mt/ThreadMgr.h"
 
+using namespace common;
+using namespace common::mt;
+
 /*************************************************************************/
-/* Mt::ThreadMgr                                                         */
+/* common::mt::ThreadMgr                                                 */
 /*************************************************************************/
-Mt::ThreadMgr::ThreadMgr( size_t limit )
+ThreadMgr::ThreadMgr( size_t limit )
 : mLimit( limit )
 {
 }
 
-Mt::ThreadMgr::~ThreadMgr()
+ThreadMgr::~ThreadMgr()
 {
     Stop();
 }
 
-void Mt::ThreadMgr::Run( Mt::TargetEx* target )
+void ThreadMgr::Run( TargetEx* target )
 {
     MutexLock lock( mMutex );
 
@@ -58,7 +61,7 @@ void Mt::ThreadMgr::Run( Mt::TargetEx* target )
     }
 }
 
-void Mt::ThreadMgr::SetThreadLimit( size_t limit )
+void ThreadMgr::SetThreadLimit( size_t limit )
 {
     MutexLock lock( mMutex );
 
@@ -72,7 +75,7 @@ void Mt::ThreadMgr::SetThreadLimit( size_t limit )
     }
 }
 
-void Mt::ThreadMgr::Run()
+void ThreadMgr::Run()
 {
     MutexLock lock( mMutex );
 
@@ -100,7 +103,7 @@ void Mt::ThreadMgr::Run()
     mThreads.erase( threadItr );
 }
 
-void Mt::ThreadMgr::Stop()
+void ThreadMgr::Stop()
 {
     MutexLock lock( mMutex );
 

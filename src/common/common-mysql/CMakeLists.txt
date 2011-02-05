@@ -7,7 +7,7 @@
 ##############
 # Initialize #
 ##############
-SET( TARGET_NAME        "common-db" )
+SET( TARGET_NAME        "common-mysql" )
 SET( TARGET_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include/common/${TARGET_NAME}" )
 SET( TARGET_SOURCE_DIR  "${PROJECT_SOURCE_DIR}/src/common/${TARGET_NAME}" )
 
@@ -17,22 +17,20 @@ FIND_PACKAGE( "MySQL" 5.0 REQUIRED )
 # Files #
 #########
 SET( INCLUDE
-     "${TARGET_INCLUDE_DIR}/CommonDb.h"
-     "${TARGET_INCLUDE_DIR}/CommonDbPCH.h" )
+     "${TARGET_INCLUDE_DIR}/CommonMysql.h" )
 SET( SOURCE
      "" )
 
 SET( db_INCLUDE
-     "${TARGET_INCLUDE_DIR}/db/Core.h"
-     "${TARGET_INCLUDE_DIR}/db/Type.h" )
+     "${TARGET_INCLUDE_DIR}/db/Core.h" )
 SET( db_SOURCE
-     "${TARGET_SOURCE_DIR}/db/Core.cpp"
-     "${TARGET_SOURCE_DIR}/db/Type.cpp" )
+     "${TARGET_SOURCE_DIR}/db/Core.cpp" )
 
 #####################
 # Setup the library #
 #####################
 INCLUDE_DIRECTORIES( "${MYSQL_INCLUDE_DIR}"
+                     "${common-std_INCLUDE_DIR}" "${common-os_INCLUDE_DIR}"
                      "${TARGET_INCLUDE_DIR}" )
 
 SOURCE_GROUP( "include"     FILES ${INCLUDE} )
@@ -46,9 +44,10 @@ ADD_LIBRARY( "${TARGET_NAME}"
              ${db_INCLUDE} ${db_SOURCE} )
 
 TARGET_BUILD_PCH( "${TARGET_NAME}"
-                  "CommonDbPCH.h"
-                  "Core.cpp" )
+                  "CommonMysql.h"
+                  "db/Core.cpp" )
 TARGET_LINK_LIBRARIES( "${TARGET_NAME}"
+                       "common-os"
                        ${MYSQL_LIBRARIES} )
 
 ######################

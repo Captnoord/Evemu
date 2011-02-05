@@ -23,14 +23,14 @@ SET( INCLUDE
      "${TARGET_INCLUDE_DIR}/TestFsDirectory.h"
      "${TARGET_INCLUDE_DIR}/TestFsFile.h"
      "${TARGET_INCLUDE_DIR}/TestNetStreamSocket.h"
-     "${TARGET_INCLUDE_DIR}/TestStdFile.h"
+     "${TARGET_INCLUDE_DIR}/TestStdxFile.h"
      "${TARGET_INCLUDE_DIR}/TestUtilBuffer.h"
      "${TARGET_INCLUDE_DIR}/TestUtilData.h" )
 SET( SOURCE
      "${TARGET_SOURCE_DIR}/TestCommon.cpp"
      "${TARGET_SOURCE_DIR}/TestFsDirectory.cpp"
      "${TARGET_SOURCE_DIR}/TestFsFile.cpp"
-     "${TARGET_SOURCE_DIR}/TestStdFile.cpp"
+     "${TARGET_SOURCE_DIR}/TestStdxFile.cpp"
      "${TARGET_SOURCE_DIR}/TestUtilBuffer.cpp"
      "${TARGET_SOURCE_DIR}/TestUtilData.cpp" )
 

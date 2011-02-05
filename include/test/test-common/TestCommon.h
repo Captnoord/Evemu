@@ -33,10 +33,9 @@
 
 #include "fs/File.h"
 #include "fs/Directory.h"
-#include "std/File.h"
+#include "stdx/File.h"
 #include "util/Buffer.h"
 #include "util/Data.h"
-#include "util/Test.h"
 
 /*************************************************************************/
 /* common-os                                                             */
@@ -47,12 +46,14 @@
 #include "net/StreamSocket.h"
 
 /*************************************************************************/
-/* cppunit                                                               */
+/* test-common                                                           */
 /*************************************************************************/
 #include <cppunit/TestCase.h>
 #include <cppunit/TestCaller.h>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TextTestRunner.h>
 #include <cppunit/XmlOutputter.h>
+
+using namespace common;
 
 #endif /* !__TEST_COMMON_H__INCL__ */

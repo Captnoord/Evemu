@@ -27,41 +27,44 @@
 
 #include "db/Type.h"
 
+using namespace common;
+using namespace common::db;
+
 /*************************************************************************/
-/* Db                                                                    */
+/* common::db                                                            */
 /*************************************************************************/
-uint8 Db::TYPE_GetSizeBits( Db::TYPE type )
+uint8 db::TYPE_GetSizeBits( TYPE type )
 {
     switch( type )
     {
-        case Db::TYPE_I8:
-        case Db::TYPE_UI8:
-        case Db::TYPE_R8:
-        case Db::TYPE_CY:
-        case Db::TYPE_FILETIME:
+        case TYPE_I8:
+        case TYPE_UI8:
+        case TYPE_R8:
+        case TYPE_CY:
+        case TYPE_FILETIME:
             return 64;
-        case Db::TYPE_I4:
-        case Db::TYPE_UI4:
-        case Db::TYPE_R4:
+        case TYPE_I4:
+        case TYPE_UI4:
+        case TYPE_R4:
             return 32;
-        case Db::TYPE_I2:
-        case Db::TYPE_UI2:
+        case TYPE_I2:
+        case TYPE_UI2:
             return 16;
-        case Db::TYPE_I1:
-        case Db::TYPE_UI1:
+        case TYPE_I1:
+        case TYPE_UI1:
             return 8;
-        case Db::TYPE_BOOL:
+        case TYPE_BOOL:
             return 1;
-        case Db::TYPE_BYTES:
-        case Db::TYPE_STR:
-        case Db::TYPE_WSTR:
+        case TYPE_BYTES:
+        case TYPE_STR:
+        case TYPE_WSTR:
             return 0;
     }
 
     return 0;
 }
 
-uint8 Db::TYPE_GetSizeBytes( Db::TYPE type )
+uint8 db::TYPE_GetSizeBytes( TYPE type )
 {
-    return ( ( Db::TYPE_GetSizeBits( type ) + 7 ) >> 3 );
+    return ( TYPE_GetSizeBits( type ) + 7 ) >> 3;
 }

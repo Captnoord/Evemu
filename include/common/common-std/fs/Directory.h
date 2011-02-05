@@ -23,104 +23,107 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __FS__DIRECTORY_H__INCL__
-#define __FS__DIRECTORY_H__INCL__
+#ifndef __COMMON__FS__DIRECTORY_H__INCL__
+#define __COMMON__FS__DIRECTORY_H__INCL__
 
-#ifndef FS_DIRECTORY_TYPE
-#   define FS_DIRECTORY_TYPE void
-#endif /* !FS_DIRECTORY_TYPE */
+#ifndef COMMON_FS_DIRECTORY_TYPE
+#   define COMMON_FS_DIRECTORY_TYPE void
+#endif /* !COMMON_FS_DIRECTORY_TYPE */
 
-namespace Fs
+namespace common
 {
-    /**
-     * @brief A class for filesystem directories.
-     *
-     * @author Bloody.Rabbit
-     */
-    class Directory
+    namespace fs
     {
-    public:
         /**
-         * @brief Creates a new directory.
+         * @brief A class for filesystem directories.
          *
-         * This method does not fail event if the
-         * directory already exists.
-         *
-         * @param[in] path A path to the new directory.
-         *
-         * @retval true  Creation succeeded.
-         * @retval false Creation failed.
+         * @author Bloody.Rabbit
          */
-        static bool Create( const char* path );
-        /**
-         * @brief Removes a directory.
-         *
-         * @param[in] path A path to the directory.
-         *
-         * @retval true  Removal succeeded.
-         * @retval false Removal failed.
-         */
-        static bool Remove( const char* path );
+        class Directory
+        {
+        public:
+            /**
+             * @brief Creates a new directory.
+             *
+             * This method does not fail event if the
+             * directory already exists.
+             *
+             * @param[in] path A path to the new directory.
+             *
+             * @retval true  Creation succeeded.
+             * @retval false Creation failed.
+             */
+            static bool Create( const char* path );
+            /**
+             * @brief Removes a directory.
+             *
+             * @param[in] path A path to the directory.
+             *
+             * @retval true  Removal succeeded.
+             * @retval false Removal failed.
+             */
+            static bool Remove( const char* path );
 
-        /**
-         * @brief A default constructor, prepares the object.
-         */
-        Directory();
-        /**
-         * @brief A destructor, cleans the object.
-         */
-        ~Directory();
+            /**
+             * @brief A default constructor, prepares the object.
+             */
+            Directory();
+            /**
+             * @brief A destructor, cleans the object.
+             */
+            ~Directory();
 
-        /**
-         * @brief Checks if the directory handle is valid.
-         *
-         * @retval true  The directory handle is valid.
-         * @retval false The directory handle is invalid.
-         */
-        bool isValid() const;
-        /**
-         * @brief A convenient bool conversion operator.
-         *
-         * @return A value returned by isValid().
-         */
-        operator bool() const { return isValid(); }
+            /**
+             * @brief Checks if the directory handle is valid.
+             *
+             * @retval true  The directory handle is valid.
+             * @retval false The directory handle is invalid.
+             */
+            bool isValid() const;
+            /**
+             * @brief A convenient bool conversion operator.
+             *
+             * @return A value returned by isValid().
+             */
+            operator bool() const { return isValid(); }
 
-        /**
-         * @brief Opens a directory
-         *
-         * @param[in]  path A path to the directory.
-         * @param[out] name Where to store the next entry's name.
-         * @param[out] len  Amount of space available at <var>name</var>.
-         *
-         * @retval true  Opened successfully.
-         * @retval false Failed to open.
-         */
-        bool Open( const char* path, char* name, size_t len );
-        /**
-         * @brief Reads the next entry in the directory.
-         *
-         * @param[out] name Where to store the next entry's name.
-         * @param[out] len  Amount of space available at <var>name</var>.
-         *
-         * @retval true  Operation successfull.
-         * @retval false Operation failed (possibly no entries left).
-         */
-        bool Next( char* name, size_t len );
-        /**
-         * @brief Closes the directory.
-         *
-         * The method succeeds even if the handle is
-         * already invalid.
-         *
-         * @retval true  Closed successfully.
-         * @retval false Failed to close.
-         */
-        bool Close();
+            /**
+             * @brief Opens a directory
+             *
+             * @param[in]  path A path to the directory.
+             * @param[out] name Where to store the next entry's name.
+             * @param[out] len  Amount of space available at <var>name</var>.
+             *
+             * @retval true  Opened successfully.
+             * @retval false Failed to open.
+             */
+            bool Open( const char* path, char* name, size_t len );
+            /**
+             * @brief Reads the next entry in the directory.
+             *
+             * @param[out] name Where to store the next entry's name.
+             * @param[out] len  Amount of space available at <var>name</var>.
+             *
+             * @retval true  Operation successfull.
+             * @retval false Operation failed (possibly no entries left).
+             */
+            bool Next( char* name, size_t len );
+            /**
+             * @brief Closes the directory.
+             *
+             * The method succeeds even if the handle is
+             * already invalid.
+             *
+             * @retval true  Closed successfully.
+             * @retval false Failed to close.
+             */
+            bool Close();
 
-    protected:
-        /// The implementing object.
-        FS_DIRECTORY_TYPE* mDirectory;
-    };
+        protected:
+            /// The implementing object.
+            COMMON_FS_DIRECTORY_TYPE* mDirectory;
+        };
+    }
 }
 
-#endif /* !__FS__DIRECTORY_H__INCL__ */
+#endif /* !__COMMON__FS__DIRECTORY_H__INCL__ */

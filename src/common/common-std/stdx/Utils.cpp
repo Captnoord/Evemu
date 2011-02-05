@@ -25,7 +25,7 @@
 
 #include "CommonStd.h"
 
-#include "std/Utils.h"
+#include "stdx/Utils.h"
 
 #ifdef WIN32
 int asprintf( char** strp, const char* fmt, ... )

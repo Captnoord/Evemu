@@ -23,187 +23,190 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __FS__FILE_H__INCL__
-#define __FS__FILE_H__INCL__
+#ifndef __COMMON__FS__FILE_H__INCL__
+#define __COMMON__FS__FILE_H__INCL__
 
 #include "stream/Input.h"
 #include "stream/Output.h"
 
-#ifndef FS_FILE_TYPE
-#   define FS_FILE_TYPE void
-#endif /* !FS_FILE_TYPE */
+#ifndef COMMON_FS_FILE_TYPE
+#   define COMMON_FS_FILE_TYPE void
+#endif /* !COMMON_FS_FILE_TYPE */
 
-/**
- * @brief Contains all utilities needed to access the filesystem.
- */
-namespace Fs
+namespace common
 {
     /**
-     * @brief A file.
-     *
-     * @author Bloody.Rabbit
+     * @brief Contains all utilities needed to access the filesystem.
      */
-    class File
-    : public Stream::Input< void >,
-      public Stream::Output< void >
+    namespace fs
     {
-    public:
-        /// Typedef for a stream element due to reference ambiguity.
-        typedef void Element;
-
-        /// A file mode.
-        enum Mode
+        /**
+         * @brief A file.
+         *
+         * @author Bloody.Rabbit
+         */
+        class File
+        : public stream::Input< void >,
+          public stream::Output< void >
         {
-            /// Read access to the file.
-            MODE_ACCESS_READ = 0x01,
-            /// Write access to the file.
-            MODE_ACCESS_WRITE = 0x02,
-            /// Default access flags.
-            MODE_ACCESS_DEFAULT = MODE_ACCESS_READ | MODE_ACCESS_WRITE,
+        public:
+            /// Typedef for a stream element due to reference ambiguity.
+            typedef void Element;
 
-            /// Creation of new file allowed?
-            MODE_OPEN_NEW = 0x10,
-            /// Opening an existing file allowed?
-            MODE_OPEN_EXISTING = 0x20,
-            /// Truncate the file on open?
-            MODE_OPEN_TRUNCATE = 0x40 | MODE_OPEN_EXISTING | MODE_ACCESS_WRITE,
-            /// Default open flags.
-            MODE_OPEN_DEFAULT = MODE_OPEN_NEW | MODE_OPEN_EXISTING,
+            /// A file mode.
+            enum Mode
+            {
+                /// Read access to the file.
+                MODE_ACCESS_READ = 0x01,
+                /// Write access to the file.
+                MODE_ACCESS_WRITE = 0x02,
+                /// Default access flags.
+                MODE_ACCESS_DEFAULT = MODE_ACCESS_READ | MODE_ACCESS_WRITE,
 
-            /// A default mode.
-            MODE_DEFAULT = MODE_ACCESS_DEFAULT | MODE_OPEN_DEFAULT
+                /// Creation of new file allowed?
+                MODE_OPEN_NEW = 0x10,
+                /// Opening an existing file allowed?
+                MODE_OPEN_EXISTING = 0x20,
+                /// Truncate the file on open?
+                MODE_OPEN_TRUNCATE = 0x40 | MODE_OPEN_EXISTING | MODE_ACCESS_WRITE,
+                /// Default open flags.
+                MODE_OPEN_DEFAULT = MODE_OPEN_NEW | MODE_OPEN_EXISTING,
+
+                /// A default mode.
+                MODE_DEFAULT = MODE_ACCESS_DEFAULT | MODE_OPEN_DEFAULT
+            };
+            /// A seek origin.
+            enum Origin
+            {
+                ORIGIN_BEGIN,   ///< Origin at the beginning of the file.
+                ORIGIN_CURRENT, ///< Origin at the current position.
+                ORIGIN_END,     ///< Origin at the end of the file.
+
+                ORIGIN_COUNT    ///< Count of origins.
+            };
+
+            /**
+             * @brief Renames a file.
+             *
+             * @param[in] nameOld The old name.
+             * @param[in] nameNew The new name.
+             *
+             * @retval true  Rename succeeded.
+             * @retval false Rename failed.
+             */
+            static bool Rename( const char* nameOld, const char* nameNew );
+            /**
+             * @brief Removes a file.
+             *
+             * @param[in] name A name of the file.
+             *
+             * @retval true  Removal succeeded.
+             * @retval false Removal failed.
+             */
+            static bool Remove( const char* name );
+
+            /**
+             * @brief A default constructor.
+             */
+            File();
+            /**
+             * @brief A primary constructor.
+             *
+             * @param[in] name A name of the file.
+             * @param[in] mode A mode to open it in.
+             */
+            File( const char* name, Mode mode );
+            /**
+             * @brief A destructor, cleans up the object.
+             */
+            ~File();
+
+            /**
+             * @brief Checks if the file is valid.
+             *
+             * @retval true  The file is valid.
+             * @retval false The file is invalid.
+             */
+            bool isValid() const;
+            /**
+             * @brief Convenient conversion to boolean.
+             *
+             * @return A value returned by isValid.
+             */
+            operator bool() const { return isValid(); }
+
+            /**
+             * @brief Obtains the file size.
+             *
+             * @param[out] size Where to store the size.
+             *
+             * @retval true  Operation succeeded.
+             * @retval false Operation failed.
+             */
+            bool GetSize( size_t& size ) const;
+
+            /**
+             * @brief Opens a file.
+             *
+             * @param[in] name A name of the file.
+             * @param[in] mode A mode to open it in.
+             *
+             * @retval true  Open successfull.
+             * @retval false Failed to open.
+             */
+            bool Open( const char* name, Mode mode = MODE_DEFAULT );
+            /**
+             * @brief Closes the file.
+             *
+             * @retval true  Closed successfully.
+             * @retval false Failed to close.
+             */
+            bool Close();
+
+            /**
+             * @brief Seeks within the file.
+             *
+             * @param[in] offset The offset to set.
+             * @param[in] origin The origin of the seek.
+             *
+             * @retval true  Seek succeeded.
+             * @retval false Seek failed.
+             */
+            bool Seek( long int offset, Origin origin = ORIGIN_BEGIN );
+            /**
+             * @brief Flushes file buffers to disk.
+             *
+             * @retval true  Flush succeeded.
+             * @retval false Flush failed.
+             */
+            bool Flush();
+
+            /**
+             * @brief Reads data from the file.
+             *
+             * @param[out] data      Where to store the data.
+             * @param[out] bytesRead Where to store a number
+             *                       of read bytes.
+             *
+             * @return An error code.
+             */
+            stream::Error Read( util::Data& data, size_t* bytesRead = NULL );
+            /**
+             * @brief Writes data to the file.
+             *
+             * @param[in]  data         The data to write.
+             * @param[out] bytesWritten Where to store a number
+             *                          of written bytes.
+             *
+             * @return An error code.
+             */
+            stream::Error Write( const util::Data& data, size_t* bytesWritten = NULL );
+
+        protected:
+            /// The implementing object.
+            COMMON_FS_FILE_TYPE* mFile;
         };
-        /// A seek origin.
-        enum Origin
-        {
-            ORIGIN_BEGIN,   ///< Origin at the beginning of the file.
-            ORIGIN_CURRENT, ///< Origin at the current position.
-            ORIGIN_END,     ///< Origin at the end of the file.
-
-            ORIGIN_COUNT    ///< Count of origins.
-        };
-
-        /**
-         * @brief Renames a file.
-         *
-         * @param[in] nameOld The old name.
-         * @param[in] nameNew The new name.
-         *
-         * @retval true  Rename succeeded.
-         * @retval false Rename failed.
-         */
-        static bool Rename( const char* nameOld, const char* nameNew );
-        /**
-         * @brief Removes a file.
-         *
-         * @param[in] name A name of the file.
-         *
-         * @retval true  Removal succeeded.
-         * @retval false Removal failed.
-         */
-        static bool Remove( const char* name );
-
-        /**
-         * @brief A default constructor.
-         */
-        File();
-        /**
-         * @brief A primary constructor.
-         *
-         * @param[in] name A name of the file.
-         * @param[in] mode A mode to open it in.
-         */
-        File( const char* name, Mode mode );
-        /**
-         * @brief A destructor, cleans up the object.
-         */
-        ~File();
-
-        /**
-         * @brief Checks if the file is valid.
-         *
-         * @retval true  The file is valid.
-         * @retval false The file is invalid.
-         */
-        bool isValid() const;
-        /**
-         * @brief Convenient conversion to boolean.
-         *
-         * @return A value returned by isValid.
-         */
-        operator bool() const { return isValid(); }
-
-        /**
-         * @brief Obtains the file size.
-         *
-         * @param[out] size Where to store the size.
-         *
-         * @retval true  Operation succeeded.
-         * @retval false Operation failed.
-         */
-        bool GetSize( size_t& size ) const;
-
-        /**
-         * @brief Opens a file.
-         *
-         * @param[in] name A name of the file.
-         * @param[in] mode A mode to open it in.
-         *
-         * @retval true  Open successfull.
-         * @retval false Failed to open.
-         */
-        bool Open( const char* name, Mode mode = MODE_DEFAULT );
-        /**
-         * @brief Closes the file.
-         *
-         * @retval true  Closed successfully.
-         * @retval false Failed to close.
-         */
-        bool Close();
-
-        /**
-         * @brief Seeks within the file.
-         *
-         * @param[in] offset The offset to set.
-         * @param[in] origin The origin of the seek.
-         *
-         * @retval true  Seek succeeded.
-         * @retval false Seek failed.
-         */
-        bool Seek( long int offset, Origin origin = ORIGIN_BEGIN );
-        /**
-         * @brief Flushes file buffers to disk.
-         *
-         * @retval true  Flush succeeded.
-         * @retval false Flush failed.
-         */
-        bool Flush();
-
-        /**
-         * @brief Reads data from the file.
-         *
-         * @param[out] data      Where to store the data.
-         * @param[out] bytesRead Where to store a number
-         *                       of read bytes.
-         *
-         * @return An error code.
-         */
-        Stream::Error Read( Util::Data& data, size_t* bytesRead = NULL );
-        /**
-         * @brief Writes data to the file.
-         *
-         * @param[in]  data         The data to write.
-         * @param[out] bytesWritten Where to store a number
-         *                          of written bytes.
-         *
-         * @return An error code.
-         */
-        Stream::Error Write( const Util::Data& data, size_t* bytesWritten = NULL );
-
-    protected:
-        /// The implementing object.
-        FS_FILE_TYPE* mFile;
-    };
+    }
 }
 
-#endif /* !__FS__FILE_H__INCL__ */
+#endif /* !__COMMON__FS__FILE_H__INCL__ */

@@ -23,8 +23,8 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __TIME__UTILS_H__INCL__
-#define __TIME__UTILS_H__INCL__
+#ifndef __COMMON__TIME__UTILS_H__INCL__
+#define __COMMON__TIME__UTILS_H__INCL__
 
 /*
  * WIN32:
@@ -36,4 +36,4 @@
 typedef long useconds_t;
 #endif /* WIN32 */
 
-#endif /* !__TIME__UTILS_H__INCL__ */
+#endif /* !__COMMON__TIME__UTILS_H__INCL__ */

@@ -27,30 +27,33 @@
 
 #include "win/CriticalSection.h"
 
+using namespace common;
+using namespace common::mt;
+
 /*************************************************************************/
-/* Mt::Mutex                                                             */
+/* common::mt::Mutex                                                     */
 /*************************************************************************/
-Mt::Mutex::Mutex()
-: mMutex( new Win::CriticalSection )
+Mutex::Mutex()
+: mMutex( new win::CriticalSection )
 {
 }
 
-Mt::Mutex::~Mutex()
+Mutex::~Mutex()
 {
     SafeDelete( mMutex );
 }
 
-void Mt::Mutex::Lock()
+void Mutex::Lock()
 {
     mMutex->Enter();
 }
 
-bool Mt::Mutex::TryLock()
+bool Mutex::TryLock()
 {
     return TRUE == mMutex->TryEnter();
 }
 
-void Mt::Mutex::Unlock()
+void Mutex::Unlock()
 {
     mMutex->Leave();
 }

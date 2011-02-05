@@ -28,26 +28,29 @@
 #include "win/Directory.h"
 #include "win/FileSearch.h"
 
+using namespace common;
+using namespace common::fs;
+
 /*************************************************************************/
-/* Fs::Directory                                                         */
+/* common::fs::Directory                                                 */
 /*************************************************************************/
-bool Fs::Directory::Create( const char* path )
+bool Directory::Create( const char* path )
 {
-    DWORD code = Win::Directory::Create( path );
+    DWORD code = win::Directory::Create( path );
     return ERROR_SUCCESS == code || ERROR_ALREADY_EXISTS == code;
 }
 
-bool Fs::Directory::Remove( const char* path )
+bool Directory::Remove( const char* path )
 {
-    return ERROR_SUCCESS == Win::Directory::Remove( path );
+    return ERROR_SUCCESS == win::Directory::Remove( path );
 }
 
-bool Fs::Directory::isValid() const
+bool Directory::isValid() const
 {
     return TRUE == mDirectory->isValid();
 }
 
-bool Fs::Directory::Open( const char* path, char* name, size_t len )
+bool Directory::Open( const char* path, char* name, size_t len )
 {
     WIN32_FIND_DATA findData;
     if( ERROR_SUCCESS != mDirectory->Find( path, &findData ) )
@@ -59,7 +62,7 @@ bool Fs::Directory::Open( const char* path, char* name, size_t len )
     return true;
 }
 
-bool Fs::Directory::Next( char* name, size_t len )
+bool Directory::Next( char* name, size_t len )
 {
     WIN32_FIND_DATA findData;
     if( ERROR_SUCCESS != mDirectory->FindNext( &findData ) )
@@ -71,7 +74,7 @@ bool Fs::Directory::Next( char* name, size_t len )
     return true;
 }
 
-bool Fs::Directory::Close()
+bool Directory::Close()
 {
     return ERROR_SUCCESS == mDirectory->Close();
 }

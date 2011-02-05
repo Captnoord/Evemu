@@ -23,114 +23,117 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __POSIX__MUTEX_H__INCL__
-#define __POSIX__MUTEX_H__INCL__
+#ifndef __COMMON__POSIX__MUTEX_H__INCL__
+#define __COMMON__POSIX__MUTEX_H__INCL__
 
-namespace Posix
+namespace common
 {
-    /**
-     * @brief Wrapper around <code>pthread_mutex_t</code>.
-     *
-     * @author Bloody.Rabbit
-     */
-    class Mutex
+    namespace posix
     {
-        friend class Condition;
-
-    public:
-        class Attribute;
-
-        /// The default attribute of new mutexes.
-        static const Attribute DEFAULT_ATTRIBUTE;
-
         /**
-         * @brief The primary constructor.
+         * @brief Wrapper around <code>pthread_mutex_t</code>.
          *
-         * @param[in] attr The mutex attribute to use.
+         * @author Bloody.Rabbit
          */
-        Mutex( const Attribute& attr = DEFAULT_ATTRIBUTE );
-        /**
-         * @brief A destructor.
-         */
-        ~Mutex();
+        class Mutex
+        {
+            friend class Condition;
 
-        /**
-         * @brief Locks the mutex.
-         *
-         * Blocks until the mutex is successfully locked or
-         * an error is encountered.
-         *
-         * @return A value returned by <code>pthread_mutex_lock</code>.
-         */
-        int Lock();
-        /**
-         * @brief Tries to lock the mutex.
-         *
-         * Returns immediately; the return value indicates
-         * whether the mutex has been locked or not.
-         *
-         * @return A value returned by <code>pthread_mutex_trylock</code>.
-         */
-        int TryLock();
+        public:
+            class Attribute;
 
-        /**
-         * @brief Unlocks the mutex.
-         *
-         * @return A value returned by <code>pthread_mutex_unlock</code>.
-         */
-        int Unlock();
+            /// The default attribute of new mutexes.
+            static const Attribute DEFAULT_ATTRIBUTE;
 
-    protected:
-        /// The mutex itself.
-        pthread_mutex_t mMutex;
-    };
+            /**
+             * @brief The primary constructor.
+             *
+             * @param[in] attr The mutex attribute to use.
+             */
+            Mutex( const Attribute& attr = DEFAULT_ATTRIBUTE );
+            /**
+             * @brief A destructor.
+             */
+            ~Mutex();
 
-    /**
-     * @brief Wrapper around <code>pthread_mutexattr_t</code>.
-     *
-     * @author Bloody.Rabbit
-     */
-    class Mutex::Attribute
-    {
-        friend class Mutex;
+            /**
+             * @brief Locks the mutex.
+             *
+             * Blocks until the mutex is successfully locked or
+             * an error is encountered.
+             *
+             * @return A value returned by <code>pthread_mutex_lock</code>.
+             */
+            int Lock();
+            /**
+             * @brief Tries to lock the mutex.
+             *
+             * Returns immediately; the return value indicates
+             * whether the mutex has been locked or not.
+             *
+             * @return A value returned by <code>pthread_mutex_trylock</code>.
+             */
+            int TryLock();
 
-    public:
-        /**
-         * @brief The default constructor.
-         */
-        Attribute();
-        /**
-         * @brief The primary constructor.
-         *
-         * @param[in] type Type to be set.
-         */
-        Attribute( int type );
-        /**
-         * @brief A destructor.
-         */
-        ~Attribute();
+            /**
+             * @brief Unlocks the mutex.
+             *
+             * @return A value returned by <code>pthread_mutex_unlock</code>.
+             */
+            int Unlock();
+
+        protected:
+            /// The mutex itself.
+            pthread_mutex_t mMutex;
+        };
 
         /**
-         * @brief Obtains the type.
+         * @brief Wrapper around <code>pthread_mutexattr_t</code>.
          *
-         * @param[out] type A variable which receives the type.
-         *
-         * @return A value returned by <code>pthread_mutexattr_gettype</code>.
+         * @author Bloody.Rabbit
          */
-        int GetType( int* type ) const;
-        /**
-         * @brief Sets the type.
-         *
-         * @param[in] type Type to be set.
-         *
-         * @return A value returned by <code>pthread_mutexattr_settype</code>.
-         */
-        int SetType( int type );
+        class Mutex::Attribute
+        {
+            friend class Mutex;
 
-    protected:
-        /// The attribute itself.
-        pthread_mutexattr_t mAttribute;
-    };
+        public:
+            /**
+             * @brief The default constructor.
+             */
+            Attribute();
+            /**
+             * @brief The primary constructor.
+             *
+             * @param[in] type Type to be set.
+             */
+            Attribute( int type );
+            /**
+             * @brief A destructor.
+             */
+            ~Attribute();
+
+            /**
+             * @brief Obtains the type.
+             *
+             * @param[out] type A variable which receives the type.
+             *
+             * @return A value returned by <code>pthread_mutexattr_gettype</code>.
+             */
+            int GetType( int* type ) const;
+            /**
+             * @brief Sets the type.
+             *
+             * @param[in] type Type to be set.
+             *
+             * @return A value returned by <code>pthread_mutexattr_settype</code>.
+             */
+            int SetType( int type );
+
+        protected:
+            /// The attribute itself.
+            pthread_mutexattr_t mAttribute;
+        };
+    }
 }
 
-#endif /* !__POSIX__MUTEX_H__INCL__ */
+#endif /* !__COMMON__POSIX__MUTEX_H__INCL__ */

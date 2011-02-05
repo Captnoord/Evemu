@@ -27,42 +27,45 @@
 
 #include "posix/File.h"
 
+using namespace common;
+using namespace common::fs;
+
 /*************************************************************************/
-/* Fs::File                                                              */
+/* common::fs::File                                                      */
 /*************************************************************************/
-bool Fs::File::Rename( const char* nameOld, const char* nameNew )
+bool File::Rename( const char* nameOld, const char* nameNew )
 {
-    return 0 == Posix::File::Rename( nameOld, nameNew );
+    return 0 == posix::File::Rename( nameOld, nameNew );
 }
 
-bool Fs::File::Remove( const char* name )
+bool File::Remove( const char* name )
 {
-    return 0 == Posix::File::Remove( name );
+    return 0 == posix::File::Remove( name );
 }
 
-Fs::File::File()
-: mFile( new Posix::File )
+File::File()
+: mFile( new posix::File )
 {
 }
 
-Fs::File::File( const char* name, Mode mode )
-: mFile( new Posix::File )
+File::File( const char* name, Mode mode )
+: mFile( new posix::File )
 {
     bool success = Open( name, mode );
     assert( success );
 }
 
-Fs::File::~File()
+File::~File()
 {
     SafeDelete( mFile );
 }
 
-bool Fs::File::isValid() const
+bool File::isValid() const
 {
     return mFile->isValid();
 }
 
-bool Fs::File::GetSize( size_t& size ) const
+bool File::GetSize( size_t& size ) const
 {
     struct stat st;
     if( 0 != mFile->Stat( st ) )
@@ -72,7 +75,7 @@ bool Fs::File::GetSize( size_t& size ) const
     return true;
 }
 
-bool Fs::File::Open( const char* name, Mode mode )
+bool File::Open( const char* name, Mode mode )
 {
     static const mode_t MODE = S_IRUSR | S_IWUSR
                              | S_IRGRP
@@ -100,12 +103,12 @@ bool Fs::File::Open( const char* name, Mode mode )
     return 0 == mFile->Open( name, flags, MODE );
 }
 
-bool Fs::File::Close()
+bool File::Close()
 {
     return 0 == mFile->Close();
 }
 
-bool Fs::File::Seek( long int offset, Origin origin )
+bool File::Seek( long int offset, Origin origin )
 {
     static const int POSIX_ORIGIN[ ORIGIN_COUNT ] =
     {
@@ -118,17 +121,17 @@ bool Fs::File::Seek( long int offset, Origin origin )
     return 0 == mFile->Seek( offset, POSIX_ORIGIN[ origin ] );
 }
 
-bool Fs::File::Flush()
+bool File::Flush()
 {
     return 0 == mFile->Sync();
 }
 
-Stream::Error Fs::File::Read( Util::Data& data, size_t* bytesRead )
+stream::Error File::Read( util::Data& data, size_t* bytesRead )
 {
     return mFile->Read( data, bytesRead );
 }
 
-Stream::Error Fs::File::Write( const Util::Data& data, size_t* bytesWritten )
+stream::Error File::Write( const util::Data& data, size_t* bytesWritten )
 {
     return mFile->Write( data, bytesWritten );
 }

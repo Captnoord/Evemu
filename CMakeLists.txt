@@ -170,7 +170,7 @@ ELSE( WIN32 )
 ENDIF( WIN32 )
 
 ADD_SUBDIRECTORY( "src/common/common-ga" )
-#ADD_SUBDIRECTORY( "src/common/common-mysql" )
+ADD_SUBDIRECTORY( "src/common/common-mysql" )
 ADD_SUBDIRECTORY( "src/common/common-xml" )
 ADD_SUBDIRECTORY( "src/common/common-zlib" )
 

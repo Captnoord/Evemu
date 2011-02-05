@@ -15,8 +15,7 @@ SET( TARGET_SOURCE_DIR  "${PROJECT_SOURCE_DIR}/src/common/${TARGET_NAME}" )
 # Files #
 #########
 SET( INCLUDE
-     "${TARGET_INCLUDE_DIR}/CommonXml.h"
-     "${TARGET_INCLUDE_DIR}/CommonXmlPCH.h" )
+     "${TARGET_INCLUDE_DIR}/CommonXml.h" )
 SET( SOURCE
      "" )
 
@@ -30,7 +29,7 @@ SET( xml_SOURCE
 # Setup the library #
 #####################
 INCLUDE_DIRECTORIES( "${TINYXML_INCLUDE_DIR}"
-                     "${common-std_INCLUDE_DIR}" "${common-os_INCLUDE_DIR}"
+                     "${common-std_INCLUDE_DIR}"
                      "${TARGET_INCLUDE_DIR}" )
 
 SOURCE_GROUP( "include"      FILES ${INCLUDE} )
@@ -44,11 +43,11 @@ ADD_LIBRARY( "${TARGET_NAME}"
              ${xml_INCLUDE} ${xml_SOURCE} )
 
 TARGET_BUILD_PCH( "${TARGET_NAME}"
-                  "CommonXmlPCH.h"
-                  "Parser.cpp" )
+                  "CommonXml.h"
+                  "xml/Parser.cpp" )
 TARGET_LINK_LIBRARIES( "${TARGET_NAME}"
-                       ${TINYXML_LIBRARIES}
-                       "common-std" "common-os" )
+                       "common-std"
+                       ${TINYXML_LIBRARIES} )
 
 ######################
 # Export directories #

@@ -27,47 +27,50 @@
 
 #include "time/Timeval.h"
 
-/*************************************************************************/
-/* Time::Timeval                                                         */
-/*************************************************************************/
-const Time::Timeval Time::Timeval::USEC = Time::Timeval( 0, 1 );
-const Time::Timeval Time::Timeval::MSEC = Time::Timeval::USEC * Time::USEC_PER_MSEC;
-const Time::Timeval Time::Timeval::SEC = Time::Timeval::MSEC * Time::MSEC_PER_SEC;
-const Time::Timeval Time::Timeval::MIN = Time::Timeval::SEC * Time::SEC_PER_MIN;
-const Time::Timeval Time::Timeval::HOUR = Time::Timeval::MIN * Time::MIN_PER_HOUR;
-const Time::Timeval Time::Timeval::DAY = Time::Timeval::HOUR * Time::HOUR_PER_DAY;
-const Time::Timeval Time::Timeval::MONTH = Time::Timeval::DAY * Time::DAY_PER_MONTH;
-const Time::Timeval Time::Timeval::YEAR = Time::Timeval::MONTH * Time::MONTH_PER_YEAR;
+using namespace common;
+using namespace common::time;
 
-Time::Timeval::Timeval( time_t sec, useconds_t usec )
+/*************************************************************************/
+/* common::time::Timeval                                                 */
+/*************************************************************************/
+const Timeval Timeval::USEC = Timeval( 0, 1 );
+const Timeval Timeval::MSEC = Timeval::USEC * USEC_PER_MSEC;
+const Timeval Timeval::SEC = Timeval::MSEC * MSEC_PER_SEC;
+const Timeval Timeval::MIN = Timeval::SEC * SEC_PER_MIN;
+const Timeval Timeval::HOUR = Timeval::MIN * MIN_PER_HOUR;
+const Timeval Timeval::DAY = Timeval::HOUR * HOUR_PER_DAY;
+const Timeval Timeval::MONTH = Timeval::DAY * DAY_PER_MONTH;
+const Timeval Timeval::YEAR = Timeval::MONTH * MONTH_PER_YEAR;
+
+Timeval::Timeval( time_t sec, useconds_t usec )
 {
     mTimeval.tv_sec = sec;
     mTimeval.tv_usec = usec;
 }
 
-Time::Timeval::Timeval( const timeval& tv )
+Timeval::Timeval( const timeval& tv )
 : mTimeval( tv )
 {
 }
 
-Time::Timeval::Timeval( const Time::Msec& msec )
+Timeval::Timeval( const Msec& msec )
 {
     mTimeval.tv_sec = msec.count() / MSEC_PER_SEC;
     mTimeval.tv_usec = USEC_PER_MSEC * ( msec.count() % MSEC_PER_SEC );
 }
 
-Time::Timeval::Timeval( const Time::Timeval& oth )
+Timeval::Timeval( const Timeval& oth )
 : mTimeval( oth.tv() )
 {
 }
 
-Time::Timeval::Timeval( const Time::WinTime& time )
+Timeval::Timeval( const WinTime& time )
 {
     mTimeval.tv_sec = time.count() / ( WINTIME_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC );
     mTimeval.tv_usec = ( time.count() % ( WINTIME_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC ) ) / WINTIME_PER_USEC;
 }
 
-bool Time::Timeval::operator==( const Time::Timeval& oth ) const
+bool Timeval::operator==( const Timeval& oth ) const
 {
     if( sec() != oth.sec() )
         return false;
@@ -77,7 +80,7 @@ bool Time::Timeval::operator==( const Time::Timeval& oth ) const
         return true;
 }
 
-bool Time::Timeval::operator!=( const Time::Timeval& oth ) const
+bool Timeval::operator!=( const Timeval& oth ) const
 {
     if( sec() != oth.sec() )
         return true;
@@ -87,7 +90,7 @@ bool Time::Timeval::operator!=( const Time::Timeval& oth ) const
         return false;
 }
 
-bool Time::Timeval::operator<( const Time::Timeval& oth ) const
+bool Timeval::operator<( const Timeval& oth ) const
 {
     if( sec() < oth.sec() )
         return true;
@@ -99,7 +102,7 @@ bool Time::Timeval::operator<( const Time::Timeval& oth ) const
         return false;
 }
 
-bool Time::Timeval::operator<=( const Time::Timeval& oth ) const
+bool Timeval::operator<=( const Timeval& oth ) const
 {
     if( sec() < oth.sec() )
         return true;
@@ -111,7 +114,7 @@ bool Time::Timeval::operator<=( const Time::Timeval& oth ) const
         return false;
 }
 
-bool Time::Timeval::operator>( const Time::Timeval& oth ) const
+bool Timeval::operator>( const Timeval& oth ) const
 {
     if( sec() > oth.sec() )
         return true;
@@ -123,7 +126,7 @@ bool Time::Timeval::operator>( const Time::Timeval& oth ) const
         return false;
 }
 
-bool Time::Timeval::operator>=( const Time::Timeval& oth ) const
+bool Timeval::operator>=( const Timeval& oth ) const
 {
     if( sec() > oth.sec() )
         return true;
@@ -135,73 +138,73 @@ bool Time::Timeval::operator>=( const Time::Timeval& oth ) const
         return false;
 }
 
-Time::Timeval Time::Timeval::operator+( const Time::Timeval& oth ) const
+Timeval Timeval::operator+( const Timeval& oth ) const
 {
-    return Time::Timeval( ( sec() + oth.sec() )
+    return Timeval( ( sec() + oth.sec() )
                           + ( usec() + oth.usec() ) / ( USEC_PER_MSEC * MSEC_PER_SEC ),
                           ( usec() + oth.usec() ) % ( USEC_PER_MSEC * MSEC_PER_SEC ) );
 }
 
-Time::Timeval Time::Timeval::operator-( const Time::Timeval& oth ) const
+Timeval Timeval::operator-( const Timeval& oth ) const
 {
     const size_t k = ( usec() < oth.usec()
                        ? 1 + ( oth.usec() - usec() - 1 ) / ( USEC_PER_MSEC * MSEC_PER_SEC )
                        : 0 );
 
-    return Time::Timeval( sec() - oth.sec() - k,
+    return Timeval( sec() - oth.sec() - k,
                           USEC_PER_MSEC * MSEC_PER_SEC * k + usec() - oth.usec() );
 }
 
-Time::Timeval Time::Timeval::operator*( size_t ratio ) const
+Timeval Timeval::operator*( size_t ratio ) const
 {
-    return Time::Timeval( ( sec() * ratio )
+    return Timeval( ( sec() * ratio )
                           + ( usec() * ratio ) / ( USEC_PER_MSEC * MSEC_PER_SEC ),
                           ( usec() * ratio ) % ( USEC_PER_MSEC * MSEC_PER_SEC ) );
 }
 
-Time::Timeval Time::Timeval::operator/( size_t ratio ) const
+Timeval Timeval::operator/( size_t ratio ) const
 {
-    return Time::Timeval( ( sec() / ratio ),
+    return Timeval( ( sec() / ratio ),
                           ( USEC_PER_MSEC * MSEC_PER_SEC * ( sec() % ratio )
                             + usec() ) / ratio );
 }
 
-Time::Timeval Time::Timeval::operator%( size_t ratio ) const
+Timeval Timeval::operator%( size_t ratio ) const
 {
     const size_t mod = ( USEC_PER_MSEC * MSEC_PER_SEC * ( sec() % ratio )
                          + usec() ) % ratio;
 
-    return Time::Timeval( mod / ( USEC_PER_MSEC * MSEC_PER_SEC ),
+    return Timeval( mod / ( USEC_PER_MSEC * MSEC_PER_SEC ),
                           mod % ( USEC_PER_MSEC * MSEC_PER_SEC ) );
 }
 
-Time::Timeval& Time::Timeval::operator=( const Time::Timeval& oth )
+Timeval& Timeval::operator=( const Timeval& oth )
 {
     mTimeval = oth.tv();
     return *this;
 }
 
-Time::Timeval& Time::Timeval::operator+=( const Time::Timeval& oth )
+Timeval& Timeval::operator+=( const Timeval& oth )
 {
     return ( *this = *this + oth );
 }
 
-Time::Timeval& Time::Timeval::operator-=( const Time::Timeval& oth )
+Timeval& Timeval::operator-=( const Timeval& oth )
 {
     return ( *this = *this - oth );
 }
 
-Time::Timeval& Time::Timeval::operator*=( size_t ratio )
+Timeval& Timeval::operator*=( size_t ratio )
 {
     return ( *this = *this * ratio );
 }
 
-Time::Timeval& Time::Timeval::operator/=( size_t ratio )
+Timeval& Timeval::operator/=( size_t ratio )
 {
     return ( *this = *this / ratio );
 }
 
-Time::Timeval& Time::Timeval::operator%=( size_t ratio )
+Timeval& Timeval::operator%=( size_t ratio )
 {
     return ( *this = *this % ratio );
 }

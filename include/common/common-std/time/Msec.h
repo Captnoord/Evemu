@@ -23,114 +23,117 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __TIME__MSEC_H__INCL__
-#define __TIME__MSEC_H__INCL__
+#ifndef __COMMON__TIME__MSEC_H__INCL__
+#define __COMMON__TIME__MSEC_H__INCL__
 
-namespace Time
+namespace common
 {
-    class Timespec;
-    class Timeval;
-    class WinTime;
-
-    /**
-     * @brief A wrapper around <code>size_t</code> as a count of milliseconds.
-     *
-     * @author Bloody.Rabbit
-     */
-    class Msec
+    namespace time
     {
-    public:
-        /// A millisecond in Msec.
-        static const Msec MSEC;
-        /// A second in Msec.
-        static const Msec SEC;
-        /// A minute in Msec.
-        static const Msec MIN;
-        /// An hour in Msec.
-        static const Msec HOUR;
-        /// A day in Msec.
-        static const Msec DAY;
-        /// A month in Msec.
-        static const Msec MONTH;
-        /// A year in Msec.
-        static const Msec YEAR;
+        class Timespec;
+        class Timeval;
+        class WinTime;
 
         /**
-         * @brief A default constructor.
+         * @brief A wrapper around <code>size_t</code> as a count of milliseconds.
          *
-         * @param[in] msec A number of milliseconds.
+         * @author Bloody.Rabbit
          */
-        Msec( size_t msec = 0 );
+        class Msec
+        {
+        public:
+            /// A millisecond in Msec.
+            static const Msec MSEC;
+            /// A second in Msec.
+            static const Msec SEC;
+            /// A minute in Msec.
+            static const Msec MIN;
+            /// An hour in Msec.
+            static const Msec HOUR;
+            /// A day in Msec.
+            static const Msec DAY;
+            /// A month in Msec.
+            static const Msec MONTH;
+            /// A year in Msec.
+            static const Msec YEAR;
 
-        /**
-         * @brief A copy constructor.
-         *
-         * @param[in] oth The object to copy.
-         */
-        Msec( const Msec& oth );
-        /**
-         * @brief A conversion constructor.
-         *
-         * @param[in] ts Timespec to be converted.
-         */
-        Msec( const Timespec& ts );
-        /**
-         * @brief A conversion constructor.
-         *
-         * @param[in] tv Timeval to be converted.
-         */
-        Msec( const Timeval& tv );
-        /**
-         * @brief A conversion constructor.
-         *
-         * @param[in] time WinTime to be converted.
-         */
-        Msec( const WinTime& time );
+            /**
+             * @brief A default constructor.
+             *
+             * @param[in] msec A number of milliseconds.
+             */
+            Msec( size_t msec = 0 );
 
-        /// Obtains the stored number of milliseconds.
-        size_t count() const { return mMsec; }
+            /**
+             * @brief A copy constructor.
+             *
+             * @param[in] oth The object to copy.
+             */
+            Msec( const Msec& oth );
+            /**
+             * @brief A conversion constructor.
+             *
+             * @param[in] ts Timespec to be converted.
+             */
+            Msec( const Timespec& ts );
+            /**
+             * @brief A conversion constructor.
+             *
+             * @param[in] tv Timeval to be converted.
+             */
+            Msec( const Timeval& tv );
+            /**
+             * @brief A conversion constructor.
+             *
+             * @param[in] time WinTime to be converted.
+             */
+            Msec( const WinTime& time );
 
-        /// An equivalency operator.
-        bool operator==( const Msec& oth ) const;
-        /// A non-equivalency operator.
-        bool operator!=( const Msec& oth ) const;
-        /// A less-than operator.
-        bool operator<( const Msec& oth ) const;
-        /// A less-or-equal operator.
-        bool operator<=( const Msec& oth ) const;
-        /// A greater-than operator.
-        bool operator>( const Msec& oth ) const;
-        /// A greater-or-equal operator.
-        bool operator>=( const Msec& oth ) const;
+            /// Obtains the stored number of milliseconds.
+            size_t count() const { return mMsec; }
 
-        /// A sum operator.
-        Msec operator+( const Msec& oth ) const;
-        /// A difference operator.
-        Msec operator-( const Msec& oth ) const;
-        /// A multiply operator.
-        Msec operator*( size_t ratio ) const;
-        /// A division operator.
-        Msec operator/( size_t ratio ) const;
-        /// A remainder operator.
-        Msec operator%( size_t ratio ) const;
+            /// An equivalency operator.
+            bool operator==( const Msec& oth ) const;
+            /// A non-equivalency operator.
+            bool operator!=( const Msec& oth ) const;
+            /// A less-than operator.
+            bool operator<( const Msec& oth ) const;
+            /// A less-or-equal operator.
+            bool operator<=( const Msec& oth ) const;
+            /// A greater-than operator.
+            bool operator>( const Msec& oth ) const;
+            /// A greater-or-equal operator.
+            bool operator>=( const Msec& oth ) const;
 
-        /// An assignment operator.
-        Msec& operator=( const Msec& oth );
-        /// An add operator.
-        Msec& operator+=( const Msec& oth );
-        /// A substract operator.
-        Msec& operator-=( const Msec& oth );
-        /// An expand operator.
-        Msec& operator*=( size_t ratio );
-        /// A reduce operator.
-        Msec& operator/=( size_t ratio );
-        /// A remainder-assign operator.
-        Msec& operator%=( size_t ratio );
+            /// A sum operator.
+            Msec operator+( const Msec& oth ) const;
+            /// A difference operator.
+            Msec operator-( const Msec& oth ) const;
+            /// A multiply operator.
+            Msec operator*( size_t ratio ) const;
+            /// A division operator.
+            Msec operator/( size_t ratio ) const;
+            /// A remainder operator.
+            Msec operator%( size_t ratio ) const;
 
-    protected:
-        /// The count of milliseconds.
-        size_t mMsec;
-    };
+            /// An assignment operator.
+            Msec& operator=( const Msec& oth );
+            /// An add operator.
+            Msec& operator+=( const Msec& oth );
+            /// A substract operator.
+            Msec& operator-=( const Msec& oth );
+            /// An expand operator.
+            Msec& operator*=( size_t ratio );
+            /// A reduce operator.
+            Msec& operator/=( size_t ratio );
+            /// A remainder-assign operator.
+            Msec& operator%=( size_t ratio );
+
+        protected:
+            /// The count of milliseconds.
+            size_t mMsec;
+        };
+    }
 }
 
-#endif /* !__TIME__MSEC_H__INCL__ */
+#endif /* !__COMMON__TIME__MSEC_H__INCL__ */

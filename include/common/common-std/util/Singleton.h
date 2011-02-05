@@ -23,56 +23,58 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __UTIL__SINGLETON_H__INCL__
-#define __UTIL__SINGLETON_H__INCL__
+#ifndef __COMMON__UTIL__SINGLETON_H__INCL__
+#define __COMMON__UTIL__SINGLETON_H__INCL__
 
-namespace Util
+namespace common
 {
-    /**
-     * @brief Template used for singleton classes.
-     *
-     * This template shall be used as base for classes
-     * which are intended to be singleton (i.e. there
-     * should be only 1 instance of this class at all).
-     *
-     * Uses lazy construction (i.e. object is constructed
-     * on first access request).
-     *
-     * @author Bloody.Rabbit
-     */
-    template< typename X >
-    class Singleton
+    namespace util
     {
-    public:
         /**
-         * @brief Primary constructor.
+         * @brief Template used for singleton classes.
          *
-         * Checks if the instance being constructed is first, i.e.
-         * mInstance hasn't been filled yet. This only makes sense
-         * if the actual class is derived from Singleton.
+         * This template shall be used as base for classes
+         * which are intended to be singleton (i.e. there
+         * should be only 1 instance of this class at all).
+         *
+         * Uses lazy construction (i.e. object is constructed
+         * on first access request).
+         *
+         * @author Bloody.Rabbit
          */
-        Singleton()
+        template< typename X >
+        class Singleton
         {
-            assert( NULL == mInstance.get() );
-        }
+        public:
+            /**
+             * @brief Primary constructor.
+             *
+             * Checks if the instance being constructed is first, i.e.
+             * mInstance hasn't been filled yet. This only makes sense
+             * if the actual class is derived from Singleton.
+             */
+            Singleton()
+            {
+                assert( NULL == mInstance.get() );
+            }
 
-        /// @return Reference to the singleton instance.
-        static X& get()
-        {
-            if( NULL == mInstance.get() )
-                mInstance.reset( new X );
+            /// @return Reference to the singleton instance.
+            static X& get()
+            {
+                if( NULL == mInstance.get() )
+                    mInstance.reset( new X );
 
-            return *mInstance;
-        }
+                return *mInstance;
+            }
 
-    protected:
-        /// Pointer to the singleton instance.
-        static std::auto_ptr< X > mInstance;
-    };
+        protected:
+            /// Pointer to the singleton instance.
+            static std::auto_ptr< X > mInstance;
+        };
 
-    template< typename X >
-    std::auto_ptr< X > Singleton< X >::mInstance( NULL );
+        template< typename X >
+        std::auto_ptr< X > Singleton< X >::mInstance( NULL );
+    }
 }
 
-#endif /* !__UTIL__SINGLETON_H__INCL__ */
-
+#endif /* !__COMMON__UTIL__SINGLETON_H__INCL__ */

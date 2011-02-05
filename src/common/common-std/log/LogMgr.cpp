@@ -28,10 +28,13 @@
 #include "log/LogMgr.h"
 #include "util/String.h"
 
+using namespace common;
+using namespace common::log;
+
 /*************************************************************************/
-/* Log::LogMgr                                                           */
+/* common::log::LogMgr                                                   */
 /*************************************************************************/
-void Log::LogMgr::notice( const char* source, const char* format, ... )
+void LogMgr::notice( const char* source, const char* format, ... )
 {
     va_list ap;
     va_start( ap, format );
@@ -41,7 +44,7 @@ void Log::LogMgr::notice( const char* source, const char* format, ... )
     va_end( ap );
 }
 
-void Log::LogMgr::error( const char* source, const char* format, ... )
+void LogMgr::error( const char* source, const char* format, ... )
 {
     va_list ap;
     va_start( ap, format );
@@ -51,7 +54,7 @@ void Log::LogMgr::error( const char* source, const char* format, ... )
     va_end( ap );
 }
 
-void Log::LogMgr::warning( const char* source, const char* format, ... )
+void LogMgr::warning( const char* source, const char* format, ... )
 {
     va_list ap;
     va_start( ap, format );
@@ -61,7 +64,7 @@ void Log::LogMgr::warning( const char* source, const char* format, ... )
     va_end( ap );
 }
 
-void Log::LogMgr::success( const char* source, const char* format, ... )
+void LogMgr::success( const char* source, const char* format, ... )
 {
     va_list ap;
     va_start( ap, format );
@@ -71,7 +74,7 @@ void Log::LogMgr::success( const char* source, const char* format, ... )
     va_end( ap );
 }
 
-void Log::LogMgr::debug( const char* source, const char* format, ... )
+void LogMgr::debug( const char* source, const char* format, ... )
 {
 #ifndef NDEBUG
     va_list ap;
@@ -83,7 +86,7 @@ void Log::LogMgr::debug( const char* source, const char* format, ... )
 #endif /* !NDEBUG */
 }
 
-void Log::LogMgr::dump( const char* source, const void* data, size_t length,
+void LogMgr::dump( const char* source, const void* data, size_t length,
                         const char* format, ... )
 {
 #ifndef NDEBUG
@@ -99,7 +102,7 @@ void Log::LogMgr::dump( const char* source, const void* data, size_t length,
 #endif /* !NDEBUG */
 }
 
-void Log::LogMgr::dumpLine( const char* source, const void* data, size_t length,
+void LogMgr::dumpLine( const char* source, const void* data, size_t length,
                             size_t offset )
 {
 #ifndef NDEBUG
@@ -125,7 +128,7 @@ void Log::LogMgr::dumpLine( const char* source, const void* data, size_t length,
             lineLen += snprintf( &line[ lineLen ],
                                  sizeof( line ) - lineLen,
                                  " %02X", b );
-            printable[ i ] = ( Util::String< char >::isPrintable( b )
+            printable[ i ] = ( util::String< char >::isPrintable( b )
                                ? static_cast< const char >( b )
                                : '.' );
         }

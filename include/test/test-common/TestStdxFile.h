@@ -23,20 +23,44 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __UTIL__TEST_H__INCL__
-#define __UTIL__TEST_H__INCL__
+#ifndef __TEST__TEST_STDX_FILE_H__INCL__
+#define __TEST__TEST_STDX_FILE_H__INCL__
 
-namespace Util
+/**
+ * @brief Aggregates all unit test classes.
+ */
+namespace test
 {
     /**
-     * @brief A dummy test class template.
+     * @brief Tests stdx::File.
      *
      * @author Bloody.Rabbit
      */
-    template< typename T >
-    class Test
+    class TestStdxFile
+    : public CppUnit::TestCase
     {
+    public:
+        /// A name for the test file
+        static const char NAME[];
+        /// An alternate name for the file.
+        static const char NAME_ALT[];
+        /// Some plain data to be used during testing.
+        static const uint8 PLAIN_DATA[];
+
+        /**
+         * @brief A default constructor.
+         */
+        TestStdxFile();
+
+        /**
+         * @brief Runs the test.
+         */
+        void runTest();
+
+    protected:
+        /// The file being tested.
+        stdx::File mFile;
     };
 }
 
-#endif /* !__UTIL__TEST_H__INCL__ */
+#endif /* !__TEST__TEST_STDX_FILE_H__INCL__ */

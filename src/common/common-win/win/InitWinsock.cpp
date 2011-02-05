@@ -27,16 +27,19 @@
 
 #include "win/InitWinsock.h"
 
+using namespace common;
+using namespace common::win;
+
 /*************************************************************************/
-/* Win::InitWinsock                                                      */
+/* common::win::InitWinsock                                              */
 /*************************************************************************/
-Win::InitWinsock::InitWinsock()
+InitWinsock::InitWinsock()
 {
     WSADATA wsadata;
     WSAStartup( MAKEWORD( 1, 1 ), &wsadata );
 }
 
-Win::InitWinsock::~InitWinsock()
+InitWinsock::~InitWinsock()
 {
     WSACleanup();
 }

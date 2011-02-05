@@ -27,10 +27,13 @@
 
 #include "mt/Target.h"
 
+using namespace common;
+using namespace common::mt;
+
 /*************************************************************************/
-/* Mt::Target                                                            */
+/* common::mt::Target                                                    */
 /*************************************************************************/
-void Mt::Target::Run( Mt::Target* target )
+void Target::Run( Target* target )
 {
     target->Run();
 
@@ -38,6 +41,6 @@ void Mt::Target::Run( Mt::Target* target )
         SafeDelete( target );
 }
 
-Mt::Target::~Target()
+Target::~Target()
 {
 }

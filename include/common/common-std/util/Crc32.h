@@ -23,61 +23,64 @@
     Author:     Zhur
 */
 
-#ifndef __UTIL__CRC32_H__INCL__
-#define __UTIL__CRC32_H__INCL__
+#ifndef __COMMON__UTIL__CRC32_H__INCL__
+#define __COMMON__UTIL__CRC32_H__INCL__
 
-namespace Util
+namespace common
 {
-     /**
-     * @brief Wrapper class for generating CRC-32 checksums.
-     *
-     * @author Zhur
-     */
-    class Crc32
+    namespace util
     {
-    public:
-        /**
-         * @brief Generates a CRC-32 checksum.
+         /**
+         * @brief Wrapper class for generating CRC-32 checksums.
          *
-         * @param[in] buf     Data to compute the checksum for.
-         * @param[in] bufsize A length of the data.
-         *
-         * @return The checksum.
+         * @author Zhur
          */
-        static uint32 Generate( const uint8* buf, size_t bufsize ) { return Finish( Update( buf, bufsize ) ); }
-        /**
-         * @brief Generates a CRC-32 checksum, not flipping the final result.
-         *
-         * @param[in] buf     Data to compute the checksum for.
-         * @param[in] bufsize A length of the data.
-         *
-         * @return The not-flipped checksum.
-         */
-        static uint32 GenerateNoFlip( const uint8* buf, size_t bufsize ) { return Update( buf, bufsize ); }
+        class Crc32
+        {
+        public:
+            /**
+             * @brief Generates a CRC-32 checksum.
+             *
+             * @param[in] buf     Data to compute the checksum for.
+             * @param[in] bufsize A length of the data.
+             *
+             * @return The checksum.
+             */
+            static uint32 Generate( const uint8* buf, size_t bufsize ) { return Finish( Update( buf, bufsize ) ); }
+            /**
+             * @brief Generates a CRC-32 checksum, not flipping the final result.
+             *
+             * @param[in] buf     Data to compute the checksum for.
+             * @param[in] bufsize A length of the data.
+             *
+             * @return The not-flipped checksum.
+             */
+            static uint32 GenerateNoFlip( const uint8* buf, size_t bufsize ) { return Update( buf, bufsize ); }
 
-    protected:
-        /**
-         * @brief Generates a CRC-32 checksum.
-         *
-         * @param[in] buf     Data to compute the checksum for.
-         * @param[in] bufsize A length of the data.
-         * @param[in] crc32   A starting checksum.
-         *
-         * @return The checksum.
-         */
-        static uint32 Update( const uint8* buf, size_t bufsize, uint32 crc32 = 0xFFFFFFFF );
-        /**
-         * @brief Finishes a CRC-32 computation.
-         *
-         * @param[in] crc32 A checksum to finish.
-         *
-         * @return The finished checksum.
-         */
-        static uint32 Finish( uint32 crc32 ) { return ~crc32; }
+        protected:
+            /**
+             * @brief Generates a CRC-32 checksum.
+             *
+             * @param[in] buf     Data to compute the checksum for.
+             * @param[in] bufsize A length of the data.
+             * @param[in] crc32   A starting checksum.
+             *
+             * @return The checksum.
+             */
+            static uint32 Update( const uint8* buf, size_t bufsize, uint32 crc32 = 0xFFFFFFFF );
+            /**
+             * @brief Finishes a CRC-32 computation.
+             *
+             * @param[in] crc32 A checksum to finish.
+             *
+             * @return The finished checksum.
+             */
+            static uint32 Finish( uint32 crc32 ) { return ~crc32; }
 
-        /// Precomputed lookup table used to speed up CRC-32 calculation.
-        static const uint32 LOOKUP_TABLE[ 0x100 ];
-    };
+            /// Precomputed lookup table used to speed up CRC-32 calculation.
+            static const uint32 LOOKUP_TABLE[ 0x100 ];
+        };
+    }
 }
 
-#endif /* !__UTIL__CRC32_H__INCL__ */
+#endif /* !__COMMON__UTIL__CRC32_H__INCL__ */

@@ -120,8 +120,8 @@
 /*
  * Include headers common enough.
  */
-#include "std/Types.h"
-#include "std/Utils.h"
+#include "stdx/Types.h"
+#include "stdx/Utils.h"
 
 #include "util/SafeDelete.h"
 

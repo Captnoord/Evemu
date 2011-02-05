@@ -27,17 +27,20 @@
 
 #include "log/File.h"
 
+using namespace common;
+using namespace common::log;
+
 /*************************************************************************/
-/* Log::File                                                             */
+/* common::log::File                                                     */
 /*************************************************************************/
-Log::File::File( const char* name )
+File::File( const char* name )
 : mFile( name, "a" )
 {
 }
 
-Stream::Error Log::File::Write( const Message& m )
+stream::Error File::Write( const Message& m )
 {
-    const Std::Tm& tm = m.time();
+    const stdx::Tm& tm = m.time();
 
     int code = mFile.Printf( "%04d-%02d-%02d %02d:%02d:%02d %c %s: %s\n",
                              1900 + tm.year(), 1 + tm.mon(), tm.mday(),
@@ -51,15 +54,15 @@ Stream::Error Log::File::Write( const Message& m )
     mFile.Flush();
 #endif /* !NDEBUG */
 
-    return 0 <= code ? Stream::ERROR_OK : Stream::ERROR_WRITE;
+    return 0 <= code ? stream::ERROR_OK : stream::ERROR_WRITE;
 }
 
-Stream::Error Log::File::Write( const Message* mp, size_t count, size_t* countWritten )
+stream::Error File::Write( const Message* mp, size_t count, size_t* countWritten )
 {
     for( size_t i = 0; i < count; ++i )
     {
-        const Stream::Error err = Write( mp[ i ] );
-        if( Stream::ERROR_OK != err )
+        const stream::Error err = Write( mp[ i ] );
+        if( stream::ERROR_OK != err )
         {
             if( NULL != countWritten )
                 *countWritten = i;
@@ -71,5 +74,5 @@ Stream::Error Log::File::Write( const Message* mp, size_t count, size_t* countWr
     if( NULL != countWritten )
         *countWritten = count;
 
-    return Stream::ERROR_OK;
+    return stream::ERROR_OK;
 }

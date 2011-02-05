@@ -23,32 +23,35 @@
     Author:     Zhur, Bloody.Rabbit
 */
 
-#ifndef __WIN__INIT_WINSOCK_H__INCL__
-#define __WIN__INIT_WINSOCK_H__INCL__
+#ifndef __COMMON__WIN__INIT_WINSOCK_H__INCL__
+#define __COMMON__WIN__INIT_WINSOCK_H__INCL__
 
-namespace Win
+namespace common
 {
-    /**
-     * @brief Winsock initialization class.
-     *
-     * Utility class to initialize Winsock. Winsock is
-     * initialized as long as there is at least one
-     * instance of this class.
-     *
-     * @author Zhur
-     */
-    class InitWinsock
+    namespace win
     {
-    public:
         /**
-         * @brief A primary constructor.
+         * @brief Winsock initialization class.
+         *
+         * Utility class to initialize Winsock. Winsock is
+         * initialized as long as there is at least one
+         * instance of this class.
+         *
+         * @author Zhur
          */
-        InitWinsock();
-        /**
-         * @brief A destructor.
-         */
-        ~InitWinsock();
-    };
+        class InitWinsock
+        {
+        public:
+            /**
+             * @brief A primary constructor.
+             */
+            InitWinsock();
+            /**
+             * @brief A destructor.
+             */
+            ~InitWinsock();
+        };
+    }
 }
 
-#endif /* !__WIN__INIT_WINSOCK_H__INCL__ */
+#endif /* !__COMMON__WIN__INIT_WINSOCK_H__INCL__ */

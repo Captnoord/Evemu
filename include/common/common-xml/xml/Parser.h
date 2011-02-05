@@ -23,95 +23,104 @@
     Author:     Zhur
 */
 
-#ifndef __XML__PARSER_H__INCL__
-#define __XML__PARSER_H__INCL__
+#ifndef __COMMON__XML__PARSER_H__INCL__
+#define __COMMON__XML__PARSER_H__INCL__
 
-/**
- * @brief Keeps classes for XML parsing (mostly TinyXML wrappers).
- */
-namespace Xml
+namespace common
 {
     /**
-     * @brief Utility for parsing XML files.
-     *
-     * @author Zhur, Bloody.Rabbit
+     * @brief Keeps classes for XML parsing (mostly TinyXML wrappers).
      */
-    class Parser
+    namespace xml
     {
-    public:
         /**
-         * @brief This virtual interface must be implemented by all parsers.
+         * @brief Utility for parsing XML files.
          *
-         * @author Bloody.Rabbit
+         * @author Zhur, Bloody.Rabbit
          */
-        class ElementParser
+        class Parser
         {
         public:
             /**
-             * @brief Parses an element.
+             * @brief This virtual interface must be implemented by all parsers.
              *
-             * @param[in] field The element to be parsed.
+             * @author Bloody.Rabbit
+             */
+            class ElementParser
+            {
+            public:
+                /**
+                 * @brief Parses an element.
+                 *
+                 * @param[in] field The element to be parsed.
+                 *
+                 * @retval true  Parsing successfull.
+                 * @retval false Parsing failed.
+                 */
+                virtual bool Parse( const TiXmlElement* field ) = 0;
+            };
+
+            /**
+             * @brief Primary constructor.
+             */
+            Parser();
+            /**
+             * @brief A destructor.
+             */
+            ~Parser();
+
+            /**
+             * @brief Parses file using registered parsers.
+             *
+             * @param[in] file File to parse.
              *
              * @retval true  Parsing successfull.
-             * @retval false Parsing failed.
+             * @retval false Error occurred during parsing.
              */
-            virtual bool Parse( const TiXmlElement* field ) = 0;
+            bool ParseFile( const char* file ) const;
+            /**
+             * @brief Parses element using registered parsers.
+             *
+             * @param[in] element Element to be parsed.
+             *
+             * @retval true  Parsing successfull.
+             * @retval false Error occurred during parsing.
+             */
+            bool ParseElement( const TiXmlElement* element ) const;
+            /**
+             * @brief Parses element's children using registered parsers.
+             *
+             * @param[in] element Element the children of which should be parsed.
+             * @param[in] max     The maximal count of children to be processed; 0 means all.
+             *
+             * @retval true  Parsing successfull.
+             * @retval false Error occurred during parsing.
+             */
+            bool ParseElementChildren( const TiXmlElement* element, size_t max = 0 ) const;
+
+            /**
+             * @brief Adds a parser.
+             *
+             * @param[in] name   Name of element to be parsed by the parser.
+             * @param[in] parser The parser itself.
+             */
+            void AddParser( const char* name, ElementParser* parser );
+            /**
+             * @brief Removes a parser.
+             *
+             * @param[in] name Name of element to be parsed by the parser.
+             */
+            void RemoveParser( const char* name );
+            /**
+             * @brief Clears all parsers.
+             */
+            void ClearParsers();
+
+        private:
+            /// Parser storage.
+            std::map< std::string, ElementParser* > mParsers;
         };
-
-        /// Primary constructor.
-        Parser();
-        /// A destructor.
-        ~Parser();
-
-        /**
-         * @brief Parses file using registered parsers.
-         *
-         * @param[in] file File to parse.
-         *
-         * @retval true  Parsing successfull.
-         * @retval false Error occurred during parsing.
-         */
-        bool ParseFile( const char* file ) const;
-        /**
-         * @brief Parses element using registered parsers.
-         *
-         * @param[in] element Element to be parsed.
-         *
-         * @retval true  Parsing successfull.
-         * @retval false Error occurred during parsing.
-         */
-        bool ParseElement( const TiXmlElement* element ) const;
-        /**
-         * @brief Parses element's children using registered parsers.
-         *
-         * @param[in] element Element the children of which should be parsed.
-         * @param[in] max     The maximal count of children to be processed; 0 means all.
-         *
-         * @retval true  Parsing successfull.
-         * @retval false Error occurred during parsing.
-         */
-        bool ParseElementChildren( const TiXmlElement* element, size_t max = 0 ) const;
-
-        /**
-         * @brief Adds a parser.
-         *
-         * @param[in] name   Name of element to be parsed by the parser.
-         * @param[in] parser The parser itself.
-         */
-        void AddParser( const char* name, ElementParser* parser );
-        /**
-         * @brief Removes a parser.
-         *
-         * @param[in] name Name of element to be parsed by the parser.
-         */
-        void RemoveParser( const char* name );
-        /// Clears all parsers.
-        void ClearParsers();
-
-    private:
-        /// Parser storage.
-        std::map< std::string, ElementParser* > mParsers;
-    };
+    }
 }
 
-#endif /* !__XML__PARSER_H__INCL__ */
+#endif /* !__COMMON__XML__PARSER_H__INCL__ */

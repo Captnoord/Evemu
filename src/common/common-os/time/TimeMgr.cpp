@@ -27,10 +27,13 @@
 
 #include "time/TimeMgr.h"
 
+using namespace common;
+using namespace common::time;
+
 /*************************************************************************/
-/* Time::TimeMgr                                                         */
+/* common::time::TimeMgr                                                 */
 /*************************************************************************/
-Time::TimeMgr::TimeMgr( size_t period )
+TimeMgr::TimeMgr( size_t period )
 : mRun( true ),
   mRunTimer( period )
 {
@@ -40,24 +43,24 @@ Time::TimeMgr::TimeMgr( size_t period )
     sThreadMgr.Run( this );
 }
 
-Std::Tm Time::TimeMgr::nowTm() const
+stdx::Tm TimeMgr::nowTm() const
 {
-    Std::Tm t;
+    stdx::Tm t;
 
     {
-        Mt::MutexLock lock( mMutex );
+        mt::MutexLock lock( mMutex );
         t = mTm;
     }
 
     return t;
 }
 
-Time::WinTime Time::TimeMgr::nowWin() const
+WinTime TimeMgr::nowWin() const
 {
     WinTime wt;
 
     {
-        Mt::MutexLock lock( mMutex );
+        mt::MutexLock lock( mMutex );
 
 #   ifdef WIN32
         wt = mWinTime;
@@ -69,12 +72,12 @@ Time::WinTime Time::TimeMgr::nowWin() const
     return wt;
 }
 
-Time::Timeval Time::TimeMgr::nowUnix() const
+Timeval TimeMgr::nowUnix() const
 {
     Timeval tv;
 
     {
-        Mt::MutexLock lock( mMutex );
+        mt::MutexLock lock( mMutex );
 
 #   ifdef WIN32
         tv = mWinTime - WinTime::SEC * EPOCH_DIFF_SEC;
@@ -86,9 +89,9 @@ Time::Timeval Time::TimeMgr::nowUnix() const
     return tv;
 }
 
-void Time::TimeMgr::Update()
+void TimeMgr::Update()
 {
-    Mt::MutexLock lock( mMutex );
+    mt::MutexLock lock( mMutex );
 
 #ifdef WIN32
     FILETIME ft;
@@ -96,8 +99,9 @@ void Time::TimeMgr::Update()
     mWinTime = ( static_cast< uint64 >( ft.dwHighDateTime ) << 32 )
                | static_cast< uint64 >( ft.dwLowDateTime );
 
-    mTm = ::time( NULL );
-    assert( -1 != mTm.t() );
+    time_t t = ::time( NULL );
+    assert( -1 != t );
+    mTm = t;
 #else /* !WIN32 */
     timeval tv;
     int code = ::gettimeofday( &tv, NULL );
@@ -108,9 +112,9 @@ void Time::TimeMgr::Update()
 #endif /* !WIN32 */
 }
 
-void Time::TimeMgr::Run()
+void TimeMgr::Run()
 {
-    Mt::MutexLock lock( mMutex );
+    mt::MutexLock lock( mMutex );
 
     mRunTimer.Start();
     while( mRun )
@@ -125,7 +129,7 @@ void Time::TimeMgr::Run()
     }
 }
 
-void Time::TimeMgr::Stop()
+void TimeMgr::Stop()
 {
     mRun = false;
 }

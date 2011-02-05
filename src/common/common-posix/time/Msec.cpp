@@ -27,10 +27,13 @@
 
 #include "time/Timespec.h"
 
+using namespace common;
+using namespace common::time;
+
 /*************************************************************************/
-/* Time::Msec                                                            */
+/* common::time::Msec                                                    */
 /*************************************************************************/
-Time::Msec::Msec( const Time::Timespec& ts )
+Msec::Msec( const Timespec& ts )
 : mMsec( MSEC_PER_SEC * ts.sec() + ts.nsec() / ( NSEC_PER_USEC * USEC_PER_MSEC ) )
 {
 }

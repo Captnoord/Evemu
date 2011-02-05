@@ -27,21 +27,24 @@
 
 #include "posix/Fd.h"
 
+using namespace common;
+using namespace common::posix;
+
 /*************************************************************************/
-/* Posix::Fd                                                             */
+/* common::posix::Fd                                                     */
 /*************************************************************************/
-Posix::Fd::Fd( int fd )
+Fd::Fd( int fd )
 : mFd( fd )
 {
 }
 
-Posix::Fd::~Fd()
+Fd::~Fd()
 {
     int code = Close();
     assert( 0 == code );
 }
 
-int Posix::Fd::Close()
+int Fd::Close()
 {
     if( isValid() )
     {
@@ -54,41 +57,41 @@ int Posix::Fd::Close()
 }
 
 /*************************************************************************/
-/* Posix::ReadableFd                                                     */
+/* common::posix::ReadableFd                                             */
 /*************************************************************************/
-Posix::ReadableFd::ReadableFd( int fd )
-: Posix::Fd( fd )
+ReadableFd::ReadableFd( int fd )
+: Fd( fd )
 {
 }
 
-Stream::Error Posix::ReadableFd::Read( Util::Data& data, size_t* bytesRead )
+stream::Error ReadableFd::Read( util::Data& data, size_t* bytesRead )
 {
     ssize_t res = ::read( mFd, &data[0], data.size() );
     if( 0 > res )
-        return Stream::ERROR_READ;
+        return stream::ERROR_READ;
 
     if( NULL != bytesRead )
         *bytesRead = res;
 
-    return data.size() == res ? Stream::ERROR_OK : Stream::ERROR_EOS;
+    return data.size() == res ? stream::ERROR_OK : stream::ERROR_EOS;
 }
 
 /*************************************************************************/
-/* Posix::WritableFd                                                     */
+/* common::posix::WritableFd                                             */
 /*************************************************************************/
-Posix::WritableFd::WritableFd( int fd )
-: Posix::Fd( fd )
+WritableFd::WritableFd( int fd )
+: Fd( fd )
 {
 }
 
-Stream::Error Posix::WritableFd::Write( const Util::Data& data, size_t* bytesWritten )
+stream::Error WritableFd::Write( const util::Data& data, size_t* bytesWritten )
 {
     ssize_t res = ::write( mFd, &data[0], data.size() );
     if( 0 > res )
-        return Stream::ERROR_WRITE;
+        return stream::ERROR_WRITE;
 
     if( NULL != bytesWritten )
         *bytesWritten = res;
 
-    return Stream::ERROR_OK;
+    return stream::ERROR_OK;
 }

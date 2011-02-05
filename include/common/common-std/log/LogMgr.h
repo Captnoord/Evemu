@@ -23,93 +23,96 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __LOG__LOG_MGR_H__INCL__
-#define __LOG__LOG_MGR_H__INCL__
+#ifndef __COMMON__LOG__LOG_MGR_H__INCL__
+#define __COMMON__LOG__LOG_MGR_H__INCL__
 
 #include "log/Message.h"
 #include "stream/Hub.h"
 #include "util/Singleton.h"
 
-/**
- * @brief Contains utilities for logging.
- */
-namespace Log
+namespace common
 {
     /**
-     * @brief Manages all active log modules.
-     *
-     * @author Bloody.Rabbit
+     * @brief Contains utilities for logging.
      */
-    class LogMgr
-    : public Stream::OutputHub< Message >,
-      public Util::Singleton< LogMgr >
+    namespace log
     {
-    public:
         /**
-         * @brief Logs a common message.
+         * @brief Manages all active log modules.
          *
-         * @param[in] source The source from where the message is printed.
-         * @param[in] format The message itself.
+         * @author Bloody.Rabbit
          */
-        void notice( const char* source, const char* format, ... );
-        /**
-         * @brief Logs an error message.
-         *
-         * @param[in] source The source from where the message is printed.
-         * @param[in] format The error message itself.
-         */
-        void error( const char* source, const char* format, ... );
-        /**
-         * @brief Logs a warning message.
-         *
-         * @param[in] source The source from where the message is printed.
-         * @param[in] format The warning message itself.
-         */
-        void warning( const char* source, const char* format, ... );
-        /**
-         * @brief Logs a success message.
-         *
-         * @param[in] source The source from where the message is printed.
-         * @param[in] format The success message itself.
-         */
-        void success( const char* source, const char* format, ... );
-        /**
-         * @brief Logs a debug message.
-         *
-         * @param[in] source The source from where the message is printed.
-         * @param[in] format The debug message itself.
-         */
-        void debug( const char* source, const char* format, ... );
-        /**
-         * @brief Logs a hex dump with a custom message.
-         *
-         * @param[in] source The source from where the message is printed.
-         * @param[in] data   The data to be dumped.
-         * @param[in] length The length of data.
-         * @param[in] format The custom message.
-         */
-        void dump( const char* source, const void* data, size_t length,
-                   const char* format, ... );
+        class LogMgr
+        : public stream::OutputHub< Message >,
+          public util::Singleton< LogMgr >
+        {
+        public:
+            /**
+             * @brief Logs a common message.
+             *
+             * @param[in] source The source from where the message is printed.
+             * @param[in] format The message itself.
+             */
+            void notice( const char* source, const char* format, ... );
+            /**
+             * @brief Logs an error message.
+             *
+             * @param[in] source The source from where the message is printed.
+             * @param[in] format The error message itself.
+             */
+            void error( const char* source, const char* format, ... );
+            /**
+             * @brief Logs a warning message.
+             *
+             * @param[in] source The source from where the message is printed.
+             * @param[in] format The warning message itself.
+             */
+            void warning( const char* source, const char* format, ... );
+            /**
+             * @brief Logs a success message.
+             *
+             * @param[in] source The source from where the message is printed.
+             * @param[in] format The success message itself.
+             */
+            void success( const char* source, const char* format, ... );
+            /**
+             * @brief Logs a debug message.
+             *
+             * @param[in] source The source from where the message is printed.
+             * @param[in] format The debug message itself.
+             */
+            void debug( const char* source, const char* format, ... );
+            /**
+             * @brief Logs a hex dump with a custom message.
+             *
+             * @param[in] source The source from where the message is printed.
+             * @param[in] data   The data to be dumped.
+             * @param[in] length The length of data.
+             * @param[in] format The custom message.
+             */
+            void dump( const char* source, const void* data, size_t length,
+                       const char* format, ... );
 
-    protected:
-        /**
-         * @brief Logs a single line of a hex dump.
-         *
-         * @param[in] source The source from where the message is printed.
-         * @param[in] data   The data to be dumped.
-         * @param[in] length The length of data.
-         * @param[in] offset Where the dump line begins.
-         */
-        void dumpLine( const char* source, const void* data, size_t length,
-                       size_t offset );
-    };
+        protected:
+            /**
+             * @brief Logs a single line of a hex dump.
+             *
+             * @param[in] source The source from where the message is printed.
+             * @param[in] data   The data to be dumped.
+             * @param[in] length The length of data.
+             * @param[in] offset Where the dump line begins.
+             */
+            void dumpLine( const char* source, const void* data, size_t length,
+                           size_t offset );
+        };
 
-    /// Base of all logs.
-    typedef LogMgr::Target Log;
+        /// Base of all logs.
+        typedef LogMgr::Target Log;
+    }
 }
 
 /// Convenience macro.
 #define sLog \
-    ( Log::LogMgr::get() )
+    ( common::log::LogMgr::get() )
 
-#endif /* !__LOG__LOG_MGR_H__INCL__ */
+#endif /* !__COMMON__LOG__LOG_MGR_H__INCL__ */

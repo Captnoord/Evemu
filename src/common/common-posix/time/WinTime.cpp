@@ -27,10 +27,13 @@
 
 #include "time/Timespec.h"
 
+using namespace common;
+using namespace common::time;
+
 /*************************************************************************/
-/* Time::WinTime                                                         */
+/* common::time::WinTime                                                 */
 /*************************************************************************/
-Time::WinTime::WinTime( const Time::Timespec& ts )
+WinTime::WinTime( const Timespec& ts )
 : mTime( WINTIME_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC * ts.sec() + ts.nsec() / NSEC_PER_WINTIME )
 {
 }

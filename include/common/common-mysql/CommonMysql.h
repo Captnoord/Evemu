@@ -23,14 +23,28 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __DB__COMMON_H__INCL__
-#define __DB__COMMON_H__INCL__
+#ifndef __COMMON_MYSQL_H__INCL__
+#define __COMMON_MYSQL_H__INCL__
 
-/**
- * @namespace Db
- * @brief Houses all database-related stuff.
- */
+/*************************************************************************/
+/* common-std                                                            */
+/*************************************************************************/
+#include "CommonStd.h"
 
+#include "db/Type.h"
+#include "mt/Mutex.h"
+#include "log/LogMgr.h"
+#include "util/Singleton.h"
+#include "util/String.h"
+
+/*************************************************************************/
+/* common-os                                                             */
+/*************************************************************************/
+#include "CommonOs.h"
+
+/*************************************************************************/
+/* common-mysql                                                          */
+/*************************************************************************/
 #include <mysql.h>
 #include <errmsg.h>
 

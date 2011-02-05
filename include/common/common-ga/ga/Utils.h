@@ -23,156 +23,163 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __GA__UTILS_H__INCL__
-#define __GA__UTILS_H__INCL__
+#ifndef __COMMON__GA__UTILS_H__INCL__
+#define __COMMON__GA__UTILS_H__INCL__
 
-/**
- * @brief Various utilities related to the Gangsta wrapper library.
- */
-namespace Ga
+namespace common
 {
     /**
-     * @brief A point in 3D space.
-     *
-     * @author Zhur
+     * @brief Various utilities related to the Gangsta wrapper library.
      */
-    class Point
-    : public GaVec3
+    namespace ga
     {
-    public:
-        /// A default constructor.
-        Point()
-        : GaVec3()
-        {
-        }
         /**
-         * @brief A cube-like constructor.
+         * @brief A point in 3D space.
          *
-         * @param[in] v A value of coordinate for every axis.
+         * @author Zhur
          */
-        Point( GaFloat v )
-        : GaVec3( v )
+        class Point
+        : public GaVec3
         {
-        }
-        /**
-         * @brief A constructor with a coordinate array.
-         *
-         * @param[in] v An array of coordinates; the first value in
-         *              the array is for X, the second one for Y and
-         *              the last one for Z.
-         */
-        Point( const GaFloat* v )
-        : GaVec3( v )
-        {
-        }
-        /**
-         * @brief A constructor with 3 value for earch coordinate.
-         *
-         * @param[in] X A value of coordinate for X axis.
-         * @param[in] Y A value of coordinate for Y axis.
-         * @param[in] Z A value of coordinate for Z axis.
-         */
-        Point( GaFloat X, GaFloat Y, GaFloat Z )
-        : GaVec3( X, Y, Z )
-        {
-        }
-        /**
-         * @brief A constructor with a vector.
-         *
-         * @param[in] oth The vector the target of which
-         *                is to be assigned.
-         */
-        Point( const GaVec3& oth )
-        : GaVec3( oth )
-        {
-        }
-        /**
-         * @brief A copy constructor.
-         *
-         * @param[in] oth The point to copy.
-         */
-        Point( const Point& oth )
-        : GaVec3( oth )
-        {
-        }
-    };
+        public:
+            /**
+             * @brief A default constructor.
+             */
+            Point()
+            : GaVec3()
+            {
+            }
+            /**
+             * @brief A cube-like constructor.
+             *
+             * @param[in] v A value of coordinate for every axis.
+             */
+            Point( GaFloat v )
+            : GaVec3( v )
+            {
+            }
+            /**
+             * @brief A constructor with a coordinate array.
+             *
+             * @param[in] v An array of coordinates; the first value in
+             *              the array is for X, the second one for Y and
+             *              the last one for Z.
+             */
+            Point( const GaFloat* v )
+            : GaVec3( v )
+            {
+            }
+            /**
+             * @brief A constructor with 3 value for earch coordinate.
+             *
+             * @param[in] X A value of coordinate for X axis.
+             * @param[in] Y A value of coordinate for Y axis.
+             * @param[in] Z A value of coordinate for Z axis.
+             */
+            Point( GaFloat X, GaFloat Y, GaFloat Z )
+            : GaVec3( X, Y, Z )
+            {
+            }
+            /**
+             * @brief A constructor with a vector.
+             *
+             * @param[in] oth The vector the target of which
+             *                is to be assigned.
+             */
+            Point( const GaVec3& oth )
+            : GaVec3( oth )
+            {
+            }
+            /**
+             * @brief A copy constructor.
+             *
+             * @param[in] oth The point to copy.
+             */
+            Point( const Point& oth )
+            : GaVec3( oth )
+            {
+            }
+        };
 
-    /**
-     * @brief A vector in 3D space.
-     *
-     * @author Zhur
-     */
-    class Vector
-    : public GaVec3
-    {
-    public:
-        /// A default constructor.
-        Vector()
-        : GaVec3()
-        {
-        }
         /**
-         * @brief A cube-like constructor.
+         * @brief A vector in 3D space.
          *
-         * @param[in] v A value of coordinate for every axis.
+         * @author Zhur
          */
-        Vector( GaFloat v )
-        : GaVec3( v )
+        class Vector
+        : public GaVec3
         {
-        }
-        /**
-         * @brief A constructor with a coordinate array.
-         *
-         * @param[in] v An array of coordinates; the first value in
-         *              the array is for X, the second one for Y and
-         *              the last one for Z.
-         */
-        Vector( const GaFloat* v )
-        : GaVec3( v )
-        {
-        }
-        /**
-         * @brief A constructor with 3 value for earch coordinate.
-         *
-         * @param[in] X A value of coordinate for X axis.
-         * @param[in] Y A value of coordinate for Y axis.
-         * @param[in] Z A value of coordinate for Z axis.
-         */
-        Vector( GaFloat X, GaFloat Y, GaFloat Z )
-        : GaVec3( X, Y, Z )
-        {
-        }
-        /**
-         * @brief A constructor with a point.
-         *
-         * @param[in] oth Where the vector shall point.
-         */
-        Vector( const Point& oth )
-        : GaVec3( oth )
-        {
-        }
-        /**
-         * @brief A constructor with two points.
-         *
-         * @param[in] from An origin of the vector.
-         * @param[in] to   Where the vector shall point.
-         */
-        Vector( const Point& from, const Point& to )
-        : GaVec3( ( to.x - from.x ),
+        public:
+            /**
+             * @brief A default constructor.
+             */
+            Vector()
+            : GaVec3()
+            {
+            }
+            /**
+             * @brief A cube-like constructor.
+             *
+             * @param[in] v A value of coordinate for every axis.
+             */
+            Vector( GaFloat v )
+            : GaVec3( v )
+            {
+            }
+            /**
+             * @brief A constructor with a coordinate array.
+             *
+             * @param[in] v An array of coordinates; the first value in
+             *              the array is for X, the second one for Y and
+             *              the last one for Z.
+             */
+            Vector( const GaFloat* v )
+            : GaVec3( v )
+            {
+            }
+            /**
+             * @brief A constructor with 3 value for earch coordinate.
+             *
+             * @param[in] X A value of coordinate for X axis.
+             * @param[in] Y A value of coordinate for Y axis.
+             * @param[in] Z A value of coordinate for Z axis.
+             */
+            Vector( GaFloat X, GaFloat Y, GaFloat Z )
+            : GaVec3( X, Y, Z )
+            {
+            }
+            /**
+             * @brief A constructor with a point.
+             *
+             * @param[in] oth Where the vector shall point.
+             */
+            Vector( const Point& oth )
+            : GaVec3( oth )
+            {
+            }
+            /**
+             * @brief A constructor with two points.
+             *
+             * @param[in] from An origin of the vector.
+             * @param[in] to   Where the vector shall point.
+             */
+            Vector( const Point& from, const Point& to )
+            : GaVec3( ( to.x - from.x ),
                       ( to.y - from.y ),
                       ( to.z - from.z ) )
-        {
-        }
-        /**
-         * @brief A copy constructor.
-         *
-         * @param[in] oth The vector to copy.
-         */
-        Vector( const GaVec3& oth )
-        : GaVec3( oth )
-        {
-        }
-    };
+            {
+            }
+            /**
+             * @brief A copy constructor.
+             *
+             * @param[in] oth The vector to copy.
+             */
+            Vector( const GaVec3& oth )
+            : GaVec3( oth )
+            {
+            }
+        };
+    }
 }
 
-#endif /* !__GANGSTA__GA_UTILS_H__INCL__ */
+#endif /* !__COMMON__GA__UTILS_H__INCL__ */

@@ -27,54 +27,57 @@
 
 #include "time/Timespec.h"
 
-/*************************************************************************/
-/* Time::Timespec                                                        */
-/*************************************************************************/
-const Time::Timespec Time::Timespec::NSEC = Time::Timespec( 0, 1 );
-const Time::Timespec Time::Timespec::USEC = Time::Timespec::NSEC * Time::NSEC_PER_USEC;
-const Time::Timespec Time::Timespec::MSEC = Time::Timespec::USEC * Time::USEC_PER_MSEC;
-const Time::Timespec Time::Timespec::SEC = Time::Timespec::MSEC * Time::MSEC_PER_SEC;
-const Time::Timespec Time::Timespec::MIN = Time::Timespec::SEC * Time::SEC_PER_MIN;
-const Time::Timespec Time::Timespec::HOUR = Time::Timespec::MIN * Time::MIN_PER_HOUR;
-const Time::Timespec Time::Timespec::DAY = Time::Timespec::HOUR * Time::HOUR_PER_DAY;
-const Time::Timespec Time::Timespec::MONTH = Time::Timespec::DAY * Time::DAY_PER_MONTH;
-const Time::Timespec Time::Timespec::YEAR = Time::Timespec::MONTH * Time::MONTH_PER_YEAR;
+using namespace common;
+using namespace common::time;
 
-Time::Timespec::Timespec( time_t sec, long nsec )
+/*************************************************************************/
+/* common::time::Timespec                                                */
+/*************************************************************************/
+const Timespec Timespec::NSEC = Timespec( 0, 1 );
+const Timespec Timespec::USEC = Timespec::NSEC * NSEC_PER_USEC;
+const Timespec Timespec::MSEC = Timespec::USEC * USEC_PER_MSEC;
+const Timespec Timespec::SEC = Timespec::MSEC * MSEC_PER_SEC;
+const Timespec Timespec::MIN = Timespec::SEC * SEC_PER_MIN;
+const Timespec Timespec::HOUR = Timespec::MIN * MIN_PER_HOUR;
+const Timespec Timespec::DAY = Timespec::HOUR * HOUR_PER_DAY;
+const Timespec Timespec::MONTH = Timespec::DAY * DAY_PER_MONTH;
+const Timespec Timespec::YEAR = Timespec::MONTH * MONTH_PER_YEAR;
+
+Timespec::Timespec( time_t sec, long nsec )
 {
     mTimespec.tv_sec = sec;
     mTimespec.tv_nsec = nsec;
 }
 
-Time::Timespec::Timespec( const timespec& ts )
+Timespec::Timespec( const timespec& ts )
 : mTimespec( ts )
 {
 }
 
-Time::Timespec::Timespec( const Time::Msec& msec )
+Timespec::Timespec( const Msec& msec )
 {
     mTimespec.tv_sec = msec.count() / MSEC_PER_SEC;
     mTimespec.tv_nsec = NSEC_PER_USEC * USEC_PER_MSEC * ( msec.count() % MSEC_PER_SEC );
 }
 
-Time::Timespec::Timespec( const Time::Timespec& oth )
+Timespec::Timespec( const Timespec& oth )
 : mTimespec( oth.ts() )
 {
 }
 
-Time::Timespec::Timespec( const Time::Timeval& tv )
+Timespec::Timespec( const Timeval& tv )
 {
     mTimespec.tv_sec = tv.sec();
     mTimespec.tv_nsec = NSEC_PER_USEC * tv.usec();
 }
 
-Time::Timespec::Timespec( const Time::WinTime& time )
+Timespec::Timespec( const WinTime& time )
 {
     mTimespec.tv_sec = time.count() / ( WINTIME_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC );
     mTimespec.tv_nsec = NSEC_PER_WINTIME * ( time.count() % ( WINTIME_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC ) );
 }
 
-bool Time::Timespec::operator==( const Time::Timespec& oth ) const
+bool Timespec::operator==( const Timespec& oth ) const
 {
     if( sec() != oth.sec() )
         return false;
@@ -84,7 +87,7 @@ bool Time::Timespec::operator==( const Time::Timespec& oth ) const
         return true;
 }
 
-bool Time::Timespec::operator!=( const Time::Timespec& oth ) const
+bool Timespec::operator!=( const Timespec& oth ) const
 {
     if( sec() != oth.sec() )
         return true;
@@ -94,7 +97,7 @@ bool Time::Timespec::operator!=( const Time::Timespec& oth ) const
         return false;
 }
 
-bool Time::Timespec::operator<( const Time::Timespec& oth ) const
+bool Timespec::operator<( const Timespec& oth ) const
 {
     if( sec() < oth.sec() )
         return true;
@@ -106,7 +109,7 @@ bool Time::Timespec::operator<( const Time::Timespec& oth ) const
         return false;
 }
 
-bool Time::Timespec::operator<=( const Time::Timespec& oth ) const
+bool Timespec::operator<=( const Timespec& oth ) const
 {
     if( sec() < oth.sec() )
         return true;
@@ -118,7 +121,7 @@ bool Time::Timespec::operator<=( const Time::Timespec& oth ) const
         return false;
 }
 
-bool Time::Timespec::operator>( const Time::Timespec& oth ) const
+bool Timespec::operator>( const Timespec& oth ) const
 {
     if( sec() > oth.sec() )
         return true;
@@ -130,7 +133,7 @@ bool Time::Timespec::operator>( const Time::Timespec& oth ) const
         return false;
 }
 
-bool Time::Timespec::operator>=( const Time::Timespec& oth ) const
+bool Timespec::operator>=( const Timespec& oth ) const
 {
     if( sec() > oth.sec() )
         return true;
@@ -142,73 +145,73 @@ bool Time::Timespec::operator>=( const Time::Timespec& oth ) const
         return false;
 }
 
-Time::Timespec Time::Timespec::operator+( const Time::Timespec& oth ) const
+Timespec Timespec::operator+( const Timespec& oth ) const
 {
-    return Time::Timespec( ( sec() + oth.sec() )
+    return Timespec( ( sec() + oth.sec() )
                            + ( nsec() + oth.nsec() ) / ( NSEC_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC ),
                            ( nsec() + oth.nsec() ) % ( NSEC_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC ) );
 }
 
-Time::Timespec Time::Timespec::operator-( const Time::Timespec& oth ) const
+Timespec Timespec::operator-( const Timespec& oth ) const
 {
     const size_t k = ( nsec() < oth.nsec()
                        ? 1 + ( oth.nsec() - nsec() - 1 ) / ( NSEC_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC )
                        : 0 );
 
-    return Time::Timespec( sec() - oth.sec() - k,
+    return Timespec( sec() - oth.sec() - k,
                            NSEC_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC * k + nsec() - oth.nsec() );
 }
 
-Time::Timespec Time::Timespec::operator*( size_t ratio ) const
+Timespec Timespec::operator*( size_t ratio ) const
 {
-    return Time::Timespec( ( sec() * ratio )
+    return Timespec( ( sec() * ratio )
                            + ( nsec() * ratio ) / ( NSEC_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC ),
                            ( nsec() * ratio ) % ( NSEC_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC ) );
 }
 
-Time::Timespec Time::Timespec::operator/( size_t ratio ) const
+Timespec Timespec::operator/( size_t ratio ) const
 {
-    return Time::Timespec( ( sec() / ratio ),
+    return Timespec( ( sec() / ratio ),
                            ( NSEC_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC * ( sec() % ratio )
                              + nsec() ) / ratio );
 }
 
-Time::Timespec Time::Timespec::operator%( size_t ratio ) const
+Timespec Timespec::operator%( size_t ratio ) const
 {
     const size_t mod = ( NSEC_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC * ( sec() % ratio )
                          + nsec() ) % ratio;
 
-    return Time::Timespec( mod / ( NSEC_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC ),
+    return Timespec( mod / ( NSEC_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC ),
                            mod % ( NSEC_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC ) );
 }
 
-Time::Timespec& Time::Timespec::operator=( const Time::Timespec& oth )
+Timespec& Timespec::operator=( const Timespec& oth )
 {
     mTimespec = oth.ts();
     return *this;
 }
 
-Time::Timespec& Time::Timespec::operator+=( const Time::Timespec& oth )
+Timespec& Timespec::operator+=( const Timespec& oth )
 {
     return ( *this = *this + oth );
 }
 
-Time::Timespec& Time::Timespec::operator-=( const Time::Timespec& oth )
+Timespec& Timespec::operator-=( const Timespec& oth )
 {
     return ( *this = *this - oth );
 }
 
-Time::Timespec& Time::Timespec::operator*=( size_t ratio )
+Timespec& Timespec::operator*=( size_t ratio )
 {
     return ( *this = *this * ratio );
 }
 
-Time::Timespec& Time::Timespec::operator/=( size_t ratio )
+Timespec& Timespec::operator/=( size_t ratio )
 {
     return ( *this = *this / ratio );
 }
 
-Time::Timespec& Time::Timespec::operator%=( size_t ratio )
+Timespec& Timespec::operator%=( size_t ratio )
 {
     return ( *this = *this % ratio );
 }

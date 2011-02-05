@@ -27,10 +27,13 @@
 
 #include "util/Crc32.h"
 
+using namespace common;
+using namespace common::util;
+
 /*************************************************************************/
-/* Util::Crc32                                                           */
+/* common::util::Crc32                                                   */
 /*************************************************************************/
-const uint32 Util::Crc32::LOOKUP_TABLE[ 0x100 ] =
+const uint32 Crc32::LOOKUP_TABLE[ 0x100 ] =
 {
     0x00000000, 0x77073096, 0xEE0E612C, 0x990951BA,
     0x076DC419, 0x706AF48F, 0xE963A535, 0x9E6495A3,
@@ -101,7 +104,7 @@ const uint32 Util::Crc32::LOOKUP_TABLE[ 0x100 ] =
     0xB40BBE37, 0xC30C8EA1, 0x5A05DF1B, 0x2D02EF8D
 };
 
-uint32 Util::Crc32::Update( const uint8* buf, size_t bufsize, uint32 crc32 )
+uint32 Crc32::Update( const uint8* buf, size_t bufsize, uint32 crc32 )
 {
     for( size_t i = 0; i < bufsize; ++i )
         crc32 = ( crc32 >> 8 ) ^ LOOKUP_TABLE[ buf[ i ] ^ ( crc32 & 0x000000FF ) ];

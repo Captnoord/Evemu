@@ -27,22 +27,25 @@
 
 #include "net/StreamPacketizer.h"
 
+using namespace common;
+using namespace common::net;
+
 /*************************************************************************/
-/* Net::StreamPacketizer                                                 */
+/* common::net::StreamPacketizer                                         */
 /*************************************************************************/
-Net::StreamPacketizer::~StreamPacketizer()
+StreamPacketizer::~StreamPacketizer()
 {
     ClearBuffers();
 }
 
-void Net::StreamPacketizer::InputData( const Util::Data& data )
+void StreamPacketizer::InputData( const util::Data& data )
 {
     mBuffer.Append( data.begin< uint8 >(), data.end< uint8 >() );
 }
 
-void Net::StreamPacketizer::Process()
+void StreamPacketizer::Process()
 {
-    Util::Buffer::ConstIterator< uint8 > cur, end;
+    util::Buffer::ConstIterator< uint8 > cur, end;
     cur = mBuffer.begin< uint8 >();
     end = mBuffer.end< uint8 >();
     while( true )
@@ -50,13 +53,13 @@ void Net::StreamPacketizer::Process()
         if( sizeof( uint32 ) > ( end - cur ) )
             break;
 
-        const Util::Buffer::ConstIterator< uint32 > len = cur.as< uint32 >();
-        const Util::Buffer::ConstIterator< uint8 > start = ( len + 1 ).as< uint8 >();
+        const util::Buffer::ConstIterator< uint32 > len = cur.as< uint32 >();
+        const util::Buffer::ConstIterator< uint8 > start = ( len + 1 ).as< uint8 >();
 
         if( *len > (uint32)( end - start ) )
             break;
 
-        mPackets.push( new Util::Buffer( start, start + *len ) );
+        mPackets.push( new util::Buffer( start, start + *len ) );
         cur = ( start + *len );
     }
 
@@ -64,9 +67,9 @@ void Net::StreamPacketizer::Process()
         mBuffer.Assign( cur, end );
 }
 
-Util::Buffer* Net::StreamPacketizer::PopPacket()
+util::Buffer* StreamPacketizer::PopPacket()
 {
-    Util::Buffer* ret = NULL;
+    util::Buffer* ret = NULL;
     if( !mPackets.empty() )
     {
         ret = mPackets.front();
@@ -76,9 +79,9 @@ Util::Buffer* Net::StreamPacketizer::PopPacket()
     return ret;
 }
 
-void Net::StreamPacketizer::ClearBuffers()
+void StreamPacketizer::ClearBuffers()
 {
-    Util::Buffer* buf;
+    util::Buffer* buf;
     while( ( buf = PopPacket() ) )
         SafeDelete( buf );
 }

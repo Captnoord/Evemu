@@ -27,30 +27,33 @@
 
 #include "win/CriticalSection.h"
 
+using namespace common;
+using namespace common::win;
+
 /*************************************************************************/
-/* Win::CriticalSection                                                  */
+/* common::win::CriticalSection                                          */
 /*************************************************************************/
-Win::CriticalSection::CriticalSection()
+CriticalSection::CriticalSection()
 {
     ::InitializeCriticalSection( &mCriticalSection );
 }
 
-Win::CriticalSection::~CriticalSection()
+CriticalSection::~CriticalSection()
 {
     ::DeleteCriticalSection( &mCriticalSection );
 }
 
-VOID Win::CriticalSection::Enter()
+VOID CriticalSection::Enter()
 {
     ::EnterCriticalSection( &mCriticalSection );
 }
 
-BOOL Win::CriticalSection::TryEnter()
+BOOL CriticalSection::TryEnter()
 {
     return ::TryEnterCriticalSection( &mCriticalSection );
 }
 
-VOID Win::CriticalSection::Leave()
+VOID CriticalSection::Leave()
 {
     ::LeaveCriticalSection( &mCriticalSection );
 }

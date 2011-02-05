@@ -27,40 +27,43 @@
 
 #include "posix/Directory.h"
 
+using namespace common;
+using namespace common::fs;
+
 /*************************************************************************/
-/* Fs::Directory                                                         */
+/* common::fs::Directory                                                 */
 /*************************************************************************/
-bool Fs::Directory::Create( const char* path )
+bool Directory::Create( const char* path )
 {
     static const mode_t MODE = S_IRUSR | S_IWUSR | S_IXUSR
                              | S_IRGRP           | S_IXGRP
                              | S_IROTH           | S_IXOTH;
 
-    int code = Posix::Directory::Create( path, MODE );
+    int code = posix::Directory::Create( path, MODE );
     return 0 == code || EEXIST == code;
 }
 
-bool Fs::Directory::Remove( const char* path )
+bool Directory::Remove( const char* path )
 {
-    return 0 == Posix::Directory::Remove( path );
+    return 0 == posix::Directory::Remove( path );
 }
 
-Fs::Directory::Directory()
-: mDirectory( new Posix::Directory )
+Directory::Directory()
+: mDirectory( new posix::Directory )
 {
 }
 
-Fs::Directory::~Directory()
+Directory::~Directory()
 {
     SafeDelete( mDirectory );
 }
 
-bool Fs::Directory::isValid() const
+bool Directory::isValid() const
 {
     return mDirectory->isValid();
 }
 
-bool Fs::Directory::Open( const char* path, char* name, size_t len )
+bool Directory::Open( const char* path, char* name, size_t len )
 {
     if( 0 != mDirectory->Open( path ) )
         return false;
@@ -68,7 +71,7 @@ bool Fs::Directory::Open( const char* path, char* name, size_t len )
     return Next( name, len );
 }
 
-bool Fs::Directory::Next( char* name, size_t len )
+bool Directory::Next( char* name, size_t len )
 {
     dirent entry;
     dirent* result;
@@ -83,7 +86,7 @@ bool Fs::Directory::Next( char* name, size_t len )
     return true;
 }
 
-bool Fs::Directory::Close()
+bool Directory::Close()
 {
     return 0 == mDirectory->Close();
 }

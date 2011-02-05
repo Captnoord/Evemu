@@ -23,60 +23,63 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __WIN__FILE_SEARCH_H__INCL__
-#define __WIN__FILE_SEARCH_H__INCL__
+#ifndef __COMMON__WIN__FILE_SEARCH_H__INCL__
+#define __COMMON__WIN__FILE_SEARCH_H__INCL__
 
 #include "win/Handle.h"
 
-namespace Win
+namespace common
 {
-    /**
-     * @brief Searches a directory.
-     *
-     * @author Bloody.Rabbit
-     */
-    class FileSearch
-    : public Handle
+    namespace win
     {
-    public:
         /**
-         * @brief A default constructor.
+         * @brief Searches a directory.
+         *
+         * @author Bloody.Rabbit
          */
-        FileSearch();
-        /**
-         * @brief Closes the search.
-         */
-        ~FileSearch();
+        class FileSearch
+        : public Handle
+        {
+        public:
+            /**
+             * @brief A default constructor.
+             */
+            FileSearch();
+            /**
+             * @brief Closes the search.
+             */
+            ~FileSearch();
 
-        /**
-         * @brief Finds a file according to the given name.
-         *
-         * @param[in]  name A full name of a file to find.
-         * @param[out] data Where to store the result.
-         *
-         * @return An error code.
-         */
-        DWORD Find( PCTSTR name, PWIN32_FIND_DATA data );
-        /**
-         * @brief Finds another file.
-         *
-         * Reuses a filename passed to the last call to Find.
-         *
-         * @param[out] data Where to store the result.
-         *
-         * @return An error code.
-         */
-        DWORD FindNext( PWIN32_FIND_DATA data );
+            /**
+             * @brief Finds a file according to the given name.
+             *
+             * @param[in]  name A full name of a file to find.
+             * @param[out] data Where to store the result.
+             *
+             * @return An error code.
+             */
+            DWORD Find( PCTSTR name, PWIN32_FIND_DATA data );
+            /**
+             * @brief Finds another file.
+             *
+             * Reuses a filename passed to the last call to Find.
+             *
+             * @param[out] data Where to store the result.
+             *
+             * @return An error code.
+             */
+            DWORD FindNext( PWIN32_FIND_DATA data );
 
-        /**
-         * @brief Closes the search.
-         *
-         * Does not fail even if the handle is already invalid.
-         *
-         * @return An error code.
-         */
-        DWORD Close();
-    };
+            /**
+             * @brief Closes the search.
+             *
+             * Does not fail even if the handle is already invalid.
+             *
+             * @return An error code.
+             */
+            DWORD Close();
+        };
+    }
 }
 
-#endif /* !__WIN__FILE_SEARCH_H__INCL__ */
+#endif /* !__COMMON__WIN__FILE_SEARCH_H__INCL__ */

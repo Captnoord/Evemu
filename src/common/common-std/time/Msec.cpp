@@ -29,118 +29,121 @@
 #include "time/Msec.h"
 #include "time/WinTime.h"
 
-/*************************************************************************/
-/* Time::Msec                                                            */
-/*************************************************************************/
-const Time::Msec Time::Msec::MSEC = 1;
-const Time::Msec Time::Msec::SEC = Time::Msec::MSEC * Time::MSEC_PER_SEC;
-const Time::Msec Time::Msec::MIN = Time::Msec::SEC * Time::SEC_PER_MIN;
-const Time::Msec Time::Msec::HOUR = Time::Msec::MIN * Time::MIN_PER_HOUR;
-const Time::Msec Time::Msec::DAY = Time::Msec::HOUR * Time::HOUR_PER_DAY;
-const Time::Msec Time::Msec::MONTH = Time::Msec::DAY * Time::DAY_PER_MONTH;
-const Time::Msec Time::Msec::YEAR = Time::Msec::MONTH * Time::MONTH_PER_YEAR;
+using namespace common;
+using namespace common::time;
 
-Time::Msec::Msec( size_t msec )
+/*************************************************************************/
+/* common::time::Msec                                                    */
+/*************************************************************************/
+const Msec Msec::MSEC = 1;
+const Msec Msec::SEC = Msec::MSEC * MSEC_PER_SEC;
+const Msec Msec::MIN = Msec::SEC * SEC_PER_MIN;
+const Msec Msec::HOUR = Msec::MIN * MIN_PER_HOUR;
+const Msec Msec::DAY = Msec::HOUR * HOUR_PER_DAY;
+const Msec Msec::MONTH = Msec::DAY * DAY_PER_MONTH;
+const Msec Msec::YEAR = Msec::MONTH * MONTH_PER_YEAR;
+
+Msec::Msec( size_t msec )
 : mMsec( msec )
 {
 }
 
-Time::Msec::Msec( const Time::Msec& oth )
+Msec::Msec( const Msec& oth )
 : mMsec( oth.count() )
 {
 }
 
-Time::Msec::Msec( const Time::WinTime& time )
+Msec::Msec( const WinTime& time )
 : mMsec( time.count() / ( WINTIME_PER_USEC * USEC_PER_MSEC ) )
 {
 }
 
-bool Time::Msec::operator==( const Time::Msec& oth ) const
+bool Msec::operator==( const Msec& oth ) const
 {
     return count() == oth.count();
 }
 
-bool Time::Msec::operator!=( const Time::Msec& oth ) const
+bool Msec::operator!=( const Msec& oth ) const
 {
     return count() != oth.count();
 }
 
-bool Time::Msec::operator<( const Time::Msec& oth ) const
+bool Msec::operator<( const Msec& oth ) const
 {
     return count() < oth.count();
 }
 
-bool Time::Msec::operator<=( const Time::Msec& oth ) const
+bool Msec::operator<=( const Msec& oth ) const
 {
     return count() <= oth.count();
 }
 
-bool Time::Msec::operator>( const Time::Msec& oth ) const
+bool Msec::operator>( const Msec& oth ) const
 {
     return count() > oth.count();
 }
 
-bool Time::Msec::operator>=( const Time::Msec& oth ) const
+bool Msec::operator>=( const Msec& oth ) const
 {
     return count() >= oth.count();
 }
 
-Time::Msec Time::Msec::operator+( const Time::Msec& oth ) const
+Msec Msec::operator+( const Msec& oth ) const
 {
     return count() + oth.count();
 }
 
-Time::Msec Time::Msec::operator-( const Time::Msec& oth ) const
+Msec Msec::operator-( const Msec& oth ) const
 {
     return count() - oth.count();
 }
 
-Time::Msec Time::Msec::operator*( size_t ratio ) const
+Msec Msec::operator*( size_t ratio ) const
 {
     return count() * ratio;
 }
 
-Time::Msec Time::Msec::operator/( size_t ratio ) const
+Msec Msec::operator/( size_t ratio ) const
 {
     return count() / ratio;
 }
 
-Time::Msec Time::Msec::operator%( size_t ratio ) const
+Msec Msec::operator%( size_t ratio ) const
 {
     return count() % ratio;
 }
 
-Time::Msec& Time::Msec::operator=( const Time::Msec& oth )
+Msec& Msec::operator=( const Msec& oth )
 {
     mMsec = oth.count();
     return *this;
 }
 
-Time::Msec& Time::Msec::operator+=( const Time::Msec& oth )
+Msec& Msec::operator+=( const Msec& oth )
 {
     mMsec += oth.count();
     return *this;
 }
 
-Time::Msec& Time::Msec::operator-=( const Time::Msec& oth )
+Msec& Msec::operator-=( const Msec& oth )
 {
     mMsec -= oth.count();
     return *this;
 }
 
-Time::Msec& Time::Msec::operator*=( size_t ratio )
+Msec& Msec::operator*=( size_t ratio )
 {
     mMsec *= ratio;
     return *this;
 }
 
-Time::Msec& Time::Msec::operator/=( size_t ratio )
+Msec& Msec::operator/=( size_t ratio )
 {
     mMsec /= ratio;
     return *this;
 }
 
-Time::Msec& Time::Msec::operator%=( size_t ratio )
+Msec& Msec::operator%=( size_t ratio )
 {
     mMsec %= ratio;
     return *this;

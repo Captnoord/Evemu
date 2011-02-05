@@ -23,71 +23,74 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __WIN__CONDITION_H__INCL__
-#define __WIN__CONDITION_H__INCL__
+#ifndef __COMMON__WIN__CONDITION_H__INCL__
+#define __COMMON__WIN__CONDITION_H__INCL__
 
 #include "win/CriticalSection.h"
 #include "win/Event.h"
 
-namespace Win
+namespace common
 {
-    /**
-     * @brief Implementation of condition variable for Windows.
-     *
-     * @author Bloody.Rabbit
-     */
-    class Condition
+    namespace win
     {
-    public:
         /**
-         * @brief A primary constructor.
+         * @brief Implementation of condition variable for Windows.
+         *
+         * @author Bloody.Rabbit
          */
-        Condition();
+        class Condition
+        {
+        public:
+            /**
+             * @brief A primary constructor.
+             */
+            Condition();
 
-        /**
-         * @brief Signals the condition variable.
-         *
-         * Signaling the condition makes exactly one
-         * waiting thread wake up. If there is none,
-         * the signal has no effect.
-         *
-         * @return An error code.
-         */
-        DWORD Signal();
-        /**
-         * @brief Broadcasts the condition variable.
-         *
-         * Broadcasting the condition makes all waiting
-         * threads wake up. If there are none, the
-         * broadcast has no effect.
-         *
-         * @return An error code.
-         */
-        DWORD Broadcast();
+            /**
+             * @brief Signals the condition variable.
+             *
+             * Signaling the condition makes exactly one
+             * waiting thread wake up. If there is none,
+             * the signal has no effect.
+             *
+             * @return An error code.
+             */
+            DWORD Signal();
+            /**
+             * @brief Broadcasts the condition variable.
+             *
+             * Broadcasting the condition makes all waiting
+             * threads wake up. If there are none, the
+             * broadcast has no effect.
+             *
+             * @return An error code.
+             */
+            DWORD Broadcast();
 
-        /**
-         * @brief Waits on the condition variable.
-         *
-         * @param[in] criticalSection The critical section this
-         *                            condition is bound to.
-         * @param[in] timeout         The wait timeout.
-         *
-         * @return An error code.
-         */
-        DWORD Wait( CriticalSection& criticalSection, const Time::Msec& timeout = INFINITE );
+            /**
+             * @brief Waits on the condition variable.
+             *
+             * @param[in] criticalSection The critical section this
+             *                            condition is bound to.
+             * @param[in] timeout         The wait timeout.
+             *
+             * @return An error code.
+             */
+            DWORD Wait( CriticalSection& criticalSection, const time::Msec& timeout = INFINITE );
 
-    protected:
-        /// The event for waiting threads.
-        Event mWaitEvent;
+        protected:
+            /// The event for waiting threads.
+            Event mWaitEvent;
 
-        /// Current count of waiting threads.
-        SIZE_T mCurrentCount;
-        /// Count of threads to free.
-        SIZE_T mToFreeCount;
+            /// Current count of waiting threads.
+            SIZE_T mCurrentCount;
+            /// Count of threads to free.
+            SIZE_T mToFreeCount;
 
-        /// A mutex to protect this whole stuff.
-        Mt::Mutex mMutex;
-    };
+            /// A mutex to protect this whole stuff.
+            mt::Mutex mMutex;
+        };
+    }
 }
 
-#endif /* !__WIN__CONDITION_H__INCL__ */
+#endif /* !__COMMON__WIN__CONDITION_H__INCL__ */

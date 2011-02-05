@@ -23,132 +23,133 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __TIME__TIMESPEC_H__INCL__
-#define __TIME__TIMESPEC_H__INCL__
+#ifndef __COMMON__TIME__TIMESPEC_H__INCL__
+#define __COMMON__TIME__TIMESPEC_H__INCL__
 
-namespace Time
+namespace common
 {
-#   ifndef WIN32
-    class Msec;
-    class Timeval;
-    class WinTime;
-
-    /**
-     * @brief A wrapper around <code>struct timespec</code>.
-     *
-     * @author Bloody.Rabbit
-     */
-    class Timespec
+    namespace time
     {
-    public:
-        /// A nanosecond in Timespec.
-        static const Timespec NSEC;
-        /// A microsecond in Timespec.
-        static const Timespec USEC;
-        /// A millisecond in Timespec.
-        static const Timespec MSEC;
-        /// A second in Timespec.
-        static const Timespec SEC;
-        /// A minute in Timespec.
-        static const Timespec MIN;
-        /// An hour in Timespec.
-        static const Timespec HOUR;
-        /// A day in Timespec.
-        static const Timespec DAY;
-        /// A month in Timespec.
-        static const Timespec MONTH;
-        /// A year in Timespec.
-        static const Timespec YEAR;
+        class Msec;
+        class Timeval;
+        class WinTime;
 
         /**
-         * @brief A primary constructor.
+         * @brief A wrapper around <code>struct timespec</code>.
          *
-         * @param[in] sec  The number of seconds.
-         * @param[in] nsec The number of nanoseconds.
+         * @author Bloody.Rabbit
          */
-        Timespec( time_t sec = 0, long nsec = 0 );
-        /**
-         * @brief A primary constructor.
-         *
-         * @param[in] ts The <code>timespec</code>.
-         */
-        Timespec( const timespec& ts );
+        class Timespec
+        {
+        public:
+            /// A nanosecond in Timespec.
+            static const Timespec NSEC;
+            /// A microsecond in Timespec.
+            static const Timespec USEC;
+            /// A millisecond in Timespec.
+            static const Timespec MSEC;
+            /// A second in Timespec.
+            static const Timespec SEC;
+            /// A minute in Timespec.
+            static const Timespec MIN;
+            /// An hour in Timespec.
+            static const Timespec HOUR;
+            /// A day in Timespec.
+            static const Timespec DAY;
+            /// A month in Timespec.
+            static const Timespec MONTH;
+            /// A year in Timespec.
+            static const Timespec YEAR;
 
-        /**
-         * @brief A conversion constructor.
-         *
-         * @param[in] msec Msec to be converted.
-         */
-        Timespec( const Msec& msec );
-        /**
-         * @brief A copy constructor.
-         *
-         * @param[in] oth Timespec to copy.
-         */
-        Timespec( const Timespec& oth );
-        /**
-         * @brief A conversion constructor.
-         *
-         * @param[in] tv Timeval to be converted.
-         */
-        Timespec( const Timeval& tv );
-        /**
-         * @brief A conversion constructor.
-         *
-         * @param[in] time WinTime to be converted.
-         */
-        Timespec( const WinTime& time );
+            /**
+             * @brief A primary constructor.
+             *
+             * @param[in] sec  The number of seconds.
+             * @param[in] nsec The number of nanoseconds.
+             */
+            Timespec( time_t sec = 0, long nsec = 0 );
+            /**
+             * @brief A primary constructor.
+             *
+             * @param[in] ts The <code>timespec</code>.
+             */
+            Timespec( const timespec& ts );
 
-        /// Obtains the stored <code>timespec</code>.
-        const timespec& ts() const { return mTimespec; }
+            /**
+             * @brief A conversion constructor.
+             *
+             * @param[in] msec Msec to be converted.
+             */
+            Timespec( const Msec& msec );
+            /**
+             * @brief A copy constructor.
+             *
+             * @param[in] oth Timespec to copy.
+             */
+            Timespec( const Timespec& oth );
+            /**
+             * @brief A conversion constructor.
+             *
+             * @param[in] tv Timeval to be converted.
+             */
+            Timespec( const Timeval& tv );
+            /**
+             * @brief A conversion constructor.
+             *
+             * @param[in] time WinTime to be converted.
+             */
+            Timespec( const WinTime& time );
 
-        /// The stored number of seconds.
-        time_t sec() const { return ts().tv_sec; }
-        /// The stored number of nanoseconds.
-        long nsec() const { return ts().tv_nsec; }
+            /// Obtains the stored <code>timespec</code>.
+            const timespec& ts() const { return mTimespec; }
 
-        /// An equivalency operator.
-        bool operator==( const Timespec& oth ) const;
-        /// A non-equivalency operator.
-        bool operator!=( const Timespec& oth ) const;
-        /// A less-than operator.
-        bool operator<( const Timespec& oth ) const;
-        /// A less-or-equal operator.
-        bool operator<=( const Timespec& oth ) const;
-        /// A greater-than operator.
-        bool operator>( const Timespec& oth ) const;
-        /// A greater-or-equal operator.
-        bool operator>=( const Timespec& oth ) const;
+            /// The stored number of seconds.
+            time_t sec() const { return ts().tv_sec; }
+            /// The stored number of nanoseconds.
+            long nsec() const { return ts().tv_nsec; }
 
-        /// A sum operator.
-        Timespec operator+( const Timespec& oth ) const;
-        /// A difference operator.
-        Timespec operator-( const Timespec& oth ) const;
-        /// A multiply operator.
-        Timespec operator*( size_t ratio ) const;
-        /// A division operator.
-        Timespec operator/( size_t ratio ) const;
-        /// A remainder operator.
-        Timespec operator%( size_t ratio ) const;
+            /// An equivalency operator.
+            bool operator==( const Timespec& oth ) const;
+            /// A non-equivalency operator.
+            bool operator!=( const Timespec& oth ) const;
+            /// A less-than operator.
+            bool operator<( const Timespec& oth ) const;
+            /// A less-or-equal operator.
+            bool operator<=( const Timespec& oth ) const;
+            /// A greater-than operator.
+            bool operator>( const Timespec& oth ) const;
+            /// A greater-or-equal operator.
+            bool operator>=( const Timespec& oth ) const;
 
-        /// An assignment operator.
-        Timespec& operator=( const Timespec& oth );
-        /// An add operator.
-        Timespec& operator+=( const Timespec& oth );
-        /// A substract operator.
-        Timespec& operator-=( const Timespec& oth );
-        /// An expand operator.
-        Timespec& operator*=( size_t ratio );
-        /// A reduce operator.
-        Timespec& operator/=( size_t ratio );
-        /// A remainder-assign operator.
-        Timespec& operator%=( size_t ratio );
+            /// A sum operator.
+            Timespec operator+( const Timespec& oth ) const;
+            /// A difference operator.
+            Timespec operator-( const Timespec& oth ) const;
+            /// A multiply operator.
+            Timespec operator*( size_t ratio ) const;
+            /// A division operator.
+            Timespec operator/( size_t ratio ) const;
+            /// A remainder operator.
+            Timespec operator%( size_t ratio ) const;
 
-    protected:
-        /// The <code>timespec</code>.
-        timespec mTimespec;
-    };
-#   endif /* !WIN32 */
+            /// An assignment operator.
+            Timespec& operator=( const Timespec& oth );
+            /// An add operator.
+            Timespec& operator+=( const Timespec& oth );
+            /// A substract operator.
+            Timespec& operator-=( const Timespec& oth );
+            /// An expand operator.
+            Timespec& operator*=( size_t ratio );
+            /// A reduce operator.
+            Timespec& operator/=( size_t ratio );
+            /// A remainder-assign operator.
+            Timespec& operator%=( size_t ratio );
+
+        protected:
+            /// The <code>timespec</code>.
+            timespec mTimespec;
+        };
+    }
 }
 
-#endif /* !__TIME__TIMESPEC_H__INCL__ */
+#endif /* !__COMMON__TIME__TIMESPEC_H__INCL__ */

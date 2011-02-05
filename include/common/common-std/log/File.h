@@ -23,55 +23,58 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __LOG__FILE_H__INCL__
-#define __LOG__FILE_H__INCL__
+#ifndef __COMMON__LOG__FILE_H__INCL__
+#define __COMMON__LOG__FILE_H__INCL__
 
 #include "log/LogMgr.h"
-#include "std/File.h"
+#include "stdx/File.h"
 
-namespace Log
+namespace common
 {
-    /**
-     * @brief A file log.
-     *
-     * @author Bloody.Rabbit
-     */
-    class File
-    : public Log
+    namespace log
     {
-    public:
         /**
-         * @brief A primary constructor.
+         * @brief A file log.
          *
-         * @param[in] name The name of the output file.
+         * @author Bloody.Rabbit
          */
-        File( const char* name );
+        class File
+        : public Log
+        {
+        public:
+            /**
+             * @brief A primary constructor.
+             *
+             * @param[in] name The name of the output file.
+             */
+            File( const char* name );
 
-        /**
-         * @brief Writes a message into the log file.
-         *
-         * @param[in] m The message to be written.
-         *
-         * @return An error code.
-         */
-        Stream::Error Write( const Message& m );
-        /**
-         * @brief Writes messages into the log file.
-         *
-         * @param[in]  mp           An array of messages to be written.
-         * @param[in]  count        Length of the <var>mp</var> array.
-         * @param[out] countWritten Where to store the number
-         *                          of written messages.
-         *
-         * @return An error code.
-         */
-        Stream::Error Write( const Message* mp, size_t count,
-                             size_t* countWritten = NULL );
+            /**
+             * @brief Writes a message into the log file.
+             *
+             * @param[in] m The message to be written.
+             *
+             * @return An error code.
+             */
+            stream::Error Write( const Message& m );
+            /**
+             * @brief Writes messages into the log file.
+             *
+             * @param[in]  mp           An array of messages to be written.
+             * @param[in]  count        Length of the <var>mp</var> array.
+             * @param[out] countWritten Where to store the number
+             *                          of written messages.
+             *
+             * @return An error code.
+             */
+            stream::Error Write( const Message* mp, size_t count,
+                                 size_t* countWritten = NULL );
 
-    protected:
-        /// The output file.
-        Std::File mFile;
-    };
+        protected:
+            /// The output file.
+            stdx::File mFile;
+        };
+    }
 }
 
-#endif /* !__LOG__FILE_H__INCL__ */
+#endif /* !__COMMON__LOG__FILE_H__INCL__ */

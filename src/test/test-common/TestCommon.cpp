@@ -28,9 +28,11 @@
 #include "TestFsDirectory.h"
 #include "TestFsFile.h"
 #include "TestNetStreamSocket.h"
-#include "TestStdFile.h"
+#include "TestStdxFile.h"
 #include "TestUtilBuffer.h"
 #include "TestUtilData.h"
+
+using namespace test;
 
 /**
  * @brief Runs all tests.
@@ -46,13 +48,13 @@ bool RunTests( CppUnit::OStream* xmlFile = NULL )
     if( NULL != xmlFile )
         runner.setOutputter( new CppUnit::XmlOutputter( &runner.result(), *xmlFile ) );
 
-    runner.addTest( Util::Test< Fs::File >::suite() );
-    runner.addTest( Util::Test< Util::Buffer >::suite() );
-    runner.addTest( Util::Test< Util::Data >::suite() );
+    runner.addTest( TestFsFile::suite() );
+    runner.addTest( TestUtilBuffer::suite() );
+    runner.addTest( TestUtilData::suite() );
 
-    runner.addTest( new Util::Test< Fs::Directory > );
-    runner.addTest( new Util::Test< Std::File > );
-    runner.addTest( new Util::Test< Net::StreamSocket< Net::Ip4 > > );
+    runner.addTest( new TestFsDirectory );
+    runner.addTest( new TestStdxFile );
+    runner.addTest( new TestNetStreamSocket< net::Ip4 > );
 
     return runner.run();
 }

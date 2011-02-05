@@ -27,8 +27,11 @@
 
 #include "util/Misc.h"
 
+using namespace common;
+using namespace common::util;
+
 /*************************************************************************/
-/* Util                                                                  */
+/* common::util                                                          */
 /*************************************************************************/
 static uint16 crc16_table[ 0x100 ] =
 {
@@ -66,7 +69,7 @@ static uint16 crc16_table[ 0x100 ] =
     0x6e17, 0x7e36, 0x4e55, 0x5e74, 0x2e93, 0x3eb2, 0x0ed1, 0x1ef0,
 };
 
-uint16 Util::crc_hqx( const uint8* data, size_t len, uint16 crc )
+uint16 util::crc_hqx( const uint8* data, size_t len, uint16 crc )
 {
     while( len-- )
         crc = ( crc << 8 ) ^ crc16_table[ ( crc >> 8 ) ^ ( *data++ ) ];
@@ -74,12 +77,12 @@ uint16 Util::crc_hqx( const uint8* data, size_t len, uint16 crc )
     return crc;
 }
 
-int64 Util::MakeRandomInt( int64 low, int64 high )
+int64 util::MakeRandomInt( int64 low, int64 high )
 {
     return (int64)MakeRandomFloat( (double)low, (double)high );
 }
 
-double Util::MakeRandomFloat( double low, double high )
+double util::MakeRandomFloat( double low, double high )
 {
 //I didn't even look to see if windows supports random();
 #   ifdef WIN32
@@ -110,7 +113,7 @@ double Util::MakeRandomFloat( double low, double high )
 #   undef GenerateRandom
 }
 
-uint64 Util::npowof2( uint64 num )
+uint64 util::npowof2( uint64 num )
 {
     --num;
     num |= ( num >>  1 );

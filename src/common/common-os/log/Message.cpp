@@ -27,10 +27,13 @@
 
 #include "time/TimeMgr.h"
 
+using namespace common;
+using namespace common::log;
+
 /*************************************************************************/
-/* Log::Message                                                          */
+/* common::log::Message                                                  */
 /*************************************************************************/
-const char Log::Message::TYPE_PREFIXES[ TYPE_COUNT ] =
+const char Message::TYPE_PREFIXES[ TYPE_COUNT ] =
 {
     'N', // TYPE_NOTICE
     'E', // TYPE_ERROR
@@ -40,7 +43,7 @@ const char Log::Message::TYPE_PREFIXES[ TYPE_COUNT ] =
     'H'  // TYPE_DUMP
 };
 
-Log::Message::Message( Type type, const char* source,
+Message::Message( Type type, const char* source,
                        const char* format, ... )
 : mType( type ),
   mTime( sTimeMgr.nowTm() ),
@@ -55,7 +58,7 @@ Log::Message::Message( Type type, const char* source,
     va_end( ap );
 }
 
-Log::Message::Message( Type type, const char* source,
+Message::Message( Type type, const char* source,
                        const char* format, va_list ap )
 : mType( type ),
   mTime( sTimeMgr.nowTm() ),
@@ -65,7 +68,7 @@ Log::Message::Message( Type type, const char* source,
     assert( 0 <= code );
 }
 
-char Log::Message::prefix() const
+char Message::prefix() const
 {
     assert( 0 <= type() && type() < TYPE_COUNT );
     return TYPE_PREFIXES[ type() ];

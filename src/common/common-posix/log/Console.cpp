@@ -25,8 +25,11 @@
 
 #include "CommonPosix.h"
 
+using namespace common;
+using namespace common::log;
+
 /*************************************************************************/
-/* Log::Console                                                          */
+/* common::log::Console                                                  */
 /*************************************************************************/
 /// A default color to print with.
 const char* const COLOR_DEFAULT = "\033[" "00"    "m";
@@ -34,7 +37,7 @@ const char* const COLOR_DEFAULT = "\033[" "00"    "m";
 const char* const COLOR_SOURCE  = "\033[" "37;01" "m";
 
 /// An array of colors to print messages with.
-const char* const TYPE_COLORS[ Log::Message::TYPE_COUNT ] =
+const char* const TYPE_COLORS[ Message::TYPE_COUNT ] =
 {
     "\033[" "00"    "m", // TYPE_NOTICE
     "\033[" "31;22" "m", // TYPE_ERROR
@@ -44,11 +47,11 @@ const char* const TYPE_COLORS[ Log::Message::TYPE_COUNT ] =
     "\033[" "35;22" "m"  // TYPE_DUMP
 };
 
-Stream::Error Log::Console::Write( const Message& m )
+stream::Error Console::Write( const Message& m )
 {
     assert( 0 <= m.type() && m.type() < Message::TYPE_COUNT );
 
-    const Std::Tm& tm = m.time();
+    const stdx::Tm& tm = m.time();
 
     int code = ::printf( "%04d-%02d-%02d %02d:%02d:%02d %s%c %s%s:%s %s%s\n",
                          1900 + tm.year(), 1 + tm.mon(), tm.mday(),
@@ -57,15 +60,15 @@ Stream::Error Log::Console::Write( const Message& m )
                          COLOR_SOURCE, m.source().c_str(), TYPE_COLORS[ m.type() ],
                          m.message().c_str(), COLOR_DEFAULT );
 
-    return 0 <= code ? Stream::ERROR_OK : Stream::ERROR_WRITE;
+    return 0 <= code ? stream::ERROR_OK : stream::ERROR_WRITE;
 }
 
-Stream::Error Log::Console::Write( const Message* mp, size_t count, size_t* countWritten )
+stream::Error Console::Write( const Message* mp, size_t count, size_t* countWritten )
 {
     for( size_t i = 0; i < count; ++i )
     {
-        const Stream::Error err = Write( mp[ i ] );
-        if( Stream::ERROR_OK != err )
+        const stream::Error err = Write( mp[ i ] );
+        if( stream::ERROR_OK != err )
         {
             if( NULL != countWritten )
                 *countWritten = i;
@@ -77,5 +80,5 @@ Stream::Error Log::Console::Write( const Message* mp, size_t count, size_t* coun
     if( NULL != countWritten )
         *countWritten = count;
 
-    return Stream::ERROR_OK;
+    return stream::ERROR_OK;
 }

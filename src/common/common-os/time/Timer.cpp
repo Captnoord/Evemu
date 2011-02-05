@@ -28,21 +28,24 @@
 #include "time/TimeMgr.h"
 #include "time/Timer.h"
 
+using namespace common;
+using namespace common::time;
+
 /*************************************************************************/
-/* Time::Timer                                                           */
+/* common::time::Timer                                                   */
 /*************************************************************************/
-Time::Timer::Timer( size_t period, bool accurate )
+Timer::Timer( size_t period, bool accurate )
 : mTimeout( 0 ),
   mPeriod( period ),
   mAccurate( accurate )
 {
 }
 
-Time::Timer::~Timer()
+Timer::~Timer()
 {
 }
 
-void Time::Timer::Start()
+void Timer::Start()
 {
     if( !accurate() || mTimeout == 0 )
     {
@@ -56,7 +59,7 @@ void Time::Timer::Start()
     mTimeout += period();
 }
 
-bool Time::Timer::Check( bool restart )
+bool Timer::Check( bool restart )
 {
 #ifdef WIN32
     Msec msec = sTimeMgr.nowWin();
@@ -75,7 +78,7 @@ bool Time::Timer::Check( bool restart )
         return false;
 }
 
-void Time::Timer::Sleep( bool restart )
+void Timer::Sleep( bool restart )
 {
 #ifdef WIN32
     Msec msec = sTimeMgr.nowWin();
@@ -84,7 +87,7 @@ void Time::Timer::Sleep( bool restart )
 #endif /* !WIN32 */
 
     if( msec < mTimeout )
-        Mt::Thread::Sleep( mTimeout - msec );
+        mt::Thread::Sleep( mTimeout - msec );
 
     if( restart )
         Start();

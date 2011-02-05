@@ -23,8 +23,8 @@
     Author:     Aim, Captnoord, Zhur, Bloody.Rabbit
 */
 
-#ifndef __STD__UTILS_H__INCL__
-#define __STD__UTILS_H__INCL__
+#ifndef __COMMON__STDX__UTILS_H__INCL__
+#define __COMMON__STDX__UTILS_H__INCL__
 
 /*
  * WIN32:
@@ -119,4 +119,4 @@ int sprintf( std::string& into, const char* fmt, ... );
  */
 int vsprintf( std::string& into, const char* fmt, va_list ap );
 
-#endif /* !__STD__UTILS_H__INCL__ */
+#endif /* !__COMMON__STDX__UTILS_H__INCL__ */

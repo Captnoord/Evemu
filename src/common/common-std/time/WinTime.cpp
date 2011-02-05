@@ -29,119 +29,122 @@
 #include "time/Msec.h"
 #include "time/WinTime.h"
 
-/*************************************************************************/
-/* Time::WinTime                                                         */
-/*************************************************************************/
-const Time::WinTime Time::WinTime::USEC = 1 * WINTIME_PER_USEC;
-const Time::WinTime Time::WinTime::MSEC = Time::WinTime::USEC * Time::USEC_PER_MSEC;
-const Time::WinTime Time::WinTime::SEC = Time::WinTime::MSEC * Time::MSEC_PER_SEC;
-const Time::WinTime Time::WinTime::MIN = Time::WinTime::SEC * Time::SEC_PER_MIN;
-const Time::WinTime Time::WinTime::HOUR = Time::WinTime::MIN * Time::MIN_PER_HOUR;
-const Time::WinTime Time::WinTime::DAY = Time::WinTime::HOUR * Time::HOUR_PER_DAY;
-const Time::WinTime Time::WinTime::MONTH = Time::WinTime::DAY * Time::DAY_PER_MONTH;
-const Time::WinTime Time::WinTime::YEAR = Time::WinTime::MONTH * Time::MONTH_PER_YEAR;
+using namespace common;
+using namespace common::time;
 
-Time::WinTime::WinTime( uint64 time )
+/*************************************************************************/
+/* common::time::WinTime                                                 */
+/*************************************************************************/
+const WinTime WinTime::USEC = 1 * WINTIME_PER_USEC;
+const WinTime WinTime::MSEC = WinTime::USEC * USEC_PER_MSEC;
+const WinTime WinTime::SEC = WinTime::MSEC * MSEC_PER_SEC;
+const WinTime WinTime::MIN = WinTime::SEC * SEC_PER_MIN;
+const WinTime WinTime::HOUR = WinTime::MIN * MIN_PER_HOUR;
+const WinTime WinTime::DAY = WinTime::HOUR * HOUR_PER_DAY;
+const WinTime WinTime::MONTH = WinTime::DAY * DAY_PER_MONTH;
+const WinTime WinTime::YEAR = WinTime::MONTH * MONTH_PER_YEAR;
+
+WinTime::WinTime( uint64 time )
 : mTime( time )
 {
 }
 
-Time::WinTime::WinTime( const Time::Msec& msec )
+WinTime::WinTime( const Msec& msec )
 : mTime( WINTIME_PER_USEC * USEC_PER_MSEC * msec.count() )
 {
 }
 
-Time::WinTime::WinTime( const Time::WinTime& oth )
+WinTime::WinTime( const WinTime& oth )
 : mTime( oth.count() )
 {
 }
 
-bool Time::WinTime::operator==( const Time::WinTime& oth ) const
+bool WinTime::operator==( const WinTime& oth ) const
 {
     return count() == oth.count();
 }
 
-bool Time::WinTime::operator!=( const Time::WinTime& oth ) const
+bool WinTime::operator!=( const WinTime& oth ) const
 {
     return count() != oth.count();
 }
 
-bool Time::WinTime::operator<( const Time::WinTime& oth ) const
+bool WinTime::operator<( const WinTime& oth ) const
 {
     return count() < oth.count();
 }
 
-bool Time::WinTime::operator<=( const Time::WinTime& oth ) const
+bool WinTime::operator<=( const WinTime& oth ) const
 {
     return count() <= oth.count();
 }
 
-bool Time::WinTime::operator>( const Time::WinTime& oth ) const
+bool WinTime::operator>( const WinTime& oth ) const
 {
     return count() > oth.count();
 }
 
-bool Time::WinTime::operator>=( const Time::WinTime& oth ) const
+bool WinTime::operator>=( const WinTime& oth ) const
 {
     return count() >= oth.count();
 }
 
-Time::WinTime Time::WinTime::operator+( const Time::WinTime& oth ) const
+WinTime WinTime::operator+( const WinTime& oth ) const
 {
     return count() + oth.count();
 }
 
-Time::WinTime Time::WinTime::operator-( const Time::WinTime& oth ) const
+WinTime WinTime::operator-( const WinTime& oth ) const
 {
     return count() - oth.count();
 }
 
-Time::WinTime Time::WinTime::operator*( size_t ratio ) const
+WinTime WinTime::operator*( size_t ratio ) const
 {
     return count() * ratio;
 }
 
-Time::WinTime Time::WinTime::operator/( size_t ratio ) const
+WinTime WinTime::operator/( size_t ratio ) const
 {
     return count() / ratio;
 }
 
-Time::WinTime Time::WinTime::operator%( size_t ratio ) const
+WinTime WinTime::operator%( size_t ratio ) const
 {
     return count() % ratio;
 }
 
-Time::WinTime& Time::WinTime::operator=( const Time::WinTime& oth )
+WinTime& WinTime::operator=( const WinTime& oth )
 {
     mTime = oth.count();
     return *this;
 }
 
-Time::WinTime& Time::WinTime::operator+=( const Time::WinTime& oth )
+WinTime& WinTime::operator+=( const WinTime& oth )
 {
     mTime += oth.count();
     return *this;
 }
 
-Time::WinTime& Time::WinTime::operator-=( const Time::WinTime& oth )
+WinTime& WinTime::operator-=( const WinTime& oth )
 {
     mTime -= oth.count();
     return *this;
 }
 
-Time::WinTime& Time::WinTime::operator*=( size_t ratio )
+WinTime& WinTime::operator*=( size_t ratio )
 {
     mTime *= ratio;
     return *this;
 }
 
-Time::WinTime& Time::WinTime::operator/=( size_t ratio )
+WinTime& WinTime::operator/=( size_t ratio )
 {
     mTime /= ratio;
     return *this;
 }
 
-Time::WinTime& Time::WinTime::operator%=( size_t ratio )
+WinTime& WinTime::operator%=( size_t ratio )
 {
     mTime %= ratio;
     return *this;

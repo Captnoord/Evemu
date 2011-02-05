@@ -27,28 +27,30 @@
 
 #include "TestFsDirectory.h"
 
-/*************************************************************************/
-/* Util::Test< Fs::Directory >                                           */
-/*************************************************************************/
-const char Util::Test< Fs::Directory >::NAME_TOP[] = "TestFsDirectory-Top";
-const char Util::Test< Fs::Directory >::NAME_BOTTOM[] = "TestFsDirectory-Top/TestFsDirectory-Bottom";
+using namespace test;
 
-Util::Test< Fs::Directory >::Test()
+/*************************************************************************/
+/* test::TestFsDirectory                                                 */
+/*************************************************************************/
+const char TestFsDirectory::NAME_TOP[] = "TestFsDirectory-Top";
+const char TestFsDirectory::NAME_BOTTOM[] = "TestFsDirectory-Top/TestFsDirectory-Bottom";
+
+TestFsDirectory::TestFsDirectory()
 : CppUnit::TestCase( "TestFsDirectory" )
 {
 }
 
-void Util::Test< Fs::Directory >::runTest()
+void TestFsDirectory::runTest()
 {
     char name[ FILENAME_MAX ];
     CPPUNIT_ASSERT( !mDirectory.isValid() );
     CPPUNIT_ASSERT( !mDirectory.Open( NAME_TOP, name, sizeof( name ) ) );
     CPPUNIT_ASSERT( !mDirectory.isValid() );
 
-    CPPUNIT_ASSERT( !Fs::Directory::Create( NAME_BOTTOM ) );
-    CPPUNIT_ASSERT( Fs::Directory::Create( NAME_TOP ) );
-    CPPUNIT_ASSERT( Fs::Directory::Create( NAME_TOP ) );
-    CPPUNIT_ASSERT( Fs::Directory::Create( NAME_BOTTOM ) );
+    CPPUNIT_ASSERT( !fs::Directory::Create( NAME_BOTTOM ) );
+    CPPUNIT_ASSERT( fs::Directory::Create( NAME_TOP ) );
+    CPPUNIT_ASSERT( fs::Directory::Create( NAME_TOP ) );
+    CPPUNIT_ASSERT( fs::Directory::Create( NAME_BOTTOM ) );
 
     CPPUNIT_ASSERT( mDirectory.Open( NAME_TOP, name, sizeof( name ) ) );
     CPPUNIT_ASSERT( mDirectory.isValid() );
@@ -70,10 +72,10 @@ void Util::Test< Fs::Directory >::runTest()
     CPPUNIT_ASSERT( mDirectory.Close() );
     CPPUNIT_ASSERT( !mDirectory.isValid() );
 
-    CPPUNIT_ASSERT( !Fs::Directory::Remove( NAME_TOP ) );
-    CPPUNIT_ASSERT( Fs::Directory::Remove( NAME_BOTTOM ) );
-    CPPUNIT_ASSERT( !Fs::Directory::Remove( NAME_BOTTOM ) );
-    CPPUNIT_ASSERT( Fs::Directory::Remove( NAME_TOP ) );
+    CPPUNIT_ASSERT( !fs::Directory::Remove( NAME_TOP ) );
+    CPPUNIT_ASSERT( fs::Directory::Remove( NAME_BOTTOM ) );
+    CPPUNIT_ASSERT( !fs::Directory::Remove( NAME_BOTTOM ) );
+    CPPUNIT_ASSERT( fs::Directory::Remove( NAME_TOP ) );
 
     CPPUNIT_ASSERT( !mDirectory.Open( NAME_TOP, name, sizeof( name ) ) );
 }

@@ -23,159 +23,162 @@
     Author:     Zhur, Bloody.Rabbit
 */
 
-#ifndef __NET__TCP_SERVER_H__INCL__
-#define __NET__TCP_SERVER_H__INCL__
+#ifndef __COMMON__NET__TCP_SERVER_H__INCL__
+#define __COMMON__NET__TCP_SERVER_H__INCL__
 
 #include "mt/Mutex.h"
 #include "net/Socket.h"
 
-namespace Net
+namespace common
 {
-    /**
-     * @brief Generic class for TCP server.
-     *
-     * @author Zhur, Bloody.Rabbit
-     */
-    class TcpServerBase
+    namespace net
     {
-    public:
-        /// Size of error buffer BaseTcpServer uses.
-        static const size_t ERRBUF_SIZE;
-        /// Time (in milliseconds) between periodical checks of socket for new connections.
-        static const size_t LOOP_GRANULARITY;
-
-        /// Creates empty TCP server.
-        TcpServerBase();
-        /// Cleans server up.
-        virtual ~TcpServerBase();
-
-        /// @return TCP port the server listens on.
-        uint16 GetPort() const { return mPort; }
-        /// @return True if listening has been opened, false if not.
-        bool IsOpen() const;
-
         /**
-         * @brief Start listening on specified port.
+         * @brief Generic class for TCP server.
          *
-         * @param[in]  port   Port on which listening should be started.
-         * @param[out] errbuf Error buffer which receives description of error.
-         *
-         * @retval true  The port has been opened successfully.
-         * @retval false Failed to open the port.
+         * @author Zhur, Bloody.Rabbit
          */
-        bool Open( uint16 port, char* errbuf = 0 );
-        /// Stops started listening.
-        void Close();
-
-    protected:
-        /**
-         * @brief Starts worker thread.
-         *
-         * This function just starts worker thread; it doesn't check
-         * whether there already is one running!
-         */
-        void StartLoop();
-        /// Waits for worker thread to terminate.
-        void WaitLoop();
-
-        /**
-         * @brief Does periodical stuff to keep the server alive.
-         *
-         * @retval true  Process more.
-         * @retval false Don't process anymore (eg. an error occurred).
-         */
-        virtual bool Process();
-        /// Accepts all new connections.
-        void ListenNewConnections();
-
-        /**
-         * @brief Processes new connection.
-         *
-         * This function must be overloaded by children to process new connections.
-         * Called every time a new connection is accepted.
-         */
-        virtual void CreateNewConnection( Socket* sock, uint32 rIP, uint16 rPort ) = 0;
-
-        /**
-         * @brief Loop for worker threads.
-         *
-         * This function only casts arg to BaseTcpServer and calls
-         * member TcpServerLoop().
-         *
-         * @param[in] arg Pointer to BaseTcpServer.
-         */
-        static thread_return_t TcpServerLoop( void* arg );
-        /// Loop for worker threads.
-        thread_return_t TcpServerLoop();
-
-        /// Mutex to protect socket and associated variables.
-        mutable Mt::Mutex mMSock;
-        /// Socket used for listening.
-        Socket* mSock;
-        /// Port the socket is listening on.
-        uint16 mPort;
-
-        /// Worker thread acquires this mutex before it starts processing; used for thread synchronization.
-        mutable Mt::Mutex mMLoopRunning;
-    };
-
-    /**
-     * @brief Connection-type-dependent version of TCP server.
-     *
-     * @author Zhur, Bloody.Rabbit
-     */
-    template< typename X >
-    class TcpServer
-    : public TcpServerBase
-    {
-    public:
-        /// Deletes all stored connections.
-        ~TcpServer()
+        class TcpServerBase
         {
-            Mt::MutexLock lock( mMQueue );
+        public:
+            /// Size of error buffer BaseTcpServer uses.
+            static const size_t ERRBUF_SIZE;
+            /// Time (in milliseconds) between periodical checks of socket for new connections.
+            static const size_t LOOP_GRANULARITY;
 
-            X* conn;
-            while( ( conn = PopConnection() ) )
-                SafeDelete( conn );
-        }
+            /// Creates empty TCP server.
+            TcpServerBase();
+            /// Cleans server up.
+            virtual ~TcpServerBase();
+
+            /// @return TCP port the server listens on.
+            uint16 GetPort() const { return mPort; }
+            /// @return True if listening has been opened, false if not.
+            bool IsOpen() const;
+
+            /**
+             * @brief Start listening on specified port.
+             *
+             * @param[in]  port   Port on which listening should be started.
+             * @param[out] errbuf Error buffer which receives description of error.
+             *
+             * @retval true  The port has been opened successfully.
+             * @retval false Failed to open the port.
+             */
+            bool Open( uint16 port, char* errbuf = 0 );
+            /// Stops started listening.
+            void Close();
+
+        protected:
+            /**
+             * @brief Starts worker thread.
+             *
+             * This function just starts worker thread; it doesn't check
+             * whether there already is one running!
+             */
+            void StartLoop();
+            /// Waits for worker thread to terminate.
+            void WaitLoop();
+
+            /**
+             * @brief Does periodical stuff to keep the server alive.
+             *
+             * @retval true  Process more.
+             * @retval false Don't process anymore (eg. an error occurred).
+             */
+            virtual bool Process();
+            /// Accepts all new connections.
+            void ListenNewConnections();
+
+            /**
+             * @brief Processes new connection.
+             *
+             * This function must be overloaded by children to process new connections.
+             * Called every time a new connection is accepted.
+             */
+            virtual void CreateNewConnection( Socket* sock, uint32 rIP, uint16 rPort ) = 0;
+
+            /**
+             * @brief Loop for worker threads.
+             *
+             * This function only casts arg to BaseTcpServer and calls
+             * member TcpServerLoop().
+             *
+             * @param[in] arg Pointer to BaseTcpServer.
+             */
+            static thread_return_t TcpServerLoop( void* arg );
+            /// Loop for worker threads.
+            thread_return_t TcpServerLoop();
+
+            /// Mutex to protect socket and associated variables.
+            mutable mt::Mutex mMSock;
+            /// Socket used for listening.
+            Socket* mSock;
+            /// Port the socket is listening on.
+            uint16 mPort;
+
+            /// Worker thread acquires this mutex before it starts processing; used for thread synchronization.
+            mutable mt::Mutex mMLoopRunning;
+        };
 
         /**
-         * @brief Pops connection from queue.
+         * @brief Connection-type-dependent version of TCP server.
          *
-         * @return Popped connection.
+         * @author Zhur, Bloody.Rabbit
          */
-        X* PopConnection()
+        template< typename X >
+        class TcpServer
+        : public TcpServerBase
         {
-            Mt::MutexLock lock( mMQueue );
-
-            X* ret = NULL;
-            if( !mQueue.empty() )
+        public:
+            /// Deletes all stored connections.
+            ~TcpServer()
             {
-                ret = mQueue.front();
-                mQueue.pop();
+                mt::MutexLock lock( mMQueue );
+
+                X* conn;
+                while( ( conn = PopConnection() ) )
+                    SafeDelete( conn );
             }
 
-            return ret;
-        }
+            /**
+             * @brief Pops connection from queue.
+             *
+             * @return Popped connection.
+             */
+            X* PopConnection()
+            {
+                mt::MutexLock lock( mMQueue );
 
-    protected:
-        /**
-         * @brief Adds connection to the queue.
-         *
-         * @param[in] con Connection to be added to the queue.
-         */
-        void AddConnection( X* con )
-        {
-            Mt::MutexLock lock( mMQueue );
+                X* ret = NULL;
+                if( !mQueue.empty() )
+                {
+                    ret = mQueue.front();
+                    mQueue.pop();
+                }
 
-            mQueue.push( con );
-        }
+                return ret;
+            }
 
-        /// Mutex to protect connection queue.
-        Mt::Mutex mMQueue;
-        /// Connection queue.
-        std::queue< X* > mQueue;
-    };
+        protected:
+            /**
+             * @brief Adds connection to the queue.
+             *
+             * @param[in] con Connection to be added to the queue.
+             */
+            void AddConnection( X* con )
+            {
+                mt::MutexLock lock( mMQueue );
+
+                mQueue.push( con );
+            }
+
+            /// Mutex to protect connection queue.
+            mt::Mutex mMQueue;
+            /// Connection queue.
+            std::queue< X* > mQueue;
+        };
+    }
 }
 
-#endif /* !__NET__TCP_SERVER_H__INCL__ */
+#endif /* !__COMMON__NET__TCP_SERVER_H__INCL__ */

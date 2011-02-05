@@ -23,38 +23,41 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __TIME__CONST_H__INCL__
-#define __TIME__CONST_H__INCL__
+#ifndef __COMMON__TIME__CONST_H__INCL__
+#define __COMMON__TIME__CONST_H__INCL__
 
-/**
- * @brief Classes dealing with time.
- */
-namespace Time
+namespace  common
 {
-    /// Number of nanoseconds in a microsecond.
-    extern const size_t NSEC_PER_USEC;
-    /// Number of microseconds in a millisecond.
-    extern const size_t USEC_PER_MSEC;
-    /// Number of milliseconds in a second.
-    extern const size_t MSEC_PER_SEC;
-    /// Number of seconds in a minute.
-    extern const size_t SEC_PER_MIN;
-    /// Number of minutes in an hour.
-    extern const size_t MIN_PER_HOUR;
-    /// Number of hours in a day.
-    extern const size_t HOUR_PER_DAY;
-    /// Number of days in a month.
-    extern const size_t DAY_PER_MONTH;
-    /// Number of months in a year.
-    extern const size_t MONTH_PER_YEAR;
+    /**
+     * @brief Classes dealing with time.
+     */
+    namespace time
+    {
+        /// Number of nanoseconds in a microsecond.
+        extern const size_t NSEC_PER_USEC;
+        /// Number of microseconds in a millisecond.
+        extern const size_t USEC_PER_MSEC;
+        /// Number of milliseconds in a second.
+        extern const size_t MSEC_PER_SEC;
+        /// Number of seconds in a minute.
+        extern const size_t SEC_PER_MIN;
+        /// Number of minutes in an hour.
+        extern const size_t MIN_PER_HOUR;
+        /// Number of hours in a day.
+        extern const size_t HOUR_PER_DAY;
+        /// Number of days in a month.
+        extern const size_t DAY_PER_MONTH;
+        /// Number of months in a year.
+        extern const size_t MONTH_PER_YEAR;
 
-    /// Number of nanoseconds in a WinTime-unit.
-    extern const size_t NSEC_PER_WINTIME;
-    /// Number of WinTime-units in a microsecond.
-    extern const size_t WINTIME_PER_USEC;
+        /// Number of nanoseconds in a WinTime-unit.
+        extern const size_t NSEC_PER_WINTIME;
+        /// Number of WinTime-units in a microsecond.
+        extern const size_t WINTIME_PER_USEC;
 
-    /// Number of seconds between Unix Epoch (January 1, 1970) and Windows Epoch (January 1, 1601).
-    extern const size_t EPOCH_DIFF_SEC;
+        /// Number of seconds between Unix Epoch (January 1, 1970) and Windows Epoch (January 1, 1601).
+        extern const size_t EPOCH_DIFF_SEC;
+    }
 }
 
-#endif /* !__TIME__CONST_H__INCL__ */
+#endif /* !__COMMON__TIME__CONST_H__INCL__ */

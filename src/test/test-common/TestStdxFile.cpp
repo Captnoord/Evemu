@@ -25,45 +25,47 @@
 
 #include "TestCommon.h"
 
-#include "TestStdFile.h"
+#include "TestStdxFile.h"
+
+using namespace test;
 
 /*************************************************************************/
-/* Util::Test< Std::File >                                               */
+/* test::TestStdxFile                                                    */
 /*************************************************************************/
-const char Util::Test< Std::File >::NAME[] = "TestStdFile.tmp";
-const char Util::Test< Std::File >::NAME_ALT[] = "TestStdFile-Alt.tmp";
-const uint8 Util::Test< Std::File >::PLAIN_DATA[] =
+const char TestStdxFile::NAME[] = "TestStdxFile.tmp";
+const char TestStdxFile::NAME_ALT[] = "TestStdxFile-Alt.tmp";
+const uint8 TestStdxFile::PLAIN_DATA[] =
 {
     0xA8, 0xDA, 0x06, 0x84, 0x43, 0x69, 0xC8,
 };
 
-Util::Test< Std::File >::Test()
-: CppUnit::TestCase( "TestStdFile" )
+TestStdxFile::TestStdxFile()
+: CppUnit::TestCase( "TestStdxFile" )
 {
 }
 
-void Util::Test< Std::File >::runTest()
+void TestStdxFile::runTest()
 {
     CPPUNIT_ASSERT( mFile.Open( NAME, "wb" ) );
 
-    Util::Buffer buf( PLAIN_DATA, PLAIN_DATA + sizeof( PLAIN_DATA ) );
+    util::Buffer buf( PLAIN_DATA, PLAIN_DATA + sizeof( PLAIN_DATA ) );
 
-    CPPUNIT_ASSERT_EQUAL( Stream::ERROR_OK, mFile.Write( buf ) );
+    CPPUNIT_ASSERT_EQUAL( stream::ERROR_OK, mFile.Write( buf ) );
     CPPUNIT_ASSERT( mFile.Flush() );
     CPPUNIT_ASSERT_EQUAL( buf.size(), static_cast< size_t >( mFile.tell() ) );
 
     CPPUNIT_ASSERT( mFile.Close() );
-    CPPUNIT_ASSERT_EQUAL( 0, Std::File::Rename( NAME, NAME_ALT ) );
+    CPPUNIT_ASSERT_EQUAL( 0, stdx::File::Rename( NAME, NAME_ALT ) );
 
     CPPUNIT_ASSERT( !mFile.Open( NAME, "rb" ) );
     CPPUNIT_ASSERT( mFile.Open( NAME_ALT, "rb" ) );
 
-    CPPUNIT_ASSERT_EQUAL( Stream::ERROR_OK, mFile.Read( buf ) );
+    CPPUNIT_ASSERT_EQUAL( stream::ERROR_OK, mFile.Read( buf ) );
     CPPUNIT_ASSERT_EQUAL( buf.size(), static_cast< size_t >( mFile.tell() ) );
     CPPUNIT_ASSERT( std::equal( PLAIN_DATA, PLAIN_DATA + sizeof( PLAIN_DATA ),
                                 buf.begin< uint8 >() ) );
 
-    CPPUNIT_ASSERT_EQUAL( Stream::ERROR_EOS, mFile.Read( buf ) );
+    CPPUNIT_ASSERT_EQUAL( stream::ERROR_EOS, mFile.Read( buf ) );
     CPPUNIT_ASSERT( mFile.eof() );
     CPPUNIT_ASSERT_EQUAL( buf.size(), static_cast< size_t >( mFile.tell() ) );
 
@@ -71,6 +73,6 @@ void Util::Test< Std::File >::runTest()
     CPPUNIT_ASSERT_EQUAL( 0L, mFile.tell() );
 
     CPPUNIT_ASSERT( mFile.Close() );
-    CPPUNIT_ASSERT_EQUAL( 0, Std::File::Remove( NAME_ALT ) );
+    CPPUNIT_ASSERT_EQUAL( 0, stdx::File::Remove( NAME_ALT ) );
     CPPUNIT_ASSERT( !mFile.Open( NAME_ALT, "rb" ) );
 }

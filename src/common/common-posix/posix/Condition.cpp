@@ -27,53 +27,56 @@
 
 #include "posix/Condition.h"
 
-/*************************************************************************/
-/* Posix::Condition                                                      */
-/*************************************************************************/
-const Posix::Condition::Attribute Posix::Condition::DEFAULT_ATTRIBUTE;
+using namespace common;
+using namespace common::posix;
 
-Posix::Condition::Condition( const Attribute& attr )
+/*************************************************************************/
+/* common::posix::Condition                                              */
+/*************************************************************************/
+const Condition::Attribute Condition::DEFAULT_ATTRIBUTE;
+
+Condition::Condition( const Attribute& attr )
 {
     int code = ::pthread_cond_init( &mCondition, &attr.mAttribute );
     assert( 0 == code );
 }
 
-Posix::Condition::~Condition()
+Condition::~Condition()
 {
     int code = ::pthread_cond_destroy( &mCondition );
     assert( 0 == code );
 }
 
-int Posix::Condition::Signal()
+int Condition::Signal()
 {
     return ::pthread_cond_signal( &mCondition );
 }
 
-int Posix::Condition::Broadcast()
+int Condition::Broadcast()
 {
     return ::pthread_cond_broadcast( &mCondition );
 }
 
-int Posix::Condition::Wait( Posix::Mutex& mutex )
+int Condition::Wait( Mutex& mutex )
 {
     return ::pthread_cond_wait( &mCondition, &mutex.mMutex );
 }
 
-int Posix::Condition::TimedWait( Posix::Mutex& mutex, const Time::Timespec& time )
+int Condition::TimedWait( Mutex& mutex, const time::Timespec& time )
 {
     return ::pthread_cond_timedwait( &mCondition, &mutex.mMutex, &time.ts() );
 }
 
 /*************************************************************************/
-/* Posix::Condition::Attribute                                           */
+/* common::posix::Condition::Attribute                                   */
 /*************************************************************************/
-Posix::Condition::Attribute::Attribute()
+Condition::Attribute::Attribute()
 {
     int code = ::pthread_condattr_init( &mAttribute );
     assert( 0 == code );
 }
 
-Posix::Condition::Attribute::Attribute( int processShared )
+Condition::Attribute::Attribute( int processShared )
 {
     int code = ::pthread_condattr_init( &mAttribute );
     assert( 0 == code );
@@ -82,18 +85,18 @@ Posix::Condition::Attribute::Attribute( int processShared )
     assert( 0 == code );
 }
 
-Posix::Condition::Attribute::~Attribute()
+Condition::Attribute::~Attribute()
 {
     int code = ::pthread_condattr_destroy( &mAttribute );
     assert( 0 == code );
 }
 
-int Posix::Condition::Attribute::GetProcessShared( int* processShared ) const
+int Condition::Attribute::GetProcessShared( int* processShared ) const
 {
     return ::pthread_condattr_getpshared( &mAttribute, processShared );
 }
 
-int Posix::Condition::Attribute::SetProcessShared( int processShared )
+int Condition::Attribute::SetProcessShared( int processShared )
 {
     return ::pthread_condattr_setpshared( &mAttribute, processShared );
 }

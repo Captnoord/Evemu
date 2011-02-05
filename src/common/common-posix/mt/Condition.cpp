@@ -27,38 +27,41 @@
 
 #include "posix/Condition.h"
 
+using namespace common;
+using namespace common::mt;
+
 /*************************************************************************/
-/* Mt::Condition                                                         */
+/* common::mt::Condition                                                 */
 /*************************************************************************/
-Mt::Condition::Condition()
-: mCondition( new Posix::Condition )
+Condition::Condition()
+: mCondition( new posix::Condition )
 {
 }
 
-Mt::Condition::~Condition()
+Condition::~Condition()
 {
     SafeDelete( mCondition );
 }
 
-void Mt::Condition::Signal()
+void Condition::Signal()
 {
     int code = mCondition->Signal();
     assert( 0 == code );
 }
 
-void Mt::Condition::Broadcast()
+void Condition::Broadcast()
 {
     int code = mCondition->Broadcast();
     assert( 0 == code );
 }
 
-void Mt::Condition::Wait( Mutex& mutex )
+void Condition::Wait( Mutex& mutex )
 {
     int code = mCondition->Wait( *mutex.mMutex );
     assert( 0 == code );
 }
 
-void Mt::Condition::TimedWait( Mutex& mutex, const Time::Msec& timeout )
+void Condition::TimedWait( Mutex& mutex, const time::Msec& timeout )
 {
     int code = mCondition->TimedWait( *mutex.mMutex, sTimeMgr.nowUnix() + timeout );
     assert( 0 == code );

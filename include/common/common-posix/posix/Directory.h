@@ -23,115 +23,118 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __POSIX__DIRECTORY_H__INCL__
-#define __POSIX__DIRECTORY_H__INCL__
+#ifndef __COMMON__POSIX__DIRECTORY_H__INCL__
+#define __COMMON__POSIX__DIRECTORY_H__INCL__
 
-namespace Posix
+namespace common
 {
-    /**
-     * @brief Represents a directory stream.
-     *
-     * @author Bloody.Rabbit
-     */
-    class Directory
+    namespace posix
     {
-    public:
         /**
-         * @brief Creates a new directory.
+         * @brief Represents a directory stream.
          *
-         * @param[in] path A path to the new directory.
-         * @param[in] mode A mode for the new directory.
-         *
-         * @return An error code.
+         * @author Bloody.Rabbit
          */
-        static int Create( const char* path, mode_t mode );
-        /**
-         * @brief Removes a directory.
-         *
-         * @param[in] path A path to the directory.
-         *
-         * @return An error code.
-         */
-        static int Remove( const char* path );
+        class Directory
+        {
+        public:
+            /**
+             * @brief Creates a new directory.
+             *
+             * @param[in] path A path to the new directory.
+             * @param[in] mode A mode for the new directory.
+             *
+             * @return An error code.
+             */
+            static int Create( const char* path, mode_t mode );
+            /**
+             * @brief Removes a directory.
+             *
+             * @param[in] path A path to the directory.
+             *
+             * @return An error code.
+             */
+            static int Remove( const char* path );
 
-        /**
-         * @brief A default constructor.
-         */
-        Directory();
-        /**
-         * @brief A primary constructor.
-         *
-         * @param[in] name A name of the directory to open.
-         */
-        Directory( const char* name );
-        /**
-         * @brief A destructor; closes the directory.
-         */
-        ~Directory();
+            /**
+             * @brief A default constructor.
+             */
+            Directory();
+            /**
+             * @brief A primary constructor.
+             *
+             * @param[in] name A name of the directory to open.
+             */
+            Directory( const char* name );
+            /**
+             * @brief A destructor; closes the directory.
+             */
+            ~Directory();
 
-        /**
-         * @brief Checks if the directory is valid.
-         *
-         * @retval true  The directory is valid.
-         * @retval false The directory is invalid.
-         */
-        bool isValid() const { return NULL != mDir; }
-        /**
-         * @brief Convenient conversion to boolean.
-         *
-         * @return A value returned by isValid.
-         */
-        operator bool() const { return isValid(); }
+            /**
+             * @brief Checks if the directory is valid.
+             *
+             * @retval true  The directory is valid.
+             * @retval false The directory is invalid.
+             */
+            bool isValid() const { return NULL != mDir; }
+            /**
+             * @brief Convenient conversion to boolean.
+             *
+             * @return A value returned by isValid.
+             */
+            operator bool() const { return isValid(); }
 
-        /**
-         * @brief Obtains current position in the directory.
-         *
-         * @return The current position.
-         */
-        long int tell() const;
+            /**
+             * @brief Obtains current position in the directory.
+             *
+             * @return The current position.
+             */
+            long int tell() const;
 
-        /**
-         * @brief Opens a directory.
-         *
-         * @param[in] name A name of the directory.
-         *
-         * @return An error code.
-         */
-        int Open( const char* name );
-        /**
-         * @brief Closes the directory.
-         *
-         * Does not fail even if the directory is
-         * already closed.
-         *
-         * @return An error code.
-         */
-        int Close();
+            /**
+             * @brief Opens a directory.
+             *
+             * @param[in] name A name of the directory.
+             *
+             * @return An error code.
+             */
+            int Open( const char* name );
+            /**
+             * @brief Closes the directory.
+             *
+             * Does not fail even if the directory is
+             * already closed.
+             *
+             * @return An error code.
+             */
+            int Close();
 
-        /**
-         * @brief Reads the next directory entry.
-         *
-         * @param[out] entry  Where to store the entry.
-         * @param[out] result A result of the read.
-         *
-         * @return An error code.
-         */
-        int Read( dirent& entry, dirent*& result );
-        /**
-         * @brief Seeks within the directory.
-         *
-         * @param[in] loc A value returned by prior call to tell.
-         */
-        void Seek( long int loc );
-        /**
-         * @brief Starts reading the directory from the beginning.
-         */
-        void Rewind();
+            /**
+             * @brief Reads the next directory entry.
+             *
+             * @param[out] entry  Where to store the entry.
+             * @param[out] result A result of the read.
+             *
+             * @return An error code.
+             */
+            int Read( dirent& entry, dirent*& result );
+            /**
+             * @brief Seeks within the directory.
+             *
+             * @param[in] loc A value returned by prior call to tell.
+             */
+            void Seek( long int loc );
+            /**
+             * @brief Starts reading the directory from the beginning.
+             */
+            void Rewind();
 
-    protected:
-        /// The directory.
-        DIR* mDir;
-    };
+        protected:
+            /// The directory.
+            DIR* mDir;
+        };
+    }
 }
 
-#endif /* !__POSIX__DIRECTORY_H__INCL__ */
+#endif /* !__COMMON__POSIX__DIRECTORY_H__INCL__ */

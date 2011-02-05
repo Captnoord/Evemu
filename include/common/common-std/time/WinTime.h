@@ -23,116 +23,119 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __TIME__WIN_TIME_H__INCL__
-#define __TIME__WIN_TIME_H__INCL__
+#ifndef __COMMON__TIME__WIN_TIME_H__INCL__
+#define __COMMON__TIME__WIN_TIME_H__INCL__
 
-namespace Time
+namespace common
 {
-    class Msec;
-    class Timespec;
-    class Timeval;
-
-    /**
-     * @brief A wrapper around <code>uint64</code> as a Windows time.
-     *
-     * @author Bloody.Rabbit
-     */
-    class WinTime
+    namespace time
     {
-    public:
-        /// A microsecond in WinTime.
-        static const WinTime USEC;
-        /// A millisecond in WinTime.
-        static const WinTime MSEC;
-        /// A second in WinTime.
-        static const WinTime SEC;
-        /// A minute in WinTime.
-        static const WinTime MIN;
-        /// An hour in WinTime.
-        static const WinTime HOUR;
-        /// A day in WinTime.
-        static const WinTime DAY;
-        /// A month in WinTime.
-        static const WinTime MONTH;
-        /// A year in WinTime.
-        static const WinTime YEAR;
+        class Msec;
+        class Timespec;
+        class Timeval;
 
         /**
-         * @brief A primary constructor.
+         * @brief A wrapper around <code>uint64</code> as a Windows time.
          *
-         * @param[in] time The Windows time.
+         * @author Bloody.Rabbit
          */
-        WinTime( uint64 time = 0 );
+        class WinTime
+        {
+        public:
+            /// A microsecond in WinTime.
+            static const WinTime USEC;
+            /// A millisecond in WinTime.
+            static const WinTime MSEC;
+            /// A second in WinTime.
+            static const WinTime SEC;
+            /// A minute in WinTime.
+            static const WinTime MIN;
+            /// An hour in WinTime.
+            static const WinTime HOUR;
+            /// A day in WinTime.
+            static const WinTime DAY;
+            /// A month in WinTime.
+            static const WinTime MONTH;
+            /// A year in WinTime.
+            static const WinTime YEAR;
 
-        /**
-         * @brief A conversion constructor.
-         *
-         * @param[in] msec Msec to be converted.
-         */
-        WinTime( const Msec& msec );
-        /**
-         * @brief A conversion operator.
-         *
-         * @param[in] ts Timespec to be converted.
-         */
-        WinTime( const Timespec& ts );
-        /**
-         * @brief A conversion constructor.
-         *
-         * @param[in] tv Timeval to be converted.
-         */
-        WinTime( const Timeval& tv );
-        /**
-         * @brief A copy constructor.
-         *
-         * @param[in] oth WinTime to be copied.
-         */
-        WinTime( const WinTime& oth );
+            /**
+             * @brief A primary constructor.
+             *
+             * @param[in] time The Windows time.
+             */
+            WinTime( uint64 time = 0 );
 
-        /// Obtains the stored time.
-        uint64 count() const { return mTime; }
+            /**
+             * @brief A conversion constructor.
+             *
+             * @param[in] msec Msec to be converted.
+             */
+            WinTime( const Msec& msec );
+            /**
+             * @brief A conversion operator.
+             *
+             * @param[in] ts Timespec to be converted.
+             */
+            WinTime( const Timespec& ts );
+            /**
+             * @brief A conversion constructor.
+             *
+             * @param[in] tv Timeval to be converted.
+             */
+            WinTime( const Timeval& tv );
+            /**
+             * @brief A copy constructor.
+             *
+             * @param[in] oth WinTime to be copied.
+             */
+            WinTime( const WinTime& oth );
 
-        /// An equivalency operator.
-        bool operator==( const WinTime& oth ) const;
-        /// A non-equivalency operator.
-        bool operator!=( const WinTime& oth ) const;
-        /// A less-than operator.
-        bool operator<( const WinTime& oth ) const;
-        /// A less-or-equal operator.
-        bool operator<=( const WinTime& oth ) const;
-        /// A greater-than operator.
-        bool operator>( const WinTime& oth ) const;
-        /// A greater-or-equal operator.
-        bool operator>=( const WinTime& oth ) const;
+            /// Obtains the stored time.
+            uint64 count() const { return mTime; }
 
-        /// A sum operator.
-        WinTime operator+( const WinTime& oth ) const;
-        /// A difference operator.
-        WinTime operator-( const WinTime& oth ) const;
-        /// A multiply operator.
-        WinTime operator*( size_t ratio ) const;
-        /// A division operator.
-        WinTime operator/( size_t ratio ) const;
-        /// A remainder operator.
-        WinTime operator%( size_t ratio ) const;
+            /// An equivalency operator.
+            bool operator==( const WinTime& oth ) const;
+            /// A non-equivalency operator.
+            bool operator!=( const WinTime& oth ) const;
+            /// A less-than operator.
+            bool operator<( const WinTime& oth ) const;
+            /// A less-or-equal operator.
+            bool operator<=( const WinTime& oth ) const;
+            /// A greater-than operator.
+            bool operator>( const WinTime& oth ) const;
+            /// A greater-or-equal operator.
+            bool operator>=( const WinTime& oth ) const;
 
-        /// An assignment operator.
-        WinTime& operator=( const WinTime& oth );
-        /// An add operator.
-        WinTime& operator+=( const WinTime& oth );
-        /// A substract operator.
-        WinTime& operator-=( const WinTime& oth );
-        /// An expand operator.
-        WinTime& operator*=( size_t ratio );
-        /// A reduce operator.
-        WinTime& operator/=( size_t ratio );
-        /// A remainder-assign operator.
-        WinTime& operator%=( size_t ratio );
+            /// A sum operator.
+            WinTime operator+( const WinTime& oth ) const;
+            /// A difference operator.
+            WinTime operator-( const WinTime& oth ) const;
+            /// A multiply operator.
+            WinTime operator*( size_t ratio ) const;
+            /// A division operator.
+            WinTime operator/( size_t ratio ) const;
+            /// A remainder operator.
+            WinTime operator%( size_t ratio ) const;
 
-    protected:
-        /// The time itself.
-        uint64 mTime;
-    };
+            /// An assignment operator.
+            WinTime& operator=( const WinTime& oth );
+            /// An add operator.
+            WinTime& operator+=( const WinTime& oth );
+            /// A substract operator.
+            WinTime& operator-=( const WinTime& oth );
+            /// An expand operator.
+            WinTime& operator*=( size_t ratio );
+            /// A reduce operator.
+            WinTime& operator/=( size_t ratio );
+            /// A remainder-assign operator.
+            WinTime& operator%=( size_t ratio );
+
+        protected:
+            /// The time itself.
+            uint64 mTime;
+        };
+    }
 }
 
-#endif /* !__TIME__WIN_TIME_H__INCL__ */
+#endif /* !__COMMON__TIME__WIN_TIME_H__INCL__ */

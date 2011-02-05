@@ -23,23 +23,26 @@
     Author:     Zhur
 */
 
-#include "CommonZlibPCH.h"
+#include "CommonZlib.h"
 
 #include "zlib/Utils.h"
 
-/*************************************************************************/
-/* Zlib                                                                  */
-/*************************************************************************/
-const uint8 Zlib::HEADER_BYTE = 0x78; //'x'
+using namespace common;
+using namespace common::zlib;
 
-bool Zlib::IsDeflated( const Util::Data& data )
+/*************************************************************************/
+/* common::zlib                                                          */
+/*************************************************************************/
+const uint8 zlib::HEADER_BYTE = 0x78; //'x'
+
+bool zlib::IsDeflated( const util::Data& data )
 {
-    return Zlib::HEADER_BYTE == data[0];
+    return zlib::HEADER_BYTE == data[0];
 }
 
-bool Zlib::DeflateData( Util::Buffer& data )
+bool zlib::DeflateData( util::Buffer& data )
 {
-    Util::Buffer dataDeflated;
+    util::Buffer dataDeflated;
     if( !DeflateData( data, dataDeflated ) )
         return false;
 
@@ -47,9 +50,9 @@ bool Zlib::DeflateData( Util::Buffer& data )
     return true;
 }
 
-bool Zlib::DeflateData( const Util::Data& input, Util::Buffer& output )
+bool zlib::DeflateData( const util::Data& input, util::Buffer& output )
 {
-    const Util::Buffer::Iterator< uint8 > out = output.end< uint8 >();
+    const util::Buffer::Iterator< uint8 > out = output.end< uint8 >();
 
     size_t outputSize = ::compressBound( input.size() );
     output.ResizeAt( out, outputSize );
@@ -68,9 +71,9 @@ bool Zlib::DeflateData( const Util::Data& input, Util::Buffer& output )
     }
 }
 
-bool Zlib::InflateData( Util::Buffer& data )
+bool zlib::InflateData( util::Buffer& data )
 {
-    Util::Buffer dataInflated;
+    util::Buffer dataInflated;
     if( !InflateData( data, dataInflated ) )
         return false;
 
@@ -78,9 +81,9 @@ bool Zlib::InflateData( Util::Buffer& data )
     return true;
 }
 
-bool Zlib::InflateData( const Util::Data& input, Util::Buffer& output )
+bool zlib::InflateData( const util::Data& input, util::Buffer& output )
 {
-    const Util::Buffer::Iterator< uint8 > out = output.end< uint8 >();
+    const util::Buffer::Iterator< uint8 > out = output.end< uint8 >();
 
     size_t outputSize = 0;
     size_t sizeMultiplier = 0;

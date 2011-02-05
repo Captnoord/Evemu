@@ -25,27 +25,30 @@
 
 #include "CommonStd.h"
 
-#include "std/Tm.h"
+#include "stdx/Tm.h"
+
+using namespace common;
+using namespace common::stdx;
 
 /*************************************************************************/
-/* Std::Tm                                                               */
+/* common::stdx::Tm                                                      */
 /*************************************************************************/
-Std::Tm::Tm()
+Tm::Tm()
 {
 }
 
-Std::Tm::Tm( const tm& t )
+Tm::Tm( const tm& t )
 : mTm( t )
 {
 }
 
-Std::Tm::Tm( time_t t )
+Tm::Tm( time_t t )
 {
     const tm* result = localtime_r( &t, &mTm );
     assert( &mTm == result );
 }
 
-Std::Tm::Tm( const Tm& oth )
+Tm::Tm( const Tm& oth )
 : mTm( oth.t() )
 {
 }

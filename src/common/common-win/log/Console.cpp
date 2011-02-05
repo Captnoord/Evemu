@@ -27,8 +27,11 @@
 
 #include "win/ConsoleScreenBuffer.h"
 
+using namespace common;
+using namespace common::log;
+
 /*************************************************************************/
-/* Log::Console                                                          */
+/* common::log::Console                                                  */
 /*************************************************************************/
 /// A default color to print with.
 const WORD COLOR_DEFAULT = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
@@ -36,7 +39,7 @@ const WORD COLOR_DEFAULT = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
 const WORD COLOR_SOURCE  = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
 
 /// An array of colors to print messages with.
-const WORD TYPE_COLORS[ Log::Message::TYPE_COUNT ] =
+const WORD TYPE_COLORS[ Message::TYPE_COUNT ] =
 {
     ( FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE                        ), // TYPE_NOTICE
     ( FOREGROUND_RED                                      | FOREGROUND_INTENSITY ), // TYPE_ERROR
@@ -46,61 +49,61 @@ const WORD TYPE_COLORS[ Log::Message::TYPE_COUNT ] =
     ( FOREGROUND_RED                    | FOREGROUND_BLUE | FOREGROUND_INTENSITY )  // TYPE_DUMP
 };
 
-Stream::Error Log::Console::Write( const Message& m )
+stream::Error Console::Write( const Message& m )
 {
     assert( 0 <= m.type() && m.type() < Message::TYPE_COUNT );
 
-    Win::ConsoleScreenBuffer& outputScreen = Win::ConsoleScreenBuffer::DEFAULT_OUTPUT_SCREEN;
-    const Std::Tm& tm = m.time();
+    static win::ConsoleScreenBuffer outputScreen = win::ConsoleScreenBuffer::DEFAULT_OUTPUT_SCREEN;
+    const stdx::Tm& tm = m.time();
 
     // Time
     int code = ::printf( "%04d-%02d-%02d %02d:%02d:%02d ",
                          1900 + tm.year(), 1 + tm.mon(), tm.mday(),
                          tm.hour(), tm.min(), tm.sec() );
     if( 0 > code )
-        return Stream::ERROR_WRITE;
+        return stream::ERROR_WRITE;
 
     // Prefix
     DWORD codeWin = outputScreen.SetTextAttributes( TYPE_COLORS[ m.type() ] );
     if( ERROR_SUCCESS != codeWin )
-        return Stream::ERROR_WRITE;
+        return stream::ERROR_WRITE;
 
     code = ::printf( "%c ", m.prefix() );
     if( 0 > code )
-        return Stream::ERROR_WRITE;
+        return stream::ERROR_WRITE;
 
     // Source
     codeWin = outputScreen.SetTextAttributes( COLOR_SOURCE );
     if( ERROR_SUCCESS != codeWin )
-        return Stream::ERROR_WRITE;
+        return stream::ERROR_WRITE;
 
     code = ::printf( "%s:", m.source().c_str() );
     if( 0 > code )
-        return Stream::ERROR_WRITE;
+        return stream::ERROR_WRITE;
 
     // Message
     codeWin = outputScreen.SetTextAttributes( TYPE_COLORS[ m.type() ] );
     if( ERROR_SUCCESS != codeWin )
-        return Stream::ERROR_WRITE;
+        return stream::ERROR_WRITE;
 
     code = ::printf( " %s", m.message().c_str() );
     if( 0 > code )
-        return Stream::ERROR_WRITE;
+        return stream::ERROR_WRITE;
 
     // Reset color
     codeWin = outputScreen.SetTextAttributes( COLOR_DEFAULT );
     if( ERROR_SUCCESS != codeWin )
-        return Stream::ERROR_WRITE;
+        return stream::ERROR_WRITE;
 
-    return Stream::ERROR_OK;
+    return stream::ERROR_OK;
 }
 
-Stream::Error Log::Console::Write( const Message* mp, size_t count, size_t* countWritten )
+stream::Error Console::Write( const Message* mp, size_t count, size_t* countWritten )
 {
     for( size_t i = 0; i < count; ++i )
     {
-        const Stream::Error err = Write( mp[ i ] );
-        if( Stream::ERROR_OK != err )
+        const stream::Error err = Write( mp[ i ] );
+        if( stream::ERROR_OK != err )
         {
             if( NULL != countWritten )
                 *countWritten = i;
@@ -112,5 +115,5 @@ Stream::Error Log::Console::Write( const Message* mp, size_t count, size_t* coun
     if( NULL != countWritten )
         *countWritten = count;
 
-    return Stream::ERROR_OK;
+    return stream::ERROR_OK;
 }

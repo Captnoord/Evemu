@@ -27,18 +27,21 @@
 
 #include "win/Event.h"
 
+using namespace common;
+using namespace common::win;
+
 /*************************************************************************/
-/* Win::Event                                                            */
+/* common::win::Event                                                    */
 /*************************************************************************/
-Win::Event::Event( BOOL manualReset, BOOL initialState )
-: Win::Handle(),
-  Win::WaitableHandle()
+Event::Event( BOOL manualReset, BOOL initialState )
+: Handle(),
+  WaitableHandle()
 {
     DWORD code = Create( manualReset, initialState );
     assert( ERROR_SUCCESS == code );
 }
 
-DWORD Win::Event::Create( BOOL manualReset, BOOL initialState )
+DWORD Event::Create( BOOL manualReset, BOOL initialState )
 {
     DWORD code = Close();
     if( ERROR_SUCCESS != code )
@@ -51,7 +54,7 @@ DWORD Win::Event::Create( BOOL manualReset, BOOL initialState )
     return ERROR_SUCCESS;
 }
 
-DWORD Win::Event::Set()
+DWORD Event::Set()
 {
     if( TRUE != ::SetEvent( mHandle ) )
         return ::GetLastError();
@@ -59,7 +62,7 @@ DWORD Win::Event::Set()
     return ERROR_SUCCESS;
 }
 
-DWORD Win::Event::Reset()
+DWORD Event::Reset()
 {
     if( TRUE != ::ResetEvent( mHandle ) )
         return ::GetLastError();

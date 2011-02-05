@@ -23,89 +23,92 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __TIME__TIMER_H__INCL__
-#define __TIME__TIMER_H__INCL__
+#ifndef __COMMON__TIME__TIMER_H__INCL__
+#define __COMMON__TIME__TIMER_H__INCL__
 
-namespace Time
+namespace common
 {
-    /**
-     * @brief A simple timer.
-     *
-     * @author Bloody.Rabbit
-     */
-    class Timer
+    namespace time
     {
-    public:
         /**
-         * @brief A primary constructor.
+         * @brief A simple timer.
          *
-         * @param[in] period   The timer period.
-         * @param[in] accurate Use accurate timing.
+         * @author Bloody.Rabbit
          */
-        Timer( size_t period, bool accurate = false );
-        /// A destructor.
-        ~Timer();
+        class Timer
+        {
+        public:
+            /**
+             * @brief A primary constructor.
+             *
+             * @param[in] period   The timer period.
+             * @param[in] accurate Use accurate timing.
+             */
+            Timer( size_t period, bool accurate = false );
+            /// A destructor.
+            ~Timer();
 
-        /// Obtains timer period.
-        size_t period() const { return mPeriod; }
-        /// Obtains accurate timing option.
-        bool accurate() const { return mAccurate; }
+            /// Obtains timer period.
+            size_t period() const { return mPeriod; }
+            /// Obtains accurate timing option.
+            bool accurate() const { return mAccurate; }
 
-        /**
-         * @brief Starts the timer.
-         *
-         * After starting the timer, you can check if the
-         * <var>period</var> has passed by calling Check().
-         *
-         *   - if the timer is not accurate:
-         *       It simply makes the Check() return <code>true</code>
-         *       after exactly <var>period</var> from now.
-         *   - if the timer is accurate:
-         *       -# and this is the first call:
-         *            The behavior is same as if the timer is not accurate.
-         *       -# and this is some subsequent call:
-         *            It takes the last timeout time and advances it into
-         *            the future by <var>period</var>.
-         */
-        void Start();
-        /**
-         * @brief Checks the timer.
-         *
-         * Checks if the <var>period</var> has passed since the last
-         * call of Start().
-         *
-         * @param[in] restart Pass <code>true</code> to have the timer
-         *                    restarted when the <var>period</var> has passed.
-         *                    It has the same effect as calling Start()
-         *                    right after the Check() returns
-         *                    <code>true</code>.
-         *
-         * @retval true  The period has already passed.
-         * @retval false The period has not passed yet.
-         */
-        bool Check( bool restart = true );
-        /**
-         * @brief Suspends the calling thread.
-         *
-         * The calling thread is made to sleep until the
-         * <var>period</var> passes.
-         *
-         * @param[in] restart Pass <code>true</code> to have the timer
-         *                    restarted when the <var>period</var> has
-         *                    passed. It has the same effect as calling
-         *                    Start() right after the Sleep() returns.
-         */
-        void Sleep( bool restart = true );
+            /**
+             * @brief Starts the timer.
+             *
+             * After starting the timer, you can check if the
+             * <var>period</var> has passed by calling Check().
+             *
+             *   - if the timer is not accurate:
+             *       It simply makes the Check() return <code>true</code>
+             *       after exactly <var>period</var> from now.
+             *   - if the timer is accurate:
+             *       -# and this is the first call:
+             *            The behavior is same as if the timer is not accurate.
+             *       -# and this is some subsequent call:
+             *            It takes the last timeout time and advances it into
+             *            the future by <var>period</var>.
+             */
+            void Start();
+            /**
+             * @brief Checks the timer.
+             *
+             * Checks if the <var>period</var> has passed since the last
+             * call of Start().
+             *
+             * @param[in] restart Pass <code>true</code> to have the timer
+             *                    restarted when the <var>period</var> has passed.
+             *                    It has the same effect as calling Start()
+             *                    right after the Check() returns
+             *                    <code>true</code>.
+             *
+             * @retval true  The period has already passed.
+             * @retval false The period has not passed yet.
+             */
+            bool Check( bool restart = true );
+            /**
+             * @brief Suspends the calling thread.
+             *
+             * The calling thread is made to sleep until the
+             * <var>period</var> passes.
+             *
+             * @param[in] restart Pass <code>true</code> to have the timer
+             *                    restarted when the <var>period</var> has
+             *                    passed. It has the same effect as calling
+             *                    Start() right after the Sleep() returns.
+             */
+            void Sleep( bool restart = true );
 
-    protected:
-        /// The timeout.
-        Msec mTimeout;
+        protected:
+            /// The timeout.
+            Msec mTimeout;
 
-        /// The timer period.
-        const size_t mPeriod;
-        /// True if accurate.
-        const bool mAccurate;
-    };
+            /// The timer period.
+            const size_t mPeriod;
+            /// True if accurate.
+            const bool mAccurate;
+        };
+    }
 }
 
-#endif /* !__TIME__TIMER_H__INCL__ */
+#endif /* !__COMMON__TIME__TIMER_H__INCL__ */

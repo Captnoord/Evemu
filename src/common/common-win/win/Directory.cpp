@@ -27,10 +27,13 @@
 
 #include "win/Directory.h"
 
+using namespace common;
+using namespace common::win;
+
 /*************************************************************************/
-/* Win::Directory                                                        */
+/* common::win::Directory                                                */
 /*************************************************************************/
-DWORD Win::Directory::Create( PCTSTR path )
+DWORD Directory::Create( PCTSTR path )
 {
     if( TRUE != ::CreateDirectory( path, NULL ) )
         return ::GetLastError();
@@ -38,7 +41,7 @@ DWORD Win::Directory::Create( PCTSTR path )
     return ERROR_SUCCESS;
 }
 
-DWORD Win::Directory::Remove( PCTSTR path )
+DWORD Directory::Remove( PCTSTR path )
 {
     if( TRUE != ::RemoveDirectory( path ) )
         return ::GetLastError();

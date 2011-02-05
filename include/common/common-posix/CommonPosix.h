@@ -29,22 +29,25 @@
 /*************************************************************************/
 /* common-std                                                            */
 /*************************************************************************/
-namespace Posix
+namespace common
 {
-    class Directory;
-    class File;
+    namespace posix
+    {
+        class Directory;
+        class File;
 
-    class Condition;
-    class Mutex;
-    class Thread;
+        class Condition;
+        class Mutex;
+        class Thread;
+    }
 }
 
-#define FS_DIRECTORY_TYPE Posix::Directory
-#define FS_FILE_TYPE      Posix::File
+#define COMMON_FS_DIRECTORY_TYPE common::posix::Directory
+#define COMMON_FS_FILE_TYPE      common::posix::File
 
-#define MT_CONDITION_TYPE Posix::Condition
-#define MT_MUTEX_TYPE     Posix::Mutex
-#define MT_THREAD_TYPE    Posix::Thread
+#define COMMON_MT_CONDITION_TYPE common::posix::Condition
+#define COMMON_MT_MUTEX_TYPE     common::posix::Mutex
+#define COMMON_MT_THREAD_TYPE    common::posix::Thread
 
 #include "CommonStd.h"
 

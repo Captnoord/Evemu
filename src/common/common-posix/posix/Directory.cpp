@@ -27,10 +27,13 @@
 
 #include "posix/Directory.h"
 
+using namespace common;
+using namespace common::posix;
+
 /*************************************************************************/
-/* Posix::Directory                                                      */
+/* common::posix::Directory                                              */
 /*************************************************************************/
-int Posix::Directory::Create( const char* path, mode_t mode )
+int Directory::Create( const char* path, mode_t mode )
 {
     if( 0 != ::mkdir( path, mode ) )
         return errno;
@@ -38,7 +41,7 @@ int Posix::Directory::Create( const char* path, mode_t mode )
     return 0;
 }
 
-int Posix::Directory::Remove( const char* path )
+int Directory::Remove( const char* path )
 {
     if( 0 != ::rmdir( path ) )
         return errno;
@@ -46,30 +49,30 @@ int Posix::Directory::Remove( const char* path )
     return 0;
 }
 
-Posix::Directory::Directory()
+Directory::Directory()
 : mDir( NULL )
 {
 }
 
-Posix::Directory::Directory( const char* name )
+Directory::Directory( const char* name )
 : mDir( NULL )
 {
     int code = Open( name );
     assert( 0 == code );
 }
 
-Posix::Directory::~Directory()
+Directory::~Directory()
 {
     int code = Close();
     assert( 0 == code );
 }
 
-long int Posix::Directory::tell() const
+long int Directory::tell() const
 {
     return ::telldir( mDir );
 }
 
-int Posix::Directory::Open( const char* name )
+int Directory::Open( const char* name )
 {
     int code = Close();
     if( 0 != code )
@@ -82,7 +85,7 @@ int Posix::Directory::Open( const char* name )
     return 0;
 }
 
-int Posix::Directory::Close()
+int Directory::Close()
 {
     if( isValid() )
     {
@@ -95,17 +98,17 @@ int Posix::Directory::Close()
     return 0;
 }
 
-int Posix::Directory::Read( dirent& entry, dirent*& result )
+int Directory::Read( dirent& entry, dirent*& result )
 {
     return ::readdir_r( mDir, &entry, &result );
 }
 
-void Posix::Directory::Seek( long int loc )
+void Directory::Seek( long int loc )
 {
     ::seekdir( mDir, loc );
 }
 
-void Posix::Directory::Rewind()
+void Directory::Rewind()
 {
     ::rewinddir( mDir );
 }

@@ -23,62 +23,65 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __MT__TARGET_H__INCL__
-#define __MT__TARGET_H__INCL__
+#ifndef __COMMON__MT__TARGET_H__INCL__
+#define __COMMON__MT__TARGET_H__INCL__
 
-namespace Mt
+namespace common
 {
-    /**
-     * @brief An execution target.
-     *
-     * @author Bloody.Rabbit
-     */
-    class Target
+    namespace mt
     {
-    public:
         /**
-         * @brief Runs the given Target.
+         * @brief An execution target.
          *
-         * Static to avoid <code>delete this</code> in the code.
+         * @author Bloody.Rabbit
+         */
+        class Target
+        {
+        public:
+            /**
+             * @brief Runs the given Target.
+             *
+             * Static to avoid <code>delete this</code> in the code.
+             *
+             * @param[in] target The Target to run.
+             */
+            static void Run( Target* target );
+
+            /**
+             * @brief Must be virtual if proper destructor shall be invoked.
+             */
+            virtual ~Target();
+
+        protected:
+            /**
+             * @brief Determines whether the Target should be deleted when Run() returns.
+             *
+             * @retval true  Target should be deleted.
+             * @retval false Target should not be deleted.
+             */
+            virtual bool deleteOnExit() = 0;
+
+            /**
+             * @brief Runs the target.
+             */
+            virtual void Run() = 0;
+        };
+
+        /**
+         * @brief A Target with an ability to stop.
          *
-         * @param[in] target The Target to run.
+         * @author Bloody.Rabbit
          */
-        static void Run( Target* target );
-
-        /**
-         * @brief Must be virtual if proper destructor shall be invoked.
-         */
-        virtual ~Target();
-
-    protected:
-        /**
-         * @brief Determines whether the Target should be deleted when Run() returns.
-         *
-         * @retval true  Target should be deleted.
-         * @retval false Target should not be deleted.
-         */
-        virtual bool deleteOnExit() = 0;
-
-        /**
-         * @brief Runs the target.
-         */
-        virtual void Run() = 0;
-    };
-
-    /**
-     * @brief A Target with an ability to stop.
-     *
-     * @author Bloody.Rabbit
-     */
-    class TargetEx
-    : public Target
-    {
-    public:
-        /**
-         * @brief Calling this should make Run() return as soon as possible.
-         */
-        virtual void Stop() = 0;
-    };
+        class TargetEx
+        : public Target
+        {
+        public:
+            /**
+             * @brief Calling this should make Run() return as soon as possible.
+             */
+            virtual void Stop() = 0;
+        };
+    }
 }
 
-#endif /* !__MT__TARGET_H__INCL__ */
+#endif /* !__COMMON__MT__TARGET_H__INCL__ */

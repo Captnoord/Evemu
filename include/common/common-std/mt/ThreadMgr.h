@@ -23,8 +23,8 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __MT__THREAD_MGR_H__INCL__
-#define __MT__THREAD_MGR_H__INCL__
+#ifndef __COMMON__MT__THREAD_MGR_H__INCL__
+#define __COMMON__MT__THREAD_MGR_H__INCL__
 
 #include "mt/Condition.h"
 #include "mt/Mutex.h"
@@ -32,106 +32,109 @@
 #include "mt/Thread.h"
 #include "util/Singleton.h"
 
-namespace Mt
+namespace common
 {
-    /**
-     * @brief Thread manager, does thread pooling.
-     *
-     * @author Bloody.Rabbit
-     */
-    class ThreadMgr
-    : public Util::Singleton< ThreadMgr >,
-      protected TargetEx
+    namespace mt
     {
-    public:
         /**
-         * @brief A primary constructor.
+         * @brief Thread manager, does thread pooling.
          *
-         * @param[in] limit Thread count limit.
+         * @author Bloody.Rabbit
          */
-        ThreadMgr( size_t limit = 100 );
-        /**
-         * @brief A primary destructor.
-         */
-        ~ThreadMgr();
+        class ThreadMgr
+        : public util::Singleton< ThreadMgr >,
+          protected TargetEx
+        {
+        public:
+            /**
+             * @brief A primary constructor.
+             *
+             * @param[in] limit Thread count limit.
+             */
+            ThreadMgr( size_t limit = 100 );
+            /**
+             * @brief A primary destructor.
+             */
+            ~ThreadMgr();
 
-        /**
-         * @brief Obtains current count of enqueued targets.
-         *
-         * @return Current count of enqueued targets.
-         */
-        size_t queueLen() const { return mQueuedTargets.size(); }
-        /**
-         * @brief Obtains current thread count.
-         *
-         * @return Current thread count.
-         */
-        size_t threadCount() const { return mThreads.size(); }
-        /**
-         * @brief Obtains current active thread count.
-         *
-         * @return Current active thread count.
-         */
-        size_t activeThreadCount() const { return mActiveTargets.size(); }
+            /**
+             * @brief Obtains current count of enqueued targets.
+             *
+             * @return Current count of enqueued targets.
+             */
+            size_t queueLen() const { return mQueuedTargets.size(); }
+            /**
+             * @brief Obtains current thread count.
+             *
+             * @return Current thread count.
+             */
+            size_t threadCount() const { return mThreads.size(); }
+            /**
+             * @brief Obtains current active thread count.
+             *
+             * @return Current active thread count.
+             */
+            size_t activeThreadCount() const { return mActiveTargets.size(); }
 
-        /**
-         * @brief Obtains current thread count limit.
-         *
-         * @return Current thread count limit.
-         */
-        size_t threadLimit() const { return mLimit; }
+            /**
+             * @brief Obtains current thread count limit.
+             *
+             * @return Current thread count limit.
+             */
+            size_t threadLimit() const { return mLimit; }
 
-        /**
-         * @brief Adds a new target to the processing queue.
-         *
-         * @param[in] target The new target.
-         */
-        void Run( TargetEx* target );
+            /**
+             * @brief Adds a new target to the processing queue.
+             *
+             * @param[in] target The new target.
+             */
+            void Run( TargetEx* target );
 
-        /**
-         * @brief Sets new thread count limit.
-         *
-         * @param[in] limit The new limit.
-         */
-        void SetThreadLimit( size_t limit );
+            /**
+             * @brief Sets new thread count limit.
+             *
+             * @param[in] limit The new limit.
+             */
+            void SetThreadLimit( size_t limit );
 
-    protected:
-        /**
-         * @brief Singleton cares about our destruction, always return <code>false</code>.
-         *
-         * @return <code>false</code>.
-         */
-        bool deleteOnExit() { return false; }
+        protected:
+            /**
+             * @brief Singleton cares about our destruction, always return <code>false</code>.
+             *
+             * @return <code>false</code>.
+             */
+            bool deleteOnExit() { return false; }
 
-        /**
-         * @brief The processing loop.
-         */
-        void Run();
-        /**
-         * @brief Immediately stops all processing.
-         */
-        void Stop();
+            /**
+             * @brief The processing loop.
+             */
+            void Run();
+            /**
+             * @brief Immediately stops all processing.
+             */
+            void Stop();
 
-        /// A queue of pending targets.
-        std::queue< TargetEx* > mQueuedTargets;
-        /// A list of our threads.
-        std::list< Thread > mThreads;
-        /// A list of active targets.
-        std::list< TargetEx* > mActiveTargets;
+            /// A queue of pending targets.
+            std::queue< TargetEx* > mQueuedTargets;
+            /// A list of our threads.
+            std::list< Thread > mThreads;
+            /// A list of active targets.
+            std::list< TargetEx* > mActiveTargets;
 
-        /// A wait condition for threads.
-        Condition mEvent;
+            /// A wait condition for threads.
+            Condition mEvent;
 
-        /// Thread limit.
-        size_t mLimit;
+            /// Thread limit.
+            size_t mLimit;
 
-        /// A Mutex to protect this object.
-        mutable Mutex mMutex;
-    };
+            /// A Mutex to protect this object.
+            mutable Mutex mMutex;
+        };
+    }
 }
 
 /// A macro for easier access.
 #define sThreadMgr \
-    ( Mt::ThreadMgr::get() )
+    ( common::mt::ThreadMgr::get() )
 
-#endif /* !__MT__THREAD_MGR_H__INCL__ */
+#endif /* !__COMMON__MT__THREAD_MGR_H__INCL__ */

@@ -23,18 +23,18 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __TEST_NET_STREAM_SOCKET_H__INCL__
-#define __TEST_NET_STREAM_SOCKET_H__INCL__
+#ifndef __TEST__TEST_NET_STREAM_SOCKET_H__INCL__
+#define __TEST__TEST_NET_STREAM_SOCKET_H__INCL__
 
-namespace Util
+namespace test
 {
     /**
-     * @brief Tests Net::StreamSocket.
+     * @brief Tests net::StreamSocket.
      *
      * @author Bloody.Rabbit
      */
     template< typename L3 >
-    class Test< Net::StreamSocket< L3 > >
+    class TestNetStreamSocket
     : public CppUnit::TestCase
     {
     public:
@@ -46,7 +46,7 @@ namespace Util
         /**
          * @brief A primary constructor.
          */
-        Test()
+        TestNetStreamSocket()
         : CppUnit::TestCase( "TestNetStreamSocket" )
         {
         }
@@ -77,15 +77,15 @@ namespace Util
             CPPUNIT_ASSERT_EQUAL( EINPROGRESS, mClient.Connect( SOCKET_ADDRESS ) );
 
             // Accept the connection (blocking)
-            Net::StreamSocket< L3 > acceptedClient;
+            net::StreamSocket< L3 > acceptedClient;
             CPPUNIT_ASSERT_EQUAL( 0, mServer.Accept( acceptedClient ) );
 
             // Send the data (asynchronously)
-            Util::Buffer buf( MESSAGE, MESSAGE + sizeof( MESSAGE ) );
-            CPPUNIT_ASSERT_EQUAL( Stream::ERROR_OK, mClient.Write( buf ) );
+            util::Buffer buf( MESSAGE, MESSAGE + sizeof( MESSAGE ) );
+            CPPUNIT_ASSERT_EQUAL( stream::ERROR_OK, mClient.Write( buf ) );
 
             // Receive the data (blocking)
-            CPPUNIT_ASSERT_EQUAL( Stream::ERROR_OK, acceptedClient.Read( buf ) );
+            CPPUNIT_ASSERT_EQUAL( stream::ERROR_OK, acceptedClient.Read( buf ) );
 
             // Compare the data
             CPPUNIT_ASSERT( std::equal( MESSAGE, MESSAGE + sizeof( MESSAGE ),
@@ -99,18 +99,18 @@ namespace Util
 
     protected:
         /// A client socket.
-        Net::StreamSocket< L3 > mClient;
+        net::StreamSocket< L3 > mClient;
         /// A server socket.
-        Net::StreamSocket< L3 > mServer;
+        net::StreamSocket< L3 > mServer;
     };
 
     template< typename L3 >
-    const typename L3::SocketAddress Test< Net::StreamSocket< L3 > >::SOCKET_ADDRESS =
+    const typename L3::SocketAddress TestNetStreamSocket< L3 >::SOCKET_ADDRESS =
         L3::GetSocketAddress( L3::GetAddressByHostname( "localhost" ),
                               L3::GetPort( 43250 ) );
     template< typename L3 >
-    const char Test< Net::StreamSocket< L3 > >::MESSAGE[] =
+    const char TestNetStreamSocket< L3 >::MESSAGE[] =
         "This is a test message of TestNetStreamSocket.";
 }
 
-#endif /* !__TEST_NET_STREAM_SOCKET_H__INCL__ */
+#endif /* !__TEST__TEST_NET_STREAM_SOCKET_H__INCL__ */

@@ -27,15 +27,18 @@
 
 #include "win/Handle.h"
 
+using namespace common;
+using namespace common::win;
+
 /*************************************************************************/
-/* Win::Handle                                                           */
+/* common::win::Handle                                                   */
 /*************************************************************************/
-Win::Handle::Handle( HANDLE handle )
+Handle::Handle( HANDLE handle )
 : mHandle( handle )
 {
 }
 
-Win::Handle::Handle( const Win::Handle& oth )
+Handle::Handle( const Handle& oth )
 : mHandle( INVALID_HANDLE_VALUE )
 {
     if( TRUE == oth.isValid() )
@@ -47,13 +50,13 @@ Win::Handle::Handle( const Win::Handle& oth )
     }
 }
 
-Win::Handle::~Handle()
+Handle::~Handle()
 {
     DWORD code = Close();
     assert( ERROR_SUCCESS == code );
 }
 
-DWORD Win::Handle::Close()
+DWORD Handle::Close()
 {
     if( TRUE == isValid() )
     {
@@ -65,7 +68,7 @@ DWORD Win::Handle::Close()
     return ERROR_SUCCESS;
 }
 
-Win::Handle& Win::Handle::operator=( const Win::Handle& oth )
+Handle& Handle::operator=( const Handle& oth )
 {
     DWORD code = Close();
     assert( ERROR_SUCCESS == code );
@@ -82,58 +85,58 @@ Win::Handle& Win::Handle::operator=( const Win::Handle& oth )
 }
 
 /*************************************************************************/
-/* Win::ReadableHandle                                                   */
+/* common::win::ReadableHandle                                           */
 /*************************************************************************/
-Win::ReadableHandle::ReadableHandle( HANDLE handle )
-: Win::Handle( handle )
+ReadableHandle::ReadableHandle( HANDLE handle )
+: Handle( handle )
 {
 }
 
-Win::ReadableHandle::Error Win::ReadableHandle::Read( Util::Data& data, size_t* bytesRead )
+stream::Error ReadableHandle::Read( util::Data& data, size_t* bytesRead )
 {
     DWORD read;
 
     BOOL success = ::ReadFile( mHandle, &data[0], data.size(), &read, NULL );
     if( TRUE != success )
-        return ERROR_READ;
+        return stream::ERROR_READ;
 
     if( NULL != bytesRead )
         *bytesRead = read;
 
-    return ERROR_OK;
+    return stream::ERROR_OK;
 }
 
 /*************************************************************************/
-/* Win::WritableHandle                                                   */
+/* common::win::WritableHandle                                           */
 /*************************************************************************/
-Win::WritableHandle::WritableHandle( HANDLE handle )
-: Win::Handle( handle )
+WritableHandle::WritableHandle( HANDLE handle )
+: Handle( handle )
 {
 }
 
-Win::WritableHandle::Error Win::WritableHandle::Write( const Util::Data& data, size_t* bytesWritten )
+stream::Error WritableHandle::Write( const util::Data& data, size_t* bytesWritten )
 {
     DWORD written;
 
     BOOL success = ::WriteFile( mHandle, &data[0], data.size(), &written, NULL );
     if( TRUE != success )
-        return ERROR_WRITE;
+        return stream::ERROR_WRITE;
 
     if( NULL != bytesWritten )
         *bytesWritten = written;
 
-    return ERROR_OK;
+    return stream::ERROR_OK;
 }
 
 /*************************************************************************/
-/* Win::WaitableHandle                                                   */
+/* common::win::WaitableHandle                                           */
 /*************************************************************************/
-Win::WaitableHandle::WaitableHandle( HANDLE handle )
-: Win::Handle( handle )
+WaitableHandle::WaitableHandle( HANDLE handle )
+: Handle( handle )
 {
 }
 
-DWORD Win::WaitableHandle::Wait( const Time::Msec& timeout, PDWORD wakeupEvent ) const
+DWORD WaitableHandle::Wait( const time::Msec& timeout, PDWORD wakeupEvent ) const
 {
     DWORD wakeup = ::WaitForSingleObject( mHandle, static_cast< DWORD >( timeout.count() ) );
     if( WAIT_FAILED == wakeup )

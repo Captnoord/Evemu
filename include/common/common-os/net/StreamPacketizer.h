@@ -23,56 +23,59 @@
     Author:     Zhur
 */
 
-#ifndef __NET__STREAM_PACKETIZER_H__INCL__
-#define __NET__STREAM_PACKETIZER_H__INCL__
+#ifndef __COMMON__NET__STREAM_PACKETIZER_H__INCL__
+#define __COMMON__NET__STREAM_PACKETIZER_H__INCL__
 
-namespace Net
+namespace common
 {
-    /**
-     * @brief Turns a stream into packets.
-     *
-     * @author Bloody.Rabbit
-     */
-    class StreamPacketizer
+    namespace net
     {
-    public:
         /**
-         * @brief A destructor.
+         * @brief Turns a stream into packets.
          *
-         * Performs cleanup by calling ClearBuffers.
+         * @author Bloody.Rabbit
          */
-        ~StreamPacketizer();
+        class StreamPacketizer
+        {
+        public:
+            /**
+             * @brief A destructor.
+             *
+             * Performs cleanup by calling ClearBuffers.
+             */
+            ~StreamPacketizer();
 
-        /**
-         * @brief Inputs new data.
-         *
-         * @param[in] data The data.
-         */
-        void InputData( const Util::Data& data );
-        /**
-         * @brief Processes input data into packets.
-         */
-        void Process();
+            /**
+             * @brief Inputs new data.
+             *
+             * @param[in] data The data.
+             */
+            void InputData( const util::Data& data );
+            /**
+             * @brief Processes input data into packets.
+             */
+            void Process();
 
-        /**
-         * @brief Obtains a next packet in the queue.
-         *
-         * @return The packet.
-         */
-        Util::Buffer* PopPacket();
+            /**
+             * @brief Obtains a next packet in the queue.
+             *
+             * @return The packet.
+             */
+            util::Buffer* PopPacket();
 
-        /**
-         * @brief Deletes all remaining packets.
-         */
-        void ClearBuffers();
+            /**
+             * @brief Deletes all remaining packets.
+             */
+            void ClearBuffers();
 
-    protected:
-        /// Unprocessed or uncomplete packet data.
-        Util::Buffer mBuffer;
+        protected:
+            /// Unprocessed or uncomplete packet data.
+            util::Buffer mBuffer;
 
-        /// A queue of processed packets.
-        std::queue< Util::Buffer* > mPackets;
-    };
+            /// A queue of processed packets.
+            std::queue< util::Buffer* > mPackets;
+        };
+    }
 }
 
-#endif /* !__NET__STREAM_PACKETIZER_H__INCL__ */
+#endif /* !__COMMON__NET__STREAM_PACKETIZER_H__INCL__ */

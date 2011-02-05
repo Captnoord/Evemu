@@ -30,17 +30,20 @@
 #include "time/Timer.h"
 #include "util/Log.h"
 
+using namespace common;
+using namespace common::net;
+
 #ifdef WIN32
-static Net::InitWinsock winsock;
+static InitWinsock winsock;
 #endif
 
 /*************************************************************************/
-/* Net::TcpConnection                                                         */
+/* common::net::TcpConnection                                            */
 /*************************************************************************/
-const size_t Net::TcpConnection::RECVBUF_SIZE = 0x1000;
-const size_t Net::TcpConnection::LOOP_GRANULARITY = 5;
+const size_t TcpConnection::RECVBUF_SIZE = 0x1000;
+const size_t TcpConnection::LOOP_GRANULARITY = 5;
 
-Net::TcpConnection::TcpConnection()
+TcpConnection::TcpConnection()
 : mSock( NULL ),
   mSockState( STATE_DISCONNECTED ),
   mrIP( 0 ),
@@ -49,7 +52,7 @@ Net::TcpConnection::TcpConnection()
 {
 }
 
-Net::TcpConnection::TcpConnection( Net::Socket* sock, uint32 mrIP, uint16 mrPort )
+TcpConnection::TcpConnection( Socket* sock, uint32 mrIP, uint16 mrPort )
 : mSock( sock ),
   mSockState( STATE_CONNECTED ),
   mrIP( mrIP ),
@@ -60,7 +63,7 @@ Net::TcpConnection::TcpConnection( Net::Socket* sock, uint32 mrIP, uint16 mrPort
     StartLoop();
 }
 
-Net::TcpConnection::~TcpConnection()
+TcpConnection::~TcpConnection()
 {
     // Make sure we are disconnected
     Disconnect();
@@ -72,7 +75,7 @@ Net::TcpConnection::~TcpConnection()
     ClearBuffers();
 }
 
-std::string Net::TcpConnection::GetAddress()
+std::string TcpConnection::GetAddress()
 {
     /* "The Matrix is a system, 'Neo'. That system is our enemy. But when you're inside, you look around, what do you see?" */
     in_addr addr;
@@ -88,12 +91,12 @@ std::string Net::TcpConnection::GetAddress()
     return address;
 }
 
-bool Net::TcpConnection::Connect( uint32 rIP, uint16 rPort, char* errbuf )
+bool TcpConnection::Connect( uint32 rIP, uint16 rPort, char* errbuf )
 {
     if( errbuf )
         errbuf[0] = 0;
 
-    Mt::MutexLock lock( mMSock );
+    mt::MutexLock lock( mMSock );
 
     State oldState = GetState();
     if( oldState == STATE_DISCONNECTED )
@@ -110,7 +113,7 @@ bool Net::TcpConnection::Connect( uint32 rIP, uint16 rPort, char* errbuf )
     if( oldState != STATE_DISCONNECTED && oldState != STATE_CONNECTING )
         return false;
 
-    mSock = new Net::Socket( AF_INET, SOCK_STREAM, 0 );
+    mSock = new Socket( AF_INET, SOCK_STREAM, 0 );
 
     sockaddr_in server_sin;
     server_sin.sin_family = AF_INET;
@@ -122,9 +125,9 @@ bool Net::TcpConnection::Connect( uint32 rIP, uint16 rPort, char* errbuf )
     {
         if( errbuf )
 #ifdef WIN32
-            snprintf( errbuf, ERRBUF_SIZE, "Net::TcpConnection::Connect(): connect() failed. Error: %i", WSAGetLastError() );
+            snprintf( errbuf, ERRBUF_SIZE, "TcpConnection::Connect(): connect() failed. Error: %i", WSAGetLastError() );
 #else
-            snprintf( errbuf, ERRBUF_SIZE, "Net::TcpConnection::Connect(): connect() failed. Error: %s", strerror( errno ) );
+            snprintf( errbuf, ERRBUF_SIZE, "TcpConnection::Connect(): connect() failed. Error: %s", strerror( errno ) );
 #endif
 
         SafeDelete( mSock );
@@ -153,10 +156,10 @@ bool Net::TcpConnection::Connect( uint32 rIP, uint16 rPort, char* errbuf )
     return true;
 }
 
-void Net::TcpConnection::AsyncConnect( uint32 rIP, uint16 rPort )
+void TcpConnection::AsyncConnect( uint32 rIP, uint16 rPort )
 {
     // Changing state; acquire mutex
-    Mt::MutexLock lock( mMSock );
+    mt::MutexLock lock( mMSock );
 
     State state = GetState();
     if( state == STATE_DISCONNECTED )
@@ -182,9 +185,9 @@ void Net::TcpConnection::AsyncConnect( uint32 rIP, uint16 rPort )
     StartLoop();
 }
 
-void Net::TcpConnection::Disconnect()
+void TcpConnection::Disconnect()
 {
-    Mt::MutexLock lock( mMSock );
+    mt::MutexLock lock( mMSock );
 
     State state = GetState();
     if( state != STATE_CONNECTING && state != STATE_CONNECTED )
@@ -194,14 +197,14 @@ void Net::TcpConnection::Disconnect()
     mSockState = STATE_DISCONNECTING;
 }
 
-bool Net::TcpConnection::Send( Util::Buffer** data )
+bool TcpConnection::Send( util::Buffer** data )
 {
     // Invalidate pointer
-    Util::Buffer* buf = *data;
+    util::Buffer* buf = *data;
     *data = NULL;
 
     // Check we are in STATE_CONNECTED
-    Mt::MutexLock sockLock( mMSock );
+    mt::MutexLock sockLock( mMSock );
 
     State state = GetState();
     if( state != STATE_CONNECTED )
@@ -212,7 +215,7 @@ bool Net::TcpConnection::Send( Util::Buffer** data )
     }
 
     // Push buffer to the send queue
-    Mt::MutexLock queueLock( mMSendQueue );
+    mt::MutexLock queueLock( mMSendQueue );
 
     mSendQueue.push_back( buf );
     buf = NULL;
@@ -220,7 +223,7 @@ bool Net::TcpConnection::Send( Util::Buffer** data )
     return true;
 }
 
-void Net::TcpConnection::StartLoop()
+void TcpConnection::StartLoop()
 {
     // Spawn new thread
 #ifdef WIN32
@@ -231,7 +234,7 @@ void Net::TcpConnection::StartLoop()
 #endif
 }
 
-void Net::TcpConnection::WaitLoop()
+void TcpConnection::WaitLoop()
 {
     // Block calling thread until work thread terminates
     mMLoopRunning.Lock();
@@ -240,11 +243,11 @@ void Net::TcpConnection::WaitLoop()
 
 /* This is always called from an IO thread. Either the server socket's thread, or a
  * special thread we create when we make an outbound connection. */
-bool Net::TcpConnection::Process()
+bool TcpConnection::Process()
 {
     char errbuf[ ERRBUF_SIZE ];
 
-    Mt::MutexLock lock( mMSock );
+    mt::MutexLock lock( mMSock );
     switch( GetState() )
     {
         case STATE_DISCONNECTED:
@@ -259,7 +262,7 @@ bool Net::TcpConnection::Process()
             // Connect
             if( !Connect( GetrIP(), GetrPort(), errbuf ) )
             {
-                sLog.Error( "Net::TcpConnection", "%s: %s.", GetAddress().c_str(), errbuf );
+                sLog.Error( "TcpConnection", "%s: %s.", GetAddress().c_str(), errbuf );
 
                 DoDisconnect();
                 return false;
@@ -274,7 +277,7 @@ bool Net::TcpConnection::Process()
             // Receive data
             if( !RecvData( errbuf ) )
             {
-                sLog.Error( "Net::TcpConnection", "%s: %s.", GetAddress().c_str(), errbuf );
+                sLog.Error( "TcpConnection", "%s: %s.", GetAddress().c_str(), errbuf );
 
                 DoDisconnect();
                 return false;
@@ -283,7 +286,7 @@ bool Net::TcpConnection::Process()
             // Send data
             if( !SendData( errbuf ) )
             {
-                sLog.Error( "Net::TcpConnection", "%s: %s.", GetAddress().c_str(), errbuf );
+                sLog.Error( "TcpConnection", "%s: %s.", GetAddress().c_str(), errbuf );
 
                 DoDisconnect();
                 return false;
@@ -298,7 +301,7 @@ bool Net::TcpConnection::Process()
             // Send anything that may be pending
             if( !SendData( errbuf ) )
             {
-                sLog.Error( "Net::TcpConnection", "%s: %s.", GetAddress().c_str(), errbuf );
+                sLog.Error( "TcpConnection", "%s: %s.", GetAddress().c_str(), errbuf );
 
                 DoDisconnect();
                 return false;
@@ -311,12 +314,12 @@ bool Net::TcpConnection::Process()
     }
 }
 
-bool Net::TcpConnection::SendData( char* errbuf )
+bool TcpConnection::SendData( char* errbuf )
 {
     if( errbuf )
     errbuf[0] = 0;
 
-    Mt::MutexLock lock( mMSock );
+    mt::MutexLock lock( mMSock );
 
     State state = GetState();
     if( state != STATE_CONNECTED && state != STATE_DISCONNECTING )
@@ -325,7 +328,7 @@ bool Net::TcpConnection::SendData( char* errbuf )
     mMSendQueue.Lock();
     while( !mSendQueue.empty() )
     {
-        Util::Buffer* buf = mSendQueue.front();
+        util::Buffer* buf = mSendQueue.front();
         mSendQueue.pop_front();
         mMSendQueue.Unlock();
 
@@ -346,9 +349,9 @@ bool Net::TcpConnection::SendData( char* errbuf )
             {
                 if( errbuf )
 #ifdef WIN32
-                    snprintf( errbuf, ERRBUF_SIZE, "Net::TcpConnection::SendData(): send(): Errorcode: %u", WSAGetLastError() );
+                    snprintf( errbuf, ERRBUF_SIZE, "TcpConnection::SendData(): send(): Errorcode: %u", WSAGetLastError() );
 #else
-                    snprintf( errbuf, ERRBUF_SIZE, "Net::TcpConnection::SendData(): send(): Errorcode: %s", strerror( errno ) );
+                    snprintf( errbuf, ERRBUF_SIZE, "TcpConnection::SendData(): send(): Errorcode: %s", strerror( errno ) );
 #endif
 
                 SafeDelete( buf );
@@ -359,7 +362,7 @@ bool Net::TcpConnection::SendData( char* errbuf )
         if( (size_t)status > buf->size() )
         {
             if( errbuf )
-                snprintf( errbuf, ERRBUF_SIZE, "Net::TcpConnection::SendData(): WTF! status > size." );
+                snprintf( errbuf, ERRBUF_SIZE, "TcpConnection::SendData(): WTF! status > size." );
 
             SafeDelete( buf );
             return false;
@@ -369,7 +372,7 @@ bool Net::TcpConnection::SendData( char* errbuf )
             if( status > 0 )
                 buf->Assign( buf->begin< uint8 >() + status, buf->end< uint8 >() );
 
-            Mt::MutexLock queueLock( mMSendQueue );
+            mt::MutexLock queueLock( mMSendQueue );
 
             mSendQueue.push_front( buf );
             buf = NULL;
@@ -386,12 +389,12 @@ bool Net::TcpConnection::SendData( char* errbuf )
     return true;
 }
 
-bool Net::TcpConnection::RecvData( char* errbuf )
+bool TcpConnection::RecvData( char* errbuf )
 {
     if( errbuf != NULL )
         errbuf[0] = 0;
 
-    Mt::MutexLock lock( mMSock );
+    mt::MutexLock lock( mMSock );
 
     State state = GetState();
     if( state != STATE_CONNECTED && state != STATE_DISCONNECTING )
@@ -400,7 +403,7 @@ bool Net::TcpConnection::RecvData( char* errbuf )
     while( true )
     {
         if( mRecvBuf == NULL )
-            mRecvBuf = new Util::Buffer( RECVBUF_SIZE );
+            mRecvBuf = new util::Buffer( RECVBUF_SIZE );
         else if( mRecvBuf->size() < RECVBUF_SIZE )
             mRecvBuf->Resize< uint8 >( RECVBUF_SIZE );
 
@@ -415,7 +418,7 @@ bool Net::TcpConnection::RecvData( char* errbuf )
         }
         else if( status == 0 )
         {
-            snprintf( errbuf, ERRBUF_SIZE, "Net::TcpConnection::RecvData(): Connection closed" );
+            snprintf( errbuf, ERRBUF_SIZE, "TcpConnection::RecvData(): Connection closed" );
 
             return false;
         }
@@ -433,9 +436,9 @@ bool Net::TcpConnection::RecvData( char* errbuf )
             {
                 if( errbuf )
 #ifdef WIN32
-                    snprintf( errbuf, ERRBUF_SIZE, "Net::TcpConnection::RecvData(): Error: %i", WSAGetLastError() );
+                    snprintf( errbuf, ERRBUF_SIZE, "TcpConnection::RecvData(): Error: %i", WSAGetLastError() );
 #else
-                    snprintf( errbuf, ERRBUF_SIZE, "Net::TcpConnection::RecvData(): Error: %s", strerror( errno ) );
+                    snprintf( errbuf, ERRBUF_SIZE, "TcpConnection::RecvData(): Error: %s", strerror( errno ) );
 #endif
 
                 return false;
@@ -444,9 +447,9 @@ bool Net::TcpConnection::RecvData( char* errbuf )
     }
 }
 
-void Net::TcpConnection::DoDisconnect()
+void TcpConnection::DoDisconnect()
 {
-    Mt::MutexLock lock( mMSock );
+    mt::MutexLock lock( mMSock );
 
     State state = GetState();
     if( state != STATE_CONNECTED && state != STATE_DISCONNECTING )
@@ -459,13 +462,13 @@ void Net::TcpConnection::DoDisconnect()
     mSockState = STATE_DISCONNECTED;
 }
 
-void Net::TcpConnection::ClearBuffers()
+void TcpConnection::ClearBuffers()
 {
-    Mt::MutexLock lock( mMSendQueue );
+    mt::MutexLock lock( mMSendQueue );
 
     while( !mSendQueue.empty() )
     {
-        Util::Buffer* buf = mSendQueue.front();
+        util::Buffer* buf = mSendQueue.front();
         mSendQueue.pop_front();
 
         SafeDelete( buf );
@@ -474,15 +477,15 @@ void Net::TcpConnection::ClearBuffers()
     SafeDelete( mRecvBuf );
 }
 
-thread_return_t Net::TcpConnection::TcpConnectionLoop( void* arg )
+thread_return_t TcpConnection::TcpConnectionLoop( void* arg )
 {
-    Net::TcpConnection* tcpc = reinterpret_cast< Net::TcpConnection* >( arg );
+    TcpConnection* tcpc = reinterpret_cast< TcpConnection* >( arg );
     assert( tcpc != NULL );
 
     THREAD_RETURN( tcpc->TcpConnectionLoop() );
 }
 
-thread_return_t Net::TcpConnection::TcpConnectionLoop()
+thread_return_t TcpConnection::TcpConnectionLoop()
 {
 #ifdef WIN32
     SetThreadPriority( GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL );

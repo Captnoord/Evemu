@@ -27,26 +27,29 @@
 
 #include "win/ConsoleScreenBuffer.h"
 
+using namespace common;
+using namespace common::win;
+
 /*************************************************************************/
-/* Win::ConsoleScreenBuffer                                              */
+/* common::win::ConsoleScreenBuffer                                      */
 /*************************************************************************/
-const Win::ConsoleScreenBuffer Win::ConsoleScreenBuffer::DEFAULT_OUTPUT_SCREEN(
+const ConsoleScreenBuffer ConsoleScreenBuffer::DEFAULT_OUTPUT_SCREEN(
     ::GetStdHandle( STD_OUTPUT_HANDLE )
 );
 
-Win::ConsoleScreenBuffer::ConsoleScreenBuffer( HANDLE handle )
-: Win::Handle( handle )
+ConsoleScreenBuffer::ConsoleScreenBuffer( HANDLE handle )
+: Handle( handle )
 {
 }
 
-Win::ConsoleScreenBuffer::ConsoleScreenBuffer( DWORD desiredAccess, DWORD shareMode )
-: Win::Handle()
+ConsoleScreenBuffer::ConsoleScreenBuffer( DWORD desiredAccess, DWORD shareMode )
+: Handle()
 {
     DWORD code = Create( desiredAccess, shareMode );
     assert( ERROR_SUCCESS == code );
 }
 
-DWORD Win::ConsoleScreenBuffer::Create( DWORD desiredAccess, DWORD shareMode )
+DWORD ConsoleScreenBuffer::Create( DWORD desiredAccess, DWORD shareMode )
 {
     DWORD code = Close();
     if( ERROR_SUCCESS != code )
@@ -59,7 +62,7 @@ DWORD Win::ConsoleScreenBuffer::Create( DWORD desiredAccess, DWORD shareMode )
     return ERROR_SUCCESS;
 }
 
-DWORD Win::ConsoleScreenBuffer::SetActive()
+DWORD ConsoleScreenBuffer::SetActive()
 {
     if( TRUE != ::SetConsoleActiveScreenBuffer( mHandle ) )
         return ::GetLastError();
@@ -67,7 +70,7 @@ DWORD Win::ConsoleScreenBuffer::SetActive()
     return ERROR_SUCCESS;
 }
 
-DWORD Win::ConsoleScreenBuffer::SetTextAttributes( WORD attributes )
+DWORD ConsoleScreenBuffer::SetTextAttributes( WORD attributes )
 {
     if( TRUE != ::SetConsoleTextAttribute( mHandle, attributes ) )
         return ::GetLastError();

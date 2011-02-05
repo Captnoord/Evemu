@@ -27,38 +27,41 @@
 
 #include "win/Condition.h"
 
+using namespace common;
+using namespace common::mt;
+
 /*************************************************************************/
-/* Mt::Condition                                                         */
+/* common::mt::Condition                                                 */
 /*************************************************************************/
-Mt::Condition::Condition()
-: mCondition( new Win::Condition )
+Condition::Condition()
+: mCondition( new win::Condition )
 {
 }
 
-Mt::Condition::~Condition()
+Condition::~Condition()
 {
     SafeDelete( mCondition );
 }
 
-void Mt::Condition::Signal()
+void Condition::Signal()
 {
     DWORD code = mCondition->Signal();
     assert( ERROR_SUCCESS == code );
 }
 
-void Mt::Condition::Broadcast()
+void Condition::Broadcast()
 {
     DWORD code = mCondition->Broadcast();
     assert( ERROR_SUCCESS == code );
 }
 
-void Mt::Condition::Wait( Mutex& mutex )
+void Condition::Wait( Mutex& mutex )
 {
     DWORD code = mCondition->Wait( *mutex.mMutex );
     assert( ERROR_SUCCESS == code );
 }
 
-void Mt::Condition::TimedWait( Mutex& mutex, const Time::Msec& timeout )
+void Condition::TimedWait( Mutex& mutex, const time::Msec& timeout )
 {
     DWORD code = mCondition->Wait( *mutex.mMutex, timeout );
     assert( ERROR_SUCCESS == code );

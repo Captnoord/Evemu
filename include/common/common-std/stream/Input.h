@@ -23,97 +23,100 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __STREAM__INPUT_H__INCL__
-#define __STREAM__INPUT_H__INCL__
+#ifndef __COMMON__STREAM__INPUT_H__INCL__
+#define __COMMON__STREAM__INPUT_H__INCL__
 
 #include "stream/Error.h"
 #include "util/Data.h"
 
-namespace Stream
+namespace common
 {
-    /**
-     * @brief An input stream.
-     *
-     * @author Bloody.Rabbit
-     */
-    template< typename T >
-    class Input
+    namespace stream
     {
-    public:
-        /// An element of the stream.
-        typedef T Element;
-
         /**
-         * @brief A destructor; empty, but virtual.
+         * @brief An input stream.
+         *
+         * @author Bloody.Rabbit
          */
-        virtual ~Input()
+        template< typename T >
+        class Input
         {
-        }
+        public:
+            /// An element of the stream.
+            typedef T Element;
+
+            /**
+             * @brief A destructor; empty, but virtual.
+             */
+            virtual ~Input()
+            {
+            }
+
+            /**
+             * @brief Reads an element from the stream, ignoring errors.
+             *
+             * @return The element.
+             */
+            Element Read()
+            {
+                Element e;
+                Read( e );
+                return e;
+            }
+
+            /**
+             * @brief Reads an element from the stream.
+             *
+             * @param[out] e Where to store the element.
+             *
+             * @return An error code.
+             */
+            virtual Error Read( Element& e ) { return Read( &e, 1 ); }
+            /**
+             * @brief Reads multiple elements from the stream.
+             *
+             * @param[out] ep        Where to store the elements.
+             * @param[in]  count     A count of elements in
+             *                       the <var>ep</var> array.
+             * @param[out] countRead Where the actual count of read
+             *                       elements will be stored.
+             *
+             * @return An error code.
+             */
+            virtual Error Read( Element* ep, size_t count, size_t* countRead = NULL ) = 0;
+        };
 
         /**
-         * @brief Reads an element from the stream, ignoring errors.
+         * @brief A specialization for binary streams.
          *
-         * @return The element.
+         * @author Bloody.Rabbit
          */
-        Element Read()
+        template<>
+        class Input< void >
         {
-            Element e;
-            Read( e );
-            return e;
-        }
+        public:
+            /// An element of the stream.
+            typedef void Element;
 
-        /**
-         * @brief Reads an element from the stream.
-         *
-         * @param[out] e Where to store the element.
-         *
-         * @return An error code.
-         */
-        virtual Error Read( Element& e ) { return Read( &e, 1 ); }
-        /**
-         * @brief Reads multiple elements from the stream.
-         *
-         * @param[out] ep        Where to store the elements.
-         * @param[in]  count     A count of elements in
-         *                       the <var>ep</var> array.
-         * @param[out] countRead Where the actual count of read
-         *                       elements will be stored.
-         *
-         * @return An error code.
-         */
-        virtual Error Read( Element* ep, size_t count, size_t* countRead = NULL ) = 0;
-    };
+            /**
+             * @brief A destructor; empty, but virtual.
+             */
+            virtual ~Input()
+            {
+            }
 
-    /**
-     * @brief A specialization for binary streams.
-     *
-     * @author Bloody.Rabbit
-     */
-    template<>
-    class Input< void >
-    {
-    public:
-        /// An element of the stream.
-        typedef void Element;
-
-        /**
-         * @brief A destructor; empty, but virtual.
-         */
-        virtual ~Input()
-        {
-        }
-
-        /**
-         * @brief Reads some data from the stream.
-         *
-         * @param[out] data      Where to store the output data.
-         * @param[out] bytesRead Where to store the number of
-         *                       read bytes.
-         *
-         * @return An error code.
-         */
-        virtual Error Read( Util::Data& data, size_t* bytesRead = NULL ) = 0;
-    };
+            /**
+             * @brief Reads some data from the stream.
+             *
+             * @param[out] data      Where to store the output data.
+             * @param[out] bytesRead Where to store the number of
+             *                       read bytes.
+             *
+             * @return An error code.
+             */
+            virtual Error Read( util::Data& data, size_t* bytesRead = NULL ) = 0;
+        };
+    }
 }
 
-#endif /* !__STREAM__INPUT_H__INCL__ */
+#endif /* !__COMMON__STREAM__INPUT_H__INCL__ */

@@ -23,78 +23,80 @@
     Author:     Zhur
 */
 
-#include "CommonPCH.h"
+#include "CommonMysql.h"
 
 #include "db/Core.h"
-#include "util/Log.h"
+
+using namespace common;
+using namespace common::db;
 
 /************************************************************************/
-/* Db::Error                                                            */
+/* common::db::Error                                                    */
 /************************************************************************/
-Db::Error::Error()
+Error::Error()
 {
     ClearError();
 }
 
-void Db::Error::SetError( unsigned int errNo, const char* errMsg )
+void Error::SetError( unsigned int errNo, const char* errMsg )
 {
     mErrNo = errNo;
     mErrMsg = errMsg;
 }
 
-void Db::Error::ClearError()
+void Error::ClearError()
 {
     SetError( 0, "No Error" );
 }
 
 /*************************************************************************/
-/* Db::ResultRow                                                         */
+/* common::db::ResultRow                                                 */
 /*************************************************************************/
-Db::ResultRow::ResultRow()
+ResultRow::ResultRow()
 : mRow( NULL ),
   mLengths( NULL ),
   mResult( NULL )
 {
 }
 
-size_t Db::ResultRow::count() const
+size_t ResultRow::count() const
 {
     return mResult->columnCount();
 }
 
-const char* Db::ResultRow::name( size_t index ) const
+const char* ResultRow::name( size_t index ) const
 {
     return mResult->columnName( index );
 }
 
-Db::TYPE Db::ResultRow::type( size_t index ) const
+TYPE ResultRow::type( size_t index ) const
 {
     return mResult->columnType( index );
 }
 
-size_t Db::ResultRow::length( size_t index ) const
+size_t ResultRow::length( size_t index ) const
 {
     assert( index < count() );
     return mLengths[ index ];
 }
 
-bool Db::ResultRow::isUnsigned( size_t index ) const
+bool ResultRow::isUnsigned( size_t index ) const
 {
     return mResult->isColumnUnsigned( index );
 }
 
-bool Db::ResultRow::isBinary( size_t index ) const
+bool ResultRow::isBinary( size_t index ) const
 {
     return mResult->isColumnBinary( index );
 }
 
-bool Db::ResultRow::isNull( size_t index ) const
+bool ResultRow::isNull( size_t index ) const
 {
     assert( index < count() );
     return NULL == mRow[ index ];
 }
 
-void Db::ResultRow::SetRow( Db::QueryResult* res, const MYSQL_ROW& row, const unsigned long* lengths )
+void ResultRow::SetRow( QueryResult* res, const MYSQL_ROW& row, const unsigned long* lengths )
 {
     mRow = row;
     mResult = res;
@@ -102,80 +104,80 @@ void Db::ResultRow::SetRow( Db::QueryResult* res, const MYSQL_ROW& row, const un
 }
 
 /************************************************************************/
-/* Db::QueryResult                                                      */
+/* common::db::QueryResult                                              */
 /************************************************************************/
 /* treating all strings as wide isn't probably the best solution but it's
    the easiest one which preserves wide strings. */
-const Db::TYPE Db::QueryResult::MYSQL_TYPE_TABLE_SIGNED[] =
+const TYPE QueryResult::MYSQL_TYPE_TABLE_SIGNED[] =
 {
-    Db::TYPE_ERROR,   //[ 0]MYSQL_TYPE_DECIMAL            /* DECIMAL or NUMERIC field */
-    Db::TYPE_I1,      //[ 1]MYSQL_TYPE_TINY               /* TINYINT field */
-    Db::TYPE_I2,      //[ 2]MYSQL_TYPE_SHORT              /* SMALLINT field */
-    Db::TYPE_I4,      //[ 3]MYSQL_TYPE_LONG               /* INTEGER field */
-    Db::TYPE_R4,      //[ 4]MYSQL_TYPE_FLOAT              /* FLOAT field */
-    Db::TYPE_R8,      //[ 5]MYSQL_TYPE_DOUBLE             /* DOUBLE or REAL field */
-    Db::TYPE_ERROR,   //[ 6]MYSQL_TYPE_NULL               /* NULL-type field */
-    Db::TYPE_FILETIME,//[ 7]MYSQL_TYPE_TIMESTAMP          /* TIMESTAMP field */
-    Db::TYPE_I8,      //[ 8]MYSQL_TYPE_LONGLONG           /* BIGINT field */
-    Db::TYPE_I4,      //[ 9]MYSQL_TYPE_INT24              /* MEDIUMINT field */
-    Db::TYPE_ERROR,   //[10]MYSQL_TYPE_DATE               /* DATE field */
-    Db::TYPE_ERROR,   //[11]MYSQL_TYPE_TIME               /* TIME field */
-    Db::TYPE_ERROR,   //[12]MYSQL_TYPE_DATETIME           /* DATETIME field */
-    Db::TYPE_ERROR,   //[13]MYSQL_TYPE_YEAR               /* YEAR field */
-    Db::TYPE_ERROR,   //[14]MYSQL_TYPE_NEWDATE            /* ??? */
-    Db::TYPE_ERROR,   //[15]MYSQL_TYPE_VARCHAR            /* ??? */
-    Db::TYPE_BOOL,    //[16]MYSQL_TYPE_BIT                /* BIT field (MySQL 5.0.3 and up) */
-    Db::TYPE_ERROR,   //[17]MYSQL_TYPE_NEWDECIMAL=246     /* Precision math DECIMAL or NUMERIC field (MySQL 5.0.3 and up) */
-    Db::TYPE_ERROR,   //[18]MYSQL_TYPE_ENUM=247           /* ENUM field */
-    Db::TYPE_ERROR,   //[19]MYSQL_TYPE_SET=248            /* SET field */
-    Db::TYPE_WSTR,    //[20]MYSQL_TYPE_TINY_BLOB=249      /* TINYBLOB or TINYTEXT field */
-    Db::TYPE_WSTR,    //[21]MYSQL_TYPE_MEDIUM_BLOB=250    /* MEDIUMBLOB or MEDIUMTEXT field */
-    Db::TYPE_WSTR,    //[22]MYSQL_TYPE_LONG_BLOB=251      /* LONGBLOB or LONGTEXT field */
-    Db::TYPE_WSTR,    //[23]MYSQL_TYPE_BLOB=252           /* BLOB or TEXT field */
-    Db::TYPE_WSTR,    //[24]MYSQL_TYPE_VAR_STRING=253     /* VARCHAR or VARBINARY field */
-    Db::TYPE_WSTR,    //[25]MYSQL_TYPE_STRING=254         /* CHAR or BINARY field */
-    Db::TYPE_ERROR,   //[26]MYSQL_TYPE_GEOMETRY=255       /* Spatial field */
+    TYPE_ERROR,   //[ 0]MYSQL_TYPE_DECIMAL            /* DECIMAL or NUMERIC field */
+    TYPE_I1,      //[ 1]MYSQL_TYPE_TINY               /* TINYINT field */
+    TYPE_I2,      //[ 2]MYSQL_TYPE_SHORT              /* SMALLINT field */
+    TYPE_I4,      //[ 3]MYSQL_TYPE_LONG               /* INTEGER field */
+    TYPE_R4,      //[ 4]MYSQL_TYPE_FLOAT              /* FLOAT field */
+    TYPE_R8,      //[ 5]MYSQL_TYPE_DOUBLE             /* DOUBLE or REAL field */
+    TYPE_ERROR,   //[ 6]MYSQL_TYPE_NULL               /* NULL-type field */
+    TYPE_FILETIME,//[ 7]MYSQL_TYPE_TIMESTAMP          /* TIMESTAMP field */
+    TYPE_I8,      //[ 8]MYSQL_TYPE_LONGLONG           /* BIGINT field */
+    TYPE_I4,      //[ 9]MYSQL_TYPE_INT24              /* MEDIUMINT field */
+    TYPE_ERROR,   //[10]MYSQL_TYPE_DATE               /* DATE field */
+    TYPE_ERROR,   //[11]MYSQL_TYPE_TIME               /* TIME field */
+    TYPE_ERROR,   //[12]MYSQL_TYPE_DATETIME           /* DATETIME field */
+    TYPE_ERROR,   //[13]MYSQL_TYPE_YEAR               /* YEAR field */
+    TYPE_ERROR,   //[14]MYSQL_TYPE_NEWDATE            /* ??? */
+    TYPE_ERROR,   //[15]MYSQL_TYPE_VARCHAR            /* ??? */
+    TYPE_BOOL,    //[16]MYSQL_TYPE_BIT                /* BIT field (MySQL 5.0.3 and up) */
+    TYPE_ERROR,   //[17]MYSQL_TYPE_NEWDECIMAL=246     /* Precision math DECIMAL or NUMERIC field (MySQL 5.0.3 and up) */
+    TYPE_ERROR,   //[18]MYSQL_TYPE_ENUM=247           /* ENUM field */
+    TYPE_ERROR,   //[19]MYSQL_TYPE_SET=248            /* SET field */
+    TYPE_WSTR,    //[20]MYSQL_TYPE_TINY_BLOB=249      /* TINYBLOB or TINYTEXT field */
+    TYPE_WSTR,    //[21]MYSQL_TYPE_MEDIUM_BLOB=250    /* MEDIUMBLOB or MEDIUMTEXT field */
+    TYPE_WSTR,    //[22]MYSQL_TYPE_LONG_BLOB=251      /* LONGBLOB or LONGTEXT field */
+    TYPE_WSTR,    //[23]MYSQL_TYPE_BLOB=252           /* BLOB or TEXT field */
+    TYPE_WSTR,    //[24]MYSQL_TYPE_VAR_STRING=253     /* VARCHAR or VARBINARY field */
+    TYPE_WSTR,    //[25]MYSQL_TYPE_STRING=254         /* CHAR or BINARY field */
+    TYPE_ERROR,   //[26]MYSQL_TYPE_GEOMETRY=255       /* Spatial field */
 };
 
-const Db::TYPE Db::QueryResult::MYSQL_TYPE_TABLE_UNSIGNED[] =
+const TYPE QueryResult::MYSQL_TYPE_TABLE_UNSIGNED[] =
 {
-    Db::TYPE_ERROR,   //[ 0]MYSQL_TYPE_DECIMAL            /* DECIMAL or NUMERIC field */
-    Db::TYPE_UI1,     //[ 1]MYSQL_TYPE_TINY               /* TINYINT field */
-    Db::TYPE_UI2,     //[ 2]MYSQL_TYPE_SHORT              /* SMALLINT field */
-    Db::TYPE_UI4,     //[ 3]MYSQL_TYPE_LONG               /* INTEGER field */
-    Db::TYPE_R4,      //[ 4]MYSQL_TYPE_FLOAT              /* FLOAT field */
-    Db::TYPE_R8,      //[ 5]MYSQL_TYPE_DOUBLE             /* DOUBLE or REAL field */
-    Db::TYPE_ERROR,   //[ 6]MYSQL_TYPE_NULL               /* NULL-type field */
-    Db::TYPE_FILETIME,//[ 7]MYSQL_TYPE_TIMESTAMP          /* TIMESTAMP field */
-    Db::TYPE_UI8,     //[ 8]MYSQL_TYPE_LONGLONG           /* BIGINT field */
-    Db::TYPE_UI4,     //[ 9]MYSQL_TYPE_INT24              /* MEDIUMINT field */
-    Db::TYPE_ERROR,   //[10]MYSQL_TYPE_DATE               /* DATE field */
-    Db::TYPE_ERROR,   //[11]MYSQL_TYPE_TIME               /* TIME field */
-    Db::TYPE_ERROR,   //[12]MYSQL_TYPE_DATETIME           /* DATETIME field */
-    Db::TYPE_ERROR,   //[13]MYSQL_TYPE_YEAR               /* YEAR field */
-    Db::TYPE_ERROR,   //[14]MYSQL_TYPE_NEWDATE            /* ??? */
-    Db::TYPE_ERROR,   //[15]MYSQL_TYPE_VARCHAR            /* ??? */
-    Db::TYPE_BOOL,    //[16]MYSQL_TYPE_BIT                /* BIT field (MySQL 5.0.3 and up) */
-    Db::TYPE_ERROR,   //[17]MYSQL_TYPE_NEWDECIMAL=246     /* Precision math DECIMAL or NUMERIC field (MySQL 5.0.3 and up) */
-    Db::TYPE_ERROR,   //[18]MYSQL_TYPE_ENUM=247           /* ENUM field */
-    Db::TYPE_ERROR,   //[19]MYSQL_TYPE_SET=248            /* SET field */
-    Db::TYPE_WSTR,    //[20]MYSQL_TYPE_TINY_BLOB=249      /* TINYBLOB or TINYTEXT field */
-    Db::TYPE_WSTR,    //[21]MYSQL_TYPE_MEDIUM_BLOB=250    /* MEDIUMBLOB or MEDIUMTEXT field */
-    Db::TYPE_WSTR,    //[22]MYSQL_TYPE_LONG_BLOB=251      /* LONGBLOB or LONGTEXT field */
-    Db::TYPE_WSTR,    //[23]MYSQL_TYPE_BLOB=252           /* BLOB or TEXT field */
-    Db::TYPE_WSTR,    //[24]MYSQL_TYPE_VAR_STRING=253     /* VARCHAR or VARBINARY field */
-    Db::TYPE_WSTR,    //[25]MYSQL_TYPE_STRING=254         /* CHAR or BINARY field */
-    Db::TYPE_ERROR,   //[26]MYSQL_TYPE_GEOMETRY=255       /* Spatial field */
+    TYPE_ERROR,   //[ 0]MYSQL_TYPE_DECIMAL            /* DECIMAL or NUMERIC field */
+    TYPE_UI1,     //[ 1]MYSQL_TYPE_TINY               /* TINYINT field */
+    TYPE_UI2,     //[ 2]MYSQL_TYPE_SHORT              /* SMALLINT field */
+    TYPE_UI4,     //[ 3]MYSQL_TYPE_LONG               /* INTEGER field */
+    TYPE_R4,      //[ 4]MYSQL_TYPE_FLOAT              /* FLOAT field */
+    TYPE_R8,      //[ 5]MYSQL_TYPE_DOUBLE             /* DOUBLE or REAL field */
+    TYPE_ERROR,   //[ 6]MYSQL_TYPE_NULL               /* NULL-type field */
+    TYPE_FILETIME,//[ 7]MYSQL_TYPE_TIMESTAMP          /* TIMESTAMP field */
+    TYPE_UI8,     //[ 8]MYSQL_TYPE_LONGLONG           /* BIGINT field */
+    TYPE_UI4,     //[ 9]MYSQL_TYPE_INT24              /* MEDIUMINT field */
+    TYPE_ERROR,   //[10]MYSQL_TYPE_DATE               /* DATE field */
+    TYPE_ERROR,   //[11]MYSQL_TYPE_TIME               /* TIME field */
+    TYPE_ERROR,   //[12]MYSQL_TYPE_DATETIME           /* DATETIME field */
+    TYPE_ERROR,   //[13]MYSQL_TYPE_YEAR               /* YEAR field */
+    TYPE_ERROR,   //[14]MYSQL_TYPE_NEWDATE            /* ??? */
+    TYPE_ERROR,   //[15]MYSQL_TYPE_VARCHAR            /* ??? */
+    TYPE_BOOL,    //[16]MYSQL_TYPE_BIT                /* BIT field (MySQL 5.0.3 and up) */
+    TYPE_ERROR,   //[17]MYSQL_TYPE_NEWDECIMAL=246     /* Precision math DECIMAL or NUMERIC field (MySQL 5.0.3 and up) */
+    TYPE_ERROR,   //[18]MYSQL_TYPE_ENUM=247           /* ENUM field */
+    TYPE_ERROR,   //[19]MYSQL_TYPE_SET=248            /* SET field */
+    TYPE_WSTR,    //[20]MYSQL_TYPE_TINY_BLOB=249      /* TINYBLOB or TINYTEXT field */
+    TYPE_WSTR,    //[21]MYSQL_TYPE_MEDIUM_BLOB=250    /* MEDIUMBLOB or MEDIUMTEXT field */
+    TYPE_WSTR,    //[22]MYSQL_TYPE_LONG_BLOB=251      /* LONGBLOB or LONGTEXT field */
+    TYPE_WSTR,    //[23]MYSQL_TYPE_BLOB=252           /* BLOB or TEXT field */
+    TYPE_WSTR,    //[24]MYSQL_TYPE_VAR_STRING=253     /* VARCHAR or VARBINARY field */
+    TYPE_WSTR,    //[25]MYSQL_TYPE_STRING=254         /* CHAR or BINARY field */
+    TYPE_ERROR,   //[26]MYSQL_TYPE_GEOMETRY=255       /* Spatial field */
 };
 
-Db::QueryResult::QueryResult()
+QueryResult::QueryResult()
 : mColumnCount( 0 ),
   mResult( NULL ),
   mFields( NULL )
 {
 }
 
-Db::QueryResult::~QueryResult()
+QueryResult::~QueryResult()
 {
     SafeDeleteArray( mFields );
 
@@ -183,13 +185,13 @@ Db::QueryResult::~QueryResult()
         mysql_free_result( mResult );
 }
 
-const char* Db::QueryResult::columnName( size_t index ) const
+const char* QueryResult::columnName( size_t index ) const
 {
     assert( index < columnCount() );
     return mFields[ index ]->name;
 }
 
-Db::TYPE Db::QueryResult::columnType( size_t index ) const
+TYPE QueryResult::columnType( size_t index ) const
 {
     assert( index < columnCount() );
     unsigned int columnType = mFields[ index ]->type;
@@ -198,31 +200,31 @@ Db::TYPE Db::QueryResult::columnType( size_t index ) const
     if ( columnType > MYSQL_TYPE_BIT )
         columnType -= ( MYSQL_TYPE_NEWDECIMAL - MYSQL_TYPE_BIT - 1 );
 
-    Db::TYPE result = ( isColumnUnsigned( index )
+    TYPE result = ( isColumnUnsigned( index )
                         ? MYSQL_TYPE_TABLE_UNSIGNED
                         : MYSQL_TYPE_TABLE_SIGNED )[ columnType ];
 
     /* if result is (wide) binary string, set result to DBTYPE_BYTES. */
-    if( ( Db::TYPE_STR == result
-          || Db::TYPE_WSTR == result )
+    if( ( TYPE_STR == result
+          || TYPE_WSTR == result )
         && isColumnBinary( index ) )
     {
-        result = Db::TYPE_BYTES;
+        result = TYPE_BYTES;
     }
 
     /* debug check */
-    assert( Db::TYPE_ERROR != result );
+    assert( TYPE_ERROR != result );
 
     return result;
 }
 
-bool Db::QueryResult::isColumnUnsigned( size_t index ) const
+bool QueryResult::isColumnUnsigned( size_t index ) const
 {
     assert( index < columnCount() );
     return 0 != ( mFields[index]->flags & UNSIGNED_FLAG );
 }
 
-bool Db::QueryResult::isColumnBinary( size_t index ) const
+bool QueryResult::isColumnBinary( size_t index ) const
 {
     assert( index < columnCount() );
     // According to MySQL C API Documentation, binary string
@@ -230,7 +232,7 @@ bool Db::QueryResult::isColumnBinary( size_t index ) const
     return 63 == mFields[ index ]->charsetnr;
 }
 
-bool Db::QueryResult::GetRow( Db::ResultRow& into )
+bool QueryResult::GetRow( ResultRow& into )
 {
     if( NULL == mResult )
         return false;
@@ -247,13 +249,13 @@ bool Db::QueryResult::GetRow( Db::ResultRow& into )
     return true;
 }
 
-void Db::QueryResult::Reset()
+void QueryResult::Reset()
 {
     if( NULL != mResult )
         mysql_data_seek( mResult, 0);
 }
 
-void Db::QueryResult::SetResult( MYSQL_RES** res, size_t colCount )
+void QueryResult::SetResult( MYSQL_RES** res, size_t colCount )
 {
     SafeDeleteArray( mFields );
 
@@ -275,9 +277,9 @@ void Db::QueryResult::SetResult( MYSQL_RES** res, size_t colCount )
 }
 
 /*************************************************************************/
-/* Db::Core                                                              */
+/* common::db::Core                                                      */
 /*************************************************************************/
-bool Db::Core::IsSafeString( const char* str )
+bool Core::IsSafeString( const char* str )
 {
     for(; *str != '\0'; ++str )
     {
@@ -292,7 +294,7 @@ bool Db::Core::IsSafeString( const char* str )
     return true;
 }
 
-Db::Core::Core( bool compress, bool ssl )
+Core::Core( bool compress, bool ssl )
 : mMysqlStatus( STATUS_CLOSED ),
   mCompress( compress ),
   mSSL( ssl )
@@ -300,12 +302,12 @@ Db::Core::Core( bool compress, bool ssl )
     mysql_init( &mMysql );
 }
 
-Db::Core::~Core()
+Core::~Core()
 {
     mysql_close( &mMysql );
 }
 
-bool Db::Core::RunQuery( Db::QueryResult& into, const char* queryFmt, ... )
+bool Core::RunQuery( QueryResult& into, const char* queryFmt, ... )
 {
     va_list ap;
     va_start( ap, queryFmt );
@@ -317,15 +319,15 @@ bool Db::Core::RunQuery( Db::QueryResult& into, const char* queryFmt, ... )
 
     bool result = false;
     {
-        Mt::MutexLock lock( mMysqlMutex );
+        mt::MutexLock lock( mMysqlMutex );
 
         if( RunQueryLocked( into.error, query, queryLen ) )
         {
             size_t colCount = mysql_field_count( &mMysql );
             if( 0 == colCount )
             {
-                into.error.SetError( 0xFFFF, "Db::Core::RunQuery: No Result" );
-                sLog.Error( "Db::Core Query", "Query: %s failed because did not return a result", query );
+                into.error.SetError( 0xFFFF, "Core::RunQuery: No Result" );
+                sLog.error( "Core Query", "Query: %s failed because did not return a result", query );
             }
             else
             {
@@ -341,7 +343,7 @@ bool Db::Core::RunQuery( Db::QueryResult& into, const char* queryFmt, ... )
     return result;
 }
 
-bool Db::Core::RunQuery( Db::Error& err, const char* queryFmt, ... )
+bool Core::RunQuery( Error& err, const char* queryFmt, ... )
 {
     va_list ap;
     va_start( ap, queryFmt );
@@ -353,7 +355,7 @@ bool Db::Core::RunQuery( Db::Error& err, const char* queryFmt, ... )
 
     bool result = false;
     {
-        Mt::MutexLock lock( mMysqlMutex );
+        mt::MutexLock lock( mMysqlMutex );
         result = RunQueryLocked( err, query, queryLen );
     }
 
@@ -361,7 +363,7 @@ bool Db::Core::RunQuery( Db::Error& err, const char* queryFmt, ... )
     return result;
 }
 
-bool Db::Core::RunQuery( Db::Error& err, size_t& affectedRows, const char* queryFmt, ... )
+bool Core::RunQuery( Error& err, size_t& affectedRows, const char* queryFmt, ... )
 {
     va_list ap;
     va_start( ap, queryFmt );
@@ -373,7 +375,7 @@ bool Db::Core::RunQuery( Db::Error& err, size_t& affectedRows, const char* query
 
     bool result = false;
     {
-        Mt::MutexLock lock( mMysqlMutex );
+        mt::MutexLock lock( mMysqlMutex );
 
         if( RunQueryLocked( err, query, queryLen ) )
         {
@@ -386,7 +388,7 @@ bool Db::Core::RunQuery( Db::Error& err, size_t& affectedRows, const char* query
     return result;
 }
 
-bool Db::Core::RunQueryLID( Db::Error& err, uint64& lastInsertId, const char* queryFmt, ... )
+bool Core::RunQueryLID( Error& err, uint64& lastInsertId, const char* queryFmt, ... )
 {
     va_list ap;
     va_start( ap, queryFmt );
@@ -398,7 +400,7 @@ bool Db::Core::RunQueryLID( Db::Error& err, uint64& lastInsertId, const char* qu
 
     bool result = false;
     {
-        Mt::MutexLock lock( mMysqlMutex );
+        mt::MutexLock lock( mMysqlMutex );
 
         if( RunQueryLocked( err, query, queryLen ) )
         {
@@ -411,7 +413,7 @@ bool Db::Core::RunQueryLID( Db::Error& err, uint64& lastInsertId, const char* qu
     return result;
 }
 
-bool Db::Core::RunQuery( const char* query, size_t queryLen, MYSQL_RES** result,
+bool Core::RunQuery( const char* query, size_t queryLen, MYSQL_RES** result,
                        unsigned int* errNo, char* errMsg, size_t* affectedRows,
                        uint64* lastInsertId, bool retry )
 {
@@ -422,12 +424,12 @@ bool Db::Core::RunQuery( const char* query, size_t queryLen, MYSQL_RES** result,
         errMsg[0] = 0;
 
     {
-        Mt::MutexLock lock( mMysqlMutex );
+        mt::MutexLock lock( mMysqlMutex );
 
-        Db::Error err;
+        Error err;
         if( !RunQueryLocked( err, query, queryLen, retry ) )
         {
-            sLog.Error( "Db::Core Query", "Query: %s failed", query );
+            sLog.error( "Core Query", "Query: %s failed", query );
 
             if( NULL != errNo )
                 *errNo = err.no();
@@ -450,9 +452,9 @@ bool Db::Core::RunQuery( const char* query, size_t queryLen, MYSQL_RES** result,
                     *errNo = UINT_MAX;
 
                 if( NULL != errMsg )
-                    strcpy( errMsg, "Db::Core::RunQuery: No Result" );
+                    strcpy( errMsg, "Core::RunQuery: No Result" );
 
-                sLog.Error( "Db::Core Query", "Query: %s failed because it should return a result", query );
+                sLog.error( "Core Query", "Query: %s failed because it should return a result", query );
                 return false;
             }
         }
@@ -467,21 +469,21 @@ bool Db::Core::RunQuery( const char* query, size_t queryLen, MYSQL_RES** result,
     return true;
 }
 
-size_t Db::Core::DoEscapeString( char* to, const char* from, size_t len )
+size_t Core::DoEscapeString( char* to, const char* from, size_t len )
 {
-    Mt::MutexLock lock( mMysqlMutex );
+    mt::MutexLock lock( mMysqlMutex );
 
     return mysql_real_escape_string( &mMysql, to, from, len );
 }
 
-void Db::Core::DoEscapeString( std::string& to, const std::string& from )
+void Core::DoEscapeString( std::string& to, const std::string& from )
 {
     // make enough room
     size_t len = from.length();
     to.resize( 2 * len + 1 );
 
     {
-        Mt::MutexLock lock( mMysqlMutex );
+        mt::MutexLock lock( mMysqlMutex );
 
         len = mysql_real_escape_string( &mMysql, &to[0], &from[0], len );
     }
@@ -489,7 +491,7 @@ void Db::Core::DoEscapeString( std::string& to, const std::string& from )
     to.resize( len + 1 );
 }
 
-void Db::Core::Ping()
+void Core::Ping()
 {
     // well, if it's locked, someone's using it. If someone's using it, it doesn't need a ping
     if( mMysqlMutex.TryLock() )
@@ -499,11 +501,11 @@ void Db::Core::Ping()
     }
 }
 
-bool Db::Core::Open( const char* host, const char* user, const char* password,
+bool Core::Open( const char* host, const char* user, const char* password,
                    const char* database, int16 port, unsigned int* errNo, char* errMsg,
                    bool compress, bool ssl )
 {
-    Mt::MutexLock lock( mMysqlMutex );
+    mt::MutexLock lock( mMysqlMutex );
 
     mHost = host;
     mUser = user;
@@ -517,10 +519,10 @@ bool Db::Core::Open( const char* host, const char* user, const char* password,
     return OpenLocked( errNo, errMsg );
 }
 
-bool Db::Core::Open( Db::Error& err, const char* host, const char* user, const char* password,
+bool Core::Open( Error& err, const char* host, const char* user, const char* password,
                    const char* database, int16 port, bool compress, bool ssl )
 {
-    Mt::MutexLock lock( mMysqlMutex );
+    mt::MutexLock lock( mMysqlMutex );
 
     mHost = host;
     mUser = user;
@@ -544,7 +546,7 @@ bool Db::Core::Open( Db::Error& err, const char* host, const char* user, const c
 }
 
 
-bool Db::Core::OpenLocked( unsigned int* errNo, char* errMsg )
+bool Core::OpenLocked( unsigned int* errNo, char* errMsg )
 {
     if( NULL != errMsg )
         errMsg[0] = 0;
@@ -558,14 +560,14 @@ bool Db::Core::OpenLocked( unsigned int* errNo, char* errMsg )
     if( mHost.empty() )
         return false;
 
-    sLog.Message( "dbcore",
-                  "Connecting to\n"
-                  "    DB:     %s\n"
-                  "    server: %s:%d\n"
-                  "    user:   %s",
-                  mDatabase.c_str(),
-                  mHost.c_str(), mPort,
-                  mUser.c_str() );
+    sLog.notice( "dbcore",
+                 "Connecting to\n"
+                 "    DB:     %s\n"
+                 "    server: %s:%d\n"
+                 "    user:   %s",
+                 mDatabase.c_str(),
+                 mHost.c_str(), mPort,
+                 mUser.c_str() );
 
     /*
     Quagmire - added CLIENT_FOUND_ROWS flag to the connect
@@ -617,7 +619,7 @@ bool Db::Core::OpenLocked( unsigned int* errNo, char* errMsg )
     return true;
 }
 
-bool Db::Core::RunQueryLocked( Db::Error& err, const char* query, size_t queryLen, bool retry )
+bool Core::RunQueryLocked( Error& err, const char* query, size_t queryLen, bool retry )
 {
     if( STATUS_CONNECTED != status() )
         OpenLocked();
@@ -632,7 +634,7 @@ bool Db::Core::RunQueryLocked( Db::Error& err, const char* query, size_t queryLe
         if( retry && ( CR_SERVER_LOST == errNo
                        || CR_SERVER_GONE_ERROR == errNo ) )
         {
-            sLog.Error( "Db::Core", "Lost connection, attempting to recover...." );
+            sLog.error( "Core", "Lost connection, attempting to recover...." );
 
             return RunQueryLocked( err, query, queryLen, false );
         }
@@ -640,7 +642,7 @@ bool Db::Core::RunQueryLocked( Db::Error& err, const char* query, size_t queryLe
         mMysqlStatus = STATUS_ERROR;
         err.SetError( errNo, mysql_error( &mMysql ) );
 
-        sLog.Error( "Db::Core Query", "#%d in '%s': %s",
+        sLog.error( "Core Query", "#%d in '%s': %s",
                     err.no(), query, err.msg() );
         return false;
     }

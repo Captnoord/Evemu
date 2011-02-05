@@ -23,18 +23,17 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __TEST_FS_DIRECTORY_H__INCL__
-#define __TEST_FS_DIRECTORY_H__INCL__
+#ifndef __TEST__TEST_FS_DIRECTORY_H__INCL__
+#define __TEST__TEST_FS_DIRECTORY_H__INCL__
 
-namespace Util
+namespace test
 {
     /**
-     * @brief Tests Fs::Directory.
+     * @brief Tests fs::Directory.
      *
      * @author Bloody.Rabbit
      */
-    template<>
-    class Test< Fs::Directory >
+    class TestFsDirectory
     : public CppUnit::TestCase
     {
     public:
@@ -46,7 +45,7 @@ namespace Util
         /**
          * @brief A primary constructor.
          */
-        Test();
+        TestFsDirectory();
 
         /**
          * @brief Runs the directory test.
@@ -55,8 +54,8 @@ namespace Util
 
     protected:
         /// The directory being tested.
-        Fs::Directory mDirectory;
+        fs::Directory mDirectory;
     };
 }
 
-#endif /* !__TEST_FS_DIRECTORY_H__INCL__ */
+#endif /* !__TEST__TEST_FS_DIRECTORY_H__INCL__ */

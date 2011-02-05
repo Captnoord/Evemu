@@ -27,10 +27,13 @@
 
 #include "win/File.h"
 
+using namespace common;
+using namespace common::win;
+
 /*************************************************************************/
-/* Win::File                                                             */
+/* common::win::File                                                     */
 /*************************************************************************/
-DWORD Win::File::Delete( PCTSTR name )
+DWORD File::Delete( PCTSTR name )
 {
     if( TRUE != ::DeleteFile( name ) )
         return ::GetLastError();
@@ -38,7 +41,7 @@ DWORD Win::File::Delete( PCTSTR name )
     return ERROR_SUCCESS;
 }
 
-DWORD Win::File::Move( PCTSTR nameOld, PCTSTR nameNew )
+DWORD File::Move( PCTSTR nameOld, PCTSTR nameNew )
 {
     if( TRUE != ::MoveFile( nameOld, nameNew ) )
         return ::GetLastError();
@@ -46,23 +49,23 @@ DWORD Win::File::Move( PCTSTR nameOld, PCTSTR nameNew )
     return ERROR_SUCCESS;
 }
 
-Win::File::File()
-: Win::Handle(),
-  Win::ReadableHandle(),
-  Win::WritableHandle()
+File::File()
+: Handle(),
+  ReadableHandle(),
+  WritableHandle()
 {
 }
 
-Win::File::File( PCTSTR name, DWORD mode, DWORD share, DWORD create )
-: Win::Handle(),
-  Win::ReadableHandle(),
-  Win::WritableHandle()
+File::File( PCTSTR name, DWORD mode, DWORD share, DWORD create )
+: Handle(),
+  ReadableHandle(),
+  WritableHandle()
 {
     DWORD code = Open( name, mode, share, create );
     assert( ERROR_SUCCESS == code );
 }
 
-DWORD Win::File::GetSize( LARGE_INTEGER& size ) const
+DWORD File::GetSize( LARGE_INTEGER& size ) const
 {
     if( TRUE != ::GetFileSizeEx( mHandle, &size ) )
         return ::GetLastError();
@@ -70,7 +73,7 @@ DWORD Win::File::GetSize( LARGE_INTEGER& size ) const
     return ERROR_SUCCESS;
 }
 
-DWORD Win::File::Open( PCTSTR name, DWORD mode, DWORD share, DWORD create )
+DWORD File::Open( PCTSTR name, DWORD mode, DWORD share, DWORD create )
 {
     DWORD code = Close();
     if( ERROR_SUCCESS != code )
@@ -83,7 +86,7 @@ DWORD Win::File::Open( PCTSTR name, DWORD mode, DWORD share, DWORD create )
     return ERROR_SUCCESS;
 }
 
-DWORD Win::File::SetPointer( LARGE_INTEGER dist, DWORD method, PLARGE_INTEGER result )
+DWORD File::SetPointer( LARGE_INTEGER dist, DWORD method, PLARGE_INTEGER result )
 {
     if( TRUE != ::SetFilePointerEx( mHandle, dist, result, method ) )
         return ::GetLastError();
@@ -91,7 +94,7 @@ DWORD Win::File::SetPointer( LARGE_INTEGER dist, DWORD method, PLARGE_INTEGER re
     return ERROR_SUCCESS;
 }
 
-DWORD Win::File::FlushBuffers()
+DWORD File::FlushBuffers()
 {
     if( TRUE != ::FlushFileBuffers( mHandle ) )
         return ::GetLastError();

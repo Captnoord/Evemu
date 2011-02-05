@@ -23,18 +23,17 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __TEST_UTIL_DATA_H__INCL__
-#define __TEST_UTIL_DATA_H__INCL__
+#ifndef __TEST__TEST_UTIL_DATA_H__INCL__
+#define __TEST__TEST_UTIL_DATA_H__INCL__
 
-namespace Util
+namespace test
 {
     /**
-     * @brief Tests Util::Data and its iterators.
+     * @brief Tests util::Data and its iterators.
      *
      * @author Bloody.Rabbit
      */
-    template<>
-    class Test< Util::Data >
+    class TestUtilData
     : public CppUnit::TestFixture
     {
     public:
@@ -117,8 +116,8 @@ namespace Util
 
     protected:
         /// A Data object being tested.
-        Util::Data* mData;
+        util::Data* mData;
     };
 }
 
-#endif /* !__TEST_UTIL_DATA_H__INCL__ */
+#endif /* !__TEST__TEST_UTIL_DATA_H__INCL__ */

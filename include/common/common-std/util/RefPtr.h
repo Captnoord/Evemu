@@ -23,195 +23,198 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __UTIL__REF_PTR_H__INCL__
-#define __UTIL__REF_PTR_H__INCL__
+#ifndef __COMMON__UTIL__REF_PTR_H__INCL__
+#define __COMMON__UTIL__REF_PTR_H__INCL__
 
-namespace Util
+namespace common
 {
-    /**
-     * @brief A reference-counted object.
-     *
-     * This class has all stuff needed to cooperate with
-     * RefPtr. If you want some of your classes to be
-     * reference-counted, derive them from this class.
-     *
-     * @author Bloody.Rabbit
-     */
-    class RefObject
+    namespace util
     {
+        /**
+         * @brief A reference-counted object.
+         *
+         * This class has all stuff needed to cooperate with
+         * RefPtr. If you want some of your classes to be
+         * reference-counted, derive them from this class.
+         *
+         * @author Bloody.Rabbit
+         */
+        class RefObject
+        {
+            template<typename X>
+            friend class RefPtr;
+
+        public:
+            /**
+             * @brief Initializes reference count.
+             *
+             * @param[in] initRefCount Initial reference count.
+             */
+            RefObject( size_t initRefCount )
+            : mRefCount( initRefCount )
+            {
+            }
+
+            /**
+             * @brief Destructor; must be virtual.
+             *
+             * Must be virtual if proper destructor should be
+             * invoked upon destruction.
+             */
+            virtual ~RefObject()
+            {
+                assert( 0 == mRefCount );
+            }
+
+        protected:
+            /// Increments reference count of object by one.
+            void IncRef() const
+            {
+                ++mRefCount;
+            }
+            /**
+             * @brief Decrements reference count of object by one.
+             *
+             * If reference count of object reaches zero, object
+             * is deleted.
+             */
+            void DecRef() const
+            {
+                assert( 0 < mRefCount );
+                --mRefCount;
+
+                if( 0 == mRefCount )
+                    delete this;
+            }
+
+            /// Reference count of instance.
+            mutable size_t mRefCount;
+        };
+
+        /**
+         * @brief Reference-counting-based smart pointer.
+         *
+         * This smart pointer cares about acquiring/releasing reference
+         * of the stored object.
+         *
+         * @author Bloody.Rabbit
+         */
         template<typename X>
-        friend class RefPtr;
-
-    public:
-        /**
-         * @brief Initializes reference count.
-         *
-         * @param[in] initRefCount Initial reference count.
-         */
-        RefObject( size_t initRefCount )
-        : mRefCount( initRefCount )
+        class RefPtr
         {
-        }
+        public:
+            /**
+             * @brief Primary constructor.
+             *
+             * @param[in] p Pointer to object to be referenced.
+             */
+            explicit RefPtr( X* p = NULL )
+            : mPtr( p )
+            {
+                if( *this )
+                    (*this)->IncRef();
+            }
+            /**
+             * @brief Copy constructor.
+             *
+             * @param[in] oth Object to copy the reference from.
+             */
+            RefPtr( const RefPtr& oth )
+            : mPtr( oth.get() )
+            {
+                if( *this )
+                    (*this)->IncRef();
+            }
+            /**
+             * @brief Casting copy constructor.
+             *
+             * @param[in] oth Object to copy the reference from.
+             */
+            template<typename Y>
+            RefPtr( const RefPtr<Y>& oth )
+            : mPtr( oth.get() )
+            {
+                if( *this )
+                    (*this)->IncRef();
+            }
 
-        /**
-         * @brief Destructor; must be virtual.
-         *
-         * Must be virtual if proper destructor should be
-         * invoked upon destruction.
-         */
-        virtual ~RefObject()
-        {
-            assert( 0 == mRefCount );
-        }
+            /// Destructor, releases reference.
+            ~RefPtr()
+            {
+                if( *this )
+                    (*this)->DecRef();
+            }
 
-    protected:
-        /// Increments reference count of object by one.
-        void IncRef() const
-        {
-            ++mRefCount;
-        }
-        /**
-         * @brief Decrements reference count of object by one.
-         *
-         * If reference count of object reaches zero, object
-         * is deleted.
-         */
-        void DecRef() const
-        {
-            assert( 0 < mRefCount );
-            --mRefCount;
+            /**
+             * @brief Copy operator.
+             *
+             * @param[in] oth Object to copy the reference from.
+             */
+            RefPtr& operator=( const RefPtr& oth )
+            {
+                if( *this )
+                    (*this)->DecRef();
 
-            if( 0 == mRefCount )
-                delete this;
-        }
+                mPtr = oth.get();
 
-        /// Reference count of instance.
-        mutable size_t mRefCount;
-    };
+                if( *this )
+                    (*this)->IncRef();
 
-    /**
-     * @brief Reference-counting-based smart pointer.
-     *
-     * This smart pointer cares about acquiring/releasing reference
-     * of the stored object.
-     *
-     * @author Bloody.Rabbit
-     */
-    template<typename X>
-    class RefPtr
-    {
-    public:
-        /**
-         * @brief Primary constructor.
-         *
-         * @param[in] p Pointer to object to be referenced.
-         */
-        explicit RefPtr( X* p = NULL )
-        : mPtr( p )
-        {
-            if( *this )
-                (*this)->IncRef();
-        }
-        /**
-         * @brief Copy constructor.
-         *
-         * @param[in] oth Object to copy the reference from.
-         */
-        RefPtr( const RefPtr& oth )
-        : mPtr( oth.get() )
-        {
-            if( *this )
-                (*this)->IncRef();
-        }
-        /**
-         * @brief Casting copy constructor.
-         *
-         * @param[in] oth Object to copy the reference from.
-         */
-        template<typename Y>
-        RefPtr( const RefPtr<Y>& oth )
-        : mPtr( oth.get() )
-        {
-            if( *this )
-                (*this)->IncRef();
-        }
+                return *this;
+            }
+            /**
+             * @brief Casting copy operator.
+             *
+             * @param[in] oth Object to copy the reference from.
+             */
+            template<typename Y>
+            RefPtr& operator=( const RefPtr<Y>& oth )
+            {
+                if( *this )
+                    (*this)->DecRef();
 
-        /// Destructor, releases reference.
-        ~RefPtr()
-        {
-            if( *this )
-                (*this)->DecRef();
-        }
+                mPtr = oth.get();
 
-        /**
-         * @brief Copy operator.
-         *
-         * @param[in] oth Object to copy the reference from.
-         */
-        RefPtr& operator=( const RefPtr& oth )
-        {
-            if( *this )
-                (*this)->DecRef();
+                if( *this )
+                    (*this)->IncRef();
 
-            mPtr = oth.get();
+                return *this;
+            }
 
-            if( *this )
-                (*this)->IncRef();
+            /// @return Stored reference.
+            X* get() const { return mPtr; }
 
-            return *this;
-        }
-        /**
-         * @brief Casting copy operator.
-         *
-         * @param[in] oth Object to copy the reference from.
-         */
-        template<typename Y>
-        RefPtr& operator=( const RefPtr<Y>& oth )
-        {
-            if( *this )
-                (*this)->DecRef();
+            /// @return True if stores a reference, false otherwise.
+            operator bool() const { return !( get() == NULL ); }
 
-            mPtr = oth.get();
+            /// @return Stored reference.
+            X& operator*() const { assert( *this ); return *get(); }
+            /// @return Stored reference.
+            X* operator->() const { assert( *this ); return get(); }
 
-            if( *this )
-                (*this)->IncRef();
+            /**
+             * @brief Compares two references.
+             *
+             * @return True if both references are of same object, false if not.
+             */
+            template<typename Y>
+            bool operator==( const RefPtr<Y>& oth ) const
+            {
+                return ( get() == oth.get() );
+            }
 
-            return *this;
-        }
+            /// Acts as static_cast.
+            template<typename Y>
+            static RefPtr StaticCast( const RefPtr<Y>& oth )
+            {
+                return RefPtr( static_cast<X*>( oth.get() ) );
+            }
 
-        /// @return Stored reference.
-        X* get() const { return mPtr; }
-
-        /// @return True if stores a reference, false otherwise.
-        operator bool() const { return !( get() == NULL ); }
-
-        /// @return Stored reference.
-        X& operator*() const { assert( *this ); return *get(); }
-        /// @return Stored reference.
-        X* operator->() const { assert( *this ); return get(); }
-
-        /**
-         * @brief Compares two references.
-         *
-         * @return True if both references are of same object, false if not.
-         */
-        template<typename Y>
-        bool operator==( const RefPtr<Y>& oth ) const
-        {
-            return ( get() == oth.get() );
-        }
-
-        /// Acts as static_cast.
-        template<typename Y>
-        static RefPtr StaticCast( const RefPtr<Y>& oth )
-        {
-            return RefPtr( static_cast<X*>( oth.get() ) );
-        }
-
-    protected:
-        /// The pointer to the reference-counted object.
-        X* mPtr;
-    };
+        protected:
+            /// The pointer to the reference-counted object.
+            X* mPtr;
+        };
+    }
 }
 
-#endif /* !__UTIL__REF_PTR_H__INCL__ */
+#endif /* !__COMMON__UTIL__REF_PTR_H__INCL__ */

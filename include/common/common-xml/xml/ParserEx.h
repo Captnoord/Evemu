@@ -23,166 +23,169 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __XML__PARSER_EX_H__INCL__
-#define __XML__PARSER_EX_H__INCL__
+#ifndef __COMMON__XML__PARSER_EX_H__INCL__
+#define __COMMON__XML__PARSER_EX_H__INCL__
 
 #include "xml/Parser.h"
 
-namespace Xml
+namespace common
 {
-    /**
-     * @brief A somewhat extended version of Parser.
-     *
-     * @author Bloody.Rabbit
-     */
-    class ParserEx
-    : public Parser
+    namespace xml
     {
-    public:
-        template< typename T >
-        class MemberElementParser;
-
-        template< typename T >
-        class ValueParser;
-
         /**
-         * @brief Adds a member parser.
+         * @brief A somewhat extended version of Parser.
          *
-         * @param[in] name     A name of element which the parser should parse.
-         * @param[in] instance Instance of parser class.
-         * @param[in] method   Parser method.
+         * @author Bloody.Rabbit
          */
-        template< typename T >
-        void AddMemberParser( const char* name, T& instance, bool ( T::* method )( const TiXmlElement* ) )
+        class ParserEx
+        : public Parser
         {
-            AddParser( name, new MemberElementParser< T >( instance, method ) );
-        }
+        public:
+            template< typename T >
+            class MemberElementParser;
 
-        /**
-         * @brief Adds a value parser.
-         *
-         * @param[in] name  A name of element which the parser should parse.
-         * @param[in] value A variable to which the result is stored.
-         */
-        template< typename T >
-        void AddValueParser( const char* name, T& value )
-        {
-            AddParser( name, new ValueParser< T >( value ) );
-        }
+            template< typename T >
+            class ValueParser;
 
-    protected:
-        /**
-         * @brief Adds a member parser, assuming that instance is @a this.
-         *
-         * @param[in] name   A name of element which the parser should parse.
-         * @param[in] method Parser method.
-         */
-        template< typename T >
-        void AddMemberParser( const char* name, bool ( T::* method )( const TiXmlElement* ) )
-        {
-            AddMemberParser< T >( name, static_cast< T& >( *this ), method );
-        }
-    };
-
-    /**
-     * @brief An implementation of ElementParser for member method parsers.
-     *
-     * @author Bloody.Rabbit
-     */
-    template< typename T >
-    class ParserEx::MemberElementParser
-    : public Parser::ElementParser
-    {
-    public:
-        /// Type of class.
-        typedef T Class;
-        /// Type of method.
-        typedef bool ( Class::* Method )( const TiXmlElement* );
-
-        /**
-         * @brief Primary constructor.
-         *
-         * @param[in] instance Instance of class.
-         * @param[in] method   Member method.
-         */
-        MemberElementParser( Class& instance, const Method& method )
-        : mInstance( instance ),
-          mMethod( method )
-        {
-        }
-
-        /**
-         * @brief Invokes parser method.
-         *
-         * @param[in] field The element to be parsed.
-         *
-         * @retval true  Parsing successfull.
-         * @retval false Parsing failed.
-         */
-        bool Parse( const TiXmlElement* field )
-        {
-            return ( mInstance.*mMethod )( field );
-        }
-
-    protected:
-        /// The instance that the method should be invoked upon.
-        Class& mInstance;
-        /// The parser method.
-        const Method mMethod;
-    };
-
-    /**
-     * @brief Parses and stores a value.
-     *
-     * @author Bloody.Rabbit
-     */
-    template< typename T >
-    class ParserEx::ValueParser
-    : public Parser::ElementParser
-    {
-    public:
-        /// Type of parsed value.
-        typedef T Value;
-
-        /**
-         * @brief Primary constructor.
-         *
-         * @param[in] value A variable to which the result is stored.
-         */
-        ValueParser( Value& value )
-        : mValue( value )
-        {
-        }
-
-        /**
-         * @brief Parse the value and store it.
-         *
-         * @param[in] field The element to be parsed.
-         *
-         * @retval true  Parsing successfull.
-         * @retval false Parsing failed.
-         */
-        bool Parse( const TiXmlElement* field )
-        {
-            // obtain the text element
-            const TiXmlNode* contents = field->FirstChild();
-            if( NULL != contents ? TiXmlNode::TEXT != contents->Type() : false )
+            /**
+             * @brief Adds a member parser.
+             *
+             * @param[in] name     A name of element which the parser should parse.
+             * @param[in] instance Instance of parser class.
+             * @param[in] method   Parser method.
+             */
+            template< typename T >
+            void AddMemberParser( const char* name, T& instance, bool ( T::* method )( const TiXmlElement* ) )
             {
-                sLog.Error( "Xml::ParserEx::ValueParser", "Expected a text element in element '%s' at line %d.", field->Value(), field->Row() );
-                return false;
+                AddParser( name, new MemberElementParser< T >( instance, method ) );
             }
 
-            // parse the text
-            mValue = Util::String< char >::to< Value >( contents->Value() );
+            /**
+             * @brief Adds a value parser.
+             *
+             * @param[in] name  A name of element which the parser should parse.
+             * @param[in] value A variable to which the result is stored.
+             */
+            template< typename T >
+            void AddValueParser( const char* name, T& value )
+            {
+                AddParser( name, new ValueParser< T >( value ) );
+            }
 
-            // return
-            return true;
-        }
+        protected:
+            /**
+             * @brief Adds a member parser, assuming that instance is @a this.
+             *
+             * @param[in] name   A name of element which the parser should parse.
+             * @param[in] method Parser method.
+             */
+            template< typename T >
+            void AddMemberParser( const char* name, bool ( T::* method )( const TiXmlElement* ) )
+            {
+                AddMemberParser< T >( name, static_cast< T& >( *this ), method );
+            }
+        };
 
-    protected:
-        /// Reference to storage variable.
-        Value& mValue;
-    };
+        /**
+         * @brief An implementation of ElementParser for member method parsers.
+         *
+         * @author Bloody.Rabbit
+         */
+        template< typename T >
+        class ParserEx::MemberElementParser
+        : public Parser::ElementParser
+        {
+        public:
+            /// Type of class.
+            typedef T Class;
+            /// Type of method.
+            typedef bool ( Class::* Method )( const TiXmlElement* );
+
+            /**
+             * @brief Primary constructor.
+             *
+             * @param[in] instance Instance of class.
+             * @param[in] method   Member method.
+             */
+            MemberElementParser( Class& instance, const Method& method )
+            : mInstance( instance ),
+              mMethod( method )
+            {
+            }
+
+            /**
+             * @brief Invokes parser method.
+             *
+             * @param[in] field The element to be parsed.
+             *
+             * @retval true  Parsing successfull.
+             * @retval false Parsing failed.
+             */
+            bool Parse( const TiXmlElement* field )
+            {
+                return ( mInstance.*mMethod )( field );
+            }
+
+        protected:
+            /// The instance that the method should be invoked upon.
+            Class& mInstance;
+            /// The parser method.
+            const Method mMethod;
+        };
+
+        /**
+         * @brief Parses and stores a value.
+         *
+         * @author Bloody.Rabbit
+         */
+        template< typename T >
+        class ParserEx::ValueParser
+        : public Parser::ElementParser
+        {
+        public:
+            /// Type of parsed value.
+            typedef T Value;
+
+            /**
+             * @brief Primary constructor.
+             *
+             * @param[in] value A variable to which the result is stored.
+             */
+            ValueParser( Value& value )
+            : mValue( value )
+            {
+            }
+
+            /**
+             * @brief Parse the value and store it.
+             *
+             * @param[in] field The element to be parsed.
+             *
+             * @retval true  Parsing successfull.
+             * @retval false Parsing failed.
+             */
+            bool Parse( const TiXmlElement* field )
+            {
+                // obtain the text element
+                const TiXmlNode* contents = field->FirstChild();
+                if( NULL != contents ? TiXmlNode::TEXT != contents->Type() : false )
+                {
+                    sLog.Error( "xml::ParserEx::ValueParser", "Expected a text element in element '%s' at line %d.", field->Value(), field->Row() );
+                    return false;
+                }
+
+                // parse the text
+                mValue = util::String< char >::to< Value >( contents->Value() );
+
+                // return
+                return true;
+            }
+
+        protected:
+            /// Reference to storage variable.
+            Value& mValue;
+        };
+    }
 }
 
-#endif /* !__XML__PARSER_EX_H__INCL__ */
+#endif /* !__COMMON__XML__PARSER_EX_H__INCL__ */

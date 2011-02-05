@@ -22,7 +22,7 @@ SET( SOURCE
 SET( db_INCLUDE
      "${TARGET_INCLUDE_DIR}/db/Type.h" )
 SET( db_SOURCE
-     "" )
+     "${TARGET_SOURCE_DIR}/db/Type.cpp" )
 
 SET( fs_INCLUDE
      "${TARGET_INCLUDE_DIR}/fs/Directory.h"
@@ -49,15 +49,15 @@ SET( mt_SOURCE
      "${TARGET_SOURCE_DIR}/mt/Target.cpp"
      "${TARGET_SOURCE_DIR}/mt/ThreadMgr.cpp" )
 
-SET( std_INCLUDE
-     "${TARGET_INCLUDE_DIR}/std/File.h"
-     "${TARGET_INCLUDE_DIR}/std/Tm.h"
-     "${TARGET_INCLUDE_DIR}/std/Types.h"
-     "${TARGET_INCLUDE_DIR}/std/Utils.h" )
-SET( std_SOURCE
-     "${TARGET_SOURCE_DIR}/std/File.cpp"
-     "${TARGET_SOURCE_DIR}/std/Tm.cpp"
-     "${TARGET_SOURCE_DIR}/std/Utils.cpp" )
+SET( stdx_INCLUDE
+     "${TARGET_INCLUDE_DIR}/stdx/File.h"
+     "${TARGET_INCLUDE_DIR}/stdx/Tm.h"
+     "${TARGET_INCLUDE_DIR}/stdx/Types.h"
+     "${TARGET_INCLUDE_DIR}/stdx/Utils.h" )
+SET( stdx_SOURCE
+     "${TARGET_SOURCE_DIR}/stdx/File.cpp"
+     "${TARGET_SOURCE_DIR}/stdx/Tm.cpp"
+     "${TARGET_SOURCE_DIR}/stdx/Utils.cpp" )
 
 SET( stream_INCLUDE
      "${TARGET_INCLUDE_DIR}/stream/Error.h"
@@ -85,8 +85,7 @@ SET( util_INCLUDE
      "${TARGET_INCLUDE_DIR}/util/RefPtr.h"
      "${TARGET_INCLUDE_DIR}/util/SafeDelete.h"
      "${TARGET_INCLUDE_DIR}/util/Singleton.h"
-     "${TARGET_INCLUDE_DIR}/util/String.h"
-     "${TARGET_INCLUDE_DIR}/util/Test.h" )
+     "${TARGET_INCLUDE_DIR}/util/String.h" )
 SET( util_SOURCE
      "${TARGET_SOURCE_DIR}/util/Crc32.cpp"
      "${TARGET_SOURCE_DIR}/util/Misc.cpp"
@@ -102,7 +101,7 @@ SOURCE_GROUP( "include\\db"     FILES ${db_INCLUDE} )
 SOURCE_GROUP( "include\\fs"     FILES ${fs_INCLUDE} )
 SOURCE_GROUP( "include\\log"    FILES ${log_INCLUDE} )
 SOURCE_GROUP( "include\\mt"     FILES ${mt_INCLUDE} )
-SOURCE_GROUP( "include\\std"    FILES ${std_INCLUDE} )
+SOURCE_GROUP( "include\\stdx"   FILES ${stdx_INCLUDE} )
 SOURCE_GROUP( "include\\stream" FILES ${stream_INCLUDE} )
 SOURCE_GROUP( "include\\time"   FILES ${time_INCLUDE} )
 SOURCE_GROUP( "include\\util"   FILES ${util_INCLUDE} )
@@ -112,7 +111,7 @@ SOURCE_GROUP( "src\\db"     FILES ${db_SOURCE} )
 SOURCE_GROUP( "src\\fs"     FILES ${fs_SOURCE} )
 SOURCE_GROUP( "src\\log"    FILES ${log_SOURCE} )
 SOURCE_GROUP( "src\\mt"     FILES ${mt_SOURCE} )
-SOURCE_GROUP( "src\\std"    FILES ${std_SOURCE} )
+SOURCE_GROUP( "src\\stdx"   FILES ${stdx_SOURCE} )
 SOURCE_GROUP( "src\\stream" FILES ${stream_SOURCE} )
 SOURCE_GROUP( "src\\time"   FILES ${time_SOURCE} )
 SOURCE_GROUP( "src\\util"   FILES ${util_SOURCE} )
@@ -123,7 +122,7 @@ ADD_LIBRARY( "${TARGET_NAME}"
              ${fs_INCLUDE}     ${fs_SOURCE}
              ${log_INCLUDE}    ${log_SOURCE}
              ${mt_INCLUDE}     ${mt_SOURCE}
-             ${std_INCLUDE}    ${std_SOURCE}
+             ${stdx_INCLUDE}   ${stdx_SOURCE}
              ${stream_INCLUDE} ${stream_SOURCE}
              ${time_INCLUDE}   ${time_SOURCE}
              ${util_INCLUDE}   ${util_SOURCE} )

@@ -27,90 +27,93 @@
 
 #include "posix/Thread.h"
 
+using namespace common;
+using namespace common::mt;
+
 /*************************************************************************/
-/* Mt::Thread                                                            */
+/* common::mt::Thread                                                    */
 /*************************************************************************/
 void* ThreadMain( void* arg )
 {
     /* Setup correct cancelability state and type so that
        cancel works as desired. */
-    int code = Posix::Thread::SetCancelState( PTHREAD_CANCEL_ENABLE, NULL );
+    int code = posix::Thread::SetCancelState( PTHREAD_CANCEL_ENABLE, NULL );
     assert( 0 == code );
 
-    code = Posix::Thread::SetCancelType( PTHREAD_CANCEL_ASYNCHRONOUS, NULL );
+    code = posix::Thread::SetCancelType( PTHREAD_CANCEL_ASYNCHRONOUS, NULL );
     assert( 0 == code );
 
-    Mt::Target::Run( reinterpret_cast< Mt::Target* >( arg ) );
+    Target::Run( reinterpret_cast< Target* >( arg ) );
 
     return NULL;
 }
 
-Mt::Thread Mt::Thread::self()
+Thread Thread::self()
 {
-    return Mt::Thread( new Posix::Thread( Posix::Thread::self() ) );
+    return Thread( new posix::Thread( posix::Thread::self() ) );
 }
 
-void Mt::Thread::Sleep( const Time::Msec& period )
+void Thread::Sleep( const time::Msec& period )
 {
-    int code = Posix::Thread::Sleep( period );
+    int code = posix::Thread::Sleep( period );
     assert( 0 == code );
 }
 
-Mt::Thread::Thread()
-: mThread( new Posix::Thread )
+Thread::Thread()
+: mThread( new posix::Thread )
 {
 }
 
-Mt::Thread::Thread( Mt::Target* target )
-: mThread( new Posix::Thread )
+Thread::Thread( Target* target )
+: mThread( new posix::Thread )
 {
     Create( target );
 }
 
-Mt::Thread::Thread( const Mt::Thread& oth )
-: mThread( new Posix::Thread( *oth.mThread ) )
+Thread::Thread( const Thread& oth )
+: mThread( new posix::Thread( *oth.mThread ) )
 {
 }
 
-Mt::Thread::Thread( Posix::Thread* thread )
+Thread::Thread( posix::Thread* thread )
 : mThread( thread )
 {
 }
 
-Mt::Thread::~Thread()
+Thread::~Thread()
 {
     SafeDelete( mThread );
 }
 
-unsigned int Mt::Thread::id() const
+unsigned int Thread::id() const
 {
     return static_cast< unsigned int >( mThread->id() );
 }
 
-void Mt::Thread::Wait() const
+void Thread::Wait() const
 {
     int code = mThread->Join( NULL );
     assert( 0 == code );
 }
 
-bool Mt::Thread::operator==( const Mt::Thread& oth ) const
+bool Thread::operator==( const Thread& oth ) const
 {
     return *mThread == *oth.mThread;
 }
 
-void Mt::Thread::Create( Mt::Target* target )
+void Thread::Create( Target* target )
 {
     int code = mThread->Create( ThreadMain, target );
     assert( 0 == code );
 }
 
-void Mt::Thread::Terminate()
+void Thread::Terminate()
 {
     int code = mThread->Cancel();
     assert( 0 == code );
 }
 
-Mt::Thread& Mt::Thread::operator=( const Mt::Thread& oth )
+Thread& Thread::operator=( const Thread& oth )
 {
     *mThread = *oth.mThread;
     return *this;

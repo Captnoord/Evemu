@@ -25,12 +25,15 @@
 
 #include "CommonStd.h"
 
-#include "std/File.h"
+#include "stdx/File.h"
+
+using namespace common;
+using namespace common::stdx;
 
 /*************************************************************************/
-/* Std::File                                                             */
+/* common::stdx::File                                                    */
 /*************************************************************************/
-int Std::File::Rename( const char* oldName, const char* newName )
+int File::Rename( const char* oldName, const char* newName )
 {
     if( 0 != ::rename( oldName, newName ) )
         return errno;
@@ -38,7 +41,7 @@ int Std::File::Rename( const char* oldName, const char* newName )
     return 0;
 }
 
-int Std::File::Remove( const char* name )
+int File::Remove( const char* name )
 {
     if( 0 != ::remove( name ) )
         return errno;
@@ -46,40 +49,40 @@ int Std::File::Remove( const char* name )
     return 0;
 }
 
-Std::File::File()
+File::File()
 : mFile( NULL )
 {
 }
 
-Std::File::File( const char* name, const char* mode )
+File::File( const char* name, const char* mode )
 : mFile( NULL )
 {
     bool success = Open( name, mode );
     assert( success );
 }
 
-Std::File::~File()
+File::~File()
 {
     bool success = Close();
     assert( success );
 }
 
-bool Std::File::eof() const
+bool File::eof() const
 {
     return 0 != ::feof( mFile );
 }
 
-bool Std::File::error() const
+bool File::error() const
 {
     return 0 != ::ferror( mFile );
 }
 
-long int Std::File::tell() const
+long int File::tell() const
 {
     return ::ftell( mFile );
 }
 
-bool Std::File::Open( const char* name, const char* mode )
+bool File::Open( const char* name, const char* mode )
 {
     if( !Close() )
         return false;
@@ -88,7 +91,7 @@ bool Std::File::Open( const char* name, const char* mode )
     return isValid();
 }
 
-bool Std::File::Close()
+bool File::Close()
 {
     if( isValid() )
     {
@@ -100,17 +103,17 @@ bool Std::File::Close()
     return true;
 }
 
-bool Std::File::Seek( long int offset, int origin )
+bool File::Seek( long int offset, int origin )
 {
     return 0 == ::fseek( mFile, offset, origin );
 }
 
-bool Std::File::Flush()
+bool File::Flush()
 {
     return 0 == ::fflush( mFile );
 }
 
-Stream::Error Std::File::Read( Util::Data& data, size_t* bytesRead )
+stream::Error File::Read( util::Data& data, size_t* bytesRead )
 {
     size_t code = ::fread( &data[0], 1, data.size(), mFile );
 
@@ -118,14 +121,14 @@ Stream::Error Std::File::Read( Util::Data& data, size_t* bytesRead )
         *bytesRead = code;
 
     if( data.size() == code )
-        return Stream::ERROR_OK;
+        return stream::ERROR_OK;
     else if( eof() )
-        return Stream::ERROR_EOS;
+        return stream::ERROR_EOS;
     else
-        return Stream::ERROR_READ;
+        return stream::ERROR_READ;
 }
 
-Stream::Error Std::File::Write( const Util::Data& data, size_t* bytesWritten )
+stream::Error File::Write( const util::Data& data, size_t* bytesWritten )
 {
     size_t code = ::fwrite( &data[0], 1, data.size(), mFile );
 
@@ -133,12 +136,12 @@ Stream::Error Std::File::Write( const Util::Data& data, size_t* bytesWritten )
         *bytesWritten = code;
 
     if( data.size() == code )
-        return Stream::ERROR_OK;
+        return stream::ERROR_OK;
     else
-        return Stream::ERROR_WRITE;
+        return stream::ERROR_WRITE;
 }
 
-int Std::File::Printf( const char* format, ... )
+int File::Printf( const char* format, ... )
 {
     va_list ap;
     va_start( ap, format );
@@ -150,7 +153,7 @@ int Std::File::Printf( const char* format, ... )
     return code;
 }
 
-int Std::File::Printf( const char* format, va_list ap )
+int File::Printf( const char* format, va_list ap )
 {
     return ::vfprintf( mFile, format, ap );
 }

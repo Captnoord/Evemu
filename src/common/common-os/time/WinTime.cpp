@@ -27,10 +27,13 @@
 
 #include "time/Timeval.h"
 
+using namespace common;
+using namespace common::time;
+
 /*************************************************************************/
-/* Time::WinTime                                                         */
+/* common::time::WinTime                                                 */
 /*************************************************************************/
-Time::WinTime::WinTime( const Time::Timeval& tv )
+WinTime::WinTime( const Timeval& tv )
 : mTime( WINTIME_PER_USEC * ( USEC_PER_MSEC * MSEC_PER_SEC * tv.sec() + tv.usec() ) )
 {
 }

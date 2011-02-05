@@ -23,93 +23,96 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __WIN__FILE_H__INCL__
-#define __WIN__FILE_H__INCL__
+#ifndef __COMMON__WIN__FILE_H__INCL__
+#define __COMMON__WIN__FILE_H__INCL__
 
 #include "win/Handle.h"
 
-namespace Win
+namespace common
 {
-    /**
-     * @brief A Windows' file.
-     *
-     * @author Bloody.Rabbit
-     */
-    class File
-    : public ReadableHandle,
-      public WritableHandle
+    namespace win
     {
-    public:
         /**
-         * @brief Deletes a file.
+         * @brief A Windows' file.
          *
-         * @param[in] name A name of the file.
-         *
-         * @return An error code.
+         * @author Bloody.Rabbit
          */
-        static DWORD Delete( PCTSTR name );
-        /**
-         * @brief Moves a file.
-         *
-         * @param[in] nameOld The old name.
-         * @param[in] nameNew The new name.
-         *
-         * @return An error code.
-         */
-        static DWORD Move( PCTSTR nameOld, PCTSTR nameNew );
+        class File
+        : public ReadableHandle,
+          public WritableHandle
+        {
+        public:
+            /**
+             * @brief Deletes a file.
+             *
+             * @param[in] name A name of the file.
+             *
+             * @return An error code.
+             */
+            static DWORD Delete( PCTSTR name );
+            /**
+             * @brief Moves a file.
+             *
+             * @param[in] nameOld The old name.
+             * @param[in] nameNew The new name.
+             *
+             * @return An error code.
+             */
+            static DWORD Move( PCTSTR nameOld, PCTSTR nameNew );
 
-        /**
-         * @brief A default constructor.
-         */
-        File();
-        /**
-         * @brief A primary constructor, opens a file.
-         *
-         * @param[in] name   A name of the file.
-         * @param[in] mode   Desired access to the file.
-         * @param[in] share  Share mode flags.
-         * @param[in] create Creation flags.
-         */
-        File( PCTSTR name, DWORD mode, DWORD share, DWORD create );
+            /**
+             * @brief A default constructor.
+             */
+            File();
+            /**
+             * @brief A primary constructor, opens a file.
+             *
+             * @param[in] name   A name of the file.
+             * @param[in] mode   Desired access to the file.
+             * @param[in] share  Share mode flags.
+             * @param[in] create Creation flags.
+             */
+            File( PCTSTR name, DWORD mode, DWORD share, DWORD create );
 
-        /**
-         * @brief Obtains size of the file.
-         *
-         * @param[out] size Where to store the size.
-         *
-         * @return An error code.
-         */
-        DWORD GetSize( LARGE_INTEGER& size ) const;
+            /**
+             * @brief Obtains size of the file.
+             *
+             * @param[out] size Where to store the size.
+             *
+             * @return An error code.
+             */
+            DWORD GetSize( LARGE_INTEGER& size ) const;
 
-        /**
-         * @brief Opens a file.
-         *
-         * @param[in] name   A name of the file.
-         * @param[in] mode   Desired access to the file.
-         * @param[in] share  Share mode flags.
-         * @param[in] create Creation flags.
-         *
-         * @return An error code.
-         */
-        DWORD Open( PCTSTR name, DWORD mode, DWORD share, DWORD create );
+            /**
+             * @brief Opens a file.
+             *
+             * @param[in] name   A name of the file.
+             * @param[in] mode   Desired access to the file.
+             * @param[in] share  Share mode flags.
+             * @param[in] create Creation flags.
+             *
+             * @return An error code.
+             */
+            DWORD Open( PCTSTR name, DWORD mode, DWORD share, DWORD create );
 
-        /**
-         * @brief Sets the internal file pointer.
-         *
-         * @param[in]  dist   The distance to move.
-         * @param[in]  method The starting point.
-         * @param[out] result The result of the move.
-         *
-         * @return An error code.
-         */
-        DWORD SetPointer( LARGE_INTEGER dist, DWORD method, PLARGE_INTEGER result = NULL );
-        /**
-         * @brief Flushes buffers of the file.
-         *
-         * @return An error code.
-         */
-        DWORD FlushBuffers();
-    };
+            /**
+             * @brief Sets the internal file pointer.
+             *
+             * @param[in]  dist   The distance to move.
+             * @param[in]  method The starting point.
+             * @param[out] result The result of the move.
+             *
+             * @return An error code.
+             */
+            DWORD SetPointer( LARGE_INTEGER dist, DWORD method, PLARGE_INTEGER result = NULL );
+            /**
+             * @brief Flushes buffers of the file.
+             *
+             * @return An error code.
+             */
+            DWORD FlushBuffers();
+        };
+    }
 }
 
-#endif /* !__WIN__FILE_H__INCL__ */
+#endif /* !__COMMON__WIN__FILE_H__INCL__ */

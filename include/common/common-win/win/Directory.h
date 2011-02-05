@@ -23,36 +23,39 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __WIN__DIRECTORY_H__INCL__
-#define __WIN__DIRECTORY_H__INCL__
+#ifndef __COMMON__WIN__DIRECTORY_H__INCL__
+#define __COMMON__WIN__DIRECTORY_H__INCL__
 
-namespace Win
+namespace common
 {
-    /**
-     * @brief A Windows' directory utilities.
-     *
-     * @author Bloody.Rabbit
-     */
-    class Directory
+    namespace win
     {
-    public:
         /**
-         * @brief Creates a new directory.
+         * @brief A Windows' directory utilities.
          *
-         * @param[in] path The directory path.
-         *
-         * @return An error code.
+         * @author Bloody.Rabbit
          */
-        static DWORD Create( PCTSTR path );
-        /**
-         * @brief Removes a directory.
-         *
-         * @param[in] path The directory path.
-         *
-         * @return An error code.
-         */
-        static DWORD Remove( PCTSTR path );
-    };
+        class Directory
+        {
+        public:
+            /**
+             * @brief Creates a new directory.
+             *
+             * @param[in] path The directory path.
+             *
+             * @return An error code.
+             */
+            static DWORD Create( PCTSTR path );
+            /**
+             * @brief Removes a directory.
+             *
+             * @param[in] path The directory path.
+             *
+             * @return An error code.
+             */
+            static DWORD Remove( PCTSTR path );
+        };
+    }
 }
 
-#endif /* !__WIN__DIRECTORY_H__INCL__ */
+#endif /* !__COMMON__WIN__DIRECTORY_H__INCL__ */

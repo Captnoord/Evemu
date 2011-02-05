@@ -27,21 +27,24 @@
 
 #include "win/FileSearch.h"
 
+using namespace common;
+using namespace common::win;
+
 /*************************************************************************/
-/* Win::FileSearch                                                       */
+/* common::win::FileSearch                                               */
 /*************************************************************************/
-Win::FileSearch::FileSearch()
-: Win::Handle()
+FileSearch::FileSearch()
+: Handle()
 {
 }
 
-Win::FileSearch::~FileSearch()
+FileSearch::~FileSearch()
 {
     DWORD code = Close();
     assert( ERROR_SUCCESS == code );
 }
 
-DWORD Win::FileSearch::Find( PCTSTR name, PWIN32_FIND_DATA data )
+DWORD FileSearch::Find( PCTSTR name, PWIN32_FIND_DATA data )
 {
     DWORD code = Close();
     if( ERROR_SUCCESS != code )
@@ -54,7 +57,7 @@ DWORD Win::FileSearch::Find( PCTSTR name, PWIN32_FIND_DATA data )
     return ERROR_SUCCESS;
 }
 
-DWORD Win::FileSearch::FindNext( PWIN32_FIND_DATA data )
+DWORD FileSearch::FindNext( PWIN32_FIND_DATA data )
 {
     if( TRUE != ::FindNextFile( mHandle, data ) )
         return ::GetLastError();
@@ -62,7 +65,7 @@ DWORD Win::FileSearch::FindNext( PWIN32_FIND_DATA data )
     return ERROR_SUCCESS;
 }
 
-DWORD Win::FileSearch::Close()
+DWORD FileSearch::Close()
 {
     if( TRUE == isValid() )
     {

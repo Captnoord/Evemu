@@ -23,55 +23,58 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __WIN__CRITICAL_SECTION_H__INCL__
-#define __WIN__CRITICAL_SECTION_H__INCL__
+#ifndef __COMMON__WIN__CRITICAL_SECTION_H__INCL__
+#define __COMMON__WIN__CRITICAL_SECTION_H__INCL__
 
-namespace Win
+namespace common
 {
-    /**
-     * @brief Wrapper around Windows critical section.
-     *
-     * @author Bloody.Rabbit
-     */
-    class CriticalSection
+    namespace win
     {
-    public:
         /**
-         * @brief Primary constructor.
-         */
-        CriticalSection();
-        /**
-         * @brief A destructor.
-         */
-        ~CriticalSection();
-
-        /**
-         * @brief Enters the critical section.
+         * @brief Wrapper around Windows critical section.
          *
-         * This method blocks until the section
-         * has been entered.
+         * @author Bloody.Rabbit
          */
-        VOID Enter();
-        /**
-         * @brief Attempts to enter the critical section.
-         *
-         * This method returns immediately; the returned value
-         * indicates whether the critical section has been entered.
-         *
-         * @retval TRUE  Successfully entered the section.
-         * @retval FALSE Coudn't enter, another thread is in.
-         */
-        BOOL TryEnter();
+        class CriticalSection
+        {
+        public:
+            /**
+             * @brief Primary constructor.
+             */
+            CriticalSection();
+            /**
+             * @brief A destructor.
+             */
+            ~CriticalSection();
 
-        /**
-         * @brief Leaves the critical section.
-         */
-        VOID Leave();
+            /**
+             * @brief Enters the critical section.
+             *
+             * This method blocks until the section
+             * has been entered.
+             */
+            VOID Enter();
+            /**
+             * @brief Attempts to enter the critical section.
+             *
+             * This method returns immediately; the returned value
+             * indicates whether the critical section has been entered.
+             *
+             * @retval TRUE  Successfully entered the section.
+             * @retval FALSE Coudn't enter, another thread is in.
+             */
+            BOOL TryEnter();
 
-    protected:
-        /// The critical section itself.
-        CRITICAL_SECTION mCriticalSection;
-    };
+            /**
+             * @brief Leaves the critical section.
+             */
+            VOID Leave();
+
+        protected:
+            /// The critical section itself.
+            CRITICAL_SECTION mCriticalSection;
+        };
+    }
 }
 
-#endif /* !__WIN__CRITICAL_SECTION_H__INCL__ */
+#endif /* !__COMMON__WIN__CRITICAL_SECTION_H__INCL__ */

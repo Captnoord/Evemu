@@ -23,83 +23,86 @@
     Author:     Zhur
 */
 
-#ifndef __ZLIB__UTILS_H__INCL__
-#define __ZLIB__UTILS_H__INCL__
+#ifndef __COMMON__ZLIB__UTILS_H__INCL__
+#define __COMMON__ZLIB__UTILS_H__INCL__
 
-/**
- * @brief Contains utilities to access zlib functionality.
- */
-namespace Zlib
+namespace common
 {
-    /// A zlib stream marker.
-    extern const uint8 HEADER_BYTE;
+    /**
+     * @brief Contains utilities to access zlib functionality.
+     */
+    namespace zlib
+    {
+        /// A zlib stream marker.
+        extern const uint8 HEADER_BYTE;
 
-    /**
-     * @brief Checks whether given data is deflated.
-     *
-     * @param[in] data Data to be checked.
-     *
-     * @retval true  Data is deflated.
-     * @retval false Data is not deflated.
-     */
-    bool IsDeflated( const Util::Data& data );
+        /**
+         * @brief Checks whether given data is deflated.
+         *
+         * @param[in] data Data to be checked.
+         *
+         * @retval true  Data is deflated.
+         * @retval false Data is not deflated.
+         */
+        bool IsDeflated( const util::Data& data );
 
-    /**
-     * @brief Deflates given data.
-     *
-     * @param[in,out] data Data to be deflated, overwritten by result.
-     *
-     * @retval true  Deflation ran successfully.
-     * @retval false Error occurred during deflation.
-     */
-    bool DeflateData( Util::Buffer& data );
-    /**
-     * @brief Deflates given data.
-     *
-     * @param[in]  input  Data to be deflated.
-     * @param[out] output Destination of deflated data.
-     *
-     * @retval true  Deflation ran successfully.
-     * @retval false Error occurred during deflation.
-     */
-    bool DeflateData( const Util::Data& input, Util::Buffer& output );
+        /**
+         * @brief Deflates given data.
+         *
+         * @param[in,out] data Data to be deflated, overwritten by result.
+         *
+         * @retval true  Deflation ran successfully.
+         * @retval false Error occurred during deflation.
+         */
+        bool DeflateData( util::Buffer& data );
+        /**
+         * @brief Deflates given data.
+         *
+         * @param[in]  input  Data to be deflated.
+         * @param[out] output Destination of deflated data.
+         *
+         * @retval true  Deflation ran successfully.
+         * @retval false Error occurred during deflation.
+         */
+        bool DeflateData( const util::Data& input, util::Buffer& output );
 
-    /**
-     * @brief Inflates given data.
-     *
-     * @param[in,out] data Data to be inflated, overwritten by result.
-     *
-     * @retval true  Inflation ran successfully.
-     * @retval false Failed to inflate data.
-     */
-    bool InflateData( Util::Buffer& data );
-    /**
-     * @brief Inflates given data.
-     *
-     * One of the key things of the ZLIB stuff is that we 'sometimes'
-     * don't know the size of the uncompressed data. My idea is to fix
-     * this regarding the first phase of the parsing of the data
-     * (the parser) is to go trough a couple of output buffer size.
-     *
-     * The first buffer size would be 2x the initial buffer size,
-     * implying that the compression ratio is about 50%.
-     * The second buffer size would be 4x the initial buffer size,
-     * implying that the compression ratio is about 75%.
-     * The third buffer size would be 8x the initial buffer size
-     * implying that the compression ratio is about 87.5%.
-     *
-     * We would go on in this progress until we find buffer size
-     * big enough to hold uncompressed data.
-     *
-     * This theory is really stupid because there is no way to actually know.
-     *
-     * @param[in]  input  Data to be inflated.
-     * @param[out] output Destination for inflated data.
-     *
-     * @retval true  Inflation ran successfully.
-     * @retval false Failed to inflate data.
-     */
-    bool InflateData( const Util::Data& input, Util::Buffer& output );
+        /**
+         * @brief Inflates given data.
+         *
+         * @param[in,out] data Data to be inflated, overwritten by result.
+         *
+         * @retval true  Inflation ran successfully.
+         * @retval false Failed to inflate data.
+         */
+        bool InflateData( util::Buffer& data );
+        /**
+         * @brief Inflates given data.
+         *
+         * One of the key things of the ZLIB stuff is that we 'sometimes'
+         * don't know the size of the uncompressed data. My idea is to fix
+         * this regarding the first phase of the parsing of the data
+         * (the parser) is to go trough a couple of output buffer size.
+         *
+         * The first buffer size would be 2x the initial buffer size,
+         * implying that the compression ratio is about 50%.
+         * The second buffer size would be 4x the initial buffer size,
+         * implying that the compression ratio is about 75%.
+         * The third buffer size would be 8x the initial buffer size
+         * implying that the compression ratio is about 87.5%.
+         *
+         * We would go on in this progress until we find buffer size
+         * big enough to hold uncompressed data.
+         *
+         * This theory is really stupid because there is no way to actually know.
+         *
+         * @param[in]  input  Data to be inflated.
+         * @param[out] output Destination for inflated data.
+         *
+         * @retval true  Inflation ran successfully.
+         * @retval false Failed to inflate data.
+         */
+        bool InflateData( const util::Data& input, util::Buffer& output );
+    }
 }
 
-#endif /* !__ZLIB__UTILS_H__INCL__ */
+#endif /* !__COMMON__ZLIB__UTILS_H__INCL__ */

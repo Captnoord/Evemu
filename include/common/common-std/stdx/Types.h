@@ -23,8 +23,8 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __STD__TYPES_H__INCL__
-#define __STD__TYPES_H__INCL__
+#ifndef __COMMON__STDX__TYPES_H__INCL__
+#define __COMMON__STDX__TYPES_H__INCL__
 
 /*
  * u?int(8|16|32|64)
@@ -108,4 +108,4 @@ typedef uint64_t uint64;
 #   define SCNx64 "I64x"
 #endif /* MSVC */
 
-#endif /* !__STD__TYPES_H__INCL__ */
+#endif /* !__COMMON__STDX__TYPES_H__INCL__ */

@@ -27,10 +27,13 @@
 
 #include "posix/Mutex.h"
 
+using namespace common;
+using namespace common::posix;
+
 /*************************************************************************/
-/* Posix::Mutex                                                          */
+/* common::posix::Mutex                                                  */
 /*************************************************************************/
-const Posix::Mutex::Attribute Posix::Mutex::DEFAULT_ATTRIBUTE(
+const Mutex::Attribute Mutex::DEFAULT_ATTRIBUTE(
 #if defined( CYGWIN ) || defined( APPLE )
     PTHREAD_MUTEX_RECURSIVE
 #else
@@ -38,43 +41,43 @@ const Posix::Mutex::Attribute Posix::Mutex::DEFAULT_ATTRIBUTE(
 #endif
  );
 
-Posix::Mutex::Mutex( const Attribute& attr )
+Mutex::Mutex( const Attribute& attr )
 {
     int code = ::pthread_mutex_init( &mMutex, &attr.mAttribute );
     assert( 0 == code );
 }
 
-Posix::Mutex::~Mutex()
+Mutex::~Mutex()
 {
     int code = ::pthread_mutex_destroy( &mMutex );
     assert( 0 == code );
 }
 
-int Posix::Mutex::Lock()
+int Mutex::Lock()
 {
     return ::pthread_mutex_lock( &mMutex );
 }
 
-int Posix::Mutex::TryLock()
+int Mutex::TryLock()
 {
     return ::pthread_mutex_trylock( &mMutex );
 }
 
-int Posix::Mutex::Unlock()
+int Mutex::Unlock()
 {
     return ::pthread_mutex_unlock( &mMutex );
 }
 
 /*************************************************************************/
-/* Posix::Mutex::Attribute                                               */
+/* common::posix::Mutex::Attribute                                       */
 /*************************************************************************/
-Posix::Mutex::Attribute::Attribute()
+Mutex::Attribute::Attribute()
 {
     int code = ::pthread_mutexattr_init( &mAttribute );
     assert( 0 == code );
 }
 
-Posix::Mutex::Attribute::Attribute( int type )
+Mutex::Attribute::Attribute( int type )
 {
     int code = ::pthread_mutexattr_init( &mAttribute );
     assert( 0 == code );
@@ -83,18 +86,18 @@ Posix::Mutex::Attribute::Attribute( int type )
     assert( 0 == code );
 }
 
-Posix::Mutex::Attribute::~Attribute()
+Mutex::Attribute::~Attribute()
 {
     int code = ::pthread_mutexattr_destroy( &mAttribute );
     assert( 0 == code );
 }
 
-int Posix::Mutex::Attribute::GetType( int* type ) const
+int Mutex::Attribute::GetType( int* type ) const
 {
     return ::pthread_mutexattr_gettype( &mAttribute, type );
 }
 
-int Posix::Mutex::Attribute::SetType( int type )
+int Mutex::Attribute::SetType( int type )
 {
     return ::pthread_mutexattr_settype( &mAttribute, type );
 }

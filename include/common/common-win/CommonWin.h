@@ -29,22 +29,25 @@
 /*************************************************************************/
 /* common-std                                                            */
 /*************************************************************************/
-namespace Win
+namespace common
 {
-    class File;
-    class FileSearch;
+    namespace win
+    {
+        class File;
+        class FileSearch;
 
-    class Condition;
-    class CriticalSection;
-    class Thread;
+        class Condition;
+        class CriticalSection;
+        class Thread;
+    }
 }
 
-#define FS_DIRECTORY_TYPE Win::FileSearch
-#define FS_FILE_TYPE      Win::File
+#define COMMON_FS_DIRECTORY_TYPE common::win::FileSearch
+#define COMMON_FS_FILE_TYPE      common::win::File
 
-#define MT_CONDITION_TYPE Win::Condition
-#define MT_MUTEX_TYPE     Win::CriticalSection
-#define MT_THREAD_TYPE    Win::Thread
+#define COMMON_MT_CONDITION_TYPE common::win::Condition
+#define COMMON_MT_MUTEX_TYPE     common::win::CriticalSection
+#define COMMON_MT_THREAD_TYPE    common::win::Thread
 
 #include "CommonStd.h"
 
@@ -54,8 +57,9 @@ namespace Win
 #include "mt/Condition.h"
 #include "mt/Mutex.h"
 #include "mt/Thread.h"
+#include "stream/Input.h"
+#include "stream/Output.h"
 #include "time/Msec.h"
-#include "util/Stream.h"
 
 /*************************************************************************/
 /* common-os                                                             */

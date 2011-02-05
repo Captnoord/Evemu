@@ -23,73 +23,76 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __WIN__CONSOLE_SCREEN_BUFFER_H__INCL__
-#define __WIN__CONSOLE_SCREEN_BUFFER_H__INCL__
+#ifndef __COMMON__WIN__CONSOLE_SCREEN_BUFFER_H__INCL__
+#define __COMMON__WIN__CONSOLE_SCREEN_BUFFER_H__INCL__
 
 #include "win/Handle.h"
 
-namespace Win
+namespace common
 {
-    /**
-     * @brief A handle to a console screen buffer.
-     *
-     * @author Bloody.Rabbit
-     */
-    class ConsoleScreenBuffer
-    : public Handle
+    namespace win
     {
-    public:
-        /// A handle to the default console output screen.
-        static const ConsoleScreenBuffer DEFAULT_OUTPUT_SCREEN;
+        /**
+         * @brief A handle to a console screen buffer.
+         *
+         * @author Bloody.Rabbit
+         */
+        class ConsoleScreenBuffer
+        : public Handle
+        {
+        public:
+            /// A handle to the default console output screen.
+            static const ConsoleScreenBuffer DEFAULT_OUTPUT_SCREEN;
 
-        /**
-         * @brief A primary constructor, creates a new console screen buffer.
-         *
-         * @param[in] desiredAccess A desired access to the buffer.
-         * @param[in] shareMode     A share mode for the buffer.
-         */
-        ConsoleScreenBuffer( DWORD desiredAccess = GENERIC_READ | GENERIC_WRITE,
-                             DWORD shareMode = FILE_SHARE_READ );
+            /**
+             * @brief A primary constructor, creates a new console screen buffer.
+             *
+             * @param[in] desiredAccess A desired access to the buffer.
+             * @param[in] shareMode     A share mode for the buffer.
+             */
+            ConsoleScreenBuffer( DWORD desiredAccess = GENERIC_READ | GENERIC_WRITE,
+                                 DWORD shareMode = FILE_SHARE_READ );
 
-        /**
-         * @brief Creates a new console screen buffer.
-         *
-         * Any previous handle is closed.
-         *
-         * @param[in] desiredAccess A desired access to the buffer.
-         * @param[in] shareMode     A share mode for the buffer.
-         *
-         * @return An error code.
-         */
-        DWORD Create( DWORD desiredAccess = GENERIC_READ | GENERIC_WRITE,
-                      DWORD shareMode = FILE_SHARE_READ );
+            /**
+             * @brief Creates a new console screen buffer.
+             *
+             * Any previous handle is closed.
+             *
+             * @param[in] desiredAccess A desired access to the buffer.
+             * @param[in] shareMode     A share mode for the buffer.
+             *
+             * @return An error code.
+             */
+            DWORD Create( DWORD desiredAccess = GENERIC_READ | GENERIC_WRITE,
+                          DWORD shareMode = FILE_SHARE_READ );
 
-        /**
-         * @brief Sets this buffer as active.
-         *
-         * An active console screen buffer is the one
-         * which is currently displayed.
-         *
-         * @return An error code.
-         */
-        DWORD SetActive();
-        /**
-         * @brief Sets attributes of console text.
-         *
-         * @param[in] attributes The new attributes.
-         *
-         * @return An error code.
-         */
-        DWORD SetTextAttributes( WORD attributes );
+            /**
+             * @brief Sets this buffer as active.
+             *
+             * An active console screen buffer is the one
+             * which is currently displayed.
+             *
+             * @return An error code.
+             */
+            DWORD SetActive();
+            /**
+             * @brief Sets attributes of console text.
+             *
+             * @param[in] attributes The new attributes.
+             *
+             * @return An error code.
+             */
+            DWORD SetTextAttributes( WORD attributes );
 
-    protected:
-        /**
-         * @brief A protected constructor, takes a handle directly.
-         *
-         * @param[in] handle The handle.
-         */
-        ConsoleScreenBuffer( HANDLE handle );
-    };
+        protected:
+            /**
+             * @brief A protected constructor, takes a handle directly.
+             *
+             * @param[in] handle The handle.
+             */
+            ConsoleScreenBuffer( HANDLE handle );
+        };
+    }
 }
 
-#endif /* !__WIN__CONSOLE_SCREEN_BUFFER_H__INCL__ */
+#endif /* !__COMMON__WIN__CONSOLE_SCREEN_BUFFER_H__INCL__ */

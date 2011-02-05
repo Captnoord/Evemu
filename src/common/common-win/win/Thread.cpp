@@ -27,51 +27,54 @@
 
 #include "win/Thread.h"
 
+using namespace common;
+using namespace common::win;
+
 /*************************************************************************/
-/* Win::Thread                                                           */
+/* common::win::Thread                                                   */
 /*************************************************************************/
-Win::Thread Win::Thread::self()
+Thread Thread::self()
 {
-    return Win::Thread( ::GetCurrentThread(),
-                        ::GetCurrentThreadId() );
+    return Thread( ::GetCurrentThread(),
+                   ::GetCurrentThreadId() );
 }
 
-VOID Win::Thread::Sleep( const Time::Msec& period )
+VOID Thread::Sleep( const time::Msec& period )
 {
     ::Sleep( static_cast< DWORD >( period.count() ) );
 }
 
-Win::Thread::Thread()
-: Win::Handle(),
-  Win::WaitableHandle(),
+Thread::Thread()
+: Handle(),
+  WaitableHandle(),
   mThreadId( 0 )
 {
 }
 
-Win::Thread::Thread( HANDLE handle, DWORD id )
-: Win::Handle( handle ),
-  Win::WaitableHandle( handle ),
+Thread::Thread( HANDLE handle, DWORD id )
+: Handle( handle ),
+  WaitableHandle( handle ),
   mThreadId( id )
 {
 }
 
-Win::Thread::Thread( PTHREAD_START_ROUTINE startAddress, PVOID param, SIZE_T stackSize )
-: Win::Handle(),
-  Win::WaitableHandle(),
+Thread::Thread( PTHREAD_START_ROUTINE startAddress, PVOID param, SIZE_T stackSize )
+: Handle(),
+  WaitableHandle(),
   mThreadId( 0 )
 {
     DWORD code = Create( startAddress, param, stackSize );
     assert( ERROR_SUCCESS == code );
 }
 
-Win::Thread::Thread( const Win::Thread& oth )
-: Win::Handle( oth ),
-  Win::WaitableHandle( oth ),
+Thread::Thread( const Thread& oth )
+: Handle( oth ),
+  WaitableHandle( oth ),
   mThreadId( oth.id() )
 {
 }
 
-DWORD Win::Thread::GetExitCode( PDWORD exitCode ) const
+DWORD Thread::GetExitCode( PDWORD exitCode ) const
 {
     if( TRUE != ::GetExitCodeThread( mHandle, exitCode ) )
         return ::GetLastError();
@@ -79,7 +82,7 @@ DWORD Win::Thread::GetExitCode( PDWORD exitCode ) const
     return ERROR_SUCCESS;
 }
 
-DWORD Win::Thread::Create( PTHREAD_START_ROUTINE startAddress, PVOID param, SIZE_T stackSize )
+DWORD Thread::Create( PTHREAD_START_ROUTINE startAddress, PVOID param, SIZE_T stackSize )
 {
     DWORD code = Close();
     if( ERROR_SUCCESS != code )
@@ -92,7 +95,7 @@ DWORD Win::Thread::Create( PTHREAD_START_ROUTINE startAddress, PVOID param, SIZE
     return ERROR_SUCCESS;
 }
 
-DWORD Win::Thread::Terminate( DWORD exitCode )
+DWORD Thread::Terminate( DWORD exitCode )
 {
     if( TRUE != ::TerminateThread( mHandle, exitCode ) )
         return ::GetLastError();
@@ -100,7 +103,7 @@ DWORD Win::Thread::Terminate( DWORD exitCode )
     return ERROR_SUCCESS;
 }
 
-DWORD Win::Thread::Suspend( PDWORD prevCount )
+DWORD Thread::Suspend( PDWORD prevCount )
 {
     DWORD count = ::SuspendThread( mHandle );
     if( -1 == count )
@@ -112,7 +115,7 @@ DWORD Win::Thread::Suspend( PDWORD prevCount )
     return ERROR_SUCCESS;
 }
 
-DWORD Win::Thread::Resume( PDWORD prevCount )
+DWORD Thread::Resume( PDWORD prevCount )
 {
     DWORD count = ::ResumeThread( mHandle );
     if( -1 == count )
@@ -124,7 +127,7 @@ DWORD Win::Thread::Resume( PDWORD prevCount )
     return ERROR_SUCCESS;
 }
 
-DWORD Win::Thread::SetPriority( int priority )
+DWORD Thread::SetPriority( int priority )
 {
     if( TRUE != ::SetThreadPriority( mHandle, priority ) )
         return ::GetLastError();
@@ -132,9 +135,9 @@ DWORD Win::Thread::SetPriority( int priority )
     return ERROR_SUCCESS;
 }
 
-Win::Thread& Win::Thread::operator=( const Win::Thread& oth )
+Thread& Thread::operator=( const Thread& oth )
 {
-    static_cast< Win::WaitableHandle& >( *this ) = oth;
+    static_cast< WaitableHandle& >( *this ) = oth;
     mThreadId = oth.id();
 
     return *this;

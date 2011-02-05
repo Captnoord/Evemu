@@ -29,19 +29,22 @@
 #include "time/Timer.h"
 #include "util/Log.h"
 
-/*************************************************************************/
-/* Net::TcpServerBase                                                    */
-/*************************************************************************/
-const size_t Net::TcpServerBase::ERRBUF_SIZE = 1024;
-const size_t Net::TcpServerBase::LOOP_GRANULARITY = 5;
+using namespace common;
+using namespace common::net;
 
-Net::TcpServerBase::TcpServerBase()
+/*************************************************************************/
+/* common::net::TcpServerBase                                            */
+/*************************************************************************/
+const size_t TcpServerBase::ERRBUF_SIZE = 1024;
+const size_t TcpServerBase::LOOP_GRANULARITY = 5;
+
+TcpServerBase::TcpServerBase()
 : mSock( NULL ),
   mPort( 0 )
 {
 }
 
-Net::TcpServerBase::~TcpServerBase()
+TcpServerBase::~TcpServerBase()
 {
     // Close socket
     Close();
@@ -50,7 +53,7 @@ Net::TcpServerBase::~TcpServerBase()
     WaitLoop();
 }
 
-bool Net::TcpServerBase::IsOpen() const
+bool TcpServerBase::IsOpen() const
 {
     bool ret;
 
@@ -61,13 +64,13 @@ bool Net::TcpServerBase::IsOpen() const
     return ret;
 }
 
-bool Net::TcpServerBase::Open( uint16 port, char* errbuf )
+bool TcpServerBase::Open( uint16 port, char* errbuf )
 {
     if( errbuf != NULL )
         errbuf[0] = 0;
 
     // mutex lock
-    Mt::MutexLock lock( mMSock );
+    mt::MutexLock lock( mMSock );
 
     if( IsOpen() )
     {
@@ -86,7 +89,7 @@ bool Net::TcpServerBase::Open( uint16 port, char* errbuf )
     }
 
     // Setting up TCP port for new TCP connections
-    mSock = new Net::Socket( AF_INET, SOCK_STREAM, 0 );
+    mSock = new Socket( AF_INET, SOCK_STREAM, 0 );
 
     // Quag: don't think following is good stuff for TCP, good for UDP
     // Mis: SO_REUSEADDR shouldn't be a problem for tcp - allows you to restart
@@ -143,15 +146,15 @@ bool Net::TcpServerBase::Open( uint16 port, char* errbuf )
     return true;
 }
 
-void Net::TcpServerBase::Close()
+void TcpServerBase::Close()
 {
-    Mt::MutexLock lock( mMSock );
+    mt::MutexLock lock( mMSock );
 
     SafeDelete( mSock );
     mPort = 0;
 }
 
-void Net::TcpServerBase::StartLoop()
+void TcpServerBase::StartLoop()
 {
 #ifdef WIN32
     _beginthread( TcpServerLoop, 0, this );
@@ -161,16 +164,16 @@ void Net::TcpServerBase::StartLoop()
 #endif
 }
 
-void Net::TcpServerBase::WaitLoop()
+void TcpServerBase::WaitLoop()
 {
     //wait for loop to stop.
     mMLoopRunning.Lock();
     mMLoopRunning.Unlock();
 }
 
-bool Net::TcpServerBase::Process()
+bool TcpServerBase::Process()
 {
-    Mt::MutexLock lock( mMSock );
+    mt::MutexLock lock( mMSock );
 
     if( !IsOpen() )
         return false;
@@ -179,16 +182,16 @@ bool Net::TcpServerBase::Process()
     return true;
 }
 
-void Net::TcpServerBase::ListenNewConnections()
+void TcpServerBase::ListenNewConnections()
 {
-    Net::Socket* sock;
+    Socket* sock;
     sockaddr_in  from;
     unsigned int fromlen;
 
     from.sin_family = AF_INET;
     fromlen = sizeof( from );
 
-    Mt::MutexLock lock( mMSock );
+    mt::MutexLock lock( mMSock );
 
     // Check for pending connects
     while( ( sock = mSock->accept( (sockaddr*)&from, &fromlen ) ) != NULL )
@@ -208,15 +211,15 @@ void Net::TcpServerBase::ListenNewConnections()
     }
 }
 
-thread_return_t Net::TcpServerBase::TcpServerLoop( void* arg )
+thread_return_t TcpServerBase::TcpServerLoop( void* arg )
 {
-    Net::TcpServerBase* tcps = reinterpret_cast< Net::TcpServerBase* >( arg );
+    TcpServerBase* tcps = reinterpret_cast< TcpServerBase* >( arg );
     assert( tcps != NULL );
 
     THREAD_RETURN( tcps->TcpServerLoop() );
 }
 
-thread_return_t Net::TcpServerBase::TcpServerLoop()
+thread_return_t TcpServerBase::TcpServerLoop()
 {
 #ifdef WIN32
     SetThreadPriority( GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL );

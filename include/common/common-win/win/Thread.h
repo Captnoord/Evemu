@@ -23,140 +23,143 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __WIN__THREAD_H__INCL__
-#define __WIN__THREAD_H__INCL__
+#ifndef __COMMON__WIN__THREAD_H__INCL__
+#define __COMMON__WIN__THREAD_H__INCL__
 
 #include "win/Handle.h"
 
-namespace Win
+namespace common
 {
-    /**
-     * @brief A handle to a thread.
-     *
-     * @author Bloody.Rabbit
-     */
-    class Thread
-    : public WaitableHandle
+    namespace win
     {
-    public:
         /**
-         * @brief Obtains a Thread handle for the calling thread itself.
+         * @brief A handle to a thread.
          *
-         * @return A Thread handle for the calling thread.
+         * @author Bloody.Rabbit
          */
-        static Thread self();
+        class Thread
+        : public WaitableHandle
+        {
+        public:
+            /**
+             * @brief Obtains a Thread handle for the calling thread itself.
+             *
+             * @return A Thread handle for the calling thread.
+             */
+            static Thread self();
 
-        /**
-         * @brief Makes caller thread sleep for specified amount of time.
-         *
-         * @param[in] period How much time to spend sleeping.
-         */
-        static VOID Sleep( const Time::Msec& period );
+            /**
+             * @brief Makes caller thread sleep for specified amount of time.
+             *
+             * @param[in] period How much time to spend sleeping.
+             */
+            static VOID Sleep( const time::Msec& period );
 
-        /**
-         * @brief A default constructor.
-         */
-        Thread();
-        /**
-         * @brief Primary constructor, creates a new thread.
-         *
-         * @param[in] startAddress Address of method where the thread should start.
-         * @param[in] param        Parameter to pass to start method.
-         * @param[in] stackSize    The size of stack of the new thread.
-         */
-        Thread( PTHREAD_START_ROUTINE startAddress, PVOID param, SIZE_T stackSize = 0 );
-        /**
-         * @brief Copy constructor, duplicates the thread handle.
-         *
-         * @param[in] oth The handle to duplicate.
-         */
-        Thread( const Thread& oth );
+            /**
+             * @brief A default constructor.
+             */
+            Thread();
+            /**
+             * @brief Primary constructor, creates a new thread.
+             *
+             * @param[in] startAddress Address of method where the thread should start.
+             * @param[in] param        Parameter to pass to start method.
+             * @param[in] stackSize    The size of stack of the new thread.
+             */
+            Thread( PTHREAD_START_ROUTINE startAddress, PVOID param, SIZE_T stackSize = 0 );
+            /**
+             * @brief Copy constructor, duplicates the thread handle.
+             *
+             * @param[in] oth The handle to duplicate.
+             */
+            Thread( const Thread& oth );
 
-        /**
-         * @brief Obtains a thread ID.
-         *
-         * @return A thread ID.
-         */
-        DWORD id() const { return mThreadId; }
+            /**
+             * @brief Obtains a thread ID.
+             *
+             * @return A thread ID.
+             */
+            DWORD id() const { return mThreadId; }
 
-        /**
-         * @brief Obtains an exit code of the thread.
-         *
-         * @param[out] exitCode A variable which receives the value.
-         *
-         * @return An error code.
-         */
-        DWORD GetExitCode( PDWORD exitCode ) const;
+            /**
+             * @brief Obtains an exit code of the thread.
+             *
+             * @param[out] exitCode A variable which receives the value.
+             *
+             * @return An error code.
+             */
+            DWORD GetExitCode( PDWORD exitCode ) const;
 
-        /**
-         * @brief Creates a new thread.
-         *
-         * The handle to the new thread is stored in this object;
-         * the old one is forgotten.
-         *
-         * @param[in] startAddress Address of method where the thread should start.
-         * @param[in] param        Parameter to pass to start method.
-         * @param[in] stackSize    The size of stack of the new thread.
-         *
-         * @return An error code.
-         */
-        DWORD Create( PTHREAD_START_ROUTINE startAddress, PVOID param, SIZE_T stackSize = 0 );
-        /**
-         * @brief Terminates the thread.
-         *
-         * @param[in] exitCode An exit code for the thread.
-         *
-         * @return An error code.
-         */
-        DWORD Terminate( DWORD exitCode );
+            /**
+             * @brief Creates a new thread.
+             *
+             * The handle to the new thread is stored in this object;
+             * the old one is forgotten.
+             *
+             * @param[in] startAddress Address of method where the thread should start.
+             * @param[in] param        Parameter to pass to start method.
+             * @param[in] stackSize    The size of stack of the new thread.
+             *
+             * @return An error code.
+             */
+            DWORD Create( PTHREAD_START_ROUTINE startAddress, PVOID param, SIZE_T stackSize = 0 );
+            /**
+             * @brief Terminates the thread.
+             *
+             * @param[in] exitCode An exit code for the thread.
+             *
+             * @return An error code.
+             */
+            DWORD Terminate( DWORD exitCode );
 
-        /**
-         * @brief Suspends the thread.
-         *
-         * @param[out] prevCount Where to store the previous suspend count.
-         *
-         * @return An error code.
-         */
-        DWORD Suspend( PDWORD prevCount = NULL );
-        /**
-         * @brief Resumes a thread.
-         *
-         * @param[out] prevCount Where to store the previous suspend count.
-         *
-         * @return An error code.
-         */
-        DWORD Resume( PDWORD prevCount = NULL );
+            /**
+             * @brief Suspends the thread.
+             *
+             * @param[out] prevCount Where to store the previous suspend count.
+             *
+             * @return An error code.
+             */
+            DWORD Suspend( PDWORD prevCount = NULL );
+            /**
+             * @brief Resumes a thread.
+             *
+             * @param[out] prevCount Where to store the previous suspend count.
+             *
+             * @return An error code.
+             */
+            DWORD Resume( PDWORD prevCount = NULL );
 
-        /**
-         * @brief Sets the thread's priority.
-         *
-         * @param[in] priority The priority to set.
-         *
-         * @return An error code.
-         */
-        DWORD SetPriority( int priority );
+            /**
+             * @brief Sets the thread's priority.
+             *
+             * @param[in] priority The priority to set.
+             *
+             * @return An error code.
+             */
+            DWORD SetPriority( int priority );
 
-        /**
-         * @brief Copy operator; duplicates the thread handle.
-         *
-         * @param[in] oth The thread handle to duplicate.
-         *
-         * @return Itself.
-         */
-        Thread& operator=( const Thread& oth );
+            /**
+             * @brief Copy operator; duplicates the thread handle.
+             *
+             * @param[in] oth The thread handle to duplicate.
+             *
+             * @return Itself.
+             */
+            Thread& operator=( const Thread& oth );
 
-    protected:
-        /**
-         * @brief A protected constructor.
-         *
-         * @param[in] handle A thread handle.
-         * @param[in] id     A thread ID.
-         */
-        Thread( HANDLE handle, DWORD id );
+        protected:
+            /**
+             * @brief A protected constructor.
+             *
+             * @param[in] handle A thread handle.
+             * @param[in] id     A thread ID.
+             */
+            Thread( HANDLE handle, DWORD id );
 
-        /// A thread ID.
-        DWORD mThreadId;
-    };
+            /// A thread ID.
+            DWORD mThreadId;
+        };
+    }
 }
 
-#endif /* !__WIN__THREAD_H__INCL__ */
+#endif /* !__COMMON__WIN__THREAD_H__INCL__ */

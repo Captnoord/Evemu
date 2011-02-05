@@ -23,18 +23,17 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __TEST_UTIL_BUFFER_H__INCL__
-#define __TEST_UTIL_BUFFER_H__INCL__
+#ifndef __TEST__TEST_UTIL_BUFFER_H__INCL__
+#define __TEST__TEST_UTIL_BUFFER_H__INCL__
 
-namespace Util
+namespace test
 {
     /**
-     * @brief Tests Util::Buffer.
+     * @brief Tests util::Buffer.
      *
      * @author Bloody.Rabbit
      */
-    template<>
-    class Test< Util::Buffer >
+    class TestUtilBuffer
     : public CppUnit::TestFixture
     {
     public:
@@ -121,8 +120,8 @@ namespace Util
 
     protected:
         /// The tested buffer.
-        Util::Buffer* mBuffer;
+        util::Buffer* mBuffer;
     };
 }
 
-#endif /* !__TEST_UTIL_BUFFER_H__INCL__ */
+#endif /* !__TEST__TEST_UTIL_BUFFER_H__INCL__ */

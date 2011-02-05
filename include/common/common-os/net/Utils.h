@@ -23,8 +23,8 @@
     Author:     Aim, Captnoord, Zhur, Bloody.Rabbit
 */
 
-#ifndef __NET__UTILS_H__INCL__
-#define __NET__UTILS_H__INCL__
+#ifndef __COMMON__NET__UTILS_H__INCL__
+#define __COMMON__NET__UTILS_H__INCL__
 
 /*
  * Define some common interface.
@@ -63,4 +63,4 @@ typedef int SOCKET;
 #   define H_NET_ERRNO static_cast< int >( h_errno )
 #endif /* !WIN32 */
 
-#endif /* !__NET__UTILS_H__INCL__ */
+#endif /* !__COMMON__NET__UTILS_H__INCL__ */

@@ -23,18 +23,17 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __TEST_FS_FILE_H__INCL__
-#define __TEST_FS_FILE_H__INCL__
+#ifndef __TEST__TEST_FS_FILE_H__INCL__
+#define __TEST__TEST_FS_FILE_H__INCL__
 
-namespace Util
+namespace test
 {
     /**
-     * @brief Tests Fs::File.
+     * @brief Tests fs::File.
      *
      * @author Bloody.Rabbit
      */
-    template<>
-    class Test< Fs::File >
+    class TestFsFile
     : public CppUnit::TestFixture
     {
     public:
@@ -98,8 +97,8 @@ namespace Util
 
     protected:
         /// The file being tested.
-        Fs::File* mFile;
+        fs::File* mFile;
     };
 }
 
-#endif /* !__TEST_FS_FILE_H__INCL__ */
+#endif /* !__TEST__TEST_FS_FILE_H__INCL__ */

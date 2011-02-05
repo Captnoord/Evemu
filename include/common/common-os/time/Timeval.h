@@ -23,128 +23,133 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __TIME__TIMEVAL_H__INCL__
-#define __TIME__TIMEVAL_H__INCL__
+#ifndef __COMMON__TIME__TIMEVAL_H__INCL__
+#define __COMMON__TIME__TIMEVAL_H__INCL__
 
-namespace Time
+#include "time/Utils.h"
+
+namespace common
 {
-    class Msec;
-    class Timespec;
-    class WinTime;
-
-    /**
-     * @brief A wrapper around <code>struct timeval</code>.
-     *
-     * @author Bloody.Rabbit
-     */
-    class Timeval
+    namespace time
     {
-    public:
-        /// A microsecond in Timeval.
-        static const Timeval USEC;
-        /// A millisecond in Timeval.
-        static const Timeval MSEC;
-        /// A second in Timeval.
-        static const Timeval SEC;
-        /// A minute in Timeval.
-        static const Timeval MIN;
-        /// An hour in Timeval.
-        static const Timeval HOUR;
-        /// A day in Timeval.
-        static const Timeval DAY;
-        /// A month in Timeval.
-        static const Timeval MONTH;
-        /// A year in Timeval.
-        static const Timeval YEAR;
+        class Msec;
+        class Timespec;
+        class WinTime;
 
         /**
-         * @brief A primary constructor.
+         * @brief A wrapper around <code>struct timeval</code>.
          *
-         * @param[in] sec  The number of seconds.
-         * @param[in] usec The number of microseconds.
+         * @author Bloody.Rabbit
          */
-        Timeval( time_t sec = 0, useconds_t usec = 0 );
-        /**
-         * @brief A primary constructor.
-         *
-         * @param[in] tv The <code>timeval</code>.
-         */
-        Timeval( const timeval& tv );
+        class Timeval
+        {
+        public:
+            /// A microsecond in Timeval.
+            static const Timeval USEC;
+            /// A millisecond in Timeval.
+            static const Timeval MSEC;
+            /// A second in Timeval.
+            static const Timeval SEC;
+            /// A minute in Timeval.
+            static const Timeval MIN;
+            /// An hour in Timeval.
+            static const Timeval HOUR;
+            /// A day in Timeval.
+            static const Timeval DAY;
+            /// A month in Timeval.
+            static const Timeval MONTH;
+            /// A year in Timeval.
+            static const Timeval YEAR;
 
-        /**
-         * @brief A conversion constructor.
-         *
-         * @param[in] msec Msec to be converted.
-         */
-        Timeval( const Msec& msec );
-        /**
-         * @brief A conversion operator.
-         *
-         * @param[in] ts Timespec to be converted.
-         */
-        Timeval( const Timespec& ts );
-        /**
-         * @brief A copy constructor.
-         *
-         * @param[in] oth Timeval to be copied.
-         */
-        Timeval( const Timeval& oth );
-        /**
-         * @brief A conversion constructor.
-         *
-         * @param[in] time WinTime to be converted.
-         */
-        Timeval( const WinTime& time );
+            /**
+             * @brief A primary constructor.
+             *
+             * @param[in] sec  The number of seconds.
+             * @param[in] usec The number of microseconds.
+             */
+            Timeval( time_t sec = 0, useconds_t usec = 0 );
+            /**
+             * @brief A primary constructor.
+             *
+             * @param[in] tv The <code>timeval</code>.
+             */
+            Timeval( const timeval& tv );
 
-        /// Obtains the stored <code>timeval</code>.
-        const timeval& tv() const { return mTimeval; }
+            /**
+             * @brief A conversion constructor.
+             *
+             * @param[in] msec Msec to be converted.
+             */
+            Timeval( const Msec& msec );
+            /**
+             * @brief A conversion operator.
+             *
+             * @param[in] ts Timespec to be converted.
+             */
+            Timeval( const Timespec& ts );
+            /**
+             * @brief A copy constructor.
+             *
+             * @param[in] oth Timeval to be copied.
+             */
+            Timeval( const Timeval& oth );
+            /**
+             * @brief A conversion constructor.
+             *
+             * @param[in] time WinTime to be converted.
+             */
+            Timeval( const WinTime& time );
 
-        /// Obtains the stored number of seconds.
-        time_t sec() const { return tv().tv_sec; }
-        /// Obtains the stored number of microseconds.
-        useconds_t usec() const { return tv().tv_usec; }
+            /// Obtains the stored <code>timeval</code>.
+            const timeval& tv() const { return mTimeval; }
 
-        /// An equivalency operator.
-        bool operator==( const Timeval& oth ) const;
-        /// A non-equivalency operator.
-        bool operator!=( const Timeval& oth ) const;
-        /// A less-than operator.
-        bool operator<( const Timeval& oth ) const;
-        /// A less-or-equal operator.
-        bool operator<=( const Timeval& oth ) const;
-        /// A greater-than operator.
-        bool operator>( const Timeval& oth ) const;
-        /// A greater-or-equal operator.
-        bool operator>=( const Timeval& oth ) const;
+            /// Obtains the stored number of seconds.
+            time_t sec() const { return tv().tv_sec; }
+            /// Obtains the stored number of microseconds.
+            useconds_t usec() const { return tv().tv_usec; }
 
-        /// A sum operator.
-        Timeval operator+( const Timeval& oth ) const;
-        /// A difference operator.
-        Timeval operator-( const Timeval& oth ) const;
-        /// A multiply operator.
-        Timeval operator*( size_t ratio ) const;
-        /// A division operator.
-        Timeval operator/( size_t ratio ) const;
-        /// A remainder operator.
-        Timeval operator%( size_t ratio ) const;
+            /// An equivalency operator.
+            bool operator==( const Timeval& oth ) const;
+            /// A non-equivalency operator.
+            bool operator!=( const Timeval& oth ) const;
+            /// A less-than operator.
+            bool operator<( const Timeval& oth ) const;
+            /// A less-or-equal operator.
+            bool operator<=( const Timeval& oth ) const;
+            /// A greater-than operator.
+            bool operator>( const Timeval& oth ) const;
+            /// A greater-or-equal operator.
+            bool operator>=( const Timeval& oth ) const;
 
-        /// An assignment operator.
-        Timeval& operator=( const Timeval& oth );
-        /// An add operator.
-        Timeval& operator+=( const Timeval& oth );
-        /// A substract operator.
-        Timeval& operator-=( const Timeval& oth );
-        /// An expand operator.
-        Timeval& operator*=( size_t ratio );
-        /// A reduce operator.
-        Timeval& operator/=( size_t ratio );
-        /// A remainder-assign operator.
-        Timeval& operator%=( size_t ratio );
+            /// A sum operator.
+            Timeval operator+( const Timeval& oth ) const;
+            /// A difference operator.
+            Timeval operator-( const Timeval& oth ) const;
+            /// A multiply operator.
+            Timeval operator*( size_t ratio ) const;
+            /// A division operator.
+            Timeval operator/( size_t ratio ) const;
+            /// A remainder operator.
+            Timeval operator%( size_t ratio ) const;
 
-    protected:
-        /// The <code>timeval</code> itself.
-        timeval mTimeval;
-    };
+            /// An assignment operator.
+            Timeval& operator=( const Timeval& oth );
+            /// An add operator.
+            Timeval& operator+=( const Timeval& oth );
+            /// A substract operator.
+            Timeval& operator-=( const Timeval& oth );
+            /// An expand operator.
+            Timeval& operator*=( size_t ratio );
+            /// A reduce operator.
+            Timeval& operator/=( size_t ratio );
+            /// A remainder-assign operator.
+            Timeval& operator%=( size_t ratio );
+
+        protected:
+            /// The <code>timeval</code> itself.
+            timeval mTimeval;
+        };
+    }
 }
 
-#endif /* !__TIME__TIMEVAL_H__INCL__ */
+#endif /* !__COMMON__TIME__TIMEVAL_H__INCL__ */

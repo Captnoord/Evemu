@@ -23,64 +23,67 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __MT__MUTEX_H__INCL__
-#define __MT__MUTEX_H__INCL__
+#ifndef __COMMON__MT__MUTEX_H__INCL__
+#define __COMMON__MT__MUTEX_H__INCL__
 
 #include "util/Lock.h"
 
-#ifndef MT_MUTEX_TYPE
-#   define MT_MUTEX_TYPE void
-#endif /* !MT_MUTEX_TYPE */
+#ifndef COMMON_MT_MUTEX_TYPE
+#   define COMMON_MT_MUTEX_TYPE void
+#endif /* !COMMON_MT_MUTEX_TYPE */
 
-/**
- * @brief Classes and utilities to manage multithreading.
- */
-namespace Mt
+namespace common
 {
     /**
-     * @brief Common wrapper for platform-specific mutexes.
-     *
-     * @author Zhur, Bloody.Rabbit
+     * @brief Classes and utilities to manage multithreading.
      */
-    class Mutex
-    : public Util::Lockable
+    namespace mt
     {
-        friend class Condition;
-
-    public:
         /**
-         * @brief A default constructor, initializes the object.
-         */
-        Mutex();
-        /**
-         * @brief A destructor, cleans the object up.
-         */
-        ~Mutex();
-
-        /**
-         * @brief Locks the mutex.
-         */
-        void Lock();
-        /**
-         * @brief Attempts to lock the mutex.
+         * @brief Common wrapper for platform-specific mutexes.
          *
-         * @retval true  Mutex successfully locked.
-         * @retval false Mutex locked by another thread.
+         * @author Zhur, Bloody.Rabbit
          */
-        bool TryLock();
+        class Mutex
+        : public util::Lockable
+        {
+            friend class Condition;
 
-        /**
-         * @brief Unlocks the mutex.
-         */
-        void Unlock();
+        public:
+            /**
+             * @brief A default constructor, initializes the object.
+             */
+            Mutex();
+            /**
+             * @brief A destructor, cleans the object up.
+             */
+            ~Mutex();
 
-    protected:
-        /// The implementing object.
-        MT_MUTEX_TYPE* mMutex;
-    };
+            /**
+             * @brief Locks the mutex.
+             */
+            void Lock();
+            /**
+             * @brief Attempts to lock the mutex.
+             *
+             * @retval true  Mutex successfully locked.
+             * @retval false Mutex locked by another thread.
+             */
+            bool TryLock();
 
-    /// Convenience typedef for Mutex lock.
-    typedef Util::Lock< Mutex > MutexLock;
+            /**
+             * @brief Unlocks the mutex.
+             */
+            void Unlock();
+
+        protected:
+            /// The implementing object.
+            COMMON_MT_MUTEX_TYPE* mMutex;
+        };
+
+        /// Convenience typedef for Mutex lock.
+        typedef util::Lock< Mutex > MutexLock;
+    }
 }
 
-#endif /* !__MT__MUTEX_H__INCL__ */
+#endif /* !__COMMON__MT__MUTEX_H__INCL__ */

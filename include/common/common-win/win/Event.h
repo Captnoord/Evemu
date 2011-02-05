@@ -23,56 +23,59 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __WIN__EVENT_H__INCL__
-#define __WIN__EVENT_H__INCL__
+#ifndef __COMMON__WIN__EVENT_H__INCL__
+#define __COMMON__WIN__EVENT_H__INCL__
 
 #include "win/Handle.h"
 
-namespace Win
+namespace common
 {
-    /**
-     * @brief Wrapper for Windows synchronization event handle.
-     *
-     * @author Bloody.Rabbit
-     */
-    class Event
-    : public WaitableHandle
+    namespace win
     {
-    public:
         /**
-         * @brief A primary constructor.
+         * @brief Wrapper for Windows synchronization event handle.
          *
-         * @param[in] manualReset  If TRUE, a manual-reset event is created.
-         * @param[in] initialState If TRUE, the event is created signaled.
+         * @author Bloody.Rabbit
          */
-        Event( BOOL manualReset = FALSE, BOOL initialState = FALSE );
+        class Event
+        : public WaitableHandle
+        {
+        public:
+            /**
+             * @brief A primary constructor.
+             *
+             * @param[in] manualReset  If TRUE, a manual-reset event is created.
+             * @param[in] initialState If TRUE, the event is created signaled.
+             */
+            Event( BOOL manualReset = FALSE, BOOL initialState = FALSE );
 
-        /**
-         * @brief Creates a new event.
-         *
-         * A handle to the new event is stored in this object;
-         * the old one is forgotten.
-         *
-         * @param[in] manualReset  If TRUE, a manual-reset event is created.
-         * @param[in] initialState If TRUE, the event is created signaled.
-         *
-         * @return An error code.
-         */
-        DWORD Create( BOOL manualReset = FALSE, BOOL initialState = FALSE );
+            /**
+             * @brief Creates a new event.
+             *
+             * A handle to the new event is stored in this object;
+             * the old one is forgotten.
+             *
+             * @param[in] manualReset  If TRUE, a manual-reset event is created.
+             * @param[in] initialState If TRUE, the event is created signaled.
+             *
+             * @return An error code.
+             */
+            DWORD Create( BOOL manualReset = FALSE, BOOL initialState = FALSE );
 
-        /**
-         * @brief Sets the event to signaled state.
-         *
-         * @return An error code.
-         */
-        DWORD Set();
-        /**
-         * @brief Resets the event to nonsignaled state.
-         *
-         * @return An error code.
-         */
-        DWORD Reset();
-    };
+            /**
+             * @brief Sets the event to signaled state.
+             *
+             * @return An error code.
+             */
+            DWORD Set();
+            /**
+             * @brief Resets the event to nonsignaled state.
+             *
+             * @return An error code.
+             */
+            DWORD Reset();
+        };
+    }
 }
 
-#endif /* !__WIN__EVENT_H__INCL__ */
+#endif /* !__COMMON__WIN__EVENT_H__INCL__ */

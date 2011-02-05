@@ -27,26 +27,29 @@
 
 #include "posix/Mutex.h"
 
+using namespace common;
+using namespace common::mt;
+
 /*************************************************************************/
-/* Mt::Mutex                                                             */
+/* common::mt::Mutex                                                     */
 /*************************************************************************/
-Mt::Mutex::Mutex()
-: mMutex( new Posix::Mutex )
+Mutex::Mutex()
+: mMutex( new posix::Mutex )
 {
 }
 
-Mt::Mutex::~Mutex()
+Mutex::~Mutex()
 {
     SafeDelete( mMutex );
 }
 
-void Mt::Mutex::Lock()
+void Mutex::Lock()
 {
     int code = mMutex->Lock();
     assert( 0 == code );
 }
 
-bool Mt::Mutex::TryLock()
+bool Mutex::TryLock()
 {
     int code = mMutex->TryLock();
     assert( 0 == code || EBUSY == code );
@@ -54,7 +57,7 @@ bool Mt::Mutex::TryLock()
     return 0 == code;
 }
 
-void Mt::Mutex::Unlock()
+void Mutex::Unlock()
 {
     int code = mMutex->Unlock();
     assert( 0 == code );

@@ -23,117 +23,120 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __POSIX__FD_H__INCL__
-#define __POSIX__FD_H__INCL__
+#ifndef __COMMON__POSIX__FD_H__INCL__
+#define __COMMON__POSIX__FD_H__INCL__
 
-/**
- * @brief Wrappers around POSIX API.
- */
-namespace Posix
+namespace common
 {
     /**
-     * @brief A file descriptor.
-     *
-     * @author Bloody.Rabbit
+     * @brief Wrappers around POSIX API.
      */
-    class Fd
+    namespace posix
     {
-    public:
         /**
-         * @brief A primary constructor.
+         * @brief A file descriptor.
          *
-         * @param[in] fd The descriptor
+         * @author Bloody.Rabbit
          */
-        Fd( int fd = -1 );
-        /**
-         * @brief A destructor, closes the descriptor.
-         */
-        ~Fd();
+        class Fd
+        {
+        public:
+            /**
+             * @brief A primary constructor.
+             *
+             * @param[in] fd The descriptor
+             */
+            Fd( int fd = -1 );
+            /**
+             * @brief A destructor, closes the descriptor.
+             */
+            ~Fd();
+
+            /**
+             * @brief Checks if the descriptor is valid.
+             *
+             * @return true  The descriptor is valid.
+             * @return false The descriptor is invalid.
+             */
+            bool isValid() const { return -1 != mFd; }
+            /**
+             * @brief Conventient conversion to boolean.
+             *
+             * @return A value returned by isValid.
+             */
+            operator bool() const { return isValid(); }
+
+            /**
+             * @brief Closes the descriptor.
+             *
+             * This method does not fail is the descriptor
+             * is already closed.
+             *
+             * @return An error code.
+             */
+            int Close();
+
+        protected:
+            /// The file descriptor.
+            int mFd;
+        };
 
         /**
-         * @brief Checks if the descriptor is valid.
+         * @brief A readable file descriptor.
          *
-         * @return true  The descriptor is valid.
-         * @return false The descriptor is invalid.
+         * @author Bloody.Rabbit
          */
-        bool isValid() const { return -1 != mFd; }
-        /**
-         * @brief Conventient conversion to boolean.
-         *
-         * @return A value returned by isValid.
-         */
-        operator bool() const { return isValid(); }
+        class ReadableFd
+        : virtual public Fd,
+          public stream::Input< void >
+        {
+        public:
+            /**
+             * @brief A primary constructor.
+             *
+             * @param[in] fd The descriptor.
+             */
+            ReadableFd( int fd = -1 );
+
+            /**
+             * @brief Reads data from the file.
+             *
+             * @param[out] data      Where to store the data.
+             * @param[out] bytesRead Where to store a number of read bytes.
+             *
+             * @return An error code.
+             */
+            stream::Error Read( util::Data& data, size_t* bytesRead = NULL );
+        };
 
         /**
-         * @brief Closes the descriptor.
+         * @brief A writable file descriptor.
          *
-         * This method does not fail is the descriptor
-         * is already closed.
-         *
-         * @return An error code.
+         * @author Bloody.Rabbit
          */
-        int Close();
+        class WritableFd
+        : virtual public Fd,
+          public stream::Output< void >
+        {
+        public:
+            /**
+             * @brief A primary constructor.
+             *
+             * @param[in] fd The descriptor.
+             */
+            WritableFd( int fd = -1 );
 
-    protected:
-        /// The file descriptor.
-        int mFd;
-    };
-
-    /**
-     * @brief A readable file descriptor.
-     *
-     * @author Bloody.Rabbit
-     */
-    class ReadableFd
-    : virtual public Fd,
-      public Stream::Input< void >
-    {
-    public:
-        /**
-         * @brief A primary constructor.
-         *
-         * @param[in] fd The descriptor.
-         */
-        ReadableFd( int fd = -1 );
-
-        /**
-         * @brief Reads data from the file.
-         *
-         * @param[out] data      Where to store the data.
-         * @param[out] bytesRead Where to store a number of read bytes.
-         *
-         * @return An error code.
-         */
-        Stream::Error Read( Util::Data& data, size_t* bytesRead = NULL );
-    };
-
-    /**
-     * @brief A writable file descriptor.
-     *
-     * @author Bloody.Rabbit
-     */
-    class WritableFd
-    : virtual public Fd,
-      public Stream::Output< void >
-    {
-    public:
-        /**
-         * @brief A primary constructor.
-         *
-         * @param[in] fd The descriptor.
-         */
-        WritableFd( int fd = -1 );
-
-        /**
-         * @brief Writes data to the file.
-         *
-         * @param[in]  data         What data to write.
-         * @param[out] bytesWritten Where to store a number of written bytes.
-         *
-         * @return An error code.
-         */
-        Stream::Error Write( const Util::Data& data, size_t* bytesWritten = NULL );
-    };
+            /**
+             * @brief Writes data to the file.
+             *
+             * @param[in]  data         What data to write.
+             * @param[out] bytesWritten Where to store a number of written bytes.
+             *
+             * @return An error code.
+             */
+            stream::Error Write( const util::Data& data, size_t* bytesWritten = NULL );
+        };
+    }
 }
 
-#endif /* !__POSIX__FD_H__INCL__ */
+#endif /* !__COMMON__POSIX__FD_H__INCL__ */

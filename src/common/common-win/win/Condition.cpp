@@ -27,35 +27,38 @@
 
 #include "win/Condition.h"
 
+using namespace common;
+using namespace common::win;
+
 /*************************************************************************/
-/* Win::Condition                                                        */
+/* common::win::Condition                                                */
 /*************************************************************************/
-Win::Condition::Condition()
+Condition::Condition()
 : mCurrentCount( 0 ),
   mToFreeCount( 0 )
 {
 }
 
-DWORD Win::Condition::Signal()
+DWORD Condition::Signal()
 {
-    Mt::MutexLock lock( mMutex );
+    mt::MutexLock lock( mMutex );
 
     mToFreeCount = std::min( mToFreeCount + 1, mCurrentCount );
     return 0 < mToFreeCount ? mWaitEvent.Set() : ERROR_SUCCESS;
 }
 
-DWORD Win::Condition::Broadcast()
+DWORD Condition::Broadcast()
 {
-    Mt::MutexLock lock( mMutex );
+    mt::MutexLock lock( mMutex );
 
     mToFreeCount = mCurrentCount;
     return 0 < mToFreeCount ? mWaitEvent.Set() : ERROR_SUCCESS;
 }
 
-DWORD Win::Condition::Wait( Win::CriticalSection& criticalSection, const Time::Msec& timeout )
+DWORD Condition::Wait( CriticalSection& criticalSection, const time::Msec& timeout )
 {
     {
-        Mt::MutexLock lock( mMutex );
+        mt::MutexLock lock( mMutex );
         ++mCurrentCount;
     }
 
@@ -65,7 +68,7 @@ DWORD Win::Condition::Wait( Win::CriticalSection& criticalSection, const Time::M
     criticalSection.Enter();
 
     {
-        Mt::MutexLock lock( mMutex );
+        mt::MutexLock lock( mMutex );
         assert( mToFreeCount <= mCurrentCount );
 
         /* It is important to do the stuff below ONLY IF

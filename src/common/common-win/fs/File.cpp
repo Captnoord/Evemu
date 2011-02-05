@@ -27,42 +27,45 @@
 
 #include "win/File.h"
 
+using namespace common;
+using namespace common::fs;
+
 /*************************************************************************/
-/* Fs::File                                                              */
+/* common::fs::File                                                      */
 /*************************************************************************/
-bool Fs::File::Rename( const char* nameOld, const char* nameNew )
+bool File::Rename( const char* nameOld, const char* nameNew )
 {
-    return ERROR_SUCCESS == Win::File::Move( nameOld, nameNew );
+    return ERROR_SUCCESS == win::File::Move( nameOld, nameNew );
 }
 
-bool Fs::File::Remove( const char* name )
+bool File::Remove( const char* name )
 {
-    return ERROR_SUCCESS == Win::File::Delete( name );
+    return ERROR_SUCCESS == win::File::Delete( name );
 }
 
-Fs::File::File()
-: mFile( new Win::File )
+File::File()
+: mFile( new win::File )
 {
 }
 
-Fs::File::File( const char* name, Mode mode )
-: mFile( new Win::File )
+File::File( const char* name, Mode mode )
+: mFile( new win::File )
 {
     bool success = Open( name, mode );
     assert( success );
 }
 
-Fs::File::~File()
+File::~File()
 {
     SafeDelete( mFile );
 }
 
-bool Fs::File::isValid() const
+bool File::isValid() const
 {
     return TRUE == mFile->isValid();
 }
 
-bool Fs::File::GetSize( size_t& size ) const
+bool File::GetSize( size_t& size ) const
 {
     LARGE_INTEGER sizeWin;
     if( ERROR_SUCCESS != mFile->GetSize( sizeWin ) )
@@ -72,7 +75,7 @@ bool Fs::File::GetSize( size_t& size ) const
     return true;
 }
 
-bool Fs::File::Open( const char* name, Mode mode )
+bool File::Open( const char* name, Mode mode )
 {
     DWORD winMode = 0;
     if( MODE_ACCESS_READ == ( mode & MODE_ACCESS_READ ) )
@@ -100,12 +103,12 @@ bool Fs::File::Open( const char* name, Mode mode )
     return ERROR_SUCCESS == mFile->Open( name, winMode, winShare, winCreate );
 }
 
-bool Fs::File::Close()
+bool File::Close()
 {
     return ERROR_SUCCESS == mFile->Close();
 }
 
-bool Fs::File::Seek( long int offset, Origin origin )
+bool File::Seek( long int offset, Origin origin )
 {
     static const DWORD WIN_ORIGIN[ ORIGIN_COUNT ] =
     {
@@ -122,17 +125,17 @@ bool Fs::File::Seek( long int offset, Origin origin )
     return ERROR_SUCCESS == mFile->SetPointer( offsetWin, WIN_ORIGIN[ origin ] );
 }
 
-bool Fs::File::Flush()
+bool File::Flush()
 {
     return ERROR_SUCCESS == mFile->FlushBuffers();
 }
 
-Fs::File::Error Fs::File::Read( Util::Data& data, size_t* bytesRead )
+stream::Error File::Read( util::Data& data, size_t* bytesRead )
 {
     return mFile->Read( data, bytesRead );
 }
 
-Fs::File::Error Fs::File::Write( const Util::Data& data, size_t* bytesWritten )
+stream::Error File::Write( const util::Data& data, size_t* bytesWritten )
 {
     return mFile->Write( data, bytesWritten );
 }

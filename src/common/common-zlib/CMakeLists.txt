@@ -17,8 +17,7 @@ FIND_PACKAGE( "ZLIB" REQUIRED )
 # Files #
 #########
 SET( INCLUDE
-     "${TARGET_INCLUDE_DIR}/CommonZlib.h"
-     "${TARGET_INCLUDE_DIR}/CommonZlibPCH.h" )
+     "${TARGET_INCLUDE_DIR}/CommonZlib.h" )
 SET( SOURCE
      "" )
 
@@ -45,11 +44,11 @@ ADD_LIBRARY( "${TARGET_NAME}"
              ${zlib_INCLUDE} ${zlib_SOURCE} )
 
 TARGET_BUILD_PCH( "${TARGET_NAME}"
-                  "CommonZlibPCH.h"
-                  "Utils.cpp" )
+                  "CommonZlib.h"
+                  "zlib/Utils.cpp" )
 TARGET_LINK_LIBRARIES( "${TARGET_NAME}"
-                       ${ZLIB_LIBRARIES}
-                       "common-std" )
+                       "common-std"
+                       ${ZLIB_LIBRARIES} )
 
 ######################
 # Export directories #

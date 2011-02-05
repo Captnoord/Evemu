@@ -23,111 +23,114 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __UTIL__LOCK_H__INCL__
-#define __UTIL__LOCK_H__INCL__
+#ifndef __COMMON__UTIL__LOCK_H__INCL__
+#define __COMMON__UTIL__LOCK_H__INCL__
 
-namespace Util
+namespace common
 {
-    /**
-     * @brief Basic interface of a lockable object.
-     *
-     * @author Bloody.Rabbit
-     */
-    class Lockable
+    namespace util
     {
-    public:
         /**
-         * @brief Locks the object.
+         * @brief Basic interface of a lockable object.
          *
-         * This method will block until the lock has been obtained.
+         * @author Bloody.Rabbit
          */
-        virtual void Lock() = 0;
-        /**
-         * @brief Attempts to lock the object.
-         *
-         * If the lock cannot be obtained immediately, the method returns.
-         *
-         * @retval true  The object has been locked.
-         * @retval false Could not obtain the lock immediately.
-         */
-        virtual bool TryLock() = 0;
-
-        /**
-         * @brief Unlocks a locked object.
-         */
-        virtual void Unlock() = 0;
-    };
-
-    /**
-     * @brief A lock for a Lockable object.
-     *
-     * The object is locked during contruction and unlocked
-     * during destruction.
-     *
-     * The passed typename should be a child of the class Lockable.
-     *
-     * @author Bloody.Rabbit
-     */
-    template< typename T >
-    class Lock
-    {
-    public:
-        /**
-         * @brief Primary contructor, locks the object.
-         *
-         * @param[in] object Object to bound this lock to.
-         * @param[in] lock   Lock the object during construction.
-         */
-        Lock( T& object, bool lock = true )
-        : mObject( object ),
-          mLocked( false )
+        class Lockable
         {
-            if( lock )
-                Relock();
-        }
-        /**
-         * @brief Destructor, unlocks the object.
-         */
-        ~Lock()
-        {
-            Unlock();
-        }
+        public:
+            /**
+             * @brief Locks the object.
+             *
+             * This method will block until the lock has been obtained.
+             */
+            virtual void Lock() = 0;
+            /**
+             * @brief Attempts to lock the object.
+             *
+             * If the lock cannot be obtained immediately, the method returns.
+             *
+             * @retval true  The object has been locked.
+             * @retval false Could not obtain the lock immediately.
+             */
+            virtual bool TryLock() = 0;
+
+            /**
+             * @brief Unlocks a locked object.
+             */
+            virtual void Unlock() = 0;
+        };
 
         /**
-         * @brief Obtains the lock state of the object.
+         * @brief A lock for a Lockable object.
          *
-         * @retval true  The object is locked.
-         * @retval false The object is not locked.
+         * The object is locked during contruction and unlocked
+         * during destruction.
+         *
+         * The passed typename should be a child of the class Lockable.
+         *
+         * @author Bloody.Rabbit
          */
-        bool isLocked() const { return mLocked; }
-
-        /**
-         * @brief Locks the object.
-         */
-        void Relock()
+        template< typename T >
+        class Lock
         {
-            if( !isLocked() )
-                mObject.Lock();
+        public:
+            /**
+             * @brief Primary contructor, locks the object.
+             *
+             * @param[in] object Object to bound this lock to.
+             * @param[in] lock   Lock the object during construction.
+             */
+            Lock( T& object, bool lock = true )
+            : mObject( object ),
+              mLocked( false )
+            {
+                if( lock )
+                    Relock();
+            }
+            /**
+             * @brief Destructor, unlocks the object.
+             */
+            ~Lock()
+            {
+                Unlock();
+            }
 
-            mLocked = true;
-        }
-        /**
-         * @brief Unlocks the object.
-         */
-        void Unlock()
-        {
-            if( isLocked() )
-                mObject.Unlock();
+            /**
+             * @brief Obtains the lock state of the object.
+             *
+             * @retval true  The object is locked.
+             * @retval false The object is not locked.
+             */
+            bool isLocked() const { return mLocked; }
 
-            mLocked = false;
-        }
+            /**
+             * @brief Locks the object.
+             */
+            void Relock()
+            {
+                if( !isLocked() )
+                    mObject.Lock();
 
-    protected:
-        /// The object this lock is bound to.
-        T& mObject;
-        /// True the @a mObject is locked, false if not.
-        bool mLocked;
-    };
+                mLocked = true;
+            }
+            /**
+             * @brief Unlocks the object.
+             */
+            void Unlock()
+            {
+                if( isLocked() )
+                    mObject.Unlock();
+
+                mLocked = false;
+            }
+
+        protected:
+            /// The object this lock is bound to.
+            T& mObject;
+            /// True the @a mObject is locked, false if not.
+            bool mLocked;
+        };
+    }
 }
 
-#endif /* !__UTIL__LOCK_H__INCL__ */
+#endif /* !__COMMON__UTIL__LOCK_H__INCL__ */

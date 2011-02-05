@@ -27,10 +27,13 @@
 
 #include "util/String.h"
 
+using namespace common;
+using namespace common::util;
+
 /*************************************************************************/
-/* Util                                                                  */
+/* common::util                                                          */
 /*************************************************************************/
-std::string Util::GenerateKey( size_t length )
+std::string util::GenerateKey( size_t length )
 {
     static const char CHARS[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     static const size_t CHARS_COUNT = sizeof( CHARS ) / sizeof( char );
@@ -43,7 +46,7 @@ std::string Util::GenerateKey( size_t length )
     return key;
 }
 
-void Util::ListToINString( const std::vector< int32 >& ints, std::string& into,
+void util::ListToINString( const std::vector< int32 >& ints, std::string& into,
                            const char* if_empty )
 {
     if( ints.empty() )
@@ -76,7 +79,7 @@ void Util::ListToINString( const std::vector< int32 >& ints, std::string& into,
     }
 }
 
-bool Util::PyDecodeEscape( const char* str, Util::Buffer& into )
+bool util::PyDecodeEscape( const char* str, util::Buffer& into )
 {
     const size_t len = strlen( str );
     const char* const end = str + len;
@@ -164,7 +167,7 @@ bool Util::PyDecodeEscape( const char* str, Util::Buffer& into )
     return true;
 }
 
-void Util::SearchReplace( std::string& subject, const std::string& search,
+void util::SearchReplace( std::string& subject, const std::string& search,
                           const std::string& replace )
 {
     std::string::size_type pos = 0;
@@ -175,7 +178,7 @@ void Util::SearchReplace( std::string& subject, const std::string& search,
     }
 }
 
-bool Util::SplitArguments( const std::string& str, std::vector< std::string >& into,
+bool util::SplitArguments( const std::string& str, std::vector< std::string >& into,
                            const char* divs, const char* quotes )
 {
     size_t baseIndex = 0;
@@ -203,7 +206,7 @@ bool Util::SplitArguments( const std::string& str, std::vector< std::string >& i
     return true;
 }
 
-void Util::SplitPath( const std::string& path, std::vector< std::string >& into,
+void util::SplitPath( const std::string& path, std::vector< std::string >& into,
                       const char* sep )
 {
     size_t baseIndex = 0;
@@ -218,18 +221,18 @@ void Util::SplitPath( const std::string& path, std::vector< std::string >& into,
 }
 
 /*************************************************************************/
-/* Util::String< char >                                                  */
+/* common::util::String< char >                                          */
 /*************************************************************************/
-const std::string Util::String< char >::NULL_STRING = "NULL";
+const std::string String< char >::NULL_STRING = "NULL";
 
 template<>
-std::string Util::String< char >::from< bool >( const bool& val )
+std::string String< char >::from< bool >( const bool& val )
 {
     return val ? "true" : "false";
 }
 
 template<>
-std::string Util::String< char >::from< int64 >( const int64& val )
+std::string String< char >::from< int64 >( const int64& val )
 {
     std::string str;
     ::sprintf( str, "%"PRId64, val );
@@ -237,7 +240,7 @@ std::string Util::String< char >::from< int64 >( const int64& val )
 }
 
 template<>
-std::string Util::String< char >::from< uint64 >( const uint64& val )
+std::string String< char >::from< uint64 >( const uint64& val )
 {
     std::string str;
     ::sprintf( str, "%"PRIu64, val );
@@ -245,19 +248,19 @@ std::string Util::String< char >::from< uint64 >( const uint64& val )
 }
 
 template<>
-std::string Util::String< char >::from< long double >( const long double& val )
+std::string String< char >::from< long double >( const long double& val )
 {
     std::string str;
     ::sprintf( str, "%Lf", val );
     return str;
 }
 
-bool Util::String< char >::isNumber( char c )
+bool String< char >::isNumber( char c )
 {
     return 0 != ::isdigit( c );
 }
 
-bool Util::String< char >::isNumber( const char* str, size_t len )
+bool String< char >::isNumber( const char* str, size_t len )
 {
     // skip sign if there is one
     if( 1 >= len )
@@ -288,17 +291,17 @@ bool Util::String< char >::isNumber( const char* str, size_t len )
     return true;
 }
 
-bool Util::String< char >::isNumber( const std::string& str )
+bool String< char >::isNumber( const std::string& str )
 {
     return isNumber( str.c_str(), str.length() );
 }
 
-bool Util::String< char >::isHexNumber( char c )
+bool String< char >::isHexNumber( char c )
 {
     return 0 != ::isxdigit( c );
 }
 
-bool Util::String< char >::isHexNumber( const char* str, size_t len )
+bool String< char >::isHexNumber( const char* str, size_t len )
 {
     // skip sign if there is one
     if( 0 < len )
@@ -335,12 +338,12 @@ bool Util::String< char >::isHexNumber( const char* str, size_t len )
     return true;
 }
 
-bool Util::String< char >::isHexNumber( const std::string& str )
+bool String< char >::isHexNumber( const std::string& str )
 {
     return isHexNumber( str.c_str(), str.length() );
 }
 
-bool Util::String< char >::isPrintable( char c )
+bool String< char >::isPrintable( char c )
 {
     // They seem to expect it unsigned ...
     const unsigned char _c = c;
@@ -348,7 +351,7 @@ bool Util::String< char >::isPrintable( char c )
     return ( ::isgraph( _c ) || ::isspace( _c ) );
 }
 
-bool Util::String< char >::isPrintable( const char* str, size_t len )
+bool String< char >::isPrintable( const char* str, size_t len )
 {
     for(; 0 < len; ++str, --len)
     {
@@ -359,13 +362,13 @@ bool Util::String< char >::isPrintable( const char* str, size_t len )
     return true;
 }
 
-bool Util::String< char >::isPrintable( const std::string& str )
+bool String< char >::isPrintable( const std::string& str )
 {
     return isPrintable( str.c_str(), str.size() );
 }
 
 template<>
-bool Util::String< char >::to< bool >( const char* str )
+bool String< char >::to< bool >( const char* str )
 {
     if( !::strcasecmp( str, "true" ) )
         return true;
@@ -398,7 +401,7 @@ bool Util::String< char >::to< bool >( const char* str )
 }
 
 template<>
-int64 Util::String< char >::to< int64 >( const char* str )
+int64 String< char >::to< int64 >( const char* str )
 {
     int64 v = 0;
     ::sscanf( str, "%"SCNd64, &v );
@@ -406,7 +409,7 @@ int64 Util::String< char >::to< int64 >( const char* str )
 }
 
 template<>
-uint64 Util::String< char >::to< uint64 >( const char* str )
+uint64 String< char >::to< uint64 >( const char* str )
 {
     uint64 v = 0;
     ::sscanf( str, "%"SCNu64, &v );
@@ -414,14 +417,14 @@ uint64 Util::String< char >::to< uint64 >( const char* str )
 }
 
 template<>
-long double Util::String< char >::to< long double >( const char* str )
+long double String< char >::to< long double >( const char* str )
 {
     long double v = 0.0;
     ::sscanf( str, "%Lf", &v );
     return v;
 }
 
-void Util::String< char >::toUpper( const char* source, char* target )
+void String< char >::toUpper( const char* source, char* target )
 {
     if( target )
     {
@@ -432,7 +435,7 @@ void Util::String< char >::toUpper( const char* source, char* target )
     }
 }
 
-void Util::String< char >::toLower( const char* source, char* target )
+void String< char >::toLower( const char* source, char* target )
 {
     if( target )
     {

@@ -27,81 +27,84 @@
 
 #include "win/Thread.h"
 
+using namespace common;
+using namespace common::mt;
+
 /*************************************************************************/
-/* Mt::Thread                                                            */
+/* common::mt::Thread                                                    */
 /*************************************************************************/
 DWORD WINAPI ThreadMain( PVOID arg )
 {
-    Mt::Target::Run( reinterpret_cast< Mt::Target* >( arg ) );
+    Target::Run( reinterpret_cast< Target* >( arg ) );
 
     return 0;
 }
 
-Mt::Thread Mt::Thread::self()
+Thread Thread::self()
 {
-    return Mt::Thread( new Win::Thread( Win::Thread::self() ) );
+    return Thread( new win::Thread( win::Thread::self() ) );
 }
 
-void Mt::Thread::Sleep( const Time::Msec& period )
+void Thread::Sleep( const time::Msec& period )
 {
-    Win::Thread::Sleep( period );
+    win::Thread::Sleep( period );
 }
 
-Mt::Thread::Thread()
-: mThread( new Win::Thread )
+Thread::Thread()
+: mThread( new win::Thread )
 {
 }
 
-Mt::Thread::Thread( Mt::Target* target )
-: mThread( new Win::Thread )
+Thread::Thread( Target* target )
+: mThread( new win::Thread )
 {
     Create( target );
 }
 
-Mt::Thread::Thread( const Mt::Thread& oth )
-: mThread( new Win::Thread( *oth.mThread ) )
+Thread::Thread( const Thread& oth )
+: mThread( new win::Thread( *oth.mThread ) )
 {
 }
 
-Mt::Thread::Thread( Win::Thread* thread )
+Thread::Thread( win::Thread* thread )
 : mThread( thread )
 {
 }
 
-Mt::Thread::~Thread()
+Thread::~Thread()
 {
     SafeDelete( mThread );
 }
 
-unsigned int Mt::Thread::id() const
+unsigned int Thread::id() const
 {
     return static_cast< unsigned int >( mThread->id() );
 }
 
-void Mt::Thread::Wait() const
+void Thread::Wait() const
 {
     DWORD code = mThread->Wait();
     assert( ERROR_SUCCESS == code );
 }
 
-bool Mt::Thread::operator==( const Mt::Thread& oth ) const
+bool Thread::operator==( const Thread& oth ) const
 {
     return TRUE == ( *mThread == *oth.mThread );
 }
 
-void Mt::Thread::Create( Mt::Target* target )
+void Thread::Create( Target* target )
 {
     DWORD code = mThread->Create( ThreadMain, target );
     assert( ERROR_SUCCESS == code );
 }
 
-void Mt::Thread::Terminate()
+void Thread::Terminate()
 {
     DWORD code = mThread->Terminate( -1 );
     assert( ERROR_SUCCESS == code );
 }
 
-Mt::Thread& Mt::Thread::operator=( const Mt::Thread& oth )
+Thread& Thread::operator=( const Thread& oth )
 {
     *mThread = *oth.mThread;
     return *this;

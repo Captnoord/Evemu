@@ -23,24 +23,27 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __STREAM__ERROR_H__INCL__
-#define __STREAM__ERROR_H__INCL__
+#ifndef __COMMON__STREAM__ERROR_H__INCL__
+#define __COMMON__STREAM__ERROR_H__INCL__
 
-namespace Stream
+namespace common
 {
-    /**
-     * @brief An enum for all possible stream errors.
-     *
-     * @author Bloody.Rabbit
-     */
-    enum Error
+    namespace stream
     {
-        ERROR_OK   = 0, ///< No error.
-        ERROR_READ,     ///< An error occurred during reading.
-        ERROR_WRITE,    ///< An error occurred during writing.
-        ERROR_TRYLATER, ///< Could not read/write all (requested) data, try again later.
-        ERROR_EOS       ///< End of stream encountered.
-    };
+        /**
+         * @brief An enum for all possible stream errors.
+         *
+         * @author Bloody.Rabbit
+         */
+        enum Error
+        {
+            ERROR_OK   = 0, ///< No error.
+            ERROR_READ,     ///< An error occurred during reading.
+            ERROR_WRITE,    ///< An error occurred during writing.
+            ERROR_TRYLATER, ///< Could not read/write all (requested) data, try again later.
+            ERROR_EOS       ///< End of stream encountered.
+        };
+    }
 }
 
-#endif /* !__STREAM__ERROR_H__INCL__ */
+#endif /* !__COMMON__STREAM__ERROR_H__INCL__ */

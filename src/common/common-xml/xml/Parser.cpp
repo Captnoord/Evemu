@@ -23,54 +23,57 @@
     Author:     Zhur
 */
 
-#include "CommonXmlPCH.h"
+#include "CommonXml.h"
 
 #include "xml/Parser.h"
 
+using namespace common;
+using namespace common::xml;
+
 /************************************************************************/
-/* Xml::Parser                                                          */
+/* common::xml::Parser                                                  */
 /************************************************************************/
-Xml::Parser::Parser()
+Parser::Parser()
 {
 }
 
-Xml::Parser::~Parser()
+Parser::~Parser()
 {
     ClearParsers();
 }
 
-bool Xml::Parser::ParseFile( const char* file ) const
+bool Parser::ParseFile( const char* file ) const
 {
     TiXmlDocument doc( file );
     if( !doc.LoadFile() )
     {
-        sLog.Error( "Xml::Parser", "Unable to load '%s': %s.", file, doc.ErrorDesc() );
+        sLog.error( "xml::Parser", "Unable to load '%s': %s.", file, doc.ErrorDesc() );
         return false;
     }
 
     TiXmlElement* root = doc.RootElement();
     if( NULL == root )
     {
-        sLog.Error( "Xml::Parser", "Unable to find root in '%s'.", file );
+        sLog.error( "xml::Parser", "Unable to find root in '%s'.", file );
         return false;
     }
 
     return ParseElement( root );
 }
 
-bool Xml::Parser::ParseElement( const TiXmlElement* element ) const
+bool Parser::ParseElement( const TiXmlElement* element ) const
 {
     std::map< std::string, ElementParser* >::const_iterator res = mParsers.find( element->Value() );
     if( mParsers.end() == res )
     {
-        sLog.Error( "Xml::Parser", "Unknown element '%s' at line %d.", element->Value(), element->Row() );
+        sLog.error( "xml::Parser", "Unknown element '%s' at line %d.", element->Value(), element->Row() );
         return false;
     }
 
     return res->second->Parse( element );
 }
 
-bool Xml::Parser::ParseElementChildren( const TiXmlElement* element, size_t max ) const
+bool Parser::ParseElementChildren( const TiXmlElement* element, size_t max ) const
 {
     const TiXmlNode* child = NULL;
 
@@ -83,7 +86,7 @@ bool Xml::Parser::ParseElementChildren( const TiXmlElement* element, size_t max 
 
             if( 0 < max && max <= count )
             {
-                sLog.Error( "Xml::Parser", "Maximal children count %lu exceeded"
+                sLog.error( "xml::Parser", "Maximal children count %lu exceeded"
                                            " in element '%s' at line %d"
                                            " by element '%s' at line %d.",
                                            max,
@@ -103,12 +106,12 @@ bool Xml::Parser::ParseElementChildren( const TiXmlElement* element, size_t max 
     return true;
 }
 
-void Xml::Parser::AddParser( const char* name, ElementParser* parser )
+void Parser::AddParser( const char* name, ElementParser* parser )
 {
     mParsers[ name ] = parser;
 }
 
-void Xml::Parser::RemoveParser( const char* name )
+void Parser::RemoveParser( const char* name )
 {
     std::map< std::string, ElementParser* >::iterator res = mParsers.find( name );
     if( mParsers.end() != res )
@@ -118,7 +121,7 @@ void Xml::Parser::RemoveParser( const char* name )
     }
 }
 
-void Xml::Parser::ClearParsers()
+void Parser::ClearParsers()
 {
     std::map< std::string, ElementParser* >::iterator cur, end;
     cur = mParsers.begin();

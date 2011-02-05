@@ -23,172 +23,175 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __WIN__HANDLE_H__INCL__
-#define __WIN__HANDLE_H__INCL__
+#ifndef __COMMON__WIN__HANDLE_H__INCL__
+#define __COMMON__WIN__HANDLE_H__INCL__
 
-/**
- * @brief A bunch of wrappers around Windows API.
- */
-namespace Win
+namespace common
 {
     /**
-     * @brief Wrapper around Windows <code>HANDLE</code>.
-     *
-     * @author Bloody.Rabbit
+     * @brief A bunch of wrappers around Windows API.
      */
-    class Handle
+    namespace win
     {
-    public:
         /**
-         * @brief Primary constructor.
+         * @brief Wrapper around Windows <code>HANDLE</code>.
          *
-         * This constructor takes ownership of the handle,
-         * i.e. closes it on destruction.
-         *
-         * @param[in] handle The handle.
+         * @author Bloody.Rabbit
          */
-        Handle( HANDLE handle = INVALID_HANDLE_VALUE );
-        /**
-         * @brief Copy constructor, duplicates the handle.
-         *
-         * @param[in] oth The handle to duplicate.
-         */
-        Handle( const Handle& oth );
-        /**
-         * @brief A destructor, closes the handle.
-         */
-        ~Handle();
+        class Handle
+        {
+        public:
+            /**
+             * @brief Primary constructor.
+             *
+             * This constructor takes ownership of the handle,
+             * i.e. closes it on destruction.
+             *
+             * @param[in] handle The handle.
+             */
+            Handle( HANDLE handle = INVALID_HANDLE_VALUE );
+            /**
+             * @brief Copy constructor, duplicates the handle.
+             *
+             * @param[in] oth The handle to duplicate.
+             */
+            Handle( const Handle& oth );
+            /**
+             * @brief A destructor, closes the handle.
+             */
+            ~Handle();
+
+            /**
+             * @brief Checks if the handle is valid.
+             *
+             * @retval TRUE  The handle is valid.
+             * @retval FALSE The handle is invalid.
+             */
+            BOOL isValid() const { return ( INVALID_HANDLE_VALUE == mHandle ? FALSE : TRUE ); }
+            /**
+             * @brief Convenience cast to bool, calls isValid().
+             *
+             * @return A value returned by isValid().
+             */
+            operator BOOL() const { return isValid(); }
+
+            /**
+             * @brief Compares two handles for equality.
+             *
+             * @param[in] oth The other handle in comparison.
+             *
+             * @retval TRUE  The handles are equal.
+             * @retval FALSE The handles are not equal.
+             */
+            BOOL operator==( const Handle& oth ) const { return ( oth.mHandle == mHandle ? TRUE : FALSE ); }
+
+            /**
+             * @brief Closes the handle.
+             *
+             * This method does not fail if the handle
+             * is already closed.
+             *
+             * @return An error code.
+             */
+            DWORD Close();
+
+            /**
+             * @brief Copy operator, duplicates the handle.
+             *
+             * @param[in] oth The handle to duplicate.
+             *
+             * @return Itself.
+             */
+            Handle& operator=( const Handle& oth );
+
+        protected:
+            /// The handle itself.
+            HANDLE mHandle;
+        };
 
         /**
-         * @brief Checks if the handle is valid.
+         * @brief A handle which you can read from.
          *
-         * @retval TRUE  The handle is valid.
-         * @retval FALSE The handle is invalid.
+         * @author Bloody.Rabbit
          */
-        BOOL isValid() const { return ( INVALID_HANDLE_VALUE == mHandle ? FALSE : TRUE ); }
-        /**
-         * @brief Convenience cast to bool, calls isValid().
-         *
-         * @return A value returned by isValid().
-         */
-        operator BOOL() const { return isValid(); }
+        class ReadableHandle
+        : virtual public Handle,
+          public stream::Input< void >
+        {
+        public:
+            /**
+             * @brief A primary constructor.
+             *
+             * @param[in] handle The handle.
+             */
+            ReadableHandle( HANDLE handle = INVALID_HANDLE_VALUE );
+
+            /**
+             * @brief Reads data from the handle.
+             *
+             * @param[out] data      Where to store the read data.
+             * @param[out] bytesRead Where to store a number of read bytes.
+             *
+             * @return An error code.
+             */
+            stream::Error Read( util::Data& data, size_t* bytesRead = NULL );
+        };
 
         /**
-         * @brief Compares two handles for equality.
+         * @brief A handle which you can write to.
          *
-         * @param[in] oth The other handle in comparison.
-         *
-         * @retval TRUE  The handles are equal.
-         * @retval FALSE The handles are not equal.
+         * @author Bloody.Rabbit
          */
-        BOOL operator==( const Handle& oth ) const { return ( oth.mHandle == mHandle ? TRUE : FALSE ); }
+        class WritableHandle
+        : virtual public Handle,
+          public stream::Output< void >
+        {
+        public:
+            /**
+             * @brief A primary constructor.
+             *
+             * @param[in] handle The handle.
+             */
+            WritableHandle( HANDLE handle = INVALID_HANDLE_VALUE );
+
+            /**
+             * @brief Writes data to the handle.
+             *
+             * @param[in]  data         The data to be written.
+             * @param[out] bytesWritten Where to store a number of written bytes.
+             *
+             * @return An error code.
+             */
+            stream::Error Write( const util::Data& data, size_t* bytesWritten = NULL );
+        };
 
         /**
-         * @brief Closes the handle.
+         * @brief A handle which you can wait for.
          *
-         * This method does not fail if the handle
-         * is already closed.
-         *
-         * @return An error code.
+         * @author Bloody.Rabbit
          */
-        DWORD Close();
+        class WaitableHandle
+        : virtual public Handle
+        {
+        public:
+            /**
+             * @brief A primary constructor.
+             *
+             * @param[in] handle The handle.
+             */
+            WaitableHandle( HANDLE handle = INVALID_HANDLE_VALUE );
 
-        /**
-         * @brief Copy operator, duplicates the handle.
-         *
-         * @param[in] oth The handle to duplicate.
-         *
-         * @return Itself.
-         */
-        Handle& operator=( const Handle& oth );
-
-    protected:
-        /// The handle itself.
-        HANDLE mHandle;
-    };
-
-    /**
-     * @brief A handle which you can read from.
-     *
-     * @author Bloody.Rabbit
-     */
-    class ReadableHandle
-    : virtual public Handle,
-      public Util::InputStream< void >
-    {
-    public:
-        /**
-         * @brief A primary constructor.
-         *
-         * @param[in] handle The handle.
-         */
-        ReadableHandle( HANDLE handle = INVALID_HANDLE_VALUE );
-
-        /**
-         * @brief Reads data from the handle.
-         *
-         * @param[out] data      Where to store the read data.
-         * @param[out] bytesRead Where to store a number of read bytes.
-         *
-         * @return An error code.
-         */
-        Error Read( Util::Data& data, size_t* bytesRead = NULL );
-    };
-
-    /**
-     * @brief A handle which you can write to.
-     *
-     * @author Bloody.Rabbit
-     */
-    class WritableHandle
-    : virtual public Handle,
-      public Util::OutputStream< void >
-    {
-    public:
-        /**
-         * @brief A primary constructor.
-         *
-         * @param[in] handle The handle.
-         */
-        WritableHandle( HANDLE handle = INVALID_HANDLE_VALUE );
-
-        /**
-         * @brief Writes data to the handle.
-         *
-         * @param[in]  data         The data to be written.
-         * @param[out] bytesWritten Where to store a number of written bytes.
-         *
-         * @return An error code.
-         */
-        Error Write( const Util::Data& data, size_t* bytesWritten = NULL );
-    };
-
-    /**
-     * @brief A handle which you can wait for.
-     *
-     * @author Bloody.Rabbit
-     */
-    class WaitableHandle
-    : virtual public Handle
-    {
-    public:
-        /**
-         * @brief A primary constructor.
-         *
-         * @param[in] handle The handle.
-         */
-        WaitableHandle( HANDLE handle = INVALID_HANDLE_VALUE );
-
-        /**
-         * @brief Waits for the handle.
-         *
-         * @param[in]  timeout     The wait timeout.
-         * @param[out] wakeupEvent Where to store any wakeup event.
-         *
-         * @return An error code.
-         */
-        DWORD Wait( const Time::Msec& timeout = INFINITE, PDWORD wakeupEvent = NULL ) const;
-    };
+            /**
+             * @brief Waits for the handle.
+             *
+             * @param[in]  timeout     The wait timeout.
+             * @param[out] wakeupEvent Where to store any wakeup event.
+             *
+             * @return An error code.
+             */
+            DWORD Wait( const time::Msec& timeout = INFINITE, PDWORD wakeupEvent = NULL ) const;
+        };
+    }
 }
 
-#endif /* !__WIN__HANDLE_H__INCL__ */
+#endif /* !__COMMON__WIN__HANDLE_H__INCL__ */
