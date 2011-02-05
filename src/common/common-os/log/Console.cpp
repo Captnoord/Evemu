@@ -126,23 +126,3 @@ stream::Error Console::Write( const Message& m )
     return 0 <= code ? stream::ERROR_OK : stream::ERROR_WRITE;
 #endif /* !WIN32 */
 }
-
-stream::Error Console::Write( const Message* mp, size_t count, size_t* countWritten )
-{
-    for( size_t i = 0; i < count; ++i )
-    {
-        const stream::Error err = Write( mp[ i ] );
-        if( stream::ERROR_OK != err )
-        {
-            if( NULL != countWritten )
-                *countWritten = i;
-
-            return err;
-        }
-    }
-
-    if( NULL != countWritten )
-        *countWritten = count;
-
-    return stream::ERROR_OK;
-}

@@ -27,7 +27,7 @@
 #define __COMMON__LOG__LOG_MGR_H__INCL__
 
 #include "log/Message.h"
-#include "stream/Hub.h"
+#include "stream/OutputHub.h"
 #include "util/Singleton.h"
 
 namespace common

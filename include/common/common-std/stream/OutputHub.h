@@ -98,7 +98,7 @@ namespace common
             std::set< Target* > mTargets;
         };
 
-#       include "stream/Hub.inl"
+#       include "stream/OutputHub.inl"
     }
 }
 

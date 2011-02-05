@@ -23,32 +23,53 @@
     Author:     Bloody.Rabbit
 */
 
-#ifndef __COMMON__STREAM__ERROR_H__INCL__
-#define __COMMON__STREAM__ERROR_H__INCL__
-
-namespace common
+/*************************************************************************/
+/* common::stream::Input                                                 */
+/*************************************************************************/
+template< typename T >
+Input< T >::~Input()
 {
-    /**
-     * @brief Classes for stream management.
-     *
-     * @author Bloody.Rabbit
-     */
-    namespace stream
-    {
-        /**
-         * @brief An enum for all possible stream errors.
-         *
-         * @author Bloody.Rabbit
-         */
-        enum Error
-        {
-            ERROR_OK   = 0, ///< No error.
-            ERROR_READ,     ///< An error occurred during reading.
-            ERROR_WRITE,    ///< An error occurred during writing.
-            ERROR_TRYLATER, ///< Could not read/write all (requested) data, try again later.
-            ERROR_EOS       ///< End of stream encountered.
-        };
-    }
 }
 
-#endif /* !__COMMON__STREAM__ERROR_H__INCL__ */
+template< typename T >
+typename Input< T >::Element
+Input< T >::Read()
+{
+    Element e;
+    Read( e );
+    return e;
+}
+
+template< typename T >
+Error Input< T >::Read( Element& e )
+{
+    return Read( &e, 1 );
+}
+
+template< typename T >
+Error Input< T >::Read( Element* ep, size_t count, size_t* countRead )
+{
+    for( int i = 0; i < count; ++i )
+    {
+        const Error err = Read( ep[i] );
+        if( ERROR_OK != err )
+        {
+            if( NULL != countRead )
+                *countRead = i;
+
+            return err;
+        }
+    }
+
+    if( NULL != countRead )
+        *countRead = count;
+
+    return ERROR_OK;
+}
+
+/*************************************************************************/
+/* common::stream::Input< void >                                         */
+/*************************************************************************/
+inline Input< void >::~Input()
+{
+}

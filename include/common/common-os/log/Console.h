@@ -54,18 +54,6 @@ namespace common
              * @return An error code.
              */
             stream::Error Write( const Message& m );
-            /**
-             * @brief Writes messages to console.
-             *
-             * @param[in]  mp           An array of messages to be written.
-             * @param[in]  count        Length of the <var>mp</var> array.
-             * @param[out] countWritten Where to store the number
-             *                          of written messages.
-             *
-             * @return An error code.
-             */
-            stream::Error Write( const Message* mp, size_t count,
-                                 size_t* countWritten = NULL );
 
         protected:
 #       ifdef WIN32

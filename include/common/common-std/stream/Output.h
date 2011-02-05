@@ -48,9 +48,7 @@ namespace common
             /**
              * @brief A destructor; empty, but virtual.
              */
-            virtual ~Output()
-            {
-            }
+            virtual ~Output();
 
             /**
              * @brief Writes an element to the stream.
@@ -59,7 +57,7 @@ namespace common
              *
              * @return An error code.
              */
-            virtual Error Write( const Element& e ) { return Write( &e, 1 ); }
+            virtual Error Write( const Element& e );
             /**
              * @brief Writes multiple elements to the stream.
              *
@@ -70,7 +68,7 @@ namespace common
              *
              * @return An error code.
              */
-            virtual Error Write( const Element* ep, size_t count, size_t* countWritten = NULL ) = 0;
+            virtual Error Write( const Element* ep, size_t count, size_t* countWritten = NULL );
         };
 
         /**
@@ -88,9 +86,7 @@ namespace common
             /**
              * @brief A destructor; empty, but virtual.
              */
-            virtual ~Output()
-            {
-            }
+            virtual ~Output();
 
             /**
              * @brief Writes some data to the stream.
@@ -103,6 +99,8 @@ namespace common
              */
             virtual Error Write( const util::Data& data, size_t* bytesWritten = NULL ) = 0;
         };
+
+#   include "stream/Output.inl"
     }
 }
 

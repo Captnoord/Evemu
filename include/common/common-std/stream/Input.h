@@ -48,21 +48,14 @@ namespace common
             /**
              * @brief A destructor; empty, but virtual.
              */
-            virtual ~Input()
-            {
-            }
+            virtual ~Input();
 
             /**
              * @brief Reads an element from the stream, ignoring errors.
              *
              * @return The element.
              */
-            Element Read()
-            {
-                Element e;
-                Read( e );
-                return e;
-            }
+            Element Read();
 
             /**
              * @brief Reads an element from the stream.
@@ -71,7 +64,7 @@ namespace common
              *
              * @return An error code.
              */
-            virtual Error Read( Element& e ) { return Read( &e, 1 ); }
+            virtual Error Read( Element& e );
             /**
              * @brief Reads multiple elements from the stream.
              *
@@ -83,7 +76,7 @@ namespace common
              *
              * @return An error code.
              */
-            virtual Error Read( Element* ep, size_t count, size_t* countRead = NULL ) = 0;
+            virtual Error Read( Element* ep, size_t count, size_t* countRead = NULL );
         };
 
         /**
@@ -101,9 +94,7 @@ namespace common
             /**
              * @brief A destructor; empty, but virtual.
              */
-            virtual ~Input()
-            {
-            }
+            virtual ~Input();
 
             /**
              * @brief Reads some data from the stream.
@@ -116,6 +107,8 @@ namespace common
              */
             virtual Error Read( util::Data& data, size_t* bytesRead = NULL ) = 0;
         };
+
+#   include "stream/Input.inl"
     }
 }
 

@@ -30,10 +30,12 @@ SET( stdx_SOURCE
 
 SET( stream_INCLUDE
      "${TARGET_INCLUDE_DIR}/stream/Error.h"
-     "${TARGET_INCLUDE_DIR}/stream/Hub.h"
-     "${TARGET_INCLUDE_DIR}/stream/Hub.inl"
      "${TARGET_INCLUDE_DIR}/stream/Input.h"
-     "${TARGET_INCLUDE_DIR}/stream/Output.h" )
+     "${TARGET_INCLUDE_DIR}/stream/Input.inl"
+     "${TARGET_INCLUDE_DIR}/stream/Output.h"
+     "${TARGET_INCLUDE_DIR}/stream/Output.inl"
+     "${TARGET_INCLUDE_DIR}/stream/OutputHub.h"
+     "${TARGET_INCLUDE_DIR}/stream/OutputHub.inl" )
 SET( stream_SOURCE
      "" )
 
