@@ -23,7 +23,7 @@
     Author:     Bloody.Rabbit
 */
 
-#include "TestCommonPCH.h"
+#include "TestCommon.h"
 
 #include "TestStdFile.h"
 
@@ -48,7 +48,7 @@ void Util::Test< Std::File >::runTest()
 
     Util::Buffer buf( PLAIN_DATA, PLAIN_DATA + sizeof( PLAIN_DATA ) );
 
-    CPPUNIT_ASSERT_EQUAL( Std::File::ERROR_OK, mFile.Write( buf ) );
+    CPPUNIT_ASSERT_EQUAL( Stream::ERROR_OK, mFile.Write( buf ) );
     CPPUNIT_ASSERT( mFile.Flush() );
     CPPUNIT_ASSERT_EQUAL( buf.size(), static_cast< size_t >( mFile.tell() ) );
 
@@ -58,12 +58,12 @@ void Util::Test< Std::File >::runTest()
     CPPUNIT_ASSERT( !mFile.Open( NAME, "rb" ) );
     CPPUNIT_ASSERT( mFile.Open( NAME_ALT, "rb" ) );
 
-    CPPUNIT_ASSERT_EQUAL( Std::File::ERROR_OK, mFile.Read( buf ) );
+    CPPUNIT_ASSERT_EQUAL( Stream::ERROR_OK, mFile.Read( buf ) );
     CPPUNIT_ASSERT_EQUAL( buf.size(), static_cast< size_t >( mFile.tell() ) );
     CPPUNIT_ASSERT( std::equal( PLAIN_DATA, PLAIN_DATA + sizeof( PLAIN_DATA ),
                                 buf.begin< uint8 >() ) );
 
-    CPPUNIT_ASSERT_EQUAL( Std::File::ERROR_EOS, mFile.Read( buf ) );
+    CPPUNIT_ASSERT_EQUAL( Stream::ERROR_EOS, mFile.Read( buf ) );
     CPPUNIT_ASSERT( mFile.eof() );
     CPPUNIT_ASSERT_EQUAL( buf.size(), static_cast< size_t >( mFile.tell() ) );
 

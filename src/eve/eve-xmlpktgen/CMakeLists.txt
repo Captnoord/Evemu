@@ -42,7 +42,8 @@ SET( SOURCE
 # Setup the executable #
 ########################
 INCLUDE_DIRECTORIES( "${TINYXML_INCLUDE_DIR}"
-                     "${common_INCLUDE_DIR}" "${TARGET_INCLUDE_DIR}" )
+                     "${common-std_INCLUDE_DIR}"
+                     "${TARGET_INCLUDE_DIR}" )
 
 SOURCE_GROUP( "include" FILES ${INCLUDE} )
 SOURCE_GROUP( "src"     FILES ${SOURCE} )
@@ -54,7 +55,7 @@ TARGET_BUILD_PCH( "${TARGET_NAME}"
                   "EVEXmlPktGenPCH.h"
                   "EVEXmlPktGen.cpp" )
 TARGET_LINK_LIBRARIES( "${TARGET_NAME}"
-                       "common" )
+                       "common-std" )
 
 ######################
 # Export directories #

@@ -20,7 +20,6 @@ MARK_AS_ADVANCED( EVEMU_TEST_COMMON_XML )
 #########
 SET( INCLUDE
      "${TARGET_INCLUDE_DIR}/TestCommon.h"
-     "${TARGET_INCLUDE_DIR}/TestCommonPCH.h"
      "${TARGET_INCLUDE_DIR}/TestFsDirectory.h"
      "${TARGET_INCLUDE_DIR}/TestFsFile.h"
      "${TARGET_INCLUDE_DIR}/TestNetStreamSocket.h"
@@ -39,7 +38,8 @@ SET( SOURCE
 # Setup the executable #
 ########################
 INCLUDE_DIRECTORIES( "${CPPUNIT_INCLUDE_DIR}"
-                     "${common_INCLUDE_DIR}" "${TARGET_INCLUDE_DIR}" )
+                     "${common-std_INCLUDE_DIR}" "${common-os_INCLUDE_DIR}"
+                     "${TARGET_INCLUDE_DIR}" )
 
 SOURCE_GROUP( "include" FILES ${INCLUDE} )
 SOURCE_GROUP( "src"     FILES ${SOURCE} )
@@ -50,10 +50,10 @@ ADD_TEST( NAME "${TARGET_NAME}"
           COMMAND "${TARGET_NAME}" "${EVEMU_TEST_COMMON_XML}" )
 
 TARGET_BUILD_PCH( "${TARGET_NAME}"
-                  "TestCommonPCH.h"
+                  "TestCommon.h"
                   "TestCommon.cpp" )
 TARGET_LINK_LIBRARIES( "${TARGET_NAME}"
-                       "common"
+                       "common-os"
                        ${CPPUNIT_LIBRARIES} )
 
 ######################

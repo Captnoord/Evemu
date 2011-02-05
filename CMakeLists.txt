@@ -114,8 +114,9 @@ ENDIF( CMAKE_CROSSCOMPILING )
 ############################
 # Distributed dependencies #
 ############################
-# Build gangsta
 FIND_PACKAGE( "Gangsta" QUIET )
+FIND_PACKAGE( "TinyXML" QUIET )
+FIND_PACKAGE( "Utf8Cpp" QUIET )
 
 IF( NOT GANGSTA_FOUND )
     ADD_SUBDIRECTORY( "src/dep/gangsta" )
@@ -125,9 +126,6 @@ IF( NOT GANGSTA_FOUND )
     SET( GANGSTA_LIBRARIES   "gangsta" )
 ENDIF( NOT GANGSTA_FOUND )
 
-# Build tinyxml
-FIND_PACKAGE( "TinyXML" QUIET )
-
 IF( NOT TINYXML_FOUND )
     ADD_SUBDIRECTORY( "src/dep/tinyxml" )
 
@@ -135,9 +133,6 @@ IF( NOT TINYXML_FOUND )
     SET( TINYXML_INCLUDE_DIR "${tinyxml_INCLUDE_DIR}" )
     SET( TINYXML_LIBRARIES   "tinyxml" )
 ENDIF( NOT TINYXML_FOUND )
-
-# Build utf8cpp
-FIND_PACKAGE( "Utf8Cpp" QUIET )
 
 IF( NOT UTF8CPP_FOUND )
     ADD_SUBDIRECTORY( "src/dep/utf8cpp" )
@@ -147,7 +142,6 @@ IF( NOT UTF8CPP_FOUND )
     SET( UTF8CPP_LIBRARIES   "utf8cpp" )
 ENDIF( NOT UTF8CPP_FOUND )
 
-# Build utils
 ADD_SUBDIRECTORY( "src/dep/utils" )
 
 ###########################
@@ -161,35 +155,43 @@ IF( EVEMU_DOC_ENABLE )
 ENDIF( EVEMU_DOC_ENABLE )
 
 ################
-# EVEmu source #
+# Common stuff #
 ################
 INCLUDE( "TargetBuildPCH" )
 
-# Build common
-ADD_SUBDIRECTORY( "src/common" )
+# The order is essential (determined by dependencies)
+ADD_SUBDIRECTORY( "src/common/common-std" )
 
-# Build eve-xmlpktgen
+ADD_SUBDIRECTORY( "src/common/common-os" )
+IF( WIN32 )
+    ADD_SUBDIRECTORY( "src/common/common-win" )
+ELSE( WIN32 )
+    ADD_SUBDIRECTORY( "src/common/common-posix" )
+ENDIF( WIN32 )
+
+ADD_SUBDIRECTORY( "src/common/common-ga" )
+#ADD_SUBDIRECTORY( "src/common/common-mysql" )
+ADD_SUBDIRECTORY( "src/common/common-xml" )
+ADD_SUBDIRECTORY( "src/common/common-zlib" )
+
+################
+# EVEmu source #
+################
+SET( EVEMU_COLLECTOR_ENABLE OFF
+     CACHE BOOL "Build eve-collector." )
+SET( EVEMU_TOOL_ENABLE OFF
+     CACHE BOOL "Build eve-tool." )
+
 IF( NOT CMAKE_CROSSCOMPILING )
     ADD_SUBDIRECTORY( "src/eve/eve-xmlpktgen" )
 ENDIF( NOT CMAKE_CROSSCOMPILING )
 
-# Build eve-common
 ADD_SUBDIRECTORY( "src/eve/eve-common" )
-
-# Build eve-server
 ADD_SUBDIRECTORY( "src/eve/eve-server" )
-
-# Build eve-collector
-SET( EVEMU_COLLECTOR_ENABLE OFF
-     CACHE BOOL "Build eve-collector." )
 
 IF( EVEMU_COLLECTOR_ENABLE )
     ADD_SUBDIRECTORY( "src/eve/eve-collector" )
 ENDIF( EVEMU_COLLECTOR_ENABLE )
-
-# Build eve-tool
-SET( EVEMU_TOOL_ENABLE OFF
-     CACHE BOOL "Build eve-tool." )
 
 IF( EVEMU_TOOL_ENABLE )
     ADD_SUBDIRECTORY( "src/eve/eve-tool" )

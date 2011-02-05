@@ -158,8 +158,8 @@ SET( utils_SOURCE
 #####################
 INCLUDE_DIRECTORIES( "${MYSQL_INCLUDE_DIR}" "${UTF8CPP_INCLUDE_DIR}"
                      "${utils_INCLUDE_DIR}"
-                     "${common_INCLUDE_DIR}" "${TARGET_INCLUDE_DIR}"
-                     "${TARGET_PACKETS_DIR}" )
+                     "${common-std_INCLUDE_DIR}"
+                     "${TARGET_INCLUDE_DIR}" "${TARGET_PACKETS_DIR}" )
 
 SOURCE_GROUP( "include"                  FILES ${INCLUDE} )
 SOURCE_GROUP( "include\\cache"           FILES ${cache_INCLUDE} )
@@ -212,7 +212,7 @@ TARGET_BUILD_PCH( "${TARGET_NAME}"
                   "EVECommonPCH.h"
                   "utils/EVEUtils.cpp" )
 TARGET_LINK_LIBRARIES( "${TARGET_NAME}"
-                       "common" "utils" )
+                       "common-std" "utils" )
 
 ######################
 # Export directories #

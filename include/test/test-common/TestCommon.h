@@ -26,32 +26,33 @@
 #ifndef __TEST_COMMON_H__INCL__
 #define __TEST_COMMON_H__INCL__
 
-/*
- * Static includes specific to test-common.
- */
+/*************************************************************************/
+/* common-std                                                            */
+/*************************************************************************/
+#include "CommonStd.h"
+
+#include "fs/File.h"
+#include "fs/Directory.h"
+#include "std/File.h"
+#include "util/Buffer.h"
+#include "util/Data.h"
+#include "util/Test.h"
 
 /*************************************************************************/
-/* dep includes                                                          */
+/* common-os                                                             */
+/*************************************************************************/
+#include "CommonOs.h"
+
+#include "net/Ip4.h"
+#include "net/StreamSocket.h"
+
+/*************************************************************************/
+/* cppunit                                                               */
 /*************************************************************************/
 #include <cppunit/TestCase.h>
 #include <cppunit/TestCaller.h>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TextTestRunner.h>
 #include <cppunit/XmlOutputter.h>
-
-/*************************************************************************/
-/* common includes                                                       */
-/*************************************************************************/
-#include "fs/File.h"
-#include "fs/Directory.h"
-
-#include "net/Ip4.h"
-#include "net/StreamSocket.h"
-
-#include "std/File.h"
-
-#include "util/Buffer.h"
-#include "util/Data.h"
-#include "util/Test.h"
 
 #endif /* !__TEST_COMMON_H__INCL__ */

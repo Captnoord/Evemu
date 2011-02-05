@@ -23,7 +23,7 @@
     Author:     Bloody.Rabbit
 */
 
-#include "TestCommonPCH.h"
+#include "TestCommon.h"
 
 #include "TestFsFile.h"
 
@@ -108,10 +108,10 @@ void Util::Test< Fs::File >::testOpenRead()
 
     size_t size = 0;
     Util::Buffer buf( PLAIN_DATA, PLAIN_DATA + sizeof( PLAIN_DATA ) );
-    CPPUNIT_ASSERT_EQUAL( Fs::File::ERROR_WRITE, mFile->Write( buf, &size ) );
+    CPPUNIT_ASSERT_EQUAL( Stream::ERROR_WRITE, mFile->Write( buf, &size ) );
     CPPUNIT_ASSERT_EQUAL( 0UL, size );
 
-    CPPUNIT_ASSERT_EQUAL( Fs::File::ERROR_EOS, mFile->Read( buf, &size ) );
+    CPPUNIT_ASSERT_EQUAL( Stream::ERROR_EOS, mFile->Read( buf, &size ) );
     CPPUNIT_ASSERT_EQUAL( 0UL, size );
 
     CPPUNIT_ASSERT( mFile->Close() );
@@ -131,13 +131,13 @@ void Util::Test< Fs::File >::testOpenWrite()
 
     size_t size = 0;
     Util::Buffer buf( PLAIN_DATA, PLAIN_DATA + sizeof( PLAIN_DATA ) );
-    CPPUNIT_ASSERT_EQUAL( Fs::File::ERROR_OK, mFile->Write( buf, &size ) );
+    CPPUNIT_ASSERT_EQUAL( Stream::ERROR_OK, mFile->Write( buf, &size ) );
     CPPUNIT_ASSERT_EQUAL( sizeof( PLAIN_DATA ), size );
 
     CPPUNIT_ASSERT( mFile->Flush() );
     CPPUNIT_ASSERT( mFile->Seek( -sizeof( PLAIN_DATA ), Fs::File::ORIGIN_CURRENT ) );
 
-    CPPUNIT_ASSERT_EQUAL( Fs::File::ERROR_READ, mFile->Read( buf, &size ) );
+    CPPUNIT_ASSERT_EQUAL( Stream::ERROR_READ, mFile->Read( buf, &size ) );
     CPPUNIT_ASSERT_EQUAL( sizeof( PLAIN_DATA ), size );
 
     CPPUNIT_ASSERT( mFile->GetSize( size ) );
@@ -161,16 +161,16 @@ void Util::Test< Fs::File >::testOpenReadWrite()
 
     size_t size = 0;
     Util::Buffer buf( PLAIN_DATA, PLAIN_DATA + sizeof( PLAIN_DATA ) );
-    CPPUNIT_ASSERT_EQUAL( Fs::File::ERROR_OK, mFile->Write( buf, &size ) );
+    CPPUNIT_ASSERT_EQUAL( Stream::ERROR_OK, mFile->Write( buf, &size ) );
     CPPUNIT_ASSERT_EQUAL( sizeof( PLAIN_DATA ), size );
 
     CPPUNIT_ASSERT( mFile->Flush() );
     CPPUNIT_ASSERT( mFile->Seek( -sizeof( PLAIN_DATA ), Fs::File::ORIGIN_CURRENT ) );
 
-    CPPUNIT_ASSERT_EQUAL( Fs::File::ERROR_OK, mFile->Read( buf, &size ) );
+    CPPUNIT_ASSERT_EQUAL( Stream::ERROR_OK, mFile->Read( buf, &size ) );
     CPPUNIT_ASSERT_EQUAL( sizeof( PLAIN_DATA ), size );
 
-    CPPUNIT_ASSERT_EQUAL( Fs::File::ERROR_EOS, mFile->Read( buf, &size ) );
+    CPPUNIT_ASSERT_EQUAL( Stream::ERROR_EOS, mFile->Read( buf, &size ) );
     CPPUNIT_ASSERT_EQUAL( 0UL, size );
 
     CPPUNIT_ASSERT( mFile->GetSize( size ) );
@@ -194,14 +194,14 @@ void Util::Test< Fs::File >::testOpenCreateSeparate()
 
     size_t size = 0;
     Util::Buffer buf( PLAIN_DATA, PLAIN_DATA + sizeof( PLAIN_DATA ) );
-    CPPUNIT_ASSERT_EQUAL( Fs::File::ERROR_OK, mFile->Write( buf, &size ) );
+    CPPUNIT_ASSERT_EQUAL( Stream::ERROR_OK, mFile->Write( buf, &size ) );
     CPPUNIT_ASSERT_EQUAL( sizeof( PLAIN_DATA ), size );
     CPPUNIT_ASSERT( mFile->Close() );
 
     CPPUNIT_ASSERT( !mFile->Open( NAME, modeCreate ) );
     CPPUNIT_ASSERT( mFile->Open( NAME, modeOpen ) );
 
-    CPPUNIT_ASSERT_EQUAL( Fs::File::ERROR_OK, mFile->Read( buf, &size ) );
+    CPPUNIT_ASSERT_EQUAL( Stream::ERROR_OK, mFile->Read( buf, &size ) );
     CPPUNIT_ASSERT_EQUAL( sizeof( PLAIN_DATA ), size );
 
     CPPUNIT_ASSERT( mFile->GetSize( size ) );
@@ -221,13 +221,13 @@ void Util::Test< Fs::File >::testOpenCreateCombined()
 
     size_t size = 0;
     Util::Buffer buf( PLAIN_DATA, PLAIN_DATA + sizeof( PLAIN_DATA ) );
-    CPPUNIT_ASSERT_EQUAL( Fs::File::ERROR_OK, mFile->Write( buf, &size ) );
+    CPPUNIT_ASSERT_EQUAL( Stream::ERROR_OK, mFile->Write( buf, &size ) );
     CPPUNIT_ASSERT_EQUAL( sizeof( PLAIN_DATA ), size );
     CPPUNIT_ASSERT( mFile->Close() );
 
     CPPUNIT_ASSERT( mFile->Open( NAME, mode ) );
 
-    CPPUNIT_ASSERT_EQUAL( Fs::File::ERROR_OK, mFile->Read( buf, &size ) );
+    CPPUNIT_ASSERT_EQUAL( Stream::ERROR_OK, mFile->Read( buf, &size ) );
     CPPUNIT_ASSERT_EQUAL( sizeof( PLAIN_DATA ), size );
 
     CPPUNIT_ASSERT( mFile->GetSize( size ) );
@@ -249,14 +249,14 @@ void Util::Test< Fs::File >::testOpenTruncate()
 
     size_t size = 0;
     Util::Buffer buf( PLAIN_DATA, PLAIN_DATA + sizeof( PLAIN_DATA ) );
-    CPPUNIT_ASSERT_EQUAL( Fs::File::ERROR_OK, mFile->Write( buf, &size ) );
+    CPPUNIT_ASSERT_EQUAL( Stream::ERROR_OK, mFile->Write( buf, &size ) );
     CPPUNIT_ASSERT_EQUAL( sizeof( PLAIN_DATA ), size );
     CPPUNIT_ASSERT( mFile->Close() );
 
     CPPUNIT_ASSERT( !mFile->Open( NAME, modeCreate ) );
     CPPUNIT_ASSERT( mFile->Open( NAME, modeTruncate ) );
 
-    CPPUNIT_ASSERT_EQUAL( Fs::File::ERROR_EOS, mFile->Read( buf, &size ) );
+    CPPUNIT_ASSERT_EQUAL( Stream::ERROR_EOS, mFile->Read( buf, &size ) );
     CPPUNIT_ASSERT_EQUAL( 0UL, size );
 
     CPPUNIT_ASSERT( mFile->GetSize( size ) );

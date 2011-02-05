@@ -26,8 +26,9 @@ SET( SOURCE
 ########################
 INCLUDE_DIRECTORIES( "${MYSQL_INCLUDE_DIR}"
                      "${utils_INCLUDE_DIR}"
-                     "${common_INCLUDE_DIR}" "${eve-common_INCLUDE_DIR}"
-                     "${eve-common_PACKETS_DIR}" "${TARGET_INCLUDE_DIR}" )
+                     "${common-std_INCLUDE_DIR}"
+                     "${eve-common_INCLUDE_DIR}" "${eve-common_PACKETS_DIR}"
+                     "${TARGET_INCLUDE_DIR}" )
 
 SOURCE_GROUP( "include" FILES ${INCLUDE} )
 SOURCE_GROUP( "src"     FILES ${SOURCE} )

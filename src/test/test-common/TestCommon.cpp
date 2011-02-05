@@ -23,7 +23,7 @@
     Author:     Bloody.Rabbit
 */
 
-#include "TestCommonPCH.h"
+#include "TestCommon.h"
 
 #include "TestFsDirectory.h"
 #include "TestFsFile.h"
