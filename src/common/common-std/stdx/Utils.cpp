@@ -27,13 +27,15 @@
 
 #include "stdx/Utils.h"
 
+using namespace common;
+
 #ifdef WIN32
 int asprintf( char** strp, const char* fmt, ... )
 {
     va_list ap;
 
     va_start( ap, fmt );
-    int res = vasprintf( strp, fmt, ap );
+    int res = ::vasprintf( strp, fmt, ap );
     va_end( ap );
 
     return res;
@@ -46,15 +48,13 @@ int vasprintf( char** strp, const char* fmt, va_list ap )
     //int size = vsnprintf(NULL, 0, fmt, ap);
     int size = 0x8000;
 
-    char* buff = (char*)malloc( size + 1 );
+    char* buff = (char*)::malloc( size + 1 );
     if( buff == NULL )
         return -1;
 
-    size = vsnprintf( buff, size, fmt, ap );
+    size = ::vsnprintf( buff, size, fmt, ap );
     if( size < 0 )
-    {
-        SafeFree( buff );
-    }
+        util::safeFree( buff );
     else
     {
         // do not waste memory
@@ -72,7 +72,7 @@ int vasprintf( char** strp, const char* fmt, va_list ap )
 char* strupr( char* str )
 {
     for( size_t i = 0; 0 != str[i]; ++i )
-        str[i] = toupper( str[i] );
+        str[i] = ::toupper( str[i] );
 
     return str;
 }
@@ -80,7 +80,7 @@ char* strupr( char* str )
 char* strlwr( char* str )
 {
     for( size_t i = 0; 0 != str[i]; ++i )
-        str[i] = tolower( str[i] );
+        str[i] = ::tolower( str[i] );
 
     return str;
 }
@@ -91,7 +91,7 @@ int sprintf( std::string& into, const char* fmt, ... )
     va_list ap;
     va_start( ap, fmt );
 
-    int code = vsprintf( into, fmt, ap );
+    int code = ::vsprintf( into, fmt, ap );
 
     va_end( ap );
 
@@ -102,10 +102,10 @@ int vsprintf( std::string& into, const char* fmt, va_list ap )
 {
     char* buf = NULL;
 
-    int code = vasprintf( &buf, fmt, ap );
+    int code = ::vasprintf( &buf, fmt, ap );
     if( 0 <= code )
         into = buf;
 
-    SafeDelete( buf );
+    util::safeDelete( buf );
     return code;
 }

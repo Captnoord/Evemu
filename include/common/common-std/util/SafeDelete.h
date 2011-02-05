@@ -26,29 +26,54 @@
 #ifndef __COMMON__UTIL__SAFE_DELETE_H__INCL__
 #define __COMMON__UTIL__SAFE_DELETE_H__INCL__
 
-// Basic programming tips
-// URL: http://nedprod.com/programs/index.html
-// Note: always nullify pointers after deletion, why? because its safer on a MT application
-#define ENABLE_SAFE_DELETE       1       // only delete and NULL after
-#define ENABLE_EXTRA_SAFE_DELETE 1       // check the array for NULL pointer then delete and NULL after
-//#define ENABLE_ULTRA_SAFE_DELETE 1       // check object and array for NULL pointer then delete and NULL after
+namespace common
+{
+    namespace util
+    {
+        /**
+         * @brief Deletes and nullifies a pointer.
+         *
+         * Basic programming tips
+         * URL: http://nedprod.com/programs/index.html
+         * Note: always nullify pointers after deletion, why? because its safer on a MT application
+         *
+         * @param[in] p The pointer.
+         */
+        template< typename T >
+        inline void safeDelete( T*& p )
+        {
+            delete p;
+            p = NULL;
+        }
 
-#if defined( ENABLE_ULTRA_SAFE_DELETE )
-#   define SafeDelete( p )      { if( p != NULL ) { delete p; p = NULL; } }
-#   define SafeDeleteArray( p ) { if( p != NULL ) { delete[] p; p = NULL; } }
-#   define SafeFree( p )        { if( p != NULL ) { free( p ); p = NULL; } }
-#elif defined( ENABLE_EXTRA_SAFE_DELETE )
-#   define SafeDelete( p )      { delete p; p = NULL; }
-#   define SafeDeleteArray( p ) { if( p != NULL ) { delete[] p; p = NULL; } }
-#   define SafeFree( p )        { if( p != NULL ) { free( p ); p = NULL; } }
-#elif defined( ENABLE_SAFE_DELETE )
-#   define SafeDelete( p )      { delete p; p = NULL; }
-#   define SafeDeleteArray( p ) { delete[] p; p = NULL; }
-#   define SafeFree( p )        { free( p ); p = NULL; }
-#else /* !ENABLE_ULTRA_SAFE_DELETE && !ENABLE_EXTRA_SAFE_DELETE && !ENABLE_SAFE_DELETE */
-#   define SafeDelete( p )      { delete p; }
-#   define SafeDeleteArray( p ) { delete[] p; }
-#   define SafeFree( p )        { free( p ); }
-#endif /* !ENABLE_ULTRA_SAFE_DELETE && !ENABLE_EXTRA_SAFE_DELETE && !ENABLE_SAFE_DELETE */
+        /**
+         * @brief Deletes and nullifies an array pointer.
+         *
+         * @param[in] p The array pointer.
+         *
+         * @see safeDelete< T >( T*& p )
+         */
+        template< typename T >
+        inline void safeDeleteArray( T*& p )
+        {
+            delete[] p;
+            p = NULL;
+        }
+
+        /**
+         * @brief Frees and nullifies a pointer.
+         *
+         * @param[in] p The pointer.
+         *
+         * @see safeDelete< T >( T*& p )
+         */
+        template< typename T >
+        inline void safeFree( T*& p )
+        {
+            ::free( p );
+            p = NULL;
+        }
+    }
+}
 
 #endif /* !__COMMON__UTIL__SAFE_DELETE_H__INCL__ */

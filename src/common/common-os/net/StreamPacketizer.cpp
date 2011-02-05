@@ -83,5 +83,5 @@ void StreamPacketizer::ClearBuffers()
 {
     util::Buffer* buf;
     while( ( buf = PopPacket() ) )
-        SafeDelete( buf );
+        util::safeDelete( buf );
 }

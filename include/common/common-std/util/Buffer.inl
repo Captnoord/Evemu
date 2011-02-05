@@ -51,7 +51,7 @@ inline Buffer::Buffer( const Buffer& oth )
 inline Buffer::~Buffer()
 {
     // Release the buffer
-    SafeFree( mData );
+    util::safeFree( mData );
 }
 
 template< typename T >

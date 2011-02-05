@@ -67,6 +67,6 @@ int main( int argc, char* argv[] )
 
     bool success = RunTests( xmlFile );
 
-    SafeDelete( xmlFile );
+    util::safeDelete( xmlFile );
     return success ? EXIT_SUCCESS : EXIT_FAILURE;
 }

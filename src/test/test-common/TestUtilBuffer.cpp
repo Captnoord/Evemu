@@ -85,7 +85,7 @@ void TestUtilBuffer::setUp()
 
 void TestUtilBuffer::tearDown()
 {
-    SafeDelete( mBuffer );
+    util::safeDelete( mBuffer );
 }
 
 void TestUtilBuffer::testConstructorSize()
@@ -93,7 +93,7 @@ void TestUtilBuffer::testConstructorSize()
     const size_t size = 8;
     const uint8 fill = PLAIN_DATA[ 5 ];
 
-    SafeDelete( mBuffer );
+    util::safeDelete( mBuffer );
     mBuffer = new util::Buffer( size, fill );
 
     CPPUNIT_ASSERT_EQUAL( size * sizeof( uint8 ), mBuffer->size() );
@@ -105,7 +105,7 @@ void TestUtilBuffer::testConstructorRange()
     const uint32* begin = reinterpret_cast< const uint32* >( &PLAIN_DATA[ 0 ] );
     const uint32* end = reinterpret_cast< const uint32* >( &PLAIN_DATA[ 7 ] );
 
-    SafeDelete( mBuffer );
+    util::safeDelete( mBuffer );
     mBuffer = new util::Buffer( begin, end );
 
     CPPUNIT_ASSERT_EQUAL( sizeof( uint32 ) * static_cast< size_t >( end - begin ),
@@ -124,7 +124,7 @@ void TestUtilBuffer::testConstructorCopy()
 {
     const util::Buffer buf( &PLAIN_DATA[ 0 ], &PLAIN_DATA[ 7 ] );
 
-    SafeDelete( mBuffer );
+    util::safeDelete( mBuffer );
     mBuffer = new util::Buffer( buf );
 
     CPPUNIT_ASSERT_EQUAL( buf.size(), mBuffer->size() );

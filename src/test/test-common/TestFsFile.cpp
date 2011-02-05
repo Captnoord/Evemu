@@ -72,7 +72,7 @@ void TestFsFile::setUp()
 
 void TestFsFile::tearDown()
 {
-    SafeDelete( mFile );
+    util::safeDelete( mFile );
 }
 
 void TestFsFile::testRename()

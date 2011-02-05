@@ -83,14 +83,14 @@ void TestUtilData::setUp()
 
 void TestUtilData::tearDown()
 {
-    SafeDelete( mData );
+    util::safeDelete( mData );
 }
 
 void TestUtilData::testConstructorDefault()
 {
     const size_t size = 0;
 
-    SafeDelete( mData );
+    util::safeDelete( mData );
     mData = new util::Data;
 
     CPPUNIT_ASSERT_EQUAL( size, mData->size() );
@@ -104,7 +104,7 @@ void TestUtilData::testConstructorValue()
 {
     uint32 val = reinterpret_cast< const uint32& >( PLAIN_DATA[ 2 ] );
 
-    SafeDelete( mData );
+    util::safeDelete( mData );
     mData = new util::Data( val );
 
     CPPUNIT_ASSERT_EQUAL( sizeof( uint32 ), mData->size() );
@@ -120,7 +120,7 @@ void TestUtilData::testConstructorRange()
     uint32* begin = reinterpret_cast< uint32* >( &PLAIN_DATA[ 0 ] );
     uint32* end = reinterpret_cast< uint32* >( &PLAIN_DATA[ 7 ] );
 
-    SafeDelete( mData );
+    util::safeDelete( mData );
     mData = new util::Data( begin, end );
 
     CPPUNIT_ASSERT_EQUAL( sizeof( uint32 ) * static_cast< size_t >( end - begin ),
@@ -143,7 +143,7 @@ void TestUtilData::testConstructorCopy()
 {
     const util::Data data( &PLAIN_DATA[ 0 ], &PLAIN_DATA[ sizeof( PLAIN_DATA ) ] );
 
-    SafeDelete( mData );
+    util::safeDelete( mData );
     mData = new util::Data( data );
 
     CPPUNIT_ASSERT_EQUAL( data.size(), mData->size() );

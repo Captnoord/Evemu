@@ -38,7 +38,7 @@ void Target::Run( Target* target )
     target->Run();
 
     if( target->deleteOnExit() )
-        SafeDelete( target );
+        util::safeDelete( target );
 }
 
 Target::~Target()
