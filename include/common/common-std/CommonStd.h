@@ -37,29 +37,26 @@
 #endif /* HAVE_CONFIG_H */
 
 /*
- * (Non-)MSVC configuration.
+ * Various configuration.
  */
 #ifdef MSVC
 #   define _CRT_SECURE_NO_WARNINGS                  1
 #   define _CRT_SECURE_NO_DEPRECATE                 1
 #   define _CRT_SECURE_COPP_OVERLOAD_STANDARD_NAMES 1
 
+#   define _SCL_SECURE_NO_WARNINGS 1
+#endif /* MSVC */
+
+#ifdef HAVE_CRTDBG_H
 #   ifndef NDEBUG
 #       define _CRTDBG_MAP_ALLOC 1
 #   endif /* !NDEBUG */
+#endif /* HAVE_CRTDBG_H */
 
-#   define _SCL_SECURE_NO_WARNINGS 1
-#else /* !MSVC */
 // We must "explicitly request" the format strings ...
+#ifdef HAVE_INTTYPES_H
 #   define __STDC_FORMAT_MACROS 1
-#endif /* !MSVC */
-
-/*
- * Standard C library includes.
- */
-#ifndef MSVC
-#   include <inttypes.h>
-#endif /* !MSVC */
+#endif /* HAVE_INTTYPES_H */
 
 /*
  * Standard C++ library includes.
@@ -97,28 +94,32 @@
  * Note: my fellow developers please read 'http://en.wikipedia.org/wiki/Technical_Report_1'. I know its a wiki page
  *       but it gives you the general idea.
  */
-#ifdef MSVC
-#   include <tuple>
-#   include <unordered_map>
-#   include <unordered_set>
-#else /* !MSVC */
+#ifdef HAVE_TR1_PREFIX
 #   include <tr1/tuple>
 #   include <tr1/unordered_map>
 #   include <tr1/unordered_set>
-#endif /* !MSVC */
+#else /* !HAVE_TR1_PREFIX */
+#   include <tuple>
+#   include <unordered_map>
+#   include <unordered_set>
+#endif /* !HAVE_TR1_PREFIX */
 
 /*
- * MSVC memory leak detection includes.
+ * Some other useful stuff.
  */
-#ifdef MSVC
+#ifdef HAVE_CRTDBG_H
 #   ifndef NDEBUG
 #       include <crtdbg.h>
 #       define new new( _NORMAL_BLOCK, __FILE__, __LINE__ )
 #   endif /* !NDEBUG */
-#endif /* MSVC */
+#endif /* HAVE_CRTDBG_H */
+
+#ifdef HAVE_INTTYPES_H
+#   include <inttypes.h>
+#endif /* HAVE_INTTYPES_H */
 
 /*
- * Include headers common enough.
+ * Include several our common-enough headers.
  */
 #include "stdx/Types.h"
 #include "stdx/Utils.h"

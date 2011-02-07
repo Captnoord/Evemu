@@ -30,6 +30,7 @@
 using namespace common;
 using namespace common::net;
 
+#ifdef WITH_IPV6
 /*************************************************************************/
 /* common::net::Ip6                                                      */
 /*************************************************************************/
@@ -72,3 +73,4 @@ Ip6::Port Ip6::GetPortBySocketAddress( const SocketAddress& socketAddress )
 {
     return socketAddress.sin6_port;
 }
+#endif /* WITH_IPV6 */

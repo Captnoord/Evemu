@@ -33,13 +33,7 @@ using namespace common::posix;
 /*************************************************************************/
 /* common::posix::Mutex                                                  */
 /*************************************************************************/
-const Mutex::Attribute Mutex::DEFAULT_ATTRIBUTE(
-#if defined( CYGWIN ) || defined( APPLE )
-    PTHREAD_MUTEX_RECURSIVE
-#else
-    PTHREAD_MUTEX_RECURSIVE_NP
-#endif
- );
+const Mutex::Attribute Mutex::DEFAULT_ATTRIBUTE( PTHREAD_MUTEX_RECURSIVE );
 
 Mutex::Mutex( const Attribute& attr )
 {

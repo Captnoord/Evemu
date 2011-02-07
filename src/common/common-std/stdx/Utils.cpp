@@ -29,7 +29,10 @@
 
 using namespace common;
 
-#ifdef WIN32
+/*************************************************************************/
+/* cstdio                                                                */
+/*************************************************************************/
+#ifndef HAVE_ASPRINTF
 int asprintf( char** strp, const char* fmt, ... )
 {
     va_list ap;
@@ -40,7 +43,9 @@ int asprintf( char** strp, const char* fmt, ... )
 
     return res;
 }
+#endif /* !HAVE_ASPRINTF */
 
+#ifndef HAVE_VASPRINTF
 int vasprintf( char** strp, const char* fmt, va_list ap )
 {
     //va_list ap_temp;
@@ -49,7 +54,7 @@ int vasprintf( char** strp, const char* fmt, va_list ap )
     int size = 0x8000;
 
     char* buff = (char*)::malloc( size + 1 );
-    if( buff == NULL )
+    if( NULL == buff )
         return -1;
 
     size = ::vsnprintf( buff, size, fmt, ap );
@@ -66,25 +71,7 @@ int vasprintf( char** strp, const char* fmt, va_list ap )
 
     return size;
 }
-#endif /* WIN32 */
-
-#ifdef CYGWIN
-char* strupr( char* str )
-{
-    for( size_t i = 0; 0 != str[i]; ++i )
-        str[i] = ::toupper( str[i] );
-
-    return str;
-}
-
-char* strlwr( char* str )
-{
-    for( size_t i = 0; 0 != str[i]; ++i )
-        str[i] = ::tolower( str[i] );
-
-    return str;
-}
-#endif /* CYGWIN */
+#endif /* !HAVE_VASPRINTF */
 
 int sprintf( std::string& into, const char* fmt, ... )
 {
@@ -109,3 +96,28 @@ int vsprintf( std::string& into, const char* fmt, va_list ap )
     util::safeDelete( buf );
     return code;
 }
+
+/*************************************************************************/
+/* ctime                                                                 */
+/*************************************************************************/
+#ifndef HAVE_LOCALTIME_R
+tm* localtime_r( const time_t* timep, tm* result )
+{
+#   ifdef HAVE_LOCALTIME_S
+    const errno_t err = ::localtime_s( result, timep );
+    if( 0 != err )
+    {
+        ::errno = err;
+        return NULL;
+    }
+#   else /* !HAVE_LOCALTIME_S */
+    /* This is quite dangerous stuff (not necessarily
+       thread-safe), but what can we do? Also,
+       there is a chance that localtime will use
+       thread-specific memory (MS's localtime does that). */
+    ::memcpy( result, ::localtime( timep ), sizeof( tm ) );
+#   endif /* !HAVE_LOCALTIME_S */
+
+    return result;
+}
+#endif /* !HAVE_LOCALTIME_R */

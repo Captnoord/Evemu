@@ -30,6 +30,7 @@ namespace common
 {
     namespace net
     {
+#   ifdef WITH_IPV6
         /**
          * @brief Contains information about IPv6.
          *
@@ -98,6 +99,7 @@ namespace common
              */
             static Port GetPortBySocketAddress( const SocketAddress& socketAddress );
         };
+#   endif /* WITH_IPV6 */
     }
 }
 

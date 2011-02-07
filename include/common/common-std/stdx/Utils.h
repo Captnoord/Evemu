@@ -27,76 +27,51 @@
 #define __COMMON__STDX__UTILS_H__INCL__
 
 /*
- * WIN32:
- *   asprintf
- *   vasprintf
- *   localtime_r
- *
- * Define localtime_r as a call to localtime.
- *
- * The page below says that MS's version of localtime uses
- * thread-specific storage, so this should not be a problem.
- *
- * http://msdn.microsoft.com/en-us/library/bf12f0hc(VS.80).aspx
+ * cfloat, cmath
  */
-#ifdef WIN32
-#   define localtime_r( x, y ) \
-    ( (tm*)( memcpy( ( y ), localtime( x ), sizeof( tm ) ) ) )
 
-int asprintf( char** strp, const char* fmt, ... );
-int vasprintf( char** strp, const char* fmt, va_list ap );
-#endif /* WIN32 */
-
-/*
- * CYGWIN:
- *   strupr
- *   strlwr
- */
-#ifdef CYGWIN
-char* strupr( char* str );
-char* strlwr( char* str );
-#endif /* CYGWIN */
-
-/*
- * MSVC:
- *   snprintf
- *   vsnprintf
- *   strcasecmp
- *   strncasecmp
- *   strdup
- *   va_copy
- */
-#ifdef MSVC
-#   define snprintf            _snprintf
-#   define strncasecmp         _strnicmp
-#   define strcasecmp          _stricmp
-
-#   define va_copy( a, b ) \
-    ( memcpy( &( a ), &( b ), sizeof( va_list ) ) )
-
-#   if( _MSC_VER < 1500 )
-#       define vsnprintf _vsnprintf
-#   else /* _MSC_VER >= 1500 */
-#       ifndef strdup
-#           define strdup _strdup
-#       endif /* !strdup */
-#   endif /* _MSC_VER >= 1500 */
-#endif /* MSVC */
-
-/*
- * finite
- * isnan
- */
-#if defined( MSVC ) || defined( MINGW )
+#if defined( HAVE__FINITE )
 #   define finite _finite
-#   define isnan  _isnan
-#elif defined( FREE_BSD ) || defined( APPLE )
-using std::finite;
-using std::isnan;
-#else /* !MSVC && !MINGW && !APPLE && !FREE_BSD */
-#   define finite __finite
-#   define isnan  __isnan
-#endif /* !MSVC && !MINGW && !APPLE && !FREE_BSD */
+#elif defined( HAVE_STD_FINITE )
+#   define finite std::finite
+#elif defined( HAVE_STD_ISFINITE )
+#   define finite std::isfinite
+#endif /* defined( HAVE_STD_ISFINITE ) */
+
+#if defined( HAVE__ISNAN )
+#   define isnan _isnan
+#elif defined( HAVE_STD_ISNAN )
+#   define isnan std::isnan
+#endif /* defined( HAVE_STD_ISNAN ) */
+
+/*
+ * cstdarg
+ */
+
+#ifndef HAVE_VA_COPY
+#   define va_copy( dest, src ) \
+    ( memcpy( &( dest ), &( src ), sizeof( va_list ) ) )
+#endif /* !HAVE_VA_COPY */
+
+/*
+ * cstdio
+ */
+
+#ifndef HAVE_ASPRINTF
+int asprintf( char** strp, const char* fmt, ... );
+#endif /* !HAVE_ASPRINTF */
+
+#ifndef HAVE_VASPRINTF
+int vasprintf( char** strp, const char* fmt, va_list ap );
+#endif /* !HAVE_VASPRINTF */
+
+#ifndef HAVE_SNPRINTF
+#   define snprintf _snprintf
+#endif /* !HAVE_SNPRINTF */
+
+#ifndef HAVE_VSNPRINTF
+#   define vsnprintf _vsnprintf
+#endif /* !HAVE_VSNPRINTF */
 
 /**
  * @brief sprintf() for <code>std::string</code>.
@@ -118,5 +93,41 @@ int sprintf( std::string& into, const char* fmt, ... );
  * @return A value returned by vasprintf().
  */
 int vsprintf( std::string& into, const char* fmt, va_list ap );
+
+/*
+ * cstdlib
+ */
+
+#ifndef HAVE_RANDOM
+#   define random rand
+#endif /* !HAVE_RANDOM */
+
+#ifndef HAVE_SRANDOM
+#   define srandom srand
+#endif /* !HAVE_SRANDOM */
+
+/*
+ * cstring
+ */
+
+#ifndef HAVE_STRCASECMP
+#   define strcasecmp _stricmp
+#endif /* !HAVE_STRCASECMP */
+
+#ifndef HAVE_STRNCASECMP
+#   define strncasecmp _strnicmp
+#endif /* !HAVE_STRNCASECMP */
+
+#ifndef HAVE_STRDUP
+#   define strdup _strdup
+#endif /* !HAVE_STRDUP */
+
+/*
+ * ctime
+ */
+
+#ifndef HAVE_LOCALTIME_R
+tm* localtime_r( const time_t* timep, tm* result );
+#endif /* !HAVE_LOCALTIME_R */
 
 #endif /* !__COMMON__STDX__UTILS_H__INCL__ */

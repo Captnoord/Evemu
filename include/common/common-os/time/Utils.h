@@ -26,14 +26,8 @@
 #ifndef __COMMON__TIME__UTILS_H__INCL__
 #define __COMMON__TIME__UTILS_H__INCL__
 
-/*
- * WIN32:
- *  useconds_t
- *
- * Stupid Windows don't define useconds_t.
- */
-#ifdef WIN32
+#ifndef HAVE_USECONDS_T
 typedef long useconds_t;
-#endif /* WIN32 */
+#endif /* !HAVE_USECONDS_T */
 
 #endif /* !__COMMON__TIME__UTILS_H__INCL__ */

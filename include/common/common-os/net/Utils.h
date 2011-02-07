@@ -26,12 +26,18 @@
 #ifndef __COMMON__NET__UTILS_H__INCL__
 #define __COMMON__NET__UTILS_H__INCL__
 
+#ifndef HAVE_MSG_NOSIGNAL
+#   ifdef HAVE_SO_NOSIGPIPE
+#       define MSG_NOSIGNAL SO_NOSIGPIPE
+#   else /* !HAVE_SO_NOSIGPIPE */
+#       define MSG_NOSIGNAL 0
+#   endif /* !HAVE_SO_NOSIGPIPE */
+#endif /* !HAVE_MSG_NOSIGNAL */
+
 /*
  * Define some common interface.
  */
 #ifdef WIN32
-#   define MSG_NOSIGNAL 0
-
 #   define close closesocket
 
 #   define SHUT_RD   SD_RECEIVE
@@ -44,12 +50,6 @@ typedef int SOCKET;
 
 #   define INVALID_SOCKET static_cast< SOCKET >( -1 )
 #   define SOCKET_ERROR   static_cast< SOCKET >( -1 )
-
-#   if defined( FREE_BSD )
-#       define MSG_NOSIGNAL 0
-#   elif defined( APPLE )
-#       define MSG_NOSIGNAL SO_NOSIGPIPE
-#   endif
 #endif /* !WIN32 */
 
 /*

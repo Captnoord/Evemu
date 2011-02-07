@@ -44,7 +44,7 @@ Tm::Tm( const tm& t )
 
 Tm::Tm( time_t t )
 {
-    const tm* result = localtime_r( &t, &mTm );
+    const tm* result = ::localtime_r( &t, &mTm );
     assert( &mTm == result );
 }
 

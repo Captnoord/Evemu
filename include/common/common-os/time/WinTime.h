@@ -33,9 +33,9 @@ namespace common
         class Msec;
         class Timeval;
 
-#   ifndef WIN32
+#   ifdef HAVE_TIMESPEC
         class Timespec;
-#   endif /* !WIN32 */
+#   endif /* HAVE_TIMESPEC */
 
         /**
          * @brief A wrapper around <code>uint64</code> as a Windows time.
@@ -75,14 +75,14 @@ namespace common
              * @param[in] msec Msec to be converted.
              */
             WinTime( const Msec& msec );
-#       ifndef WIN32
+#       ifdef HAVE_TIMESPEC
             /**
              * @brief A conversion operator.
              *
              * @param[in] ts Timespec to be converted.
              */
             WinTime( const Timespec& ts );
-#       endif /* !WIN32 */
+#       endif /* HAVE_TIMESPEC */
             /**
              * @brief A conversion constructor.
              *

@@ -33,9 +33,9 @@ namespace common
         class Timeval;
         class WinTime;
 
-#   ifndef WIN32
+#   ifdef HAVE_TIMESPEC
         class Timespec;
-#   endif /* !WIN32 */
+#   endif /* HAVE_TIMESPEC */
 
         /**
          * @brief A wrapper around <code>size_t</code> as a count of milliseconds.
@@ -73,14 +73,14 @@ namespace common
              * @param[in] oth The object to copy.
              */
             Msec( const Msec& oth );
-#       ifndef WIN32
+#       ifdef HAVE_TIMESPEC
             /**
              * @brief A conversion constructor.
              *
              * @param[in] ts Timespec to be converted.
              */
             Msec( const Timespec& ts );
-#       endif /* !WIN32 */
+#       endif /* HAVE_TIMESPEC */
             /**
              * @brief A conversion constructor.
              *

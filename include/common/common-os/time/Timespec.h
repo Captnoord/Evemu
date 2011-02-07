@@ -34,7 +34,7 @@ namespace common
         class Timeval;
         class WinTime;
 
-#   ifndef WIN32
+#   ifdef HAVE_TIMESPEC
         /**
          * @brief A wrapper around <code>struct timespec</code>.
          *
@@ -150,7 +150,7 @@ namespace common
             /// The <code>timespec</code>.
             timespec mTimespec;
         };
-#   endif /* !WIN32 */
+#   endif /* HAVE_TIMESPEC */
     }
 }
 

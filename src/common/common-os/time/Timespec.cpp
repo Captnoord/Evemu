@@ -34,6 +34,7 @@
 using namespace common;
 using namespace common::time;
 
+#ifdef HAVE_TIMESPEC
 /*************************************************************************/
 /* common::time::Timespec                                                */
 /*************************************************************************/
@@ -219,3 +220,4 @@ Timespec& Timespec::operator%=( size_t ratio )
 {
     return ( *this = *this % ratio );
 }
+#endif /* HAVE_TIMESPEC */

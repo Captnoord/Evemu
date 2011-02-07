@@ -30,9 +30,9 @@
 #include "time/Timeval.h"
 #include "time/WinTime.h"
 
-#ifndef WIN32
+#ifdef HAVE_TIMESPEC
 #   include "time/Timespec.h"
-#endif /* !WIN32 */
+#endif /* HAVE_TIMESPEC */
 
 using namespace common;
 using namespace common::time;
@@ -59,12 +59,12 @@ WinTime::WinTime( const Msec& msec )
 {
 }
 
-#ifndef WIN32
+#ifdef HAVE_TIMESPEC
 WinTime::WinTime( const Timespec& ts )
 : mTime( WINTIME_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC * ts.sec() + ts.nsec() / NSEC_PER_WINTIME )
 {
 }
-#endif /* !WIN32 */
+#endif /* HAVE_TIMESPEC */
 
 WinTime::WinTime( const Timeval& tv )
 : mTime( WINTIME_PER_USEC * ( USEC_PER_MSEC * MSEC_PER_SEC * tv.sec() + tv.usec() ) )

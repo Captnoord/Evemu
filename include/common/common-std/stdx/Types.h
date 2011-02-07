@@ -29,16 +29,7 @@
 /*
  * u?int(8|16|32|64)
  */
-#ifdef MSVC
-typedef   signed __int8   int8;
-typedef unsigned __int8  uint8;
-typedef   signed __int16  int16;
-typedef unsigned __int16 uint16;
-typedef   signed __int32  int32;
-typedef unsigned __int32 uint32;
-typedef   signed __int64  int64;
-typedef unsigned __int64 uint64;
-#else /* !MSVC */
+#ifdef HAVE_INTTYPES_H
 typedef  int8_t   int8;
 typedef uint8_t  uint8;
 typedef  int16_t  int16;
@@ -47,14 +38,22 @@ typedef  int32_t  int32;
 typedef uint32_t uint32;
 typedef  int64_t  int64;
 typedef uint64_t uint64;
-#endif /* !MSVC */
+#else /* !HAVE_INTTYPES_H */
+typedef   signed __int8   int8;
+typedef unsigned __int8  uint8;
+typedef   signed __int16  int16;
+typedef unsigned __int16 uint16;
+typedef   signed __int32  int32;
+typedef unsigned __int32 uint32;
+typedef   signed __int64  int64;
+typedef unsigned __int64 uint64;
+#endif /* !HAVE_INTTYPES_H */
 
 /*
- * MSVC:
- *   PRI[diouxX](8|16|32|64)
- *   SCN[diouxX](8|16|32|64)
+ * PRI[diouxX](8|16|32|64)
+ * SCN[diouxX](8|16|32|64)
  */
-#ifdef MSVC
+#ifndef HAVE_INTTYPES_H
 #   define PRId8 "hhd"
 #   define PRIi8 "hhi"
 #   define PRIo8 "hho"
@@ -106,6 +105,6 @@ typedef uint64_t uint64;
 #   define SCNo64 "I64o"
 #   define SCNu64 "I64u"
 #   define SCNx64 "I64x"
-#endif /* MSVC */
+#endif /* !HAVE_INTTYPES_H */
 
 #endif /* !__COMMON__STDX__TYPES_H__INCL__ */

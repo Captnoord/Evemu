@@ -21,6 +21,10 @@ SET( CMAKE_MODULE_PATH
 #################
 # Build options #
 #################
+# For now it's this easy, add a proper build option/tests
+# once we actually need it.
+SET( WITH_IPV6 NOT ${WIN32} )
+
 SET( EVEMU_ROOT_DIR ".."
      CACHE PATH "The root of EVEmu workspace." )
 MARK_AS_ADVANCED( EVEMU_ROOT_DIR )
@@ -32,13 +36,73 @@ MARK_AS_ADVANCED( TINYXML_USE_STL )
 ##################
 # Platform tests #
 ##################
-INCLUDE( "TestX64" )
-TEST_X64( X64 )
+INCLUDE( "CheckIncludeFileCXX" )
 
-INCLUDE( "CheckSymbolExists" )
-CHECK_SYMBOL_EXISTS( "__FreeBSD__" "" FREE_BSD )
+CHECK_INCLUDE_FILE_CXX( "inttypes.h" HAVE_INTTYPES_H )
+CHECK_INCLUDE_FILE_CXX( "crtdbg.h"   HAVE_CRTDBG_H )
+CHECK_INCLUDE_FILE_CXX( "tr1/tuple"  HAVE_TR1_PREFIX )
 
-SET( GNUC ${CMAKE_COMPILER_IS_GNUCXX} )
+INCLUDE( "CheckCXXSourceCompiles" )
+
+# cfloat
+CHECK_CXX_SOURCE_COMPILES( "#include <cfloat>
+int main() { return *(int*)::_finite; }" HAVE__FINITE )
+CHECK_CXX_SOURCE_COMPILES( "#include <cfloat>
+int main() { return *(int*)::_isnan; }" HAVE__ISNAN )
+
+# cmath
+CHECK_CXX_SOURCE_COMPILES( "#include <cmath>
+int main() { return std::finite( 0.0 ); }" HAVE_STD_FINITE )
+CHECK_CXX_SOURCE_COMPILES( "#include <cmath>
+int main() { return std::isfinite( 0.0 ); }" HAVE_STD_ISFINITE )
+CHECK_CXX_SOURCE_COMPILES( "#include <cmath>
+int main() { return std::isnan( 0.0 ); }" HAVE_STD_ISNAN )
+
+# cstdarg
+CHECK_CXX_SOURCE_COMPILES( "#include <cstdarg>
+int main() { va_list ap[2]; va_copy( ap[0], ap[1] ); return 0; }" HAVE_VA_COPY )
+
+# cstdio
+CHECK_CXX_SOURCE_COMPILES( "#include <cstdio>
+int main() { return *(int*)::asprintf; }" HAVE_ASPRINTF )
+CHECK_CXX_SOURCE_COMPILES( "#include <cstdio>
+int main() { return *(int*)::vasprintf; }" HAVE_VASPRINTF )
+CHECK_CXX_SOURCE_COMPILES( "#include <cstdio>
+int main() { return *(int*)::snprintf; }" HAVE_SNPRINTF )
+CHECK_CXX_SOURCE_COMPILES( "#include <cstdio>
+int main() { return *(int*)::vsnprintf; }" HAVE_VSNPRINTF )
+
+# cstdlib
+CHECK_CXX_SOURCE_COMPILES( "#include <cstdlib>
+int main() { return *(int*)::random; }" HAVE_RANDOM )
+CHECK_CXX_SOURCE_COMPILES( "#include <cstdlib>
+int main() { return *(int*)::srandom; }" HAVE_SRANDOM )
+
+# cstring
+CHECK_CXX_SOURCE_COMPILES( "#include <cstring>
+int main() { return *(int*)::strcasecmp; }" HAVE_STRCASECMP )
+CHECK_CXX_SOURCE_COMPILES( "#include <cstring>
+int main() { return *(int*)::strncasecmp; }" HAVE_STRNCASECMP )
+CHECK_CXX_SOURCE_COMPILES( "#include <cstring>
+int main() { return *(int*)::strdup; }" HAVE_STRDUP )
+
+# ctime
+CHECK_CXX_SOURCE_COMPILES( "#include <ctime>
+int main() { timespec ts; return ts.tv_nsec; }" HAVE_TIMESPEC )
+CHECK_CXX_SOURCE_COMPILES( "#include <ctime>
+int main() { return *(int*)::localtime_r; }" HAVE_LOCALTIME_R )
+CHECK_CXX_SOURCE_COMPILES( "#include <ctime>
+int main() { return *(int*)::localtime_s; }" HAVE_LOCALTIME_S )
+
+# sys/socket.h
+CHECK_CXX_SOURCE_COMPILES( "#include <sys/socket.h>
+int main() { return MSG_NOSIGNAL; }" HAVE_MSG_NOSIGNAL )
+CHECK_CXX_SOURCE_COMPILES( "#include <sys/socket.h>
+int main() { return SO_NOSIGPIPE; }" HAVE_SO_NOSIGPIPE )
+
+# sys/types.h
+CHECK_CXX_SOURCE_COMPILES( "#include <sys/types.h>
+int main() { useconds_t us; return us; }" HAVE_USECONDS_T )
 
 ##################
 # Compiler flags #
