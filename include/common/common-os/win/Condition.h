@@ -26,7 +26,7 @@
 #ifndef __COMMON__WIN__CONDITION_H__INCL__
 #define __COMMON__WIN__CONDITION_H__INCL__
 
-#include "win/CriticalSection.h"
+#include "mt/Mutex.h"
 #include "win/Event.h"
 
 namespace common

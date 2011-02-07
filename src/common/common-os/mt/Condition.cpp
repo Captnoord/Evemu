@@ -59,7 +59,7 @@ void Condition::Broadcast()
 void Condition::Wait( Mutex& mutex )
 {
 #ifdef WIN32
-    DWORD code = mCondition.Wait( mutex.mMutex );
+    DWORD code = mCondition.Wait( mutex.mCriticalSection );
     assert( ERROR_SUCCESS == code );
 #else /* !WIN32 */
     int code = mCondition.Wait( mutex.mMutex );
@@ -70,7 +70,7 @@ void Condition::Wait( Mutex& mutex )
 void Condition::TimedWait( Mutex& mutex, const time::Msec& timeout )
 {
 #ifdef WIN32
-    DWORD code = mCondition.Wait( mutex.mMutex, timeout );
+    DWORD code = mCondition.Wait( mutex.mCriticalSection, timeout );
     assert( ERROR_SUCCESS == code );
 #else /* !WIN32 */
     int code = mCondition.TimedWait( mutex.mMutex, sTimeMgr.nowUnix() + timeout );

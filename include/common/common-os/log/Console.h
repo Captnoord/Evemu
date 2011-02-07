@@ -28,6 +28,10 @@
 
 #include "log/LogMgr.h"
 
+#ifdef WIN32
+#   include "win/ConsoleScreenBuffer.h"
+#endif /* WIN32 */
+
 namespace common
 {
     namespace log

@@ -29,7 +29,7 @@
 #include "util/Lock.h"
 
 #ifdef WIN32
-#   include "win/Mutex.h"
+#   include "win/CriticalSection.h"
 #else /* !WIN32 */
 #   include "posix/Mutex.h"
 #endif /* !WIN32 */
@@ -72,7 +72,7 @@ namespace common
         protected:
 #       ifdef WIN32
             /// Windows mutex.
-            win::Mutex mMutex;
+            win::CriticalSection mCriticalSection;
 #       else /* !WIN32 */
             /// Posix mutex.
             posix::Mutex mMutex;

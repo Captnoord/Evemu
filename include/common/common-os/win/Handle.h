@@ -26,6 +26,8 @@
 #ifndef __COMMON__WIN__HANDLE_H__INCL__
 #define __COMMON__WIN__HANDLE_H__INCL__
 
+#include "time/Msec.h"
+
 namespace common
 {
     /**

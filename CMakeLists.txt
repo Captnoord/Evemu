@@ -23,7 +23,11 @@ SET( CMAKE_MODULE_PATH
 #################
 # For now it's this easy, add a proper build option/tests
 # once we actually need it.
-SET( WITH_IPV6 NOT ${WIN32} )
+IF( WIN32 )
+    SET( WITH_IPV6 FALSE )
+ELSE( WIN32 )
+    SET( WITH_IPV6 TRUE )
+ENDIF( WIN32 )
 
 SET( EVEMU_ROOT_DIR ".."
      CACHE PATH "The root of EVEmu workspace." )

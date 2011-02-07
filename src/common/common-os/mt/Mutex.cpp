@@ -36,7 +36,7 @@ using namespace common::mt;
 void Mutex::Lock()
 {
 #ifdef WIN32
-    mMutex.Enter();
+    mCriticalSection.Enter();
 #else /* !WIN32 */
     int code = mMutex.Lock();
     assert( 0 == code );
@@ -46,7 +46,7 @@ void Mutex::Lock()
 bool Mutex::TryLock()
 {
 #ifdef WIN32
-    return TRUE == mMutex.TryEnter();
+    return TRUE == mCriticalSection.TryEnter();
 #else /* !WIN32 */
     int code = mMutex.TryLock();
     assert( 0 == code || EBUSY == code );
@@ -58,7 +58,7 @@ bool Mutex::TryLock()
 void Mutex::Unlock()
 {
 #ifdef WIN32
-    mMutex.Leave();
+    mCriticalSection.Leave();
 #else /* !WIN32 */
     int code = mMutex.Unlock();
     assert( 0 == code );
