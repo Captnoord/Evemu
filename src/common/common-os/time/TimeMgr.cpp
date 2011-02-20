@@ -45,6 +45,16 @@ TimeMgr::TimeMgr( const Msec& period )
     sThreadMgr.Run( this );
 }
 
+Msec TimeMgr::now() const
+{
+    /* Just use the platform's native time. */
+#ifdef WIN32
+    return nowWin();
+#else /* !WIN32 */
+    return nowUnix();
+#endif /* !WIN32 */
+}
+
 Tm TimeMgr::nowTm() const
 {
     Tm t;

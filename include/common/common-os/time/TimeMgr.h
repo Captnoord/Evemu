@@ -62,6 +62,16 @@ namespace common
             const Msec& period() const { return mRunTimer.period(); }
 
             /**
+             * @brief Obtains time passed.
+             *
+             * Use this if you don't care about the Epoch at all.
+             * Returns Msec since it's not associated with either
+             * of the Epochs (unlike WinTime or Timeval).
+             *
+             * @return The time.
+             */
+            Msec now() const;
+            /**
              * @brief Obtains time passed in a human readable form.
              *
              * For details on what time this is, see stdx::Tm or

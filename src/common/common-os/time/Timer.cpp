@@ -45,26 +45,14 @@ Timer::Timer( const Msec& period, bool accurate )
 void Timer::Start()
 {
     if( !accurate() || mTimeout == 0 )
-    {
-#   ifdef WIN32
-        mTimeout = sTimeMgr.nowWin();
-#   else /* !WIN32 */
-        mTimeout = sTimeMgr.nowUnix();
-#   endif /* !WIN32 */
-    }
+        mTimeout = sTimeMgr.now();
 
     mTimeout += period();
 }
 
 bool Timer::Check( bool restart )
 {
-#ifdef WIN32
-    Msec msec = sTimeMgr.nowWin();
-#else /* !WIN32 */
-    Msec msec = sTimeMgr.nowUnix();
-#endif /* !WIN32 */
-
-    if( mTimeout <= msec )
+    if( mTimeout <= sTimeMgr.now() )
     {
         if( restart )
             Start();
@@ -77,12 +65,7 @@ bool Timer::Check( bool restart )
 
 void Timer::Sleep( bool restart )
 {
-#ifdef WIN32
-    Msec msec = sTimeMgr.nowWin();
-#else /* !WIN32 */
-    Msec msec = sTimeMgr.nowUnix();
-#endif /* !WIN32 */
-
+    const Msec msec = sTimeMgr.now();
     if( msec < mTimeout )
         mt::Thread::Sleep( mTimeout - msec );
 
