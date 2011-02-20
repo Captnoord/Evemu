@@ -116,7 +116,7 @@ void Parser::RemoveParser( const char* name )
     std::map< std::string, ElementParser* >::iterator res = mParsers.find( name );
     if( mParsers.end() != res )
     {
-        SafeDelete( res->second );
+        util::safeDelete( res->second );
         mParsers.erase( res );
     }
 }
@@ -127,7 +127,7 @@ void Parser::ClearParsers()
     cur = mParsers.begin();
     end = mParsers.end();
     for(; cur != end; ++cur )
-        SafeDelete( cur->second );
+        util::safeDelete( cur->second );
 
     mParsers.clear();
 }

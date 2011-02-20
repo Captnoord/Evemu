@@ -179,7 +179,7 @@ QueryResult::QueryResult()
 
 QueryResult::~QueryResult()
 {
-    SafeDeleteArray( mFields );
+    util::safeDeleteArray( mFields );
 
     if( NULL != mResult )
         mysql_free_result( mResult );
@@ -257,7 +257,7 @@ void QueryResult::Reset()
 
 void QueryResult::SetResult( MYSQL_RES** res, size_t colCount )
 {
-    SafeDeleteArray( mFields );
+    util::safeDeleteArray( mFields );
 
     if( NULL != mResult )
         mysql_free_result( mResult );
@@ -339,7 +339,7 @@ bool Core::RunQuery( QueryResult& into, const char* queryFmt, ... )
         }
     }
 
-    SafeFree( query );
+    util::safeFree( query );
     return result;
 }
 
@@ -359,7 +359,7 @@ bool Core::RunQuery( Error& err, const char* queryFmt, ... )
         result = RunQueryLocked( err, query, queryLen );
     }
 
-    SafeFree( query );
+    util::safeFree( query );
     return result;
 }
 
@@ -384,7 +384,7 @@ bool Core::RunQuery( Error& err, size_t& affectedRows, const char* queryFmt, ...
         }
     }
 
-    SafeFree( query );
+    util::safeFree( query );
     return result;
 }
 
@@ -409,7 +409,7 @@ bool Core::RunQueryLID( Error& err, uint64& lastInsertId, const char* queryFmt, 
         }
     }
 
-    SafeFree( query );
+    util::safeFree( query );
     return result;
 }
 
