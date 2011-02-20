@@ -30,6 +30,12 @@ namespace common
 {
     namespace net
     {
+        template< typename L3 >
+        class Socket;
+
+        template< typename L3 >
+        class StreamSocket;
+
 #   ifdef WITH_IPV6
         /**
          * @brief Contains information about IPv6.
@@ -38,66 +44,96 @@ namespace common
          */
         struct Ip6
         {
-            /// Typedef for socket address.
-            typedef sockaddr_in6 SocketAddress;
-            /// Typedef for address.
-            typedef in6_addr Address;
-            /// Typedef for port.
-            typedef uint16 Port;
-            /// Typedef for flow info
-            typedef uint32 FlowInfo;
-            /// Typedef for scope ID
-            typedef uint32 ScopeID;
-
             /// Address family.
             static const int ADDRESS_FAMILY;
 
-            /// Socket pseudo-address "any".
-            static const SocketAddress SOCKET_ADDRESS_ANY;
-
             /// Pseudo-address "any".
-            static const Address ADDRESS_ANY;
+            static const in6_addr ADDRESS_ANY;
             /// Pseudo-address "loopback".
-            static const Address ADDRESS_LOOPBACK;
+            static const in6_addr ADDRESS_LOOPBACK;
 
             /**
-             * @brief Obtains a socket address.
+             * @brief A socket address.
              *
-             * @param[in] address An address.
-             * @param[in] port    A port.
-             * @param[in] fi      Flow info.
-             * @param[in] sid     A scope ID.
-             *
-             * @return The socket address.
+             * @author Bloody.Rabbit
              */
-            static SocketAddress GetSocketAddress( const Address& address, const Port& port,
-                                                   const FlowInfo& fi = 0, const ScopeID& sid = 0 );
+            class SocketAddress
+            {
+                friend class Socket< Ip6 >;
+                friend class StreamSocket< Ip6 >;
 
-            /**
-             * @brief Obtains an address from a socket address.
-             *
-             * @param[in] socketAddress A socket address.
-             *
-             * @return The address.
-             */
-            static Address GetAddressBySocketAddress( const SocketAddress& socketAddress );
+            public:
+                /**
+                 * @brief Constructor with socket address.
+                 *
+                 * @param[in] sockAddr Socket address.
+                 */
+                SocketAddress( const sockaddr_in6& sockAddr );
+                /**
+                 * @brief Primary constructor.
+                 *
+                 * @param[in] addr Network address.
+                 * @param[in] port Port.
+                 * @param[in] fi   Flow info.
+                 * @param[in] sid  Scope ID.
+                 */
+                SocketAddress( const in6_addr& addr = ADDRESS_ANY, uint16 port = 0,
+                               uint32 fi = 0, uint32 sid = 0 );
 
-            /**
-             * @brief Obtains a port.
-             *
-             * @param[in] port A port number.
-             *
-             * @return The port.
-             */
-            static Port GetPort( uint16 port );
-            /**
-             * @brief Obtains a port from a socket address.
-             *
-             * @param[in] socketAddress A socket address.
-             *
-             * @return The port.
-             */
-            static Port GetPortBySocketAddress( const SocketAddress& socketAddress );
+                /**
+                 * @brief Obtains network address.
+                 *
+                 * @return The network address.
+                 */
+                const in6_addr& address() const;
+                /**
+                 * @brief Obtains port.
+                 *
+                 * @return The port.
+                 */
+                uint16 port() const;
+                /**
+                 * @brief Obtains flow info.
+                 *
+                 * @return The flow info.
+                 */
+                uint32 flowInfo() const;
+                /**
+                 * @brief Obtains scope ID.
+                 *
+                 * @return The scope ID.
+                 */
+                uint32 scopeId() const;
+
+                /**
+                 * @brief Sets network address.
+                 *
+                 * @param[in] addr Network address.
+                 */
+                void setAddress( const in6_addr& addr );
+                /**
+                 * @brief Sets port.
+                 *
+                 * @param[in] port Port.
+                 */
+                void setPort( uint16 port );
+                /**
+                 * @brief Sets flow info.
+                 *
+                 * @param[in] flowInfo Flow info.
+                 */
+                void setFlowInfo( uint32 flowInfo );
+                /**
+                 * @brief Sets scope ID.
+                 *
+                 * @param[in] scopeId Scope ID.
+                 */
+                void setScopeId( uint32 scopeId );
+
+            protected:
+                /// The socket address.
+                sockaddr_in6 mSocketAddress;
+            };
         };
 #   endif /* WITH_IPV6 */
     }

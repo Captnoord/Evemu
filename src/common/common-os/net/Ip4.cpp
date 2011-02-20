@@ -37,84 +37,77 @@ using namespace common::net;
 /*************************************************************************/
 const int Ip4::ADDRESS_FAMILY = AF_INET;
 
-const Ip4::SocketAddress Ip4::SOCKET_ADDRESS_ANY =
-    Ip4::GetSocketAddress( Ip4::ADDRESS_ANY,
-                           Ip4::GetPort( 0 ) )
-;
+const in_addr Ip4::ADDRESS_ANY = { INADDR_ANY };
+const in_addr Ip4::ADDRESS_BROADCAST = { INADDR_BROADCAST };
 
-const Ip4::Address Ip4::ADDRESS_ANY = Ip4::GetAddress( INADDR_ANY );
-const Ip4::Address Ip4::ADDRESS_BROADCAST = Ip4::GetAddress( INADDR_BROADCAST );
-
-Ip4::SocketAddress Ip4::GetSocketAddress( const Ip4::Address& address,
-                                          const Ip4::Port& port )
+/*************************************************************************/
+/* common::net::Ip4::SocketAddress                                       */
+/*************************************************************************/
+Ip4::SocketAddress::SocketAddress( const sockaddr_in& sockAddr )
+: mSocketAddress( sockAddr )
 {
-    SocketAddress socketAddress;
-    socketAddress.sin_family = ADDRESS_FAMILY;
-    socketAddress.sin_port = port;
-    socketAddress.sin_addr = address;
-
-    return socketAddress;
+    assert( Ip4::ADDRESS_FAMILY == mSocketAddress.sin_family );
 }
 
-Ip4::Address Ip4::GetAddress( uint32 address )
+Ip4::SocketAddress::SocketAddress( const in_addr& addr, uint16 port )
 {
-    Address addr;
-    addr.s_addr = address;
+    mSocketAddress.sin_family = Ip4::ADDRESS_FAMILY;
 
-    return addr;
+    setAddress( addr );
+    setPort( port );
 }
 
-Ip4::Address Ip4::GetAddressByIP( const char* ip )
+const in_addr& Ip4::SocketAddress::address() const
 {
-    /* inet_addr may fail, but since the error code is
-       always ambiguous, we don't care. */
-    return GetAddress( inet_addr( ip ) );
+    return mSocketAddress.sin_addr;
 }
 
-Ip4::Address Ip4::GetAddressByHostname( const char* hostname )
+uint16 Ip4::SocketAddress::port() const
 {
-    hostent* h = gethostbyname( hostname );
-    if( NULL == h )
-    {
-        sLog.error( "network", "Failed to translate '%s' into address: error %d",
-                    hostname, H_NET_ERRNO );
-        return ADDRESS_ANY;
-    }
-
-    return *reinterpret_cast< Ip4::Address* >( h->h_addr_list[0] );
+    return ::ntohs( mSocketAddress.sin_port );
 }
 
-Ip4::Address Ip4::GetAddressBySocketAddress( const Ip4::SocketAddress& socketAddress )
-{
-    return socketAddress.sin_addr;
-}
-
-Ip4::Port Ip4::GetPort( uint16 port )
-{
-    return htons( port );
-}
-
-Ip4::Port Ip4::GetPortBySocketAddress( const Ip4::SocketAddress& socketAddress )
-{
-    return socketAddress.sin_port;
-}
-
-std::string Ip4::PrintSocketAddress( const Ip4::SocketAddress& socketAddress )
+std::string Ip4::SocketAddress::str() const
 {
     std::string str;
-    sprintf( str, "%s:%s",
-             PrintAddress( GetAddressBySocketAddress( socketAddress ) ).c_str(),
-             PrintPort( GetPortBySocketAddress( socketAddress ) ).c_str() );
+
+    int code = ::sprintf( str, "%s:%u", ::inet_ntoa( address() ), port() );
+    assert( 0 == code );
 
     return str;
 }
 
-std::string Ip4::PrintAddress( const Ip4::Address& address )
+void Ip4::SocketAddress::setAddress( const in_addr& addr )
 {
-    return std::string( inet_ntoa( address ) );
+    mSocketAddress.sin_addr = addr;
 }
 
-std::string Ip4::PrintPort( const Ip4::Port& port )
+void Ip4::SocketAddress::setAddress( const char* ip )
 {
-    return util::String< char >::from< uint16 >( ntohs( port ) );
+    /* inet_addr may fail, but since the error code is
+       always ambiguous, we don't care. */
+    in_addr addr = { ::inet_addr( ip ) };
+
+    setAddress( addr );
+}
+
+bool Ip4::SocketAddress::setHostname( const char* hostname )
+{
+    hostent* h = ::gethostbyname( hostname );
+    if( NULL != h )
+    {
+        setAddress( *reinterpret_cast< in_addr* >( h->h_addr_list[0] ) );
+        return true;
+    }
+    else
+    {
+        sLog.error( "network", "Failed to translate '%s' into address: error %d",
+                    hostname, H_NET_ERRNO );
+        return false;
+    }
+}
+
+void Ip4::SocketAddress::setPort( uint16 port )
+{
+    mSocketAddress.sin_port = ::htons( port );
 }

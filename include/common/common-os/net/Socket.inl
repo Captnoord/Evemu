@@ -28,15 +28,13 @@
 /*************************************************************************/
 template< typename L3 >
 Socket< L3 >::Socket()
-: mSocket( INVALID_SOCKET ),
-  mAddress( L3::SOCKET_ADDRESS_ANY )
+: mSocket( INVALID_SOCKET )
 {
 }
 
 template< typename L3 >
 Socket< L3 >::Socket( int type, int prot )
-: mSocket( INVALID_SOCKET ),
-  mAddress( L3::SOCKET_ADDRESS_ANY )
+: mSocket( INVALID_SOCKET )
 {
     int code = Create( type, prot );
     assert( 0 == code );
@@ -63,7 +61,7 @@ int Socket< L3 >::Create( int type, int prot )
         return NET_ERRNO;
 
     // Assign it
-    code = Assign( socket, L3::SOCKET_ADDRESS_ANY );
+    code = Assign( socket, Address() );
     if( 0 != code )
         return code;
 
@@ -73,15 +71,15 @@ int Socket< L3 >::Create( int type, int prot )
 template< typename L3 >
 int Socket< L3 >::Close()
 {
-    return Assign( INVALID_SOCKET, L3::SOCKET_ADDRESS_ANY );
+    return Assign( INVALID_SOCKET, Address() );
 }
 
 template< typename L3 >
 int Socket< L3 >::Bind( const Address& address )
 {
     if( 0 != ::bind( mSocket,
-                     reinterpret_cast< const sockaddr* >( &address ),
-                     sizeof( address ) ) )
+                     reinterpret_cast< const sockaddr* >( &address.mSocketAddress ),
+                     sizeof( address.mSocketAddress ) ) )
         return NET_ERRNO;
 
     mAddress = address;

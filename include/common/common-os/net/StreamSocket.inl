@@ -47,8 +47,8 @@ template< typename L3 >
 int StreamSocket< L3 >::Connect( const Address& address )
 {
     if( 0 != ::connect( Base::mSocket,
-                        reinterpret_cast< const sockaddr* >( &address ),
-                        sizeof( address ) ) )
+                        reinterpret_cast< const sockaddr* >( &address.mSocketAddress ),
+                        sizeof( address.mSocketAddress ) ) )
         return NET_ERRNO;
 
     Base::mAddress = address;
@@ -124,10 +124,10 @@ int StreamSocket< L3 >::Accept( StreamSocket& into )
 
     // Obtain the new socket
     Address address;
-    socklen_t len = sizeof( address );
+    socklen_t len = sizeof( address.mSocketAddress );
 
     SOCKET socket = ::accept( Base::mSocket,
-                              reinterpret_cast< sockaddr* >( &address ),
+                              reinterpret_cast< sockaddr* >( &address.mSocketAddress ),
                               &len );
     if( INVALID_SOCKET == socket )
         return NET_ERRNO;

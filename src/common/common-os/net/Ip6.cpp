@@ -36,41 +36,66 @@ using namespace common::net;
 /*************************************************************************/
 const int Ip6::ADDRESS_FAMILY = AF_INET6;
 
-const Ip6::SocketAddress Ip6::SOCKET_ADDRESS_ANY =
-    Ip6::GetSocketAddress( Ip6::ADDRESS_ANY,
-                           Ip6::GetPort( 0 ) )
-;
+const in6_addr Ip6::ADDRESS_ANY = ::in6addr_any;
+const in6_addr Ip6::ADDRESS_LOOPBACK = ::in6addr_loopback;
 
-const Ip6::Address Ip6::ADDRESS_ANY = ::in6addr_any;
-const Ip6::Address Ip6::ADDRESS_LOOPBACK = ::in6addr_loopback;
-
-Ip6::SocketAddress Ip6::GetSocketAddress( const Ip6::Address& address,
-                                          const Ip6::Port& port,
-                                          const Ip6::FlowInfo& fi,
-                                          const Ip6::ScopeID& sid )
+/*************************************************************************/
+/* common::net::Ip6::SocketAddress                                       */
+/*************************************************************************/
+Ip6::SocketAddress::SocketAddress( const sockaddr_in6& sockAddr )
+: mSocketAddress( sockAddr )
 {
-    Ip6::SocketAddress socketAddress;
-    socketAddress.sin6_family = Ip6::ADDRESS_FAMILY;
-    socketAddress.sin6_addr = address;
-    socketAddress.sin6_port = port;
-    socketAddress.sin6_flowinfo = fi;
-    socketAddress.sin6_scope_id = sid;
-
-    return socketAddress;
+    assert( Ip6::ADDRESS_FAMILY == mSocketAddress.sin6_family );
 }
 
-Ip6::Address Ip6::GetAddressBySocketAddress( const SocketAddress& socketAddress )
+Ip6::SocketAddress::SocketAddress( const in6_addr& addr, uint16 port,
+                                   uint32 flowInfo, uint32 scopeId )
 {
-    return socketAddress.sin6_addr;
+    mSocketAddress.sin6_family = Ip6::ADDRESS_FAMILY;
+
+    setAddress( addr );
+    setPort( port );
+    setFlowInfo( flowInfo );
+    setScopeId( scopeId );
 }
 
-Ip6::Port Ip6::GetPort( uint16 port )
+const in6_addr& Ip6::SocketAddress::address() const
 {
-    return htons( port );
+    return mSocketAddress.sin6_addr;
 }
 
-Ip6::Port Ip6::GetPortBySocketAddress( const SocketAddress& socketAddress )
+uint16 Ip6::SocketAddress::port() const
 {
-    return socketAddress.sin6_port;
+    return ::ntohs( mSocketAddress.sin6_port );
+}
+
+uint32 Ip6::SocketAddress::flowInfo() const
+{
+    return mSocketAddress.sin6_flowinfo;
+}
+
+uint32 Ip6::SocketAddress::scopeId() const
+{
+    return mSocketAddress.sin6_scope_id;
+}
+
+void Ip6::SocketAddress::setAddress( const in6_addr& addr )
+{
+    mSocketAddress.sin6_addr = addr;
+}
+
+void Ip6::SocketAddress::setPort( uint16 port )
+{
+    mSocketAddress.sin6_port = ::htons( port );
+}
+
+void Ip6::SocketAddress::setFlowInfo( uint32 flowInfo )
+{
+    mSocketAddress.sin6_flowinfo = flowInfo;
+}
+
+void Ip6::SocketAddress::setScopeId( uint32 scopeId )
+{
+    mSocketAddress.sin6_scope_id = scopeId;
 }
 #endif /* WITH_IPV6 */

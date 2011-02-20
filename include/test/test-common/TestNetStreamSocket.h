@@ -38,8 +38,6 @@ namespace test
     : public CppUnit::TestCase
     {
     public:
-        /// A test socket address.
-        static const typename L3::SocketAddress SOCKET_ADDRESS;
         /// A test message.
         static const char MESSAGE[];
 
@@ -56,38 +54,36 @@ namespace test
          */
         void runTest()
         {
-            // Create the sockets
+            // Prepare socket address
+            typename L3::SocketAddress socketAddress;
+
+            CPPUNIT_ASSERT( socketAddress.setHostname( "localhost" ) );
+            socketAddress.setPort( 43250 );
+
+            // Create and setup the sockets
             CPPUNIT_ASSERT_EQUAL( 0, mClient.Create( IPPROTO_TCP ) );
             CPPUNIT_ASSERT_EQUAL( 0, mServer.Create( IPPROTO_TCP ) );
 
-            // Set a nonblocking mode on the client socket
 #       ifdef WIN32
             CPPUNIT_ASSERT_EQUAL( 0, mClient.Ioctl( FIONBIO, 1 ) );
 #       else /* !WIN32 */
             CPPUNIT_ASSERT_EQUAL( 0, mClient.Fcntl( F_SETFL, O_NONBLOCK ) );
 #       endif /* !WIN32 */
 
-            // Set SO_REUSEADDR on the server socket
             CPPUNIT_ASSERT_EQUAL( 0, mServer.SetOption( SOL_SOCKET, SO_REUSEADDR, 1 ) );
 
-            // Start listening
-            CPPUNIT_ASSERT_EQUAL( 0, mServer.Listen( SOCKET_ADDRESS ) );
-
-            // Try to connect (asynchronously)
-            CPPUNIT_ASSERT_EQUAL( EINPROGRESS, mClient.Connect( SOCKET_ADDRESS ) );
-
-            // Accept the connection (blocking)
+            // Try to connect
             net::StreamSocket< L3 > acceptedClient;
+
+            CPPUNIT_ASSERT_EQUAL( 0, mServer.Listen( socketAddress ) );
+            CPPUNIT_ASSERT_EQUAL( EINPROGRESS, mClient.Connect( socketAddress ) );
             CPPUNIT_ASSERT_EQUAL( 0, mServer.Accept( acceptedClient ) );
 
-            // Send the data (asynchronously)
+            // Transfer and verify the data
             util::Buffer buf( MESSAGE, MESSAGE + sizeof( MESSAGE ) );
+
             CPPUNIT_ASSERT_EQUAL( stream::ERROR_OK, mClient.Write( buf ) );
-
-            // Receive the data (blocking)
             CPPUNIT_ASSERT_EQUAL( stream::ERROR_OK, acceptedClient.Read( buf ) );
-
-            // Compare the data
             CPPUNIT_ASSERT( std::equal( MESSAGE, MESSAGE + sizeof( MESSAGE ),
                                         buf.begin< char >() ) );
 
@@ -104,10 +100,6 @@ namespace test
         net::StreamSocket< L3 > mServer;
     };
 
-    template< typename L3 >
-    const typename L3::SocketAddress TestNetStreamSocket< L3 >::SOCKET_ADDRESS =
-        L3::GetSocketAddress( L3::GetAddressByHostname( "localhost" ),
-                              L3::GetPort( 43250 ) );
     template< typename L3 >
     const char TestNetStreamSocket< L3 >::MESSAGE[] =
         "This is a test message of TestNetStreamSocket.";

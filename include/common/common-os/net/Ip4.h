@@ -30,6 +30,12 @@ namespace common
 {
     namespace net
     {
+        template< typename L3 >
+        class Socket;
+
+        template< typename L3 >
+        class StreamSocket;
+
         /**
          * @brief Contains information about IPv4.
          *
@@ -37,108 +43,93 @@ namespace common
          */
         struct Ip4
         {
-            /// Typedef for socket address.
-            typedef sockaddr_in SocketAddress;
-            /// Typedef for address.
-            typedef in_addr Address;
-            /// Typedef for port.
-            typedef uint16 Port;
-
             /// Address family.
             static const int ADDRESS_FAMILY;
 
-            /// Socket pseudo-address "any".
-            static const SocketAddress SOCKET_ADDRESS_ANY;
-
             /// Pseudo-address "any".
-            static const Address ADDRESS_ANY;
+            static const in_addr ADDRESS_ANY;
             /// Pseudo-address "broadcast".
-            static const Address ADDRESS_BROADCAST;
+            static const in_addr ADDRESS_BROADCAST;
 
             /**
-             * @brief Obtains a socket address.
+             * @brief A socket address.
              *
-             * @param[in] address The address to use.
-             * @param[in] port    The port to use.
-             *
-             * @return The socket address.
+             * @author Bloody.Rabbit
              */
-            static SocketAddress GetSocketAddress( const Address& address, const Port& port );
+            class SocketAddress
+            {
+                friend class Socket< Ip4 >;
+                friend class StreamSocket< Ip4 >;
 
-            /**
-             * @brief Obtains an address.
-             *
-             * @param[in] address The address.
-             *
-             * @return The address.
-             */
-            static Address GetAddress( uint32 address );
-            /**
-             * @brief Obtains an address by IP.
-             *
-             * @param[in] ip An IP address in dotted form.
-             *
-             * @return The address.
-             */
-            static Address GetAddressByIP( const char* ip );
-            /**
-             * @brief Obtains an address by hostname.
-             *
-             * @param[in] hostname A hostname.
-             *
-             * @return The address.
-             */
-            static Address GetAddressByHostname( const char* hostname );
-            /**
-             * @brief Obtains an address by socket address.
-             *
-             * @param[in] socketAddress The socket address.
-             *
-             * @return The address.
-             */
-            static Address GetAddressBySocketAddress( const SocketAddress& socketAddress );
+            public:
+                /**
+                 * @brief Constructor with socket address.
+                 *
+                 * @param[in] addr Socket address.
+                 */
+                SocketAddress( const sockaddr_in& sockAddr );
+                /**
+                 * @brief Primary constructor.
+                 *
+                 * @param[in] addr Network address.
+                 * @param[in] port Port.
+                 */
+                SocketAddress( const in_addr& addr = ADDRESS_ANY, uint16 port = 0 );
 
-            /**
-             * @brief Obtains a port.
-             *
-             * @param[in] port A port number.
-             *
-             * @return The port.
-             */
-            static Port GetPort( uint16 port );
-            /**
-             * @brief Obtains a port by socket address.
-             *
-             * @param[in] socketAddress The socket address.
-             *
-             * @return The port.
-             */
-            static Port GetPortBySocketAddress( const SocketAddress& socketAddress );
+                /**
+                 * @brief Obtains network address from the socket address.
+                 *
+                 * @return The network address.
+                 */
+                const in_addr& address() const;
+                /**
+                 * @brief Obtains port from the socket address.
+                 *
+                 * @return The port.
+                 */
+                uint16 port() const;
 
-            /**
-             * @brief Prints a socket address.
-             *
-             * @param[in] socketAddress The socket address.
-             *
-             * @return The resulting string.
-             */
-            static std::string PrintSocketAddress( const SocketAddress& socketAddress );
-            /**
-             * @brief Prints an address.
-             *
-             * @param[in] address The address.
-             *
-             * @return The resulting string.
-             */
-            static std::string PrintAddress( const Address& address );
-            /**
-             * @brief Prints a port.
-             *
-             * @param[in] port The port.
-             *
-             * @return The resulting string.
-             */
-            static std::string PrintPort( const Port& port );
+                /**
+                 * @brief Creates string containing info about address and port.
+                 *
+                 * The string has form of "a.b.c.d:x".
+                 *
+                 * @return The string.
+                 */
+                std::string str() const;
+
+                /**
+                 * @brief Sets network address.
+                 *
+                 * @param[in] addr The network address.
+                 */
+                void setAddress( const in_addr& addr );
+                /**
+                 * @brief Sets network address.
+                 *
+                 * @param[in] ip The network address in form "a.b.c.d"
+                 */
+                void setAddress( const char* ip );
+                /**
+                 * @brief Sets network address by hostname.
+                 *
+                 * @param[in] hostname The hostname.
+                 *
+                 * @return true  Hostname resolving successfull.
+                 * @return false Hostname resolving failed.
+                 */
+                bool setHostname( const char* hostname );
+                /**
+                 * @brief Sets port.
+                 *
+                 * @param[in] port The port.
+                 */
+                void setPort( uint16 port );
+
+            protected:
+                /// The socket address.
+                sockaddr_in mSocketAddress;
+            };
         };
     }
 }
