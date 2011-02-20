@@ -83,9 +83,9 @@ namespace common
             Event mWaitEvent;
 
             /// Current count of waiting threads.
-            SIZE_T mCurrentCount;
+            UINT mCurrentCount;
             /// Count of threads to free.
-            SIZE_T mToFreeCount;
+            UINT mToFreeCount;
 
             /// A mutex to protect this whole stuff.
             mt::Mutex mMutex;
