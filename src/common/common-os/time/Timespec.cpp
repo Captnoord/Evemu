@@ -153,41 +153,41 @@ bool Timespec::operator>=( const Timespec& oth ) const
 Timespec Timespec::operator+( const Timespec& oth ) const
 {
     return Timespec( ( sec() + oth.sec() )
-                           + ( nsec() + oth.nsec() ) / ( NSEC_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC ),
-                           ( nsec() + oth.nsec() ) % ( NSEC_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC ) );
+                     + ( nsec() + oth.nsec() ) / ( NSEC_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC ),
+                     ( nsec() + oth.nsec() ) % ( NSEC_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC ) );
 }
 
 Timespec Timespec::operator-( const Timespec& oth ) const
 {
-    const size_t k = ( nsec() < oth.nsec()
-                       ? 1 + ( oth.nsec() - nsec() - 1 ) / ( NSEC_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC )
-                       : 0 );
+    const unsigned long long k = ( nsec() < oth.nsec()
+                                   ? 1 + ( oth.nsec() - nsec() - 1 ) / ( NSEC_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC )
+                                   : 0 );
 
     return Timespec( sec() - oth.sec() - k,
-                           NSEC_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC * k + nsec() - oth.nsec() );
+                     NSEC_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC * k + nsec() - oth.nsec() );
 }
 
-Timespec Timespec::operator*( size_t ratio ) const
+Timespec Timespec::operator*( unsigned long long ratio ) const
 {
     return Timespec( ( sec() * ratio )
-                           + ( nsec() * ratio ) / ( NSEC_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC ),
-                           ( nsec() * ratio ) % ( NSEC_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC ) );
+                     + ( nsec() * ratio ) / ( NSEC_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC ),
+                     ( nsec() * ratio ) % ( NSEC_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC ) );
 }
 
-Timespec Timespec::operator/( size_t ratio ) const
+Timespec Timespec::operator/( unsigned long long ratio ) const
 {
     return Timespec( ( sec() / ratio ),
-                           ( NSEC_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC * ( sec() % ratio )
-                             + nsec() ) / ratio );
+                     ( NSEC_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC * ( sec() % ratio )
+                       + nsec() ) / ratio );
 }
 
-Timespec Timespec::operator%( size_t ratio ) const
+Timespec Timespec::operator%( unsigned long long ratio ) const
 {
-    const size_t mod = ( NSEC_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC * ( sec() % ratio )
-                         + nsec() ) % ratio;
+    const unsigned long long mod = ( NSEC_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC * ( sec() % ratio )
+                                     + nsec() ) % ratio;
 
     return Timespec( mod / ( NSEC_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC ),
-                           mod % ( NSEC_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC ) );
+                     mod % ( NSEC_PER_USEC * USEC_PER_MSEC * MSEC_PER_SEC ) );
 }
 
 Timespec& Timespec::operator=( const Timespec& oth )
@@ -206,17 +206,17 @@ Timespec& Timespec::operator-=( const Timespec& oth )
     return ( *this = *this - oth );
 }
 
-Timespec& Timespec::operator*=( size_t ratio )
+Timespec& Timespec::operator*=( unsigned long long ratio )
 {
     return ( *this = *this * ratio );
 }
 
-Timespec& Timespec::operator/=( size_t ratio )
+Timespec& Timespec::operator/=( unsigned long long ratio )
 {
     return ( *this = *this / ratio );
 }
 
-Timespec& Timespec::operator%=( size_t ratio )
+Timespec& Timespec::operator%=( unsigned long long ratio )
 {
     return ( *this = *this % ratio );
 }

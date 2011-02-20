@@ -127,11 +127,11 @@ namespace common
             /// A difference operator.
             Timespec operator-( const Timespec& oth ) const;
             /// A multiply operator.
-            Timespec operator*( size_t ratio ) const;
+            Timespec operator*( unsigned long long ratio ) const;
             /// A division operator.
-            Timespec operator/( size_t ratio ) const;
+            Timespec operator/( unsigned long long ratio ) const;
             /// A remainder operator.
-            Timespec operator%( size_t ratio ) const;
+            Timespec operator%( unsigned long long ratio ) const;
 
             /// An assignment operator.
             Timespec& operator=( const Timespec& oth );
@@ -140,11 +140,11 @@ namespace common
             /// A substract operator.
             Timespec& operator-=( const Timespec& oth );
             /// An expand operator.
-            Timespec& operator*=( size_t ratio );
+            Timespec& operator*=( unsigned long long ratio );
             /// A reduce operator.
-            Timespec& operator/=( size_t ratio );
+            Timespec& operator/=( unsigned long long ratio );
             /// A remainder-assign operator.
-            Timespec& operator%=( size_t ratio );
+            Timespec& operator%=( unsigned long long ratio );
 
         protected:
             /// The <code>timespec</code>.

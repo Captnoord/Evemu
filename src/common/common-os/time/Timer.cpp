@@ -35,14 +35,10 @@ using namespace common::time;
 /*************************************************************************/
 /* common::time::Timer                                                   */
 /*************************************************************************/
-Timer::Timer( size_t period, bool accurate )
+Timer::Timer( const Msec& period, bool accurate )
 : mTimeout( 0 ),
   mPeriod( period ),
   mAccurate( accurate )
-{
-}
-
-Timer::~Timer()
 {
 }
 

@@ -131,11 +131,11 @@ namespace common
             /// A difference operator.
             Timeval operator-( const Timeval& oth ) const;
             /// A multiply operator.
-            Timeval operator*( size_t ratio ) const;
+            Timeval operator*( unsigned long long ratio ) const;
             /// A division operator.
-            Timeval operator/( size_t ratio ) const;
+            Timeval operator/( unsigned long long ratio ) const;
             /// A remainder operator.
-            Timeval operator%( size_t ratio ) const;
+            Timeval operator%( unsigned long long ratio ) const;
 
             /// An assignment operator.
             Timeval& operator=( const Timeval& oth );
@@ -144,11 +144,11 @@ namespace common
             /// A substract operator.
             Timeval& operator-=( const Timeval& oth );
             /// An expand operator.
-            Timeval& operator*=( size_t ratio );
+            Timeval& operator*=( unsigned long long ratio );
             /// A reduce operator.
-            Timeval& operator/=( size_t ratio );
+            Timeval& operator/=( unsigned long long ratio );
             /// A remainder-assign operator.
-            Timeval& operator%=( size_t ratio );
+            Timeval& operator%=( unsigned long long ratio );
 
         protected:
             /// The <code>timeval</code> itself.

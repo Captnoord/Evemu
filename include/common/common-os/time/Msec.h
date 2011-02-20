@@ -38,7 +38,7 @@ namespace common
 #   endif /* HAVE_TIMESPEC */
 
         /**
-         * @brief A wrapper around <code>size_t</code> as a count of milliseconds.
+         * @brief A wrapper around <code>unsigned long long</code> as a count of milliseconds.
          *
          * @author Bloody.Rabbit
          */
@@ -65,7 +65,7 @@ namespace common
              *
              * @param[in] msec A number of milliseconds.
              */
-            Msec( size_t msec = 0 );
+            Msec( unsigned long long msec = 0 );
 
             /**
              * @brief A copy constructor.
@@ -95,7 +95,7 @@ namespace common
             Msec( const WinTime& time );
 
             /// Obtains the stored number of milliseconds.
-            size_t count() const { return mMsec; }
+            unsigned long long count() const { return mMsec; }
 
             /// An equivalency operator.
             bool operator==( const Msec& oth ) const;
@@ -115,11 +115,11 @@ namespace common
             /// A difference operator.
             Msec operator-( const Msec& oth ) const;
             /// A multiply operator.
-            Msec operator*( size_t ratio ) const;
+            Msec operator*( unsigned long long ratio ) const;
             /// A division operator.
-            Msec operator/( size_t ratio ) const;
+            Msec operator/( unsigned long long ratio ) const;
             /// A remainder operator.
-            Msec operator%( size_t ratio ) const;
+            Msec operator%( unsigned long long ratio ) const;
 
             /// An assignment operator.
             Msec& operator=( const Msec& oth );
@@ -128,15 +128,15 @@ namespace common
             /// A substract operator.
             Msec& operator-=( const Msec& oth );
             /// An expand operator.
-            Msec& operator*=( size_t ratio );
+            Msec& operator*=( unsigned long long ratio );
             /// A reduce operator.
-            Msec& operator/=( size_t ratio );
+            Msec& operator/=( unsigned long long ratio );
             /// A remainder-assign operator.
-            Msec& operator%=( size_t ratio );
+            Msec& operator%=( unsigned long long ratio );
 
         protected:
             /// The count of milliseconds.
-            size_t mMsec;
+            unsigned long long mMsec;
         };
     }
 }

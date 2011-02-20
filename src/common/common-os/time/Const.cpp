@@ -38,16 +38,16 @@ using namespace common::time;
  * alter them! WinTime-related calculations depend on these
  * specific values.
  */
-const size_t time::NSEC_PER_USEC = 1000;
-const size_t time::USEC_PER_MSEC = 1000;
-const size_t time::MSEC_PER_SEC = 1000;
-const size_t time::SEC_PER_MIN = 60;
-const size_t time::MIN_PER_HOUR = 60;
-const size_t time::HOUR_PER_DAY = 24;
-const size_t time::DAY_PER_MONTH = 30;
-const size_t time::MONTH_PER_YEAR = 12;
+const unsigned int time::NSEC_PER_USEC = 1000;
+const unsigned int time::USEC_PER_MSEC = 1000;
+const unsigned int time::MSEC_PER_SEC = 1000;
+const unsigned int time::SEC_PER_MIN = 60;
+const unsigned int time::MIN_PER_HOUR = 60;
+const unsigned int time::HOUR_PER_DAY = 24;
+const unsigned int time::DAY_PER_MONTH = 30;
+const unsigned int time::MONTH_PER_YEAR = 12;
 
-const size_t time::NSEC_PER_WINTIME = 100;
-const size_t time::WINTIME_PER_USEC = 10;
+const unsigned int time::NSEC_PER_WINTIME = 100;
+const unsigned int time::WINTIME_PER_USEC = 10;
 
-const size_t time::EPOCH_DIFF_SEC = time::SEC_PER_MIN * time::MIN_PER_HOUR * time::HOUR_PER_DAY * 134774;
+const unsigned long long time::EPOCH_DIFF_SEC = time::SEC_PER_MIN * time::MIN_PER_HOUR * time::HOUR_PER_DAY * 134774ULL;

@@ -35,7 +35,7 @@ using namespace common::time;
 /*************************************************************************/
 /* common::time::TimeMgr                                                 */
 /*************************************************************************/
-TimeMgr::TimeMgr( size_t period )
+TimeMgr::TimeMgr( const Msec& period )
 : mRun( true ),
   mRunTimer( period )
 {

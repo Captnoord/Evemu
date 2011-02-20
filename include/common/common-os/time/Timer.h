@@ -46,13 +46,20 @@ namespace common
              * @param[in] period   The timer period.
              * @param[in] accurate Use accurate timing.
              */
-            Timer( size_t period, bool accurate = false );
-            /// A destructor.
-            ~Timer();
+            Timer( const Msec& period, bool accurate = false );
 
-            /// Obtains timer period.
-            size_t period() const { return mPeriod; }
-            /// Obtains accurate timing option.
+            /**
+             * @brief Obtains timer period.
+             *
+             * @return The period.
+             */
+            const Msec& period() const { return mPeriod; }
+            /**
+             * @brief Obtains accurate timing option.
+             *
+             * @retval true  Accurate timing is on.
+             * @retval false Accurate timing is off.
+             */
             bool accurate() const { return mAccurate; }
 
             /**
@@ -106,7 +113,7 @@ namespace common
             Msec mTimeout;
 
             /// The timer period.
-            const size_t mPeriod;
+            const Msec mPeriod;
             /// True if accurate.
             const bool mAccurate;
         };

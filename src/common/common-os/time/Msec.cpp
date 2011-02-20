@@ -48,7 +48,7 @@ const Msec Msec::DAY = Msec::HOUR * HOUR_PER_DAY;
 const Msec Msec::MONTH = Msec::DAY * DAY_PER_MONTH;
 const Msec Msec::YEAR = Msec::MONTH * MONTH_PER_YEAR;
 
-Msec::Msec( size_t msec )
+Msec::Msec( unsigned long long msec )
 : mMsec( msec )
 {
 }
@@ -115,17 +115,17 @@ Msec Msec::operator-( const Msec& oth ) const
     return count() - oth.count();
 }
 
-Msec Msec::operator*( size_t ratio ) const
+Msec Msec::operator*( unsigned long long ratio ) const
 {
     return count() * ratio;
 }
 
-Msec Msec::operator/( size_t ratio ) const
+Msec Msec::operator/( unsigned long long ratio ) const
 {
     return count() / ratio;
 }
 
-Msec Msec::operator%( size_t ratio ) const
+Msec Msec::operator%( unsigned long long ratio ) const
 {
     return count() % ratio;
 }
@@ -148,19 +148,19 @@ Msec& Msec::operator-=( const Msec& oth )
     return *this;
 }
 
-Msec& Msec::operator*=( size_t ratio )
+Msec& Msec::operator*=( unsigned long long ratio )
 {
     mMsec *= ratio;
     return *this;
 }
 
-Msec& Msec::operator/=( size_t ratio )
+Msec& Msec::operator/=( unsigned long long ratio )
 {
     mMsec /= ratio;
     return *this;
 }
 
-Msec& Msec::operator%=( size_t ratio )
+Msec& Msec::operator%=( unsigned long long ratio )
 {
     mMsec %= ratio;
     return *this;

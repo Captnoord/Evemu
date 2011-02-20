@@ -156,41 +156,41 @@ bool Timeval::operator>=( const Timeval& oth ) const
 Timeval Timeval::operator+( const Timeval& oth ) const
 {
     return Timeval( ( sec() + oth.sec() )
-                          + ( usec() + oth.usec() ) / ( USEC_PER_MSEC * MSEC_PER_SEC ),
-                          ( usec() + oth.usec() ) % ( USEC_PER_MSEC * MSEC_PER_SEC ) );
+                    + ( usec() + oth.usec() ) / ( USEC_PER_MSEC * MSEC_PER_SEC ),
+                    ( usec() + oth.usec() ) % ( USEC_PER_MSEC * MSEC_PER_SEC ) );
 }
 
 Timeval Timeval::operator-( const Timeval& oth ) const
 {
-    const size_t k = ( usec() < oth.usec()
-                       ? 1 + ( oth.usec() - usec() - 1 ) / ( USEC_PER_MSEC * MSEC_PER_SEC )
-                       : 0 );
+    const unsigned long long k = ( usec() < oth.usec()
+                                   ? 1 + ( oth.usec() - usec() - 1 ) / ( USEC_PER_MSEC * MSEC_PER_SEC )
+                                   : 0 );
 
     return Timeval( sec() - oth.sec() - k,
-                          USEC_PER_MSEC * MSEC_PER_SEC * k + usec() - oth.usec() );
+                    USEC_PER_MSEC * MSEC_PER_SEC * k + usec() - oth.usec() );
 }
 
-Timeval Timeval::operator*( size_t ratio ) const
+Timeval Timeval::operator*( unsigned long long ratio ) const
 {
     return Timeval( ( sec() * ratio )
-                          + ( usec() * ratio ) / ( USEC_PER_MSEC * MSEC_PER_SEC ),
-                          ( usec() * ratio ) % ( USEC_PER_MSEC * MSEC_PER_SEC ) );
+                    + ( usec() * ratio ) / ( USEC_PER_MSEC * MSEC_PER_SEC ),
+                    ( usec() * ratio ) % ( USEC_PER_MSEC * MSEC_PER_SEC ) );
 }
 
-Timeval Timeval::operator/( size_t ratio ) const
+Timeval Timeval::operator/( unsigned long long ratio ) const
 {
     return Timeval( ( sec() / ratio ),
-                          ( USEC_PER_MSEC * MSEC_PER_SEC * ( sec() % ratio )
-                            + usec() ) / ratio );
+                    ( USEC_PER_MSEC * MSEC_PER_SEC * ( sec() % ratio )
+                      + usec() ) / ratio );
 }
 
-Timeval Timeval::operator%( size_t ratio ) const
+Timeval Timeval::operator%( unsigned long long ratio ) const
 {
-    const size_t mod = ( USEC_PER_MSEC * MSEC_PER_SEC * ( sec() % ratio )
-                         + usec() ) % ratio;
+    const unsigned long long mod = ( USEC_PER_MSEC * MSEC_PER_SEC * ( sec() % ratio )
+                                     + usec() ) % ratio;
 
     return Timeval( mod / ( USEC_PER_MSEC * MSEC_PER_SEC ),
-                          mod % ( USEC_PER_MSEC * MSEC_PER_SEC ) );
+                    mod % ( USEC_PER_MSEC * MSEC_PER_SEC ) );
 }
 
 Timeval& Timeval::operator=( const Timeval& oth )
@@ -209,17 +209,17 @@ Timeval& Timeval::operator-=( const Timeval& oth )
     return ( *this = *this - oth );
 }
 
-Timeval& Timeval::operator*=( size_t ratio )
+Timeval& Timeval::operator*=( unsigned long long ratio )
 {
     return ( *this = *this * ratio );
 }
 
-Timeval& Timeval::operator/=( size_t ratio )
+Timeval& Timeval::operator/=( unsigned long long ratio )
 {
     return ( *this = *this / ratio );
 }
 
-Timeval& Timeval::operator%=( size_t ratio )
+Timeval& Timeval::operator%=( unsigned long long ratio )
 {
     return ( *this = *this % ratio );
 }

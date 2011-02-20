@@ -117,11 +117,11 @@ namespace common
             /// A difference operator.
             WinTime operator-( const WinTime& oth ) const;
             /// A multiply operator.
-            WinTime operator*( size_t ratio ) const;
+            WinTime operator*( unsigned long long ratio ) const;
             /// A division operator.
-            WinTime operator/( size_t ratio ) const;
+            WinTime operator/( unsigned long long ratio ) const;
             /// A remainder operator.
-            WinTime operator%( size_t ratio ) const;
+            WinTime operator%( unsigned long long ratio ) const;
 
             /// An assignment operator.
             WinTime& operator=( const WinTime& oth );
@@ -130,11 +130,11 @@ namespace common
             /// A substract operator.
             WinTime& operator-=( const WinTime& oth );
             /// An expand operator.
-            WinTime& operator*=( size_t ratio );
+            WinTime& operator*=( unsigned long long ratio );
             /// A reduce operator.
-            WinTime& operator/=( size_t ratio );
+            WinTime& operator/=( unsigned long long ratio );
             /// A remainder-assign operator.
-            WinTime& operator%=( size_t ratio );
+            WinTime& operator%=( unsigned long long ratio );
 
         protected:
             /// The time itself.

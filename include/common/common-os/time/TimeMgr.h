@@ -52,14 +52,14 @@ namespace common
              *
              * @param[in] period The update period.
              */
-            TimeMgr( size_t period = 20 );
+            TimeMgr( const Msec& period = Msec( 20 ) );
 
             /**
              * @brief Obtains the update period.
              *
              * @return The update period.
              */
-            size_t period() const { return mRunTimer.period(); }
+            const Msec& period() const { return mRunTimer.period(); }
 
             /**
              * @brief Obtains time passed in a human readable form.
@@ -89,7 +89,11 @@ namespace common
             Timeval nowUnix() const;
 
         protected:
-            /// Never delete on exit.
+            /**
+             * @brief Never delete on exit.
+             *
+             * @return false.
+             */
             bool deleteOnExit() { return false; }
 
             /**

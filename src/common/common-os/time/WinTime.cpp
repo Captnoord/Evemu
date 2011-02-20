@@ -116,17 +116,17 @@ WinTime WinTime::operator-( const WinTime& oth ) const
     return count() - oth.count();
 }
 
-WinTime WinTime::operator*( size_t ratio ) const
+WinTime WinTime::operator*( unsigned long long ratio ) const
 {
     return count() * ratio;
 }
 
-WinTime WinTime::operator/( size_t ratio ) const
+WinTime WinTime::operator/( unsigned long long ratio ) const
 {
     return count() / ratio;
 }
 
-WinTime WinTime::operator%( size_t ratio ) const
+WinTime WinTime::operator%( unsigned long long ratio ) const
 {
     return count() % ratio;
 }
@@ -149,19 +149,19 @@ WinTime& WinTime::operator-=( const WinTime& oth )
     return *this;
 }
 
-WinTime& WinTime::operator*=( size_t ratio )
+WinTime& WinTime::operator*=( unsigned long long ratio )
 {
     mTime *= ratio;
     return *this;
 }
 
-WinTime& WinTime::operator/=( size_t ratio )
+WinTime& WinTime::operator/=( unsigned long long ratio )
 {
     mTime /= ratio;
     return *this;
 }
 
-WinTime& WinTime::operator%=( size_t ratio )
+WinTime& WinTime::operator%=( unsigned long long ratio )
 {
     mTime %= ratio;
     return *this;
