@@ -23,10 +23,13 @@
     Author:        Zhur
 */
 
-#include "EVEXmlPktGenPCH.h"
+#include "EVEXmlPktGen.h"
 
 #include "EncodeGenerator.h"
 
+/*************************************************************************/
+/* ClassEncodeGenerator                                                  */
+/*************************************************************************/
 ClassEncodeGenerator::ClassEncodeGenerator( FILE* outputFile )
 : Generator( outputFile ),
   mItemNumber( 0 ),
@@ -40,14 +43,14 @@ bool ClassEncodeGenerator::ProcessElementDef( const TiXmlElement* field )
     mName = field->Attribute( "name" );
     if( mName == NULL )
     {
-        sLog.Error( "EncodeGenerator", "<element> at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "EncodeGenerator", "<element> at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
     const TiXmlElement* main = field->FirstChildElement();
     if( main->NextSiblingElement() != NULL )
     {
-        sLog.Error( "EncodeGenerator", "<element> at line %d contains more than one root element. skipping.", field->Row() );
+        sLog.error( "EncodeGenerator", "<element> at line %d contains more than one root element. skipping.", field->Row() );
         return false;
     }
 
@@ -82,7 +85,7 @@ bool ClassEncodeGenerator::ProcessElement( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -101,7 +104,7 @@ bool ClassEncodeGenerator::ProcessElementPtr( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -131,7 +134,7 @@ bool ClassEncodeGenerator::ProcessRaw( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -165,7 +168,7 @@ bool ClassEncodeGenerator::ProcessInt( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -197,7 +200,7 @@ bool ClassEncodeGenerator::ProcessLong( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -229,7 +232,7 @@ bool ClassEncodeGenerator::ProcessReal( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -261,7 +264,7 @@ bool ClassEncodeGenerator::ProcessBool( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -292,7 +295,7 @@ bool ClassEncodeGenerator::ProcessBuffer( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -326,7 +329,7 @@ bool ClassEncodeGenerator::ProcessString( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -357,7 +360,7 @@ bool ClassEncodeGenerator::ProcessStringInline( const TiXmlElement* field )
     const char* value = field->Attribute( "value" );
     if( NULL == value )
     {
-        sLog.Error( "EncodeGenerator", "String element at line %d has no value attribute.", field->Row() );
+        sLog.error( "EncodeGenerator", "String element at line %d has no value attribute.", field->Row() );
         return false;
     }
 
@@ -377,7 +380,7 @@ bool ClassEncodeGenerator::ProcessWString( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -408,7 +411,7 @@ bool ClassEncodeGenerator::ProcessWStringInline( const TiXmlElement* field )
     const char* value = field->Attribute( "value" );
     if( NULL == value )
     {
-        sLog.Error( "EncodeGenerator", "WString element at line %d has no value attribute.", field->Row() );
+        sLog.error( "EncodeGenerator", "WString element at line %d has no value attribute.", field->Row() );
         return false;
     }
 
@@ -428,14 +431,14 @@ bool ClassEncodeGenerator::ProcessToken( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
     bool optional = false;
     const char* optional_str = field->Attribute("optional");
     if( optional_str != NULL )
-        optional = Util::String< char >::to< bool >( optional_str );
+        optional = util::String< char >::to< bool >( optional_str );
 
     const char* v = top();
     if( optional )
@@ -478,7 +481,7 @@ bool ClassEncodeGenerator::ProcessTokenInline( const TiXmlElement* field )
     const char* value = field->Attribute( "value" );
     if( NULL == value )
     {
-        sLog.Error( "EncodeGenerator", "Token element at line %d has no type attribute.", field->Row() );
+        sLog.error( "EncodeGenerator", "Token element at line %d has no type attribute.", field->Row() );
         return false;
     }
 
@@ -498,14 +501,14 @@ bool ClassEncodeGenerator::ProcessObject( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
     bool optional = false;
     const char* optional_str = field->Attribute( "optional" );
     if( NULL != optional_str )
-        optional = Util::String< char >::to< bool >( optional_str );
+        optional = util::String< char >::to< bool >( optional_str );
 
     const char* v = top();
     if( optional )
@@ -585,20 +588,20 @@ bool ClassEncodeGenerator::ProcessObjectEx( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
     const char* type = field->Attribute( "type" );
     if( type == NULL )
     {
-        sLog.Error( "EncodeGenerator", "field at line %d is missing the type attribute.", field->Row() );
+        sLog.error( "EncodeGenerator", "field at line %d is missing the type attribute.", field->Row() );
         return false;
     }
 
     bool optional = false;
     const char* optional_str = field->Attribute( "optional" );
     if( optional_str != NULL )
-        optional = Util::String< char >::to< bool >( optional_str );
+        optional = util::String< char >::to< bool >( optional_str );
 
     const char *v = top();
     if( optional )
@@ -641,14 +644,14 @@ bool ClassEncodeGenerator::ProcessTuple( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
     bool optional = false;
     const char* optional_str = field->Attribute("optional");
     if( optional_str != NULL )
-        optional = Util::String< char >::to< bool >( optional_str );
+        optional = util::String< char >::to< bool >( optional_str );
 
     const char* v = top();
     fprintf( mOutputFile,
@@ -736,14 +739,14 @@ bool ClassEncodeGenerator::ProcessList( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
     bool optional = false;
     const char* optional_str = field->Attribute( "optional" );
     if( optional_str != NULL )
-        optional = Util::String< char >::to< bool >( optional_str );
+        optional = util::String< char >::to< bool >( optional_str );
 
     const char* v = top();
     fprintf( mOutputFile,
@@ -830,7 +833,7 @@ bool ClassEncodeGenerator::ProcessListInt( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -867,7 +870,7 @@ bool ClassEncodeGenerator::ProcessListLong( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -904,7 +907,7 @@ bool ClassEncodeGenerator::ProcessListStr( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -941,14 +944,14 @@ bool ClassEncodeGenerator::ProcessDict( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
     bool optional = false;
     const char* optional_str = field->Attribute("optional");
     if( optional_str != NULL )
-        optional = Util::String< char >::to< bool >( optional_str );
+        optional = util::String< char >::to< bool >( optional_str );
 
     const char* v = top();
     fprintf( mOutputFile,
@@ -1011,13 +1014,13 @@ bool ClassEncodeGenerator::ProcessDictInline( const TiXmlElement* field )
             //we only handle dictInlineEntry elements
             if( strcmp( ele->Value(), "dictInlineEntry" ) != 0 )
             {
-                sLog.Error( "EncodeGenerator", "non-dictInlineEntry in <dictInline> at line %d, ignoring.", ele->Row() );
+                sLog.error( "EncodeGenerator", "non-dictInlineEntry in <dictInline> at line %d, ignoring.", ele->Row() );
                 continue;
             }
             const char* key = ele->Attribute( "key" );
             if( key == NULL )
             {
-                sLog.Error( "EncodeGenerator", "<dictInlineEntry> at line %d lacks a key attribute", ele->Row() );
+                sLog.error( "EncodeGenerator", "<dictInlineEntry> at line %d lacks a key attribute", ele->Row() );
                 return false;
             }
 
@@ -1079,32 +1082,32 @@ bool ClassEncodeGenerator::ProcessDictRaw( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
     const char* key = field->Attribute( "key" );
     if( key == NULL )
     {
-        sLog.Error( "EncodeGenerator", "field at line %d is missing the key attribute, skipping.", field->Row() );
+        sLog.error( "EncodeGenerator", "field at line %d is missing the key attribute, skipping.", field->Row() );
         return false;
     }
     const char* pykey = field->Attribute( "pykey" );
     if( pykey == NULL )
     {
-        sLog.Error( "EncodeGenerator", "field at line %d is missing the pykey attribute, skipping.", field->Row() );
+        sLog.error( "EncodeGenerator", "field at line %d is missing the pykey attribute, skipping.", field->Row() );
         return false;
     }
     const char* value = field->Attribute( "value" );
     if( value == NULL )
     {
-        sLog.Error( "EncodeGenerator", "field at line %d is missing the value attribute, skipping.", field->Row() );
+        sLog.error( "EncodeGenerator", "field at line %d is missing the value attribute, skipping.", field->Row() );
         return false;
     }
     const char* pyvalue = field->Attribute( "pyvalue" );
     if( pyvalue == NULL )
     {
-        sLog.Error( "EncodeGenerator", "field at line %d is missing the pyvalue attribute, skipping.", field->Row() );
+        sLog.error( "EncodeGenerator", "field at line %d is missing the pyvalue attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -1141,7 +1144,7 @@ bool ClassEncodeGenerator::ProcessDictInt( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -1185,7 +1188,7 @@ bool ClassEncodeGenerator::ProcessDictStr( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "EncodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 

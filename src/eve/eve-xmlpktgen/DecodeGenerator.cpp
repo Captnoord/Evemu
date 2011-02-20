@@ -23,10 +23,13 @@
     Author:     Zhur
 */
 
-#include "EVEXmlPktGenPCH.h"
+#include "EVEXmlPktGen.h"
 
 #include "DecodeGenerator.h"
 
+/*************************************************************************/
+/* ClassDecodeGenerator                                                  */
+/*************************************************************************/
 ClassDecodeGenerator::ClassDecodeGenerator( FILE* outputFile )
 : Generator( outputFile ),
   mName( NULL ),
@@ -40,7 +43,7 @@ bool ClassDecodeGenerator::ProcessElementDef( const TiXmlElement* field )
     mName = field->Attribute( "name" );
     if( mName == NULL )
     {
-        sLog.Error( "DecodeGenerator", "<element> at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DecodeGenerator", "<element> at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -90,7 +93,7 @@ bool ClassDecodeGenerator::ProcessElement( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row());
+        sLog.error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row());
         return false;
     }
 
@@ -116,14 +119,14 @@ bool ClassDecodeGenerator::ProcessElementPtr( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
     const char* type = field->Attribute( "type" );
     if( type == NULL )
     {
-        sLog.Error( "DecodeGenerator", "field at line %d is missing the type attribute, skipping.", field->Row() );
+        sLog.error( "DecodeGenerator", "field at line %d is missing the type attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -155,7 +158,7 @@ bool ClassDecodeGenerator::ProcessRaw( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -179,7 +182,7 @@ bool ClassDecodeGenerator::ProcessInt( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -221,7 +224,7 @@ bool ClassDecodeGenerator::ProcessLong( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -267,7 +270,7 @@ bool ClassDecodeGenerator::ProcessReal( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -309,14 +312,14 @@ bool ClassDecodeGenerator::ProcessBool( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
     bool soft = false;
     const char* soft_str = field->Attribute( "soft" );
     if( soft_str != NULL )
-        soft = Util::String< char >::to< bool >( soft_str );
+        soft = util::String< char >::to< bool >( soft_str );
 
     const char* none_marker = field->Attribute( "none_marker" );
 
@@ -385,7 +388,7 @@ bool ClassDecodeGenerator::ProcessBuffer( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row());
+        sLog.error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row());
         return false;
     }
 
@@ -425,7 +428,7 @@ bool ClassDecodeGenerator::ProcessString( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -467,7 +470,7 @@ bool ClassDecodeGenerator::ProcessStringInline( const TiXmlElement* field )
     const char* value = field->Attribute( "value" );
     if( NULL == value )
     {
-        sLog.Error( "DecodeGenerator", "String element at line %d has no value attribute.", field->Row() );
+        sLog.error( "DecodeGenerator", "String element at line %d has no value attribute.", field->Row() );
         return false;
     }
 
@@ -508,14 +511,14 @@ bool ClassDecodeGenerator::ProcessWString( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
     bool soft = false;
     const char* soft_str = field->Attribute( "soft" );
     if( soft_str != NULL )
-        soft = Util::String< char >::to< bool >( soft_str );
+        soft = util::String< char >::to< bool >( soft_str );
 
     const char* none_marker = field->Attribute( "none_marker" );
 
@@ -565,7 +568,7 @@ bool ClassDecodeGenerator::ProcessWStringInline( const TiXmlElement* field )
     const char* value = field->Attribute( "value" );
     if( NULL == value )
     {
-        sLog.Error( "DecodeGenerator", "WString element at line %d has no value attribute.", field->Row() );
+        sLog.error( "DecodeGenerator", "WString element at line %d has no value attribute.", field->Row() );
         return false;
     }
 
@@ -606,14 +609,14 @@ bool ClassDecodeGenerator::ProcessToken( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
     bool optional = false;
     const char* optional_str = field->Attribute( "optional" );
     if( optional_str != NULL )
-        optional = Util::String< char >::to< bool >( optional_str );
+        optional = util::String< char >::to< bool >( optional_str );
 
     fprintf( mOutputFile,
         "    PySafeDecRef( %s );\n",
@@ -659,7 +662,7 @@ bool ClassDecodeGenerator::ProcessTokenInline( const TiXmlElement* field )
     const char* value = field->Attribute( "value" );
     if( NULL == value )
     {
-        sLog.Error( "DecodeGenerator", "Token element at line %d has no value attribute.", field->Row() );
+        sLog.error( "DecodeGenerator", "Token element at line %d has no value attribute.", field->Row() );
         return false;
     }
 
@@ -700,14 +703,14 @@ bool ClassDecodeGenerator::ProcessObject( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
     bool optional = false;
     const char* optional_str = field->Attribute( "optional" );
     if( NULL != optional_str )
-        optional = Util::String< char >::to< bool >( optional_str );
+        optional = util::String< char >::to< bool >( optional_str );
 
     fprintf( mOutputFile,
         "    PySafeDecRef( %s );\n",
@@ -792,20 +795,20 @@ bool ClassDecodeGenerator::ProcessObjectEx( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
     const char* type = field->Attribute( "type" );
     if( type == NULL )
     {
-        sLog.Error( "DecodeGenerator", "field at line %d is missing the type attribute.", field->Row() );
+        sLog.error( "DecodeGenerator", "field at line %d is missing the type attribute.", field->Row() );
         return false;
     }
 
     bool optional = false;
     const char* optional_str = field->Attribute( "optional" );
     if( optional_str != NULL )
-        optional = Util::String< char >::to< bool >( optional_str );
+        optional = util::String< char >::to< bool >( optional_str );
 
     fprintf( mOutputFile,
         "    PySafeDecRef( %s );\n",
@@ -853,14 +856,14 @@ bool ClassDecodeGenerator::ProcessTuple( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
     bool optional = false;
     const char* optional_str = field->Attribute( "optional" );
     if( optional_str != NULL )
-        optional = Util::String< char >::to< bool >( optional_str );
+        optional = util::String< char >::to< bool >( optional_str );
 
     fprintf( mOutputFile,
         "    PySafeDecRef( %s );\n",
@@ -962,7 +965,7 @@ bool ClassDecodeGenerator::ProcessList( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -970,7 +973,7 @@ bool ClassDecodeGenerator::ProcessList( const TiXmlElement* field )
     bool optional = false;
     const char* optional_str = field->Attribute("optional");
     if( optional_str != NULL )
-        optional = Util::String< char >::to< bool >( optional_str );
+        optional = util::String< char >::to< bool >( optional_str );
 
     fprintf( mOutputFile,
         "    PySafeDecRef( %s );\n",
@@ -1072,7 +1075,7 @@ bool ClassDecodeGenerator::ProcessListInt( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -1130,7 +1133,7 @@ bool ClassDecodeGenerator::ProcessListLong( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row());
+        sLog.error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row());
         return false;
     }
 
@@ -1201,7 +1204,7 @@ bool ClassDecodeGenerator::ProcessListStr( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row());
+        sLog.error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row());
         return false;
     }
 
@@ -1259,7 +1262,7 @@ bool ClassDecodeGenerator::ProcessDict( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -1267,7 +1270,7 @@ bool ClassDecodeGenerator::ProcessDict( const TiXmlElement* field )
     bool optional = false;
     const char* optional_str = field->Attribute( "optional" );
     if( optional_str != NULL )
-        optional = Util::String< char >::to< bool >( optional_str );
+        optional = util::String< char >::to< bool >( optional_str );
 
     fprintf( mOutputFile,
         "    PySafeDecRef( %s );\n",
@@ -1320,7 +1323,7 @@ bool ClassDecodeGenerator::ProcessDictInline( const TiXmlElement* field )
     bool soft = false;
     const char* soft_str = field->Attribute( "soft" );
     if( soft_str != NULL )
-        soft = Util::String< char >::to< bool >( soft_str );
+        soft = util::String< char >::to< bool >( soft_str );
 
     const char* v = top();
     //make sure its a dict
@@ -1352,7 +1355,7 @@ bool ClassDecodeGenerator::ProcessDictInline( const TiXmlElement* field )
             //we only handle dictInlineEntry elements
             if( strcmp( ele->Value(), "dictInlineEntry" ) != 0 )
             {
-                sLog.Error( "DecodeGenerator", "non-dictInlineEntry in <dictInline> at line %d, ignoring.", ele->Row());
+                sLog.error( "DecodeGenerator", "non-dictInlineEntry in <dictInline> at line %d, ignoring.", ele->Row());
                 continue;
             }
 
@@ -1411,13 +1414,13 @@ bool ClassDecodeGenerator::ProcessDictInline( const TiXmlElement* field )
                 //we only handle dictInlineEntry elements
                 if( strcmp( ele->Value(), "dictInlineEntry" ) != 0 )
                 {
-                    sLog.Error( "DecodeGenerator", "non-dictInlineEntry in <dictInline> at line %d, ignoring.", ele->Row() );
+                    sLog.error( "DecodeGenerator", "non-dictInlineEntry in <dictInline> at line %d, ignoring.", ele->Row() );
                     continue;
                 }
                 const char* key = ele->Attribute( "key" );
                 if( key == NULL )
                 {
-                    sLog.Error( "DecodeGenerator", "<dictInlineEntry> at line %d lacks a key attribute", ele->Row() );
+                    sLog.error( "DecodeGenerator", "<dictInlineEntry> at line %d lacks a key attribute", ele->Row() );
                     return false;
                 }
 
@@ -1480,13 +1483,13 @@ bool ClassDecodeGenerator::ProcessDictInline( const TiXmlElement* field )
                 //we only handle dictInlineEntry elements
                 if( strcmp( ele->Value(), "dictInlineEntry" ) != 0 )
                 {
-                    sLog.Error( "DecodeGenerator", "non-dictInlineEntry in <dictInline> at line %d, ignoring.", ele->Row() );
+                    sLog.error( "DecodeGenerator", "non-dictInlineEntry in <dictInline> at line %d, ignoring.", ele->Row() );
                     continue;
                 }
                 const char* key = ele->Attribute( "key" );
                 if( key == NULL )
                 {
-                    sLog.Error( "DecodeGenerator", "<dictInlineEntry> at line %d lacks a key attribute", ele->Row() );
+                    sLog.error( "DecodeGenerator", "<dictInlineEntry> at line %d lacks a key attribute", ele->Row() );
                     return false;
                 }
 
@@ -1515,32 +1518,32 @@ bool ClassDecodeGenerator::ProcessDictRaw( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
     const char* key = field->Attribute( "key" );
     if( key == NULL )
     {
-        sLog.Error( "DecodeGenerator", "field at line %d is missing the key attribute, skipping.", field->Row() );
+        sLog.error( "DecodeGenerator", "field at line %d is missing the key attribute, skipping.", field->Row() );
         return false;
     }
     const char* pykey = field->Attribute( "pykey" );
     if( pykey == NULL )
     {
-        sLog.Error( "DecodeGenerator", "field at line %d is missing the pykey attribute, skipping.", field->Row() );
+        sLog.error( "DecodeGenerator", "field at line %d is missing the pykey attribute, skipping.", field->Row() );
         return false;
     }
     const char* value = field->Attribute( "value" );
     if( value == NULL )
     {
-        sLog.Error( "DecodeGenerator", "field at line %d is missing the value attribute, skipping.", field->Row() );
+        sLog.error( "DecodeGenerator", "field at line %d is missing the value attribute, skipping.", field->Row() );
         return false;
     }
     const char* pyvalue = field->Attribute( "pyvalue" );
     if( pyvalue == NULL )
     {
-        sLog.Error( "DecodeGenerator", "field at line %d is missing the pyvalue attribute, skipping.", field->Row() );
+        sLog.error( "DecodeGenerator", "field at line %d is missing the pyvalue attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -1608,7 +1611,7 @@ bool ClassDecodeGenerator::ProcessDictInt( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -1665,7 +1668,7 @@ bool ClassDecodeGenerator::ProcessDictStr( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DecodeGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 

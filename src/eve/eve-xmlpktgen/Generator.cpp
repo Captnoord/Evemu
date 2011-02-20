@@ -23,7 +23,7 @@
     Author:        Zhur
 */
 
-#include "EVEXmlPktGenPCH.h"
+#include "EVEXmlPktGen.h"
 
 #include "Generator.h"
 

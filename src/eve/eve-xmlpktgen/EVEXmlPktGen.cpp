@@ -23,7 +23,7 @@
     Author:     Zhur
 */
 
-#include "EVEXmlPktGenPCH.h"
+#include "EVEXmlPktGen.h"
 
 #include "XmlPacketGenerator.h"
 
@@ -31,10 +31,15 @@ void usage();
 
 int main( int argc, char* argv[] )
 {
-#if defined( MSVC ) && !defined( NDEBUG )
-    // Under Visual Studio setup memory leak detection
+#ifdef HAVE_CRTDBG_H
+    // Setup memory leak detection
     _CrtSetDbgFlag( _CRTDBG_LEAK_CHECK_DF | _CrtSetDbgFlag( _CRTDBG_REPORT_FLAG ) );
-#endif /* defined( MSVC ) && !defined( NDEBUG ) */
+#endif /* HAVE_CRTDBG_H */
+
+    // Setup logging to console
+    sLog.add( new log::Console );
+
+    sLog.debug( "eve-xmlpktgen", "Logging initialized" );
 
     // skip first argument, not interested
     --argc;
@@ -62,7 +67,7 @@ int main( int argc, char* argv[] )
                 }
                 else
                 {
-                    sLog.Error( "EVEXmlPktGen", "Error parsing options: no parameter for include dir" );
+                    sLog.error( "eve-xmlpktgen", "Error parsing options: no parameter for include dir" );
                     return -1;
                 }
                 break;
@@ -77,7 +82,7 @@ int main( int argc, char* argv[] )
                 }
                 else
                 {
-                    sLog.Error( "EVEXmlPktGen", "Error parsing options: no parameter for source dir" );
+                    sLog.error( "eve-xmlpktgen", "Error parsing options: no parameter for source dir" );
                     return -1;
                 }
                 break;
@@ -89,14 +94,14 @@ int main( int argc, char* argv[] )
 
             /* error */
             default:
-                sLog.Error( "EVEXmlPktGen", "Unknown option '%c'", argv[0][1] );
+                sLog.error( "eve-xmlpktgen", "Unknown option '%c'", argv[0][1] );
                 return -1;
         }
     }
 
     if( 0 == argc )
     {
-        sLog.Error( "EVEXmlPktGen", "Error processing files: no files given" );
+        sLog.error( "eve-xmlpktgen", "Error processing files: no files given" );
         return -1;
     }
 

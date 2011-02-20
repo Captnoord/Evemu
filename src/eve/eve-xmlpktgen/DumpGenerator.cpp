@@ -23,10 +23,13 @@
     Author:     Zhur
 */
 
-#include "EVEXmlPktGenPCH.h"
+#include "EVEXmlPktGen.h"
 
 #include "DumpGenerator.h"
 
+/*************************************************************************/
+/* ClassDumpGenerator                                                    */
+/*************************************************************************/
 ClassDumpGenerator::ClassDumpGenerator( FILE* outputFile )
 : Generator( outputFile )
 {
@@ -45,7 +48,7 @@ bool ClassDumpGenerator::ProcessElementDef( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DumpGenerator", "<element> at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DumpGenerator", "<element> at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -73,7 +76,7 @@ bool ClassDumpGenerator::ProcessElement( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -99,7 +102,7 @@ bool ClassDumpGenerator::ProcessElementPtr( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -130,7 +133,7 @@ bool ClassDumpGenerator::ProcessRaw( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -161,7 +164,7 @@ bool ClassDumpGenerator::ProcessInt( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -179,7 +182,7 @@ bool ClassDumpGenerator::ProcessLong( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -197,7 +200,7 @@ bool ClassDumpGenerator::ProcessReal( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -215,7 +218,7 @@ bool ClassDumpGenerator::ProcessBool( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -238,7 +241,7 @@ bool ClassDumpGenerator::ProcessBuffer( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -264,7 +267,7 @@ bool ClassDumpGenerator::ProcessString( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -282,7 +285,7 @@ bool ClassDumpGenerator::ProcessStringInline( const TiXmlElement* field )
     const char* value = field->Attribute( "value" );
     if( NULL == value )
     {
-        sLog.Error( "DumpGenerator", "String element at line %d has no value attribute.", field->Row() );
+        sLog.error( "DumpGenerator", "String element at line %d has no value attribute.", field->Row() );
         return false;
     }
 
@@ -300,7 +303,7 @@ bool ClassDumpGenerator::ProcessWString( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -318,7 +321,7 @@ bool ClassDumpGenerator::ProcessWStringInline( const TiXmlElement* field )
     const char* value = field->Attribute( "value" );
     if( NULL == value )
     {
-        sLog.Error( "DumpGenerator", "WString element at line %d has no value attribute.", field->Row() );
+        sLog.error( "DumpGenerator", "WString element at line %d has no value attribute.", field->Row() );
         return false;
     }
 
@@ -336,7 +339,7 @@ bool ClassDumpGenerator::ProcessToken( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -370,7 +373,7 @@ bool ClassDumpGenerator::ProcessTokenInline( const TiXmlElement* field )
     const char* value = field->Attribute( "value" );
     if( NULL == value )
     {
-        sLog.Error( "DumpGenerator", "Token element at line %d has no type attribute.", field->Row() );
+        sLog.error( "DumpGenerator", "Token element at line %d has no type attribute.", field->Row() );
         return false;
     }
 
@@ -388,7 +391,7 @@ bool ClassDumpGenerator::ProcessObject( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -432,13 +435,13 @@ bool ClassDumpGenerator::ProcessObjectEx( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
     const char* type = field->Attribute( "type" );
     if( type == NULL )
     {
-        sLog.Error( "DumpGenerator", "field at line %d is missing the type attribute.", field->Row() );
+        sLog.error( "DumpGenerator", "field at line %d is missing the type attribute.", field->Row() );
         return false;
     }
 
@@ -471,7 +474,7 @@ bool ClassDumpGenerator::ProcessTuple( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -511,7 +514,7 @@ bool ClassDumpGenerator::ProcessList( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -551,7 +554,7 @@ bool ClassDumpGenerator::ProcessListInt( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -580,7 +583,7 @@ bool ClassDumpGenerator::ProcessListLong( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -609,7 +612,7 @@ bool ClassDumpGenerator::ProcessListStr( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -638,7 +641,7 @@ bool ClassDumpGenerator::ProcessDict( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -679,7 +682,7 @@ bool ClassDumpGenerator::ProcessDictInlineEntry( const TiXmlElement* field )
     const char* key = field->Attribute( "key" );
     if( key == NULL )
     {
-        sLog.Error( "DumpGenerator", "<dictInlineEntry> at line %d is missing the key attribute, skipping.", field->Row() );
+        sLog.error( "DumpGenerator", "<dictInlineEntry> at line %d is missing the key attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -691,32 +694,32 @@ bool ClassDumpGenerator::ProcessDictRaw( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
     const char* key = field->Attribute( "key" );
     if( key == NULL )
     {
-        sLog.Error( "DumpGenerator", "field at line %d is missing the key attribute, skipping.", field->Row() );
+        sLog.error( "DumpGenerator", "field at line %d is missing the key attribute, skipping.", field->Row() );
         return false;
     }
     const char* pykey = field->Attribute( "pykey" );
     if( pykey == NULL )
     {
-        sLog.Error( "DumpGenerator", "field at line %d is missing the pykey attribute, skipping.", field->Row() );
+        sLog.error( "DumpGenerator", "field at line %d is missing the pykey attribute, skipping.", field->Row() );
         return false;
     }
     const char* value = field->Attribute( "value" );
     if( value == NULL )
     {
-        sLog.Error( "DumpGenerator", "field at line %d is missing the value attribute, skipping.", field->Row() );
+        sLog.error( "DumpGenerator", "field at line %d is missing the value attribute, skipping.", field->Row() );
         return false;
     }
     const char* pyvalue = field->Attribute( "pyvalue" );
     if( pyvalue == NULL )
     {
-        sLog.Error( "DumpGenerator", "field at line %d is missing the pyvalue attribute, skipping.", field->Row() );
+        sLog.error( "DumpGenerator", "field at line %d is missing the pyvalue attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -749,7 +752,7 @@ bool ClassDumpGenerator::ProcessDictInt( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -784,7 +787,7 @@ bool ClassDumpGenerator::ProcessDictStr( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DumpGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 

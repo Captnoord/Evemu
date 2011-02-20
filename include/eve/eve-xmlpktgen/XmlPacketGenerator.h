@@ -42,7 +42,7 @@
  * @author Zhur, Bloody.Rabbit
  */
 class XmlPacketGenerator
-: public Xml::ParserEx
+: public xml::ParserEx
 {
 public:
     /**

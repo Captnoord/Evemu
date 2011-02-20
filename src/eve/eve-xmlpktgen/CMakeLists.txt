@@ -17,7 +17,6 @@ SET( TARGET_SOURCE_DIR  "${PROJECT_SOURCE_DIR}/src/${TARGET_CATEGORY}/${TARGET_N
 #########
 SET( INCLUDE
      "${TARGET_INCLUDE_DIR}/EVEXmlPktGen.h"
-     "${TARGET_INCLUDE_DIR}/EVEXmlPktGenPCH.h"
      "${TARGET_INCLUDE_DIR}/Generator.h"
      "${TARGET_INCLUDE_DIR}/CloneGenerator.h"
      "${TARGET_INCLUDE_DIR}/ConstructGenerator.h"
@@ -44,6 +43,8 @@ SET( SOURCE
 ########################
 INCLUDE_DIRECTORIES( "${TINYXML_INCLUDE_DIR}"
                      "${common-std_INCLUDE_DIR}"
+                     "${common-os_INCLUDE_DIR}"
+                     "${common-xml_INCLUDE_DIR}"
                      "${TARGET_INCLUDE_DIR}" )
 
 SOURCE_GROUP( "include" FILES ${INCLUDE} )
@@ -53,9 +54,10 @@ ADD_EXECUTABLE( "${TARGET_NAME}"
                 ${INCLUDE} ${SOURCE} )
 
 TARGET_BUILD_PCH( "${TARGET_NAME}"
-                  "EVEXmlPktGenPCH.h"
+                  "EVEXmlPktGen.h"
                   "EVEXmlPktGen.cpp" )
 TARGET_LINK_LIBRARIES( "${TARGET_NAME}"
+                       "common-xml"
                        "common-std" )
 
 ######################

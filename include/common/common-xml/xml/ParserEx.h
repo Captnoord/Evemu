@@ -170,7 +170,8 @@ namespace common
                 const TiXmlNode* contents = field->FirstChild();
                 if( NULL != contents ? TiXmlNode::TEXT != contents->Type() : false )
                 {
-                    sLog.Error( "xml::ParserEx::ValueParser", "Expected a text element in element '%s' at line %d.", field->Value(), field->Row() );
+                    sLog.error( "xml::ParserEx::ValueParser", "Expected a text element in element '%s' at line %d.",
+                                field->Value(), field->Row() );
                     return false;
                 }
 

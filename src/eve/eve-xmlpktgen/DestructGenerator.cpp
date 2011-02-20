@@ -23,10 +23,13 @@
     Author:     Zhur
 */
 
-#include "EVEXmlPktGenPCH.h"
+#include "EVEXmlPktGen.h"
 
 #include "DestructGenerator.h"
 
+/*************************************************************************/
+/* ClassDestructGenerator                                                */
+/*************************************************************************/
 ClassDestructGenerator::ClassDestructGenerator( FILE* outputFile )
 : Generator( outputFile )
 {
@@ -45,7 +48,7 @@ bool ClassDestructGenerator::ProcessElementDef( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DestructGenerator", "<element> at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DestructGenerator", "<element> at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -76,7 +79,7 @@ bool ClassDestructGenerator::ProcessElementPtr( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DestructGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DestructGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -93,7 +96,7 @@ bool ClassDestructGenerator::ProcessRaw( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DestructGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DestructGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -135,7 +138,7 @@ bool ClassDestructGenerator::ProcessBuffer( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DestructGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DestructGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -172,7 +175,7 @@ bool ClassDestructGenerator::ProcessToken( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DestructGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DestructGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -194,7 +197,7 @@ bool ClassDestructGenerator::ProcessObject( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DestructGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DestructGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -217,7 +220,7 @@ bool ClassDestructGenerator::ProcessObjectEx( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DestructGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DestructGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -234,7 +237,7 @@ bool ClassDestructGenerator::ProcessTuple( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DestructGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DestructGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -256,7 +259,7 @@ bool ClassDestructGenerator::ProcessList( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DestructGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DestructGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -292,7 +295,7 @@ bool ClassDestructGenerator::ProcessDict( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DestructGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DestructGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -315,7 +318,7 @@ bool ClassDestructGenerator::ProcessDictInlineEntry( const TiXmlElement* field )
     const char* key = field->Attribute( "key" );
     if( key == NULL )
     {
-        sLog.Error( "DestructGenerator", "<dictInlineEntry> at line %d is missing the key attribute, skipping.", field->Row() );
+        sLog.error( "DestructGenerator", "<dictInlineEntry> at line %d is missing the key attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -332,7 +335,7 @@ bool ClassDestructGenerator::ProcessDictInt( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DestructGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DestructGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -359,7 +362,7 @@ bool ClassDestructGenerator::ProcessDictStr( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "DestructGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "DestructGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 

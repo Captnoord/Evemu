@@ -23,10 +23,13 @@
     Author:        Zhur
 */
 
-#include "EVEXmlPktGenPCH.h"
+#include "EVEXmlPktGen.h"
 
 #include "HeaderGenerator.h"
 
+/*************************************************************************/
+/* ClassHeaderGenerator                                                  */
+/*************************************************************************/
 ClassHeaderGenerator::ClassHeaderGenerator( FILE* outputFile )
 : Generator( outputFile )
 {
@@ -37,7 +40,7 @@ bool ClassHeaderGenerator::RegisterName( const char* name, uint32 row )
 {
     if( mNamesUsed.find( name ) != mNamesUsed.end() )
     {
-        sLog.Error( "HeaderGenerator", "Field at line %u: The name '%s' is already used.", row, name );
+        sLog.error( "HeaderGenerator", "Field at line %u: The name '%s' is already used.", row, name );
 
         return false;
     }
@@ -63,14 +66,14 @@ bool ClassHeaderGenerator::ProcessElementDef( const TiXmlElement* field )
     const char* name = field->Attribute("name");
     if( name == NULL )
     {
-        sLog.Error( "HeaderGenerator", "<element> at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "HeaderGenerator", "<element> at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
     const TiXmlElement* main = field->FirstChildElement();
     if( main->NextSiblingElement() != NULL )
     {
-        sLog.Error( "HeaderGenerator", "<element> at line %d contains more than one root element. skipping.", field->Row() );
+        sLog.error( "HeaderGenerator", "<element> at line %d contains more than one root element. skipping.", field->Row() );
         return false;
     }
 
@@ -122,13 +125,13 @@ bool ClassHeaderGenerator::ProcessElement( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
     const char* type = field->Attribute( "type" );
     if( type == NULL )
     {
-        sLog.Error( "HeaderGenerator", "field at line %d is missing the type attribute, skipping.", field->Row() );
+        sLog.error( "HeaderGenerator", "field at line %d is missing the type attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -148,13 +151,13 @@ bool ClassHeaderGenerator::ProcessElementPtr( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
     const char* type = field->Attribute( "type" );
     if( type == NULL )
     {
-        sLog.Error( "HeaderGenerator", "field at line %d is missing the type attribute, skipping.", field->Row() );
+        sLog.error( "HeaderGenerator", "field at line %d is missing the type attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -174,7 +177,7 @@ bool ClassHeaderGenerator::ProcessRaw( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -194,7 +197,7 @@ bool ClassHeaderGenerator::ProcessInt( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -214,7 +217,7 @@ bool ClassHeaderGenerator::ProcessLong( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -234,7 +237,7 @@ bool ClassHeaderGenerator::ProcessReal( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -254,7 +257,7 @@ bool ClassHeaderGenerator::ProcessBool( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -279,7 +282,7 @@ bool ClassHeaderGenerator::ProcessBuffer( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -299,7 +302,7 @@ bool ClassHeaderGenerator::ProcessString( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -324,7 +327,7 @@ bool ClassHeaderGenerator::ProcessWString( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -349,7 +352,7 @@ bool ClassHeaderGenerator::ProcessToken( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -374,7 +377,7 @@ bool ClassHeaderGenerator::ProcessObject( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -396,13 +399,13 @@ bool ClassHeaderGenerator::ProcessObjectEx( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
     const char* type = field->Attribute( "type" );
     if( type == NULL )
     {
-        sLog.Error( "HeaderGenerator", "field at line %d is missing the type attribute.", field->Row() );
+        sLog.error( "HeaderGenerator", "field at line %d is missing the type attribute.", field->Row() );
         return false;
     }
 
@@ -422,7 +425,7 @@ bool ClassHeaderGenerator::ProcessTuple( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -447,7 +450,7 @@ bool ClassHeaderGenerator::ProcessList( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -472,7 +475,7 @@ bool ClassHeaderGenerator::ProcessListInt( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -492,7 +495,7 @@ bool ClassHeaderGenerator::ProcessListLong( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -512,7 +515,7 @@ bool ClassHeaderGenerator::ProcessListStr( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -532,7 +535,7 @@ bool ClassHeaderGenerator::ProcessDict( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -558,7 +561,7 @@ bool ClassHeaderGenerator::ProcessDictInlineEntry( const TiXmlElement* field )
     const char* key = field->Attribute( "key" );
     if( key == NULL )
     {
-        sLog.Error( "HeaderGenerator", "<dictInlineEntry> at line %d is missing the key attribute, skipping.", field->Row() );
+        sLog.error( "HeaderGenerator", "<dictInlineEntry> at line %d is missing the key attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -570,32 +573,32 @@ bool ClassHeaderGenerator::ProcessDictRaw( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
     const char* key = field->Attribute( "key" );
     if( key == NULL )
     {
-        sLog.Error( "HeaderGenerator", "field at line %d is missing the key attribute, skipping.", field->Row() );
+        sLog.error( "HeaderGenerator", "field at line %d is missing the key attribute, skipping.", field->Row() );
         return false;
     }
     const char* pykey = field->Attribute( "pykey" );
     if( pykey == NULL )
     {
-        sLog.Error( "HeaderGenerator", "field at line %d is missing the pykey attribute, skipping.", field->Row() );
+        sLog.error( "HeaderGenerator", "field at line %d is missing the pykey attribute, skipping.", field->Row() );
         return false;
     }
     const char* value = field->Attribute( "value" );
     if( value == NULL )
     {
-        sLog.Error( "HeaderGenerator", "field at line %d is missing the value attribute, skipping.", field->Row() );
+        sLog.error( "HeaderGenerator", "field at line %d is missing the value attribute, skipping.", field->Row() );
         return false;
     }
     const char* pyvalue = field->Attribute( "pyvalue" );
     if( pyvalue == NULL )
     {
-        sLog.Error( "HeaderGenerator", "field at line %d is missing the pyvalue attribute, skipping.", field->Row() );
+        sLog.error( "HeaderGenerator", "field at line %d is missing the pyvalue attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -615,7 +618,7 @@ bool ClassHeaderGenerator::ProcessDictInt( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 
@@ -635,7 +638,7 @@ bool ClassHeaderGenerator::ProcessDictStr( const TiXmlElement* field )
     const char* name = field->Attribute( "name" );
     if( name == NULL )
     {
-        sLog.Error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
+        sLog.error( "HeaderGenerator", "field at line %d is missing the name attribute, skipping.", field->Row() );
         return false;
     }
 

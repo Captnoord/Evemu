@@ -23,7 +23,7 @@
     Author:     Zhur
 */
 
-#include "EVEXmlPktGenPCH.h"
+#include "EVEXmlPktGen.h"
 
 #include "XmlPacketGenerator.h"
 
@@ -63,7 +63,7 @@ std::string XmlPacketGenerator::FNameToDef( const char* buf )
 
     for(; '\0' != *buf; ++buf )
     {
-        if( !Util::String< char >::isPrintable( *buf )
+        if( !util::String< char >::isPrintable( *buf )
             || *buf == '/'
             || *buf == '\\'
             || *buf == ':'
@@ -104,7 +104,7 @@ bool XmlPacketGenerator::ParseElements( const TiXmlElement* field )
 {
     if( !OpenFiles() )
     {
-        sLog.Error( "XmlPacketGenerator", "Unable to open output files: %s.", strerror( errno ) );
+        sLog.error( "XmlPacketGenerator", "Unable to open output files: %s.", strerror( errno ) );
         return false;
     }
 
@@ -153,7 +153,7 @@ bool XmlPacketGenerator::ParseInclude( const TiXmlElement* field )
     const char* file = field->Attribute( "file" );
     if( file == NULL )
     {
-        sLog.Error( "XmlPacketGenerator", "field at line %d is missing the file attribute, skipping.", field->Row() );
+        sLog.error( "XmlPacketGenerator", "field at line %d is missing the file attribute, skipping.", field->Row() );
         return false;
     }
 

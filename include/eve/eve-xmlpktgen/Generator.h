@@ -35,7 +35,7 @@
  * @author Zhur, Bloody.Rabbit
  */
 class Generator
-: public Xml::ParserEx
+: public xml::ParserEx
 {
 public:
     /**
