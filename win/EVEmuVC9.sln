@@ -8,6 +8,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zlib", "VC9\zlib.vcproj", "
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "evemu-proxy", "VC9\evemu-proxy.vcproj", "{54CB1034-61B9-4A3D-B743-A184E469F0BB}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "evemu-unit-test", "VC9\evemu-unit-test.vcproj", "{25804B93-09C2-4661-A9AC-F3E43D38A91C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -28,6 +30,10 @@ Global
 		{FA5AC1A0-2A35-48B1-AF36-ADF7E6ED2DD4}.Release|Win32.Build.0 = Release|Win32
 		{54CB1034-61B9-4A3D-B743-A184E469F0BB}.Debug|Win32.ActiveCfg = Debug|Win32
 		{54CB1034-61B9-4A3D-B743-A184E469F0BB}.Release|Win32.ActiveCfg = Release|Win32
+		{25804B93-09C2-4661-A9AC-F3E43D38A91C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{25804B93-09C2-4661-A9AC-F3E43D38A91C}.Debug|Win32.Build.0 = Debug|Win32
+		{25804B93-09C2-4661-A9AC-F3E43D38A91C}.Release|Win32.ActiveCfg = Release|Win32
+		{25804B93-09C2-4661-A9AC-F3E43D38A91C}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

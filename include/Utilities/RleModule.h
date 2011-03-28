@@ -76,6 +76,8 @@ public:
 		//	);
 	}
 
+    static bool encode(const uint8 *src, uint32 len, std::vector<uint8> &out_buf);
+
 	/**
 	 * \brief decode decodes the Zero 'Rle' data.
 	 *
