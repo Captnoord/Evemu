@@ -334,13 +334,13 @@ PyObject* MarshalStream::unmarshal( ReadStream & stream )
             case Op_PyEmptyTuple:
             {
                 unmarshalState(Op_PyEmptyTuple, stream);
-                MARSHALSTREAM_RETURN(PyTuple_New(0));
+                MARSHALSTREAM_RETURN(new PyTuple(0));
             }
 
             case Op_PyOneTuple:
             {
                 unmarshalState(Op_PyOneTuple, stream);
-                PyTuple& tuple = *PyTuple_New(1);
+                PyTuple& tuple = *new PyTuple(1);
                 if ((opcode & 0x40) != 0)
                 {
                     tuple.IncRef();
@@ -358,7 +358,7 @@ PyObject* MarshalStream::unmarshal( ReadStream & stream )
             case Op_PyTwoTuple:
             {
                 unmarshalState(Op_PyTwoTuple, stream);
-                PyTuple& tuple = *PyTuple_New(2);
+                PyTuple& tuple = *new PyTuple(2);
                 if ((opcode & 0x40) != 0)
                 {
                     tuple.IncRef();
@@ -384,7 +384,7 @@ PyObject* MarshalStream::unmarshal( ReadStream & stream )
                 if (!stream.readSizeEx(elementCount))
                     MARSHALSTREAM_RETURN_NULL;
 
-                PyTuple& tuple = *PyTuple_New(elementCount);
+                PyTuple& tuple = *new PyTuple(elementCount);
                 if ((opcode & 0x40) != 0)
                 {
                     tuple.IncRef();
@@ -1037,7 +1037,7 @@ bool MarshalStream::ReadNewObjList( ReadStream & stream, PyClass & obj )
 
 bool MarshalStream::ReadNewObjDict( ReadStream & stream, PyClass & obj )
 {
-    PyDict * dict = PyDict_New();
+    PyDict * dict = new PyDict();
     PyObject * dictItr = NULL;
     bool healthyExit = false;
     while (true)

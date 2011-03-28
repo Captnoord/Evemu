@@ -26,6 +26,7 @@
 #ifndef _PYPACKEDROW_H
 #define _PYPACKEDROW_H
 
+#if 0
 #pragma pack(push,1)
 
 /**
@@ -82,5 +83,7 @@ public:
 };
 
 #pragma pack(pop)
+
+#endif
 
 #endif //_PYPACKEDROW_H

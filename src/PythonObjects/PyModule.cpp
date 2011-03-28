@@ -34,6 +34,7 @@
 #include "PyChameleon.h"
 #include "PyModule.h"
 
+#if 0
 /************************************************************************/
 /* PyModule                                                             */
 /************************************************************************/
@@ -73,3 +74,4 @@ uint32 PyModule::_hash()
     ASCENT_HARDWARE_BREAKPOINT;
     return 0;
 }
+#endif

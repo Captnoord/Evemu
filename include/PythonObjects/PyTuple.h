@@ -26,111 +26,263 @@
 #ifndef _PYTUPLE_H
 #define _PYTUPLE_H
 
-#pragma pack(push,1)
-
 /**
- * \class PyTuple
- *
- * @brief PyTuple is one of the most used objects within python. Its a pObject to store objects in.
- *
- * http://en.wikipedia.org/wiki/Tuple
- *
- * @note one of the design choices was to use a vector to store the pointers.
- * @note this at first hand only cause big slowdowns when allocating a big amount of items.
- * @author Captnoord
- * @date March 2009
- */
-class PyTuple
+* \class PyTuple
+*
+* @brief PyTuple is one of the most used objects within python. Its a object to store objects in.
+*
+* http://en.wikipedia.org/wiki/Tuple
+*
+* @note one of the design choices was to use a vector to store the pointers.
+* @note this at first hand only cause big slowdowns when allocating a big amount of items.
+* @author Captnoord
+* @date March 2009
+*/
+class PyTuple : public PyObject
 {
-/* limit the tuple to 1000 items */
+    /* limit the tuple to 1000 items */
 #define PY_TUPLE_ELEMENT_MAX 1000
-    uint8 mType;
-    size_t mRefcnt;
-    uint32 (PyTuple::*mHash)();
 public:
-    uint8 gettype();
-    void IncRef();
-    void DecRef();
-    uint32 hash();
-public:
-    explicit PyTuple();
-    explicit PyTuple(size_t elementCount);
+    PyTuple();
+    PyTuple(size_t elementCount);
     ~PyTuple();
 
-    /**
-     * \brief operator overload for easy pObject access and storage
-     *
-     * nothing much to tell about this function, it returns a PyChameleon pObject reference.
-     *
-     * @param[in] index is the location of the required pObject.
-     * @return always returns a PyChameleon pObject even if there isn't a pObject stored (so it can be used to store objects).
-     */
-    PyChameleon &operator[](const int index);
+    // tuple hash function
+    uint32 hash();
 
     /**
-     * Generic get pObject function. We shouldn't use this function much as it makes the code a mess
-     * unless we are working with generic objects.
-     */
+    * \brief operator overload for easy object access and storage
+    *
+    * nothing much to tell about this function, it returns a PyChameleon object reference.
+    *
+    * @param[in] index is the location of the required object.
+    * @return always returns a PyChameleon object even if there isn't a object stored (so it can be used to store objects).
+    */
+    //PyChameleon &operator[](const int index);
     PyObject* GetItem(const int index);
 
-    /**
-     * unsafe get integer function. We shouldn't use this function much as it is unsafe.
-     * use scanf for most of the value retrievers.
-     */
-    int GetInt(const int index);
+    // utility functions, warning don't use this should without knowing how it works and what it does.
+    int32		GetItem_asInt(const int index);
+    int64		GetItem_asLong(const int index);
+    double		GetItem_asDouble(const int index);
+    PyTuple*	GetItem_asPyTuple(const int index);
+    PyList*		GetItem_asPyList(const int index);
+    PyString*	GetItem_asPyString(const int index);
+    PySubStream*GetItem_asPySubStream(const int index);
+    PyClass*    GetItem_asPyClass(const int index);
 
-    /**
-     * unsafe get float function. We shouldn't use this function much as it is unsafe.
-     * use scanf for most of the value retrievers.
-     */
-    double GetFloat(const int index);
-    
-    /**
-     * unsafe get string function. We shouldn't use this function much as it is unsafe.
-     * use scanf for most of the value retrievers.
-     */
-    std::string GetString(const int index);
+    /* smarter way todo get stuff... */
+    bool GetString( const int index, std::string& rStr )
+    {
+        if (index > (int)mTuple.size())
+            return false;
 
-    /**
-     * get item as std::string. This function we can consider safe as we can check if a
-     * retrieve action has been successful.
-     */
-    bool GetString(const int index, std::string& rStr);
+        PyChameleon * itr = mTuple[index];
+        PyObject * object = itr->getPyObject();
 
-    template<typename T>
-    void set_item(const int index, T* pObject);
+        if (object->gettype() != PyTypeString)
+            return false;
 
-    // generic pObject setters..... because it makes the code a bit cleaner
-    void set_str(const int index, const char* pStr);
-    void set_str(const int index, const char* pStr, const size_t len);
-    void set_int(const int index, const int number);
-    void set_long(const int index, const long number);
+        PyString * strobj = (PyString*)object;
 
-    /**
-     * \brief a VA function for getting multiple pObject from a tuple.
-     *
-     * a VA function for getting multiple pObject from a tuple.
-     *
-     * @param[in] format is the VA string containing the expected pObject types.
-     * @param[out] ... this VA field contains the pointers to the VA items.
-     * @return the number of 'scanned' objects and 0 of a error has happened.
-     */
-    int scanf(const char * format, ...);
+        rStr.clear(); // make sure its empty
+        rStr.append(strobj->content(), strobj->length());
 
-    /**
-     * @brief this function returns the amount of objects.
-     * @return the element count
-     */
+        return true;
+    }
+
+    bool		set_item(const int index, PyObject *object);
+
+    /* @todo add other variable types */
+    int scanf( const char* pFormat, ... )
+    {
+        /* should not be possible */
+        if (pFormat == NULL || *pFormat == '\0')
+            return 0;
+
+        size_t formatLen = strlen(pFormat);
+        if (formatLen == 0)
+            return 0;
+
+        if (formatLen != size())
+            return 0;
+
+        va_list ap;
+        va_start(ap, pFormat);
+
+        void* pVar = NULL;
+        size_t formatIndex = 0;
+        while (formatLen != formatIndex)
+        {
+            pVar = va_arg( ap, void* );
+
+            char tag = pFormat[formatIndex];
+
+            /* we check for NULL argument pointers but only if the tag isn't a 'ignore' tag*/
+            if (pVar == NULL && tag != '0')
+            {
+                va_end(ap);
+                return 0;
+            }
+
+            if (formatIndex > mTuple.size())
+            {
+                va_end(ap);
+                return 0;
+            }        
+
+            PyObject* pFoundObject = mTuple[formatIndex]->getPyObject();
+
+            ASCENT_ASSERT(pFoundObject);
+
+            switch(tag)
+            {
+            case '0': // ignore
+                {
+                } break;
+
+            case 'i': // int
+                {
+                    if (pFoundObject->gettype() != PyTypeInt)
+                    {
+                        va_end(ap);
+                        return 0;
+                    }
+
+                    int32* pNum = (int32*)pVar;
+                    *pNum = ((PyInt*)pFoundObject)->GetValue();
+                } break;
+
+            case 'f': // double
+                {
+                    if (pFoundObject->gettype() != PyTypeReal)
+                    {
+                        va_end(ap);
+                        return 0;
+                    }
+
+                    double * pNum = (double *)pVar;
+                    *pNum = ((PyFloat*)pFoundObject)->GetValue();
+                } break;
+
+            case 's': // std::string
+                {
+                    if (pFoundObject->gettype() != PyTypeString)
+                    {
+                        va_end(ap);
+                        return 0;
+                    }
+
+                    std::string * pStr = (std::string *)pVar;
+                    pStr->clear();
+
+                    size_t len = ((PyString*)pFoundObject)->length();
+                    const char* pBuff = ((PyString*)pFoundObject)->content();
+                    pStr->append(pBuff, len);
+                } break;
+
+                /*unicode string*/
+            case 'u': // std::wstring
+                {
+                    if (pFoundObject->gettype() != PyTypeUnicode)
+                    {
+                        va_end(ap);
+                        return 0;
+                    }
+
+                    std::wstring* pStr = (std::wstring *)pVar;
+                    pStr->clear();
+
+                    size_t len = ((PyUnicodeUCS2*)pFoundObject)->length();
+                    wchar_t* pBuff = ((PyUnicodeUCS2*)pFoundObject)->content();
+                    pStr->append(pBuff, len);
+                } break;
+
+                /* scanf internal types will be tricky. Are we required to increase
+                * the ref counter when we use the pointer. In a way we are because
+                * that will make everything as flexible as I designed it.
+                * @todo add ref counter increase stuff.
+                */
+            case 't': // PyTuple
+                {
+                    if (pFoundObject->gettype() != PyTypeTuple)
+                    {
+                        va_end(ap);
+                        return 0;
+                    }
+
+                    PyTuple** pTuple = (PyTuple **)pVar;
+                    (*pTuple) = (PyTuple*)pFoundObject;
+                } break;
+
+                /* same stuff as the PyTuple stuff... tricky
+                */
+            case 'd': // PyDict
+                {
+                    if (pFoundObject->gettype() != PyTypeDict)
+                    {
+                        va_end(ap);
+                        return 0;
+                    }
+
+                    PyDict** pDict = (PyDict **)pVar;
+                    (*pDict) = (PyDict*)pFoundObject;
+                } break;
+            }
+            formatIndex++;
+        }
+
+        va_end(ap);
+        return (int)formatIndex;
+    }
+
+    void set_str( const int index, const char* str )
+    {
+        if (index+1 > (int)mTuple.size())
+            mTuple.resize(index+1);
+        PyChameleon* itr = mTuple[index];
+        PyString* pStr = new PyString(str);
+        itr->setPyObject((PyObject*)pStr);
+    }
+
+    void set_str( const int index, const char* str, const size_t len )
+    {
+        if (index+1 > (int)mTuple.size())
+            mTuple.resize(index+1);
+        PyChameleon* itr = mTuple[index];
+        itr->setPyObject((PyObject*)new PyString(str, len)); // GCC is not going to like this
+    }
+
+    void set_int( const int index, const int number )
+    {
+        if (index+1 > (int)mTuple.size())
+            mTuple.resize(index+1);
+        PyChameleon* itr = mTuple[index];
+        itr->setPyObject((PyObject*)new PyInt(number));
+    }
+
+    void set_long( const int index, const long number )
+    {
+        if (index+1 > (int)mTuple.size())
+            mTuple.resize(index+1);
+        PyChameleon* itr = mTuple[index];
+        itr->setPyObject((PyObject*)new PyLong((int64)number));
+    }
+
+    void set_float( const int index, const double number )
+    {
+        if (index+1 > (int)mTuple.size())
+            mTuple.resize(index+1);
+        PyChameleon* itr = mTuple[index];
+        itr->setPyObject((PyObject*)new PyFloat(number));
+    }
+
+    // returns the element count
     size_t size();
 
-    /**
-     * @brief clears the tuple from all objects
-     */
+    // clears the tuple from all objects
     void clear();
 
-    /**
-     * @brief this function resizes the tuple. Objects that are lost will get a decrease in there reference.
-     */
     bool resize(size_t elementCount);
 private:
     typedef std::vector<PyChameleon*> TupleVector;
@@ -141,13 +293,6 @@ public:
     iterator end() {return mTuple.end();}
 private:
     TupleVector mTuple;
-
-    /**
-     * @brief tuple hash function
-     */ 
-    uint32 _hash();
 };
-
-#pragma pack(pop)
 
 #endif //_PYTUPLE_H

@@ -36,6 +36,7 @@
 /************************************************************************/
 /* substruct                                                            */
 /************************************************************************/
+#if 0
 PySubStruct::PySubStruct() : mType(PyTypeSubStruct), mRefcnt(1), mHash(&PySubStruct::_hash),
                              payload(NULL)
 {
@@ -92,3 +93,4 @@ uint32 PySubStruct::_hash()
     ASCENT_HARDWARE_BREAKPOINT;
 }
 
+#endif

@@ -175,8 +175,8 @@ void AccountMgr::OnAccountEvent()
 		const char *accountName		= field[1].GetString();
 		const char *accountPass		= field[2].GetString();
 		const char* accountShaHash	= field[3].GetString();
-		uint32 accountRole			= field[4].GetUInt32();
-		const bool changed			= field[5].GetBool();
+//		uint32 accountRole			= field[4].GetUInt32();
+//		const bool changed			= field[5].GetBool();
 
 		size_t nameLen = strlen(accountName);
 		size_t passLen = strlen(accountPass);

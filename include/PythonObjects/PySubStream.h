@@ -26,6 +26,7 @@
 #ifndef _PYSUBSTREAM_H
 #define _PYSUBSTREAM_H
 
+#if 0
 #pragma pack(push,1)
 
 /**
@@ -65,5 +66,6 @@ private:
 };
 
 #pragma pack(pop)
+#endif
 
 #endif //_PYSUBSTREAM_H

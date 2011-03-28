@@ -27,7 +27,8 @@ public:
 
     ASCENT_INLINE const char *GetString() { return mValue; }
     ASCENT_INLINE double GetDouble()      { return mValue ? strtod(mValue,NULL) : 0; }
-    ASCENT_INLINE float GetFloat()        { return mValue ? strtof(mValue,NULL) : 0; }
+    ASCENT_INLINE float GetFloat()        { return mValue ? (float)strtod(mValue,NULL) : 0; }
+    
     ASCENT_INLINE bool GetBool()          { return mValue ? atoi(mValue) > 0 : false; }
     ASCENT_INLINE uint8 GetUInt8()        { return mValue ? static_cast<uint8>(strtoul(mValue,NULL,10)) : 0; }
     ASCENT_INLINE int8 GetInt8()          { return mValue ? static_cast<int8>(strtol(mValue,NULL,10)) : 0; }

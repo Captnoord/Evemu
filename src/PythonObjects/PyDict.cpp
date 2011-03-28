@@ -37,9 +37,7 @@
 /************************************************************************/
 /* PyDict                                                               */
 /************************************************************************/
-PyDict::PyDict() : mType(PyTypeDict), mRefcnt(1), mHash(&PyDict::_hash), mMappingMode(true), mMappingIndex(0)
-{
-}
+PyDict::PyDict() : PyObject(PyTypeDict), mMappingMode(true), mMappingIndex(0) {}
 
 PyDict::~PyDict()
 {
@@ -54,19 +52,15 @@ PyDict::~PyDict()
 
         entry->key->DecRef();
         entry->obj->DecRef();
-        SafeDelete(entry);
+        //SafeDelete(entry);
+        SafeFree(entry);
         i++;
     }
 
     mDict.clear();
-    mType = PyTypeDeleted;
 }
 
-uint8 PyDict::gettype()
-{
-    return mType;
-}
-
+// this one needs to die...
 PyChameleon PyDict::operator[]( const char* keyName )
 {
     ASCENT_HARDWARE_BREAKPOINT;
@@ -78,7 +72,7 @@ PyChameleon PyDict::operator[]( const char* keyName )
     PyDictEntry * entry = mDict[hsh];
     if (entry == NULL)
     {
-        entry = new PyDictEntry;
+        entry = (PyDictEntry*)malloc(sizeof( PyDictEntry ));//new PyDictEntry;
         entry->key = (PyObject*)new PyString(keyName);
         entry->obj = NULL;
         mDict[hsh] = entry;
@@ -87,23 +81,12 @@ PyChameleon PyDict::operator[]( const char* keyName )
     return entry;
 }
 
-void PyDict::IncRef()
-{
-    mRefcnt++;
-}
-
-void PyDict::DecRef()
-{
-    mRefcnt--;
-    if (mRefcnt <= 0)
-        PyDelete(this);
-}
-
 size_t PyDict::size()
 {
     return mDict.size();
 }
 
+// fix mapping mode.... to update on get_item..
 bool PyDict::set_item( PyObject* key, PyObject* obj )
 {
     if (key == NULL || obj == NULL)
@@ -112,20 +95,26 @@ bool PyDict::set_item( PyObject* key, PyObject* obj )
         return false;
     }
 
-    if (mMappingMode == true)
+    /*if (key->gettype() == PyTypeNone || obj->gettype() == PyTypeNone)
     {
-        /* create a new dictionary entry */
-        PyDictEntry * entry = new PyDictEntry;
-        entry->key = key;
-        entry->obj = obj;
-        mDict.insert(std::make_pair(mMappingIndex++, entry));
-        key->IncRef();  // we seem to reuse a object that is already in the system so increase its mojo
-        obj->IncRef();
+    ASCENT_HARDWARE_BREAKPOINT;
+    return false;
+    }*/
+
+    /*if (mMappingMode == true)
+    {
+    // create a new dictionary entry 
+    PyDictEntry * entry = new PyDictEntry;
+    entry->key = key;
+    entry->obj = obj;
+    mDict.insert(std::make_pair(mMappingIndex++, entry));
+    key->IncRef();  // we seem to reuse a object that is already in the system so increase its mojo
+    obj->IncRef();
     }
-    else
+    else*/
     {
         // hit debug as I want to make sure its working correctly.
-        ASCENT_HARDWARE_BREAKPOINT;
+        //ASCENT_HARDWARE_BREAKPOINT;
 
         uint32 hsh = PyObject_Hash(key);
 
@@ -135,7 +124,8 @@ bool PyDict::set_item( PyObject* key, PyObject* obj )
         if (itr == mDict.end())
         {
             /* create a new dictionary entry */
-            PyDictEntry * entry = new PyDictEntry;
+            //PyDictEntry * entry = new PyDictEntry();
+            PyDictEntry * entry = (PyDictEntry*)malloc(sizeof( PyDictEntry ));
             entry->key = key;
             entry->obj = obj;
             mDict.insert(std::make_pair(hsh, entry));
@@ -145,6 +135,7 @@ bool PyDict::set_item( PyObject* key, PyObject* obj )
         else
         {
             /* update/replace a already existing entry ( bit tricky ) */
+            //ASCENT_HARDWARE_BREAKPOINT;
             PyDictEntry * entry = itr->second;
             entry->obj->DecRef();
             entry->obj = obj;
@@ -163,12 +154,57 @@ PyObject* PyDict::get_item( PyObject* key )
     return NULL;
 }
 
-uint32 PyDict::hash()
+PyObject* PyDict::get_item(const char* key_name)
 {
-    return (this->*mHash)();
+    //ASCENT_HARDWARE_BREAKPOINT;
+    if (key_name == NULL || *key_name == '\0')
+        return NULL;
+
+    uint32 hsh = Utils::Hash::sdbm_hash(key_name);
+
+    PyDictEntry * entry = mDict[hsh];
+    if (entry == NULL)
+    {
+        ASCENT_HARDWARE_BREAKPOINT;
+        entry = (PyDictEntry*)malloc(sizeof( PyDictEntry ));//new PyDictEntry;
+        entry->key = (PyObject*)new PyString(key_name);
+        entry->obj = NULL;
+        mDict[hsh] = entry;
+    }
+
+    return entry->obj;
 }
 
-uint32 PyDict::_hash()
+PyObject* PyDict::get_item(const char* key_name, PyObject* default_obj)
+{
+    //ASCENT_HARDWARE_BREAKPOINT;
+    if (key_name == NULL || *key_name == '\0')
+    {
+        default_obj->DecRef();
+        return NULL;
+    }
+
+    uint32 hsh = Utils::Hash::sdbm_hash(key_name);
+
+    PyDictEntry * entry = mDict[hsh];
+    if (entry == NULL)
+    {
+        //ASCENT_HARDWARE_BREAKPOINT;
+        entry = (PyDictEntry*)malloc(sizeof( PyDictEntry ));//new PyDictEntry();
+        entry->key = (PyObject*)new PyString(key_name);
+        entry->obj = default_obj; default_obj->IncRef();
+        mDict[hsh] = entry;
+    }
+
+    // another wierd exception
+    if (entry->obj == NULL)
+        ASCENT_HARDWARE_BREAKPOINT;
+
+    default_obj->DecRef();
+    return entry->obj;
+}
+
+uint32 PyDict::hash()
 {
     uint32 hsh = 0;
     iterator itr = mDict.begin();
@@ -217,23 +253,23 @@ bool PyDict::scanf( const char * keyName, const char* format, ... )
     int formatIndex = 0;
     //while (pVar != -1)
     //{
-        pVar = va_arg( ap, void*);
+    pVar = va_arg( ap, void*);
 
-        char tag = format[formatIndex];
-        switch(tag)
-        {
-            /*unicode string*/
-        case 'u':
-            std::wstring * str = (std::wstring *)pVar;
-            str->clear();
+    char tag = format[formatIndex];
+    switch(tag)
+    {
+        /*unicode string*/
+    case 'u':
+        std::wstring * str = (std::wstring *)pVar;
+        str->clear();
 
-            size_t len = ((PyUnicodeUCS2*)foundObject)->length();
-            wchar_t * buff = ((PyUnicodeUCS2*)foundObject)->content();
-            str->append(buff, len);
-            break;
-        }
+        size_t len = ((PyUnicodeUCS2*)foundObject)->length();
+        wchar_t * buff = ((PyUnicodeUCS2*)foundObject)->content();
+        str->append(buff, len);
+        break;
+    }
 
-        //formatIndex++;
+    //formatIndex++;
     //}
 
     va_end(ap);

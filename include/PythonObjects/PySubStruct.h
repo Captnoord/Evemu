@@ -26,6 +26,8 @@
 #ifndef _PYSUBSTRUCT_H
 #define _PYSUBSTRUCT_H
 
+#if 0
+
 class PySubStruct
 {
     uint8 mType;
@@ -47,5 +49,7 @@ public:
 private:
     PyObject* payload;
 };
+
+#endif
 
 #endif //_PYSUBSTRUCT_H

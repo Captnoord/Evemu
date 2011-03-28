@@ -29,8 +29,13 @@
 
 uint8 mDigest[SHA_DIGEST_SIZE];
 
-void PasswordModule::GeneratePassHash(std::wstring &userName, std::wstring &passWord, std::string &passWordHash)
+bool PasswordModule::GeneratePassHash(std::wstring &userName, std::wstring &passWord, std::string &passWordHash)
 {
+    if (userName.size() > 50 || passWord.size() > 50) {
+        sLog.Error("PasswordModule", "username or password is simply to long");
+        return false;
+    }
+
     std::wstring salt = userName;
 
     Utils::Strings::trim(salt, true, true);     // comparable to the ".strip" function in python.
@@ -49,7 +54,7 @@ void PasswordModule::GeneratePassHash(std::wstring &userName, std::wstring &pass
     int daylySaltLen = SHA_DIGEST_SIZE + saltLen;
 
     // allocate buffer for the hashing, this way its only allocated once.
-    uint8 * uDaylySalt = new uint8[daylySaltLen];   // first part of the data string
+    uint8 * uDaylySalt = (uint8 *)malloc(daylySaltLen);   // first part of the data string
     uint8 * uDaylySaltPart = &uDaylySalt[SHA_DIGEST_SIZE];      // second part of the data string
 
     for (int i = 0; i < 1000; i++)
@@ -61,15 +66,24 @@ void PasswordModule::GeneratePassHash(std::wstring &userName, std::wstring &pass
         ShaModule::sha_update(&shaObj, uDaylySalt, daylySaltLen);
     }
 
-    delete [] uDaylySalt;
+    free(uDaylySalt);
 
     ShaModule::sha_final(mDigest, &shaObj);
-    passWordHash = "";
+    
+    if (passWordHash.size() != 0)
+        passWordHash = "";
+
     passWordHash.append((char*)mDigest, SHA_DIGEST_SIZE);
+    return true;
 }
 
-void PasswordModule::GeneratePassHash(const wchar_t *userName, const wchar_t *passWord, std::string &passWordHash)
+bool PasswordModule::GeneratePassHash(const wchar_t *userName, const wchar_t *passWord, std::string &passWordHash)
 {
+    if (strnlen(userName, 51) > 50 || strnlen(passWord, 51) > 50) {
+        sLog.Error("PasswordModule", "username or password is simply to long");
+        return false;
+    }
+
     std::wstring salt(userName);
 
     Utils::Strings::trim(salt, true, true);     // comparable to the ".strip" function in python.
@@ -89,7 +103,7 @@ void PasswordModule::GeneratePassHash(const wchar_t *userName, const wchar_t *pa
     int daylySaltLen = SHA_DIGEST_SIZE + saltLen;
 
     // allocate buffer for the hashing, this way its only allocated once.
-    uint8 * uDaylySalt = new uint8[daylySaltLen];   // first part of the data string
+    uint8 * uDaylySalt = (uint8 *)malloc(daylySaltLen);   // first part of the data string
     uint8 * uDaylySaltPart = &uDaylySalt[SHA_DIGEST_SIZE];      // second part of the data string
 
     for (int i = 0; i < 1000; i++)
@@ -101,11 +115,16 @@ void PasswordModule::GeneratePassHash(const wchar_t *userName, const wchar_t *pa
         ShaModule::sha_update(&shaObj, uDaylySalt, daylySaltLen);
     }
 
-    delete [] uDaylySalt;
+    free(uDaylySalt);
 
     ShaModule::sha_final(mDigest, &shaObj);
-    passWordHash = "";
+    
+    if (passWordHash.size() != 0)
+        passWordHash = "";
+    
     passWordHash.append((char*)mDigest, SHA_DIGEST_SIZE);
+
+    return true;
 }
 
 std::string PasswordModule::GenerateHexString(const std::string & str)

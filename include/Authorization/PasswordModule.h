@@ -55,7 +55,7 @@ public:
      * @param[out] passWordHash return parameter, returning the Sha1 hash of the userName and passWord
      * @note this is a relative slow function, so I recommend not to use it to calculate the hashes on the fly.
      */
-    static void GeneratePassHash(/*in*/std::wstring &userName, /*in*/std::wstring &passWord, /*out*/std::string &passWordHash);
+    static bool GeneratePassHash(/*in*/std::wstring &userName, /*in*/std::wstring &passWord, /*out*/std::string &passWordHash);
 
     /**
      * @brief this functions converts a username and password into a Sha1 hash.
@@ -67,7 +67,7 @@ public:
      * @param[out] passWordHash return parameter, returning the Sha1 hash of the userName and passWord
      * @note this is a relative slow function, so I recommend not to use it to calculate the hashes on the fly.
      */
-    static void GeneratePassHash(/*in*/const wchar_t *userName, /*in*/const wchar_t *passWord, /*out*/std::string &passWordHash);
+    static bool GeneratePassHash(/*in*/const wchar_t *userName, /*in*/const wchar_t *passWord, /*out*/std::string &passWordHash);
 
     /**
      * @brief GenerateHexString generates a hex string from a normal string.

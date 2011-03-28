@@ -26,6 +26,7 @@
 #ifndef _PYINSTANCE_H
 #define _PYINSTANCE_H
 
+#if 0
 #pragma pack(push,1)
 
 /**
@@ -60,5 +61,7 @@ private:
 };
 
 #pragma pack(pop)
+
+#endif
 
 #endif //_PYINSTANCE_H

@@ -101,7 +101,7 @@ public:
     {
         uint32 line = 1;
         uint32 countpos = 0;
-        uint32 lenght = size;
+        uint32 lenght = (uint32)size;
 
         fprintf(fouttxt, "{%s} PacketSize = %u"LINE_END, (direction ? "SERVER" : "CLIENT"), lenght);
         fprintf(fouttxt, "|------------------------------------------------|----------------|"LINE_END);
@@ -217,7 +217,7 @@ public:
 
         uint32 line = 1;
         uint32 countpos = 0;
-        uint32 lenght = size + 5;
+        uint32 lenght = (uint32)size + 5;
 
         fprintf(fouttxt, "{%s} PacketSize = %u"LINE_END, (direction ? "SERVER" : "CLIENT"), lenght);
         fprintf(fouttxt, "|------------------------------------------------|----------------|"LINE_END);

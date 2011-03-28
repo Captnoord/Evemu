@@ -99,13 +99,25 @@ void EveClientSocket::sendConnectionHandShake()
 {
     uint32 clusterUserCount = (uint32)sSpace.GetAuthorizedCount();
 
-    PyTuple tulpe(6);
-    tulpe[0] = EveBirthday;
-    tulpe[1] = MachoNetVersion;
-    tulpe[2] = clusterUserCount;
-    tulpe[3] = EveVersionNumber;
-    tulpe[4] = EveBuildVersion;
-    tulpe[5] = EveProjectVersion;
+    PyTuple tulpe(7);
+    tulpe.set_int(0, EveBirthday);
+    tulpe.set_int(1, MachoNetVersion);
+    tulpe.set_int(2, clusterUserCount);
+    tulpe.set_float(3, EveVersionNumber);
+    tulpe.set_int(4, EveBuildVersion);
+    tulpe.set_str(5, EveProjectVersion);
+
+    /*PyClass * script = new PyClass();
+    script->setname( new PyString("util.KeyVal") );
+
+    PyDict * script_dict = new PyDict();
+    script_dict->set_str("hash", "Mqt8SPIrL9vl87VNKuLzcw==");
+    script_dict->set_int("build", 240510);
+    script_dict->set_str("fileurl", "http://content.eveonline.com/codePatch/240510/compiled.code");
+
+    script->setdict(script_dict);
+
+    tulpe[6] = (PyObject*)script;*/
 
     send(tulpe);
 }
@@ -621,5 +633,5 @@ bool EveClientSocket::prepPacket( PyObject* obj )
 
     PyClass & data = *(PyClass*)obj;
     
-
+    return true;
 }

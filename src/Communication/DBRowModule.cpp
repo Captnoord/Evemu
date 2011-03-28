@@ -54,7 +54,7 @@ PyObject* DBRowModule::parseraw( MarshalStream& stream, PyObject* header, uint8 
     if (tuple.size() == 0)
         ASCENT_HARDWARE_BREAKPOINT;
 
-    PyTuple & result_tuple = *PyTuple_New(tuple.size());
+    PyTuple & result_tuple = *new PyTuple(tuple.size());
     // will go wrong
     for (int i = 0; i < (int)tuple.size(); i++)
     {

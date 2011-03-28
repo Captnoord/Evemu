@@ -26,6 +26,7 @@
 #ifndef _PYMODULE_H
 #define _PYMODULE_H
 
+#if 0
 #pragma pack(push,1)
 
 /**
@@ -57,5 +58,6 @@ private:
 };
 
 #pragma pack(pop)
+#endif
 
 #endif //_PYMODULE_H

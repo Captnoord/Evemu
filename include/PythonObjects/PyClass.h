@@ -26,8 +26,6 @@
 #ifndef _PYCLASS_H
 #define _PYCLASS_H
 
-#pragma pack(push,1)
-
 /**
  * \class PyClassObject
  *
@@ -38,41 +36,46 @@
  * @author Captnoord
  * @date February 2009
  */
-class PyClass
+class PyClass : public PyObject
 {
-    uint8 mType;
-    size_t mRefcnt;
-    uint32 (PyClass::*mHash)();
-public:
-    uint8 gettype();
-    void IncRef();
-    void DecRef();
-    uint32 hash();
 public:
     PyClass();
-    ~PyClass();
+    ~PyClass(); // this doesn't do shit... bleh...
+    void destruct() {};
+
+    uint32 hash();
+
     bool setname(PyString* name);
     bool setbases(PyTuple* tuple);
     bool setdict(PyDict* dict);
     bool setDirList(PyList * list);
     bool setDirDict(PyDict * dict);
 
+
     PyString* getname();
     PyTuple* getbases();
     PyDict* getdict();
     PyList * getDirList();
     PyDict * getDirDict();
-protected:
-    PyDict      *mDict; /* A dictionary */
-    PyString    *mName; /* A string */
-    PyTuple     *mBases;/* A tuple of class objects */
 
-    // derived object call info...
-    PyList      *mDirivedCallList;
-    PyDict      *mDirivedCallDict;
-    uint32 _hash();
+    // optional for normal classes but required for InstanceClasses
+    PyClass* New(){return NULL;}
+    int UpdateDict(PyObject* bases){return -1;}
+
+    // important for the inner workings of this all
+    bool init(PyObject* state) {ASCENT_HARDWARE_BREAKPOINT;}
+    PyTuple* GetState() {return NULL;};
+protected:
+    PyTuple		*mBases;/* A tuple of class objects */
+    PyDict		*mDict;	/* A dictionary, used to store 'self.xxxx' variable info */
+    PyString	*mName;	/* A string */
+
+    // instance object info...
+    PyDict		*mInDict;
+    PyList		*mWeakRefList;
+
+    ternaryfunc tp_call;
 };
 
-#pragma pack(pop)
 
 #endif // _PYCLASS_H

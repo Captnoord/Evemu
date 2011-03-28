@@ -26,12 +26,12 @@
 #ifndef __EVE_VERSION_H
 #define __EVE_VERSION_H
 
-static const uint8 MachoNetVersion = 215;
-static const double EveVersionNumber = 6.13;
-static const uint32 EveBuildVersion = 94168;
-static const char *const EveProjectCodename = "EVE-EVE-RELEASE";
+static const uint16 MachoNetVersion = 259;
+static const double EveVersionNumber = 6.42;
+static const uint32 EveBuildVersion = 237081;
+static const char *const EveProjectCodename = "EVE-EVE-TRANQUILITY";
 static const char *const EveProjectRegion = "ccp";
-static const char *const EveProjectVersion = "EVE-EVE-RELEASE@ccp";
+static const char *const EveProjectVersion = "EVE-EVE-TRANQUILITY@ccp";
 
 static const uint32 EveBirthday = 170472;
 
