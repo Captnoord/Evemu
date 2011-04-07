@@ -93,7 +93,6 @@ ShipRef Ship::Load(ItemFactory &factory, uint32 shipID)
     // Load dynamic attributes into new AttributeMap:
     // NOTE: these are set to maximum or default, but they should be saved/loaded to/from the 'entity_attributes' table
     sShipRef.get()->mAttributeMap.SetAttribute(AttrShieldCharge,sShipRef.get()->GetAttribute(AttrShieldCapacity),true);     // Shield Charge
-    sShipRef.get()->mAttributeMap.SetAttribute(AttrArmorDamage,sShipRef.get()->GetAttribute(AttrArmorHP),true);             // Armor Damage
     sShipRef.get()->mAttributeMap.SetAttribute(AttrMass,EvilNumber(sShipRef.get()->type().attributes.mass()),true);         // Mass
     sShipRef.get()->mAttributeMap.SetAttribute(AttrRadius,EvilNumber(sShipRef.get()->type().attributes.radius()),true);     // Radius
     sShipRef.get()->mAttributeMap.SetAttribute(AttrInertia,EvilNumber(sShipRef.get()->type().attributes.Inertia()),true);   // Inertia
@@ -260,10 +259,17 @@ PyObject *Ship::ShipGetInfo()
 
     //hacking:
     //maximumRangeCap
-    /* TODO: possible destruction... we need to check if a attribute like that is present..
-     * for now we keep it as we need to check this...
-     */
-    entry.attributes[ AttrMaximumRangeCap ] = new PyFloat( 250000.000000 );
+    /* this is a ugly hack... */
+    if (entry.attributes.find(AttrMaximumRangeCap) == entry.attributes.end())
+        entry.attributes.insert(std::make_pair(AttrMaximumRangeCap, new PyFloat( 249999.0 )));
+
+    // more hacking
+    SetAttribute(AttrArmorMaxDamageResonance, 1.0f, false);
+    SetAttribute(AttrShieldMaxDamageResonance, 1.0f, false);
+
+    entry.attributes.insert(std::make_pair(AttrArmorMaxDamageResonance, new PyFloat( 1.0 )));
+    entry.attributes.insert(std::make_pair(AttrShieldMaxDamageResonance, new PyFloat( 1.0 )));
+
 
     result.items[ itemID() ] = entry.Encode();
 

@@ -169,12 +169,12 @@ public:
     /* start experimental new attribute system ( not operational )          */
     /************************************************************************/
     AttributeMap mAttributeMap;
-    bool SetAttribute(uint32 attributeID, int num);
-    bool SetAttribute(uint32 attributeID, uint32 num);
-    bool SetAttribute(uint32 attributeID, int64 num);
-    bool SetAttribute(uint32 attributeID, uint64 num);
-    bool SetAttribute(uint32 attributeID, double num);
-    bool SetAttribute(uint32 attributeID, EvilNumber& num);
+    bool SetAttribute(uint32 attributeID, int num, bool notify = true);
+    bool SetAttribute(uint32 attributeID, uint32 num, bool notify = true);
+    bool SetAttribute(uint32 attributeID, int64 num, bool notify = true);
+    bool SetAttribute(uint32 attributeID, uint64 num, bool notify = true);
+    bool SetAttribute(uint32 attributeID, double num, bool notify = true);
+    bool SetAttribute(uint32 attributeID, EvilNumber& num, bool notify = true);
     
 
     EvilNumber GetAttribute(uint32 attributeID);

@@ -735,39 +735,39 @@ void InventoryItem::Relocate(const GPoint &pos) {
     SaveItem();
 }
 
-bool InventoryItem::SetAttribute( uint32 attributeID, int64 num )
+bool InventoryItem::SetAttribute( uint32 attributeID, int64 num, bool notify /* true */ )
 {
     EvilNumber devil_number(num);
-    return mAttributeMap.SetAttribute(attributeID, devil_number);
+    return mAttributeMap.SetAttribute(attributeID, devil_number, notify);
 }
 
-bool InventoryItem::SetAttribute( uint32 attributeID, double num )
+bool InventoryItem::SetAttribute( uint32 attributeID, double num, bool notify /* true */ )
 {
     EvilNumber devil_number(num);
-    return mAttributeMap.SetAttribute(attributeID, devil_number);
+    return mAttributeMap.SetAttribute(attributeID, devil_number, notify);
 }
 
-bool InventoryItem::SetAttribute( uint32 attributeID, EvilNumber& num )
+bool InventoryItem::SetAttribute( uint32 attributeID, EvilNumber& num, bool notify /* true */ )
 {
-    return mAttributeMap.SetAttribute(attributeID, num);
+    return mAttributeMap.SetAttribute(attributeID, num, notify);
 }
 
-bool InventoryItem::SetAttribute( uint32 attributeID, int num )
+bool InventoryItem::SetAttribute( uint32 attributeID, int num, bool notify /* true */ )
 {
     EvilNumber devil_number(num);
-    return mAttributeMap.SetAttribute(attributeID, devil_number);
+    return mAttributeMap.SetAttribute(attributeID, devil_number, notify);
 }
 
-bool InventoryItem::SetAttribute( uint32 attributeID, uint64 num )
+bool InventoryItem::SetAttribute( uint32 attributeID, uint64 num, bool notify /* true */ )
 {
     EvilNumber devil_number(*((int64*)&num));
-    return mAttributeMap.SetAttribute(attributeID, devil_number);
+    return mAttributeMap.SetAttribute(attributeID, devil_number, notify);
 }
 
-bool InventoryItem::SetAttribute( uint32 attributeID, uint32 num )
+bool InventoryItem::SetAttribute( uint32 attributeID, uint32 num, bool notify /* true */ )
 {
     EvilNumber devil_number((int64)num);
-    return mAttributeMap.SetAttribute(attributeID, devil_number);
+    return mAttributeMap.SetAttribute(attributeID, devil_number, notify);
 }
 
 EvilNumber InventoryItem::GetAttribute( uint32 attributeID )
