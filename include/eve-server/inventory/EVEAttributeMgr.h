@@ -293,13 +293,9 @@ public:
     /* ATM we don't load or save as we assume that all attribute modifiers are calculated on the fly
      * except charge attributes but we won't handle them for now
      */
-#if 0
     bool Save();
-#endif
     
     // load the default attributes that come with the itemID
-
-
     typedef std::map<uint32, EvilNumber>    AttrMap;
     typedef AttrMap::iterator               AttrMapItr;
     typedef AttrMap::const_iterator         AttrMapConstItr;
@@ -307,6 +303,26 @@ public:
     bool Load();
 
     //void set_item(InventoryItem *item) {mItem = item;}
+
+    /**
+     * @brief return the begin iterator of the AttributeMap
+     *
+     * 
+     *
+     * @return the begin iterator of the AttributeMap
+     * @note this way to solve the attribute system problems are quite hacky... but atm its needed
+     */
+    AttrMapItr begin();
+
+    /**
+     * @brief return the end iterator of the AttributeMap
+     *
+     * 
+     *
+     * @return the end iterator of the AttributeMap
+     * @note this way to solve the attribute system problems are quite hacky... but atm its needed
+     */
+    AttrMapItr end();
 
 protected:
     /**
@@ -353,6 +369,13 @@ protected:
      *       of 'EvilNumber' objects not fitting into the stack.
      */
     AttrMap mAttributes;
+
+    /**
+     * we set and we clear this flag when we change attributes of this item....
+     * @note we should improve this idea... and only save the changed attributes...
+     *       but that is for the future.
+     */
+    bool mChanged;
 };
 
 #endif /* __EVE_ATTRIBUTE_MGR__H__INCL__ */

@@ -260,7 +260,10 @@ PyObject *Ship::ShipGetInfo()
 
     //hacking:
     //maximumRangeCap
-    entry.attributes[ 797 ] = new PyFloat( 250000.000000 );
+    /* TODO: possible destruction... we need to check if a attribute like that is present..
+     * for now we keep it as we need to check this...
+     */
+    entry.attributes[ AttrMaximumRangeCap ] = new PyFloat( 250000.000000 );
 
     result.items[ itemID() ] = entry.Encode();
 

@@ -242,7 +242,7 @@ protected:
         ItemData &data
     );
 
-    void SaveItem() const;  //save the item to the DB.
+    void SaveItem();  //save the item to the DB.
 
     void SendItemChange(uint32 toID, std::map<int32, PyRep *> &changes) const;
     void SetOnline(bool newval);

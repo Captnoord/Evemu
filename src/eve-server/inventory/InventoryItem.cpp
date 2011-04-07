@@ -420,7 +420,11 @@ bool InventoryItem::Populate( Rsp_CommonGetInfo_Entry &result )
     //result..activeEffects[id] = List[11];
 
     //attributes:
-    //attributes.EncodeAttributes( result.attributes );
+    AttributeMap::AttrMapItr itr = mAttributeMap.begin();
+    AttributeMap::AttrMapItr itr_end = mAttributeMap.end();
+    for (; itr != itr_end; itr++) {
+        result.attributes[(*itr).first] = (*itr).second.GetPyObject();
+    }
 
     //no idea what time this is supposed to be
     result.time = Win32TimeNow();
@@ -625,9 +629,11 @@ void InventoryItem::ChangeOwner(uint32 new_owner, bool notify) {
     }
 }
 
-void InventoryItem::SaveItem() const
+void InventoryItem::SaveItem()
 {
-    _log( ITEM__TRACE, "Saving item %u.", itemID() );
+    //_log( ITEM__TRACE, "Saving item %u.", itemID() );
+    
+    mAttributeMap.Save();
 
     m_factory.db().SaveItem(
         itemID(),
@@ -664,14 +670,14 @@ void InventoryItem::SendItemChange(uint32 toID, std::map<int32, PyRep *> &change
 }
 
 
-typedef enum {
+/*typedef enum {
     dgmEffPassive = 0,
     dgmEffActivation = 1,
     dgmEffTarget = 2,
     dgmEffArea = 3,
     dgmEffOnline = 4,
     dgmEffOverload = 5,
-} EffectCategories;
+} EffectCategories;*/
 
 
 void InventoryItem::SetOnline(bool newval) {

@@ -344,7 +344,7 @@ void ItemAttributeMgr::_SendAttributeChange(Attr attr, PyRep *oldValue, PyRep *n
 /************************************************************************/
 /* Start of new attribute system                                        */
 /************************************************************************/
-AttributeMap::AttributeMap( InventoryItem & item ) : mItem(item)
+AttributeMap::AttributeMap( InventoryItem & item ) : mItem(item), mChanged(false)
 {
     // load the initial attributes for this item
     //Load();
@@ -353,9 +353,13 @@ AttributeMap::AttributeMap( InventoryItem & item ) : mItem(item)
 bool AttributeMap::SetAttribute( uint32 attributeId, EvilNumber &num, bool nofity /*= true*/ )
 {
     AttrMapItr itr = mAttributes.find(attributeId);
+
+    /* most attribute have default value's which are related to the item type */
     if (itr == mAttributes.end()) {
         mAttributes.insert(std::make_pair(attributeId, num));
-        return Add(attributeId, num);
+        if (nofity == true)
+            return Add(attributeId, num);
+        return true;
     }
 
     // I dono if this should happen... in short... if nothing changes... do nothing
@@ -364,7 +368,7 @@ bool AttributeMap::SetAttribute( uint32 attributeId, EvilNumber &num, bool nofit
 
     // notify dogma to change the attribute, if we are unable to queue the change
     // event. Don't change the value.
-    if (nofity)
+    if (nofity == true)
         if (!Change(attributeId, itr->second, num))
             return false;
 
@@ -374,6 +378,8 @@ bool AttributeMap::SetAttribute( uint32 attributeId, EvilNumber &num, bool nofit
 
 bool AttributeMap::Change( uint32 attributeID, EvilNumber& old_val, EvilNumber& new_val )
 {
+    mChanged = true;
+
     PyTuple* AttrChange = new PyTuple(7);
     AttrChange->SetItem(0, new PyString("OnModuleAttributeChange"));
     AttrChange->SetItem(1, new PyInt(mItem.ownerID()));
@@ -388,6 +394,8 @@ bool AttributeMap::Change( uint32 attributeID, EvilNumber& old_val, EvilNumber& 
 
 bool AttributeMap::Add( uint32 attributeID, EvilNumber& num )
 {
+    mChanged = true;
+
     PyTuple* AttrChange = new PyTuple(7);
     AttrChange->SetItem(0, new PyString("OnModuleAttributeChange"));
     AttrChange->SetItem(1, new PyInt(mItem.ownerID()));
@@ -438,54 +446,22 @@ bool AttributeMap::SendAttributeChanges( PyTuple* attrChange )
     }
 }
 
-
-
 bool AttributeMap::Load()
 {
-    /*DBQueryResult res;
+    /* then we possibly overwrite the attributes value's with the default's.. */
+    DgmTypeAttributeSet *attr_set = sDgmTypeAttrMgr.GetDmgTypeAttributeSet( mItem.typeID() );
+    if (attr_set == NULL)
+        return false;
 
-    if(!sDatabase.RunQuery(res,"SELECT * FROM dgmtypeattributes ORDER BY typeID")) {
-    sLog.Error("DgmTypeAttrMgr", "Error in db load query: %s", res.error.c_str());
-    return;
-    }
+    DgmTypeAttributeSet::AttrSetItr itr = attr_set->attributeset.begin();
 
-    uint32 currentID = 0;
-    DgmTypeAttributeSet * entry = NULL;
-    DBResultRow row;
+    for (; itr != attr_set->attributeset.end(); itr++)
+        SetAttribute((*itr)->attributeID, (*itr)->number, false);
 
-    int amount = res.GetRowCount();
-    for (int i = 0; i < amount; i++)
-    {
-    res.GetRow(row);
-    uint32 typeID = row.GetUInt(0);
-
-    // need a better sollution for this
-    if (currentID == 0) {
-    currentID = typeID;
-    entry = new DgmTypeAttributeSet;
-    }
-
-    if (currentID != typeID) {
-    mDgmTypeAttrInfo.insert(std::make_pair(currentID, entry));
-    currentID = typeID;
-    entry = new DgmTypeAttributeSet;
-    }
-
-    DmgTypeAttribute * attr_entry = new DmgTypeAttribute();
-    attr_entry->attributeID = row.GetUInt(1);
-    if (row.IsNull(2) == true) {
-    attr_entry->number = EvilNumber(row.GetFloat(3));
-    } else {
-    attr_entry->number = EvilNumber(row.GetInt(2));
-    }
-
-    entry->attributeset.push_back(attr_entry);
-    }
-    }*/
-
+    /* first we load the saved attributes from the db */
     DBQueryResult res;
 
-    if(!sDatabase.RunQuery(res,"SELECT * FROM entity_attributes WHERE itemID='%u'", mItem.itemID())) {
+    if(!sDatabase.RunQuery(res, "SELECT * FROM entity_attributes WHERE itemID='%u'", mItem.itemID())) {
         sLog.Error("AttributeMap", "Error in db load query: %s", res.error.c_str());
         return false;
     }
@@ -495,21 +471,54 @@ bool AttributeMap::Load()
     int amount = res.GetRowCount();
     for (int i = 0; i < amount; i++)
     {
+        EvilNumber attr_value;
         res.GetRow(row);
         uint32 attributeID = row.GetUInt(1);
-        int64 int_val = row.GetInt64(2);
-        Add(attributeID, EvilNumber(int_val));
+        if (!row.IsNull(2))
+            attr_value = row.GetInt64(2);
+        else
+            attr_value = row.GetDouble(3);
+        SetAttribute(attributeID, attr_value, false);
     }
 
+    return true;
+}
 
-    DgmTypeAttributeSet *attr_set = sDgmTypeAttrMgr.GetDmgTypeAttributeSet( mItem.typeID() );
-    if (attr_set == NULL)
-        return false;
+/* hmmm only save 'state' related attributes... and calculate the rest on the fly....*/
+/* we should save skills */
+bool AttributeMap::Save()
+{
+    /* if nothing changed... it means this action has been successful we return true... */
+    if (mChanged == false)
+        return true;
 
-    DgmTypeAttributeSet::AttrSetItr itr = attr_set->attributeset.begin();
-    
-    for (; itr != attr_set->attributeset.end(); itr++)
-        SetAttribute((*itr)->attributeID, (*itr)->number, false);
+    AttrMapItr itr = mAttributes.begin();
+    AttrMapItr itr_end = mAttributes.end();
+    for (; itr != itr_end; itr++)
+    {
+        if ( itr->second.get_type() == evil_number_int ) {
+
+            DBQueryResult res;
+            bool success = sDatabase.RunQuery(res,
+                "REPLACE INTO entity_attributes (itemID, attributeID, valueInt, valueFloat) VALUES (%u, %u, "I64d", NULL)",
+                 mItem.typeID(), itr->first, itr->second.get_int());
+
+            if (!success)
+                sLog.Error("AttributeMap", "unable to save attribute");
+
+        } else if (itr->second.get_type() == evil_number_float ) {
+
+            DBQueryResult res;
+            bool success = sDatabase.RunQuery(res,
+                "REPLACE INTO entity_attributes (itemID, attributeID, valueInt, valueFloat) VALUES (%u, %u, NULL, %f)",
+                mItem.typeID(), itr->first, itr->second.get_float());
+
+            if (!success)
+                sLog.Error("AttributeMap", "unable to save attribute");
+        }
+    }
+
+    mChanged = false;
 
     return true;
 }
@@ -538,6 +547,16 @@ EvilNumber AttributeMap::GetAttribute( const uint32 attributeId ) const
         sLog.Error("AttributeMap", "unable to find attribute: %u", attributeId);
         return EvilNumber(0);
     }
+}
+
+AttributeMap::AttrMapItr AttributeMap::begin()
+{
+    return mAttributes.begin();
+}
+
+AttributeMap::AttrMapItr AttributeMap::end()
+{
+    return mAttributes.end();
 }
 /************************************************************************/
 /* End of new attribute system                                          */
